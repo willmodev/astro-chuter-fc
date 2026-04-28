@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '@/components/layout/Section.astro';
+import Container from '@/components/layout/Container.astro';
+import SectionHeading from '@/components/layout/SectionHeading.astro';
+import ProgramCard from '@/components/sections/ProgramCard.astro';
+
+const programas = (await getCollection('programas')).sort(
+  (a, b) => a.data.orden - b.data.orden,
+);
+---
+
+<Section id="programas" variant="light">
+  <Container>
+    <SectionHeading
+      eyebrow="Categorías por año de nacimiento"
+      title="Nuestros Programas"
+      subtitle="Cada niño y niña en la categoría que le corresponde según su año de nacimiento, con una metodología adaptada a su etapa de desarrollo."
+    />
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      {programas.map((programa) => (
+        <ProgramCard
+          nombre={programa.data.nombre}
+          nacidos={programa.data.nacidos}
+          edadAprox={programa.data.edadAprox}
+          horario={programa.data.horario}
+          descripcion={programa.data.descripcion}
+          icono={programa.data.icono}
+          color={programa.data.color}
+        />
+      ))}
+    </div>
+
+    <p class="mt-8 text-center text-sm text-neutral-500">
+      ¿No sabés en qué categoría entra tu hijo o hija?{' '}
+      <a
+        href="https://wa.me/573015216830?text=Hola%20Chuter%20FC%2C%20quiero%20saber%20en%20qué%20categoría%20va%20mi%20hijo"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-medium text-brand-navy underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-brand-gold"
+      >
+        Consultanos por WhatsApp
+      </a>
+    </p>
+  </Container>
+</Section>

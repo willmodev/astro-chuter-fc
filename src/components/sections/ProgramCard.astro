@@ -1,0 +1,118 @@
+---
+import { waCategory } from '@/lib/whatsapp';
+
+interface Props {
+  nombre: string;
+  nacidos: string;
+  edadAprox: string;
+  horario: string;
+  descripcion: string;
+  icono: string;
+  color: 'navy' | 'blue' | 'gold';
+}
+
+const { nombre, nacidos, edadAprox, horario, descripcion, color } = Astro.props;
+
+const colorMap: Record<string, { icon: string; badge: string; title: string }> = {
+  navy: {
+    icon: 'bg-brand-navy/10 text-brand-navy',
+    badge: 'bg-brand-navy text-white',
+    title: 'text-brand-navy',
+  },
+  blue: {
+    icon: 'bg-brand-blue/10 text-brand-blue',
+    badge: 'bg-brand-blue text-white',
+    title: 'text-brand-blue',
+  },
+  gold: {
+    icon: 'bg-brand-gold/15 text-brand-gold-deep',
+    badge: 'bg-brand-gold text-neutral-900',
+    title: 'text-brand-gold-deep',
+  },
+};
+
+const c = colorMap[color];
+const waLink = waCategory(nombre);
+
+const iconPaths: Record<string, string> = {
+  Baby: 'M12 6.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM8 11c0-2.2 1.8-4 4-4s4 1.8 4 4v2H8v-2zm-2 4h12v2H6v-2z',
+  Footprints:
+    'M4 16s-1-2 1-2 3 2 3 2-1 2-3 2-1-2-1-2zM16 8s1 2-1 2-3-2-3-2 1-2 3-2 1 2 1 2zM7 20s-1-2 1-2 2 2 2 2-1 2-3 2 0-2 0-2zM17 4s1 2-1 2-2-2-2-2 1-2 3-2 0 2 0 2z',
+  Target:
+    'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zm0-14a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z',
+  Trophy:
+    'M6 9H3V4h3M18 9h3V4h-3M12 17v4m-4 0h8M12 13a5 5 0 0 1-5-5V4h10v4a5 5 0 0 1-5 5z',
+  Medal:
+    'M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm0 0v2m0 2v2M8 21h8M10 15l-2 8 4-2 4 2-2-8',
+};
+
+const path = iconPaths[Astro.props.icono] ?? iconPaths.Trophy;
+---
+
+<article
+  class="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl md:p-8"
+>
+  <div class="mb-4 flex items-center justify-between">
+    <div class={`flex h-12 w-12 items-center justify-center rounded-xl ${c.icon}`}>
+      <svg
+        aria-hidden="true"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d={path} />
+      </svg>
+    </div>
+    <span class={`rounded-full px-3 py-1 text-xs font-semibold ${c.badge}`}>
+      Nacidos {nacidos}
+    </span>
+  </div>
+
+  <h3 class={`font-display text-h3 ${c.title}`}>{nombre}</h3>
+  <p class="mt-0.5 text-xs text-neutral-500">{edadAprox}</p>
+  <p class="mt-3 flex-1 text-sm leading-relaxed text-neutral-600">{descripcion}</p>
+
+  <div class="mt-4 flex items-center gap-1.5 text-xs text-neutral-500">
+    <svg
+      aria-hidden="true"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+    <span>{horario}</span>
+  </div>
+
+  <a
+    href={waLink}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={`Inscribir a mi hijo en la categoría ${nombre} vía WhatsApp`}
+    class="mt-5 flex items-center justify-center gap-2 rounded-full border-2 border-brand-navy py-2.5 text-sm font-semibold text-brand-navy transition-colors duration-150 hover:bg-brand-navy hover:text-white focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2"
+  >
+    Me interesa esta categoría
+    <svg
+      aria-hidden="true"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path d="M5 12h14M12 5l7 7-7 7" />
+    </svg>
+  </a>
+</article>
