@@ -51,7 +51,7 @@ export default function GalleryLightbox({ images }: GalleryLightboxProps) {
             key={index}
             onClick={() => openAt(index)}
             aria-label={`Ver imagen ${index + 1}: ${image.alt}`}
-            className="group relative aspect-square overflow-hidden rounded-xl bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2"
+            className="group relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2"
           >
             <img
               src={image.thumbnail}

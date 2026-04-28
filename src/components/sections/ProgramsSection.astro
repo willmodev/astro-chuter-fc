@@ -18,7 +18,7 @@ const programas = (await getCollection('programas')).sort(
       subtitle="Cada niño y niña en la categoría que le corresponde según su año de nacimiento, con una metodología adaptada a su etapa de desarrollo."
     />
 
-    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
       {programas.map((programa) => (
         <ProgramCard
           nombre={programa.data.nombre}

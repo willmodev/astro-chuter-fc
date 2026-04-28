@@ -25,7 +25,7 @@ const rawImages = [
 
 const images = await Promise.all(
   rawImages.map(async ({ src, alt }) => {
-    const thumb = await getImage({ src, width: 480, height: 480, format: 'webp', quality: 80, fit: 'cover' });
+    const thumb = await getImage({ src, width: 480, height: 600, format: 'webp', quality: 80, fit: 'cover' });
     const full = await getImage({ src, width: 1080, format: 'webp', quality: 85 });
     return {
       src: thumb.src,
