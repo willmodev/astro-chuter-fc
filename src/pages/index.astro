@@ -1,33 +1,8 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSection from '@/components/sections/HeroSection.astro';
 ---
 
 <BaseLayout>
-  <main class="mx-auto max-w-3xl space-y-6 p-8">
-    <p class="text-sm uppercase tracking-widest text-brand-gold-deep">
-      Smoke test pasos A + B
-    </p>
-    <h1 class="font-display text-hero text-brand-navy">Chuter FC</h1>
-    <p class="text-lg text-neutral-700">
-      Layout base con SEO + JSON-LD activo. Tipografía Bebas Neue + Inter,
-      paleta navy/gold y tokens listos.
-    </p>
-    <div class="flex flex-wrap gap-3">
-      <span class="rounded-full bg-brand-navy px-4 py-2 text-sm text-white">
-        navy
-      </span>
-      <span class="rounded-full bg-brand-blue px-4 py-2 text-sm text-white">
-        blue
-      </span>
-      <span class="rounded-full bg-brand-gold px-4 py-2 text-sm text-neutral-900">
-        gold
-      </span>
-      <span class="rounded-full bg-brand-gold-deep px-4 py-2 text-sm text-white">
-        gold-deep
-      </span>
-      <span class="rounded-full bg-whatsapp px-4 py-2 text-sm text-white">
-        whatsapp
-      </span>
-    </div>
-  </main>
+  <HeroSection />
 </BaseLayout>

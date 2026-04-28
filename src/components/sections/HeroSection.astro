@@ -1,0 +1,85 @@
+---
+import { Image } from 'astro:assets';
+import heroImg from '@/assets/images/hero.jpg';
+import BrandButton from '@/components/layout/BrandButton.astro';
+import { WA_HERO } from '@/lib/whatsapp';
+import { SITE, PROMO, SCHEDULE } from '@/lib/site';
+---
+
+<section
+  id="inicio"
+  class="relative flex min-h-[70vh] items-center overflow-hidden md:min-h-[85vh]"
+  aria-label="Sección principal de Chuter FC"
+>
+  <Image
+    src={heroImg}
+    alt="Entrenamiento de niños en Chuter FC — Cancha de la Provincia, Los Algarrobillos"
+    class="absolute inset-0 h-full w-full object-cover object-center"
+    widths={[640, 960, 1440]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    quality={85}
+  />
+
+  <div class="absolute inset-0 bg-brand-navy/72"></div>
+
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-4 py-20 md:px-6 lg:px-8">
+    <div class="max-w-2xl space-y-6">
+      <div class="inline-flex items-center gap-2 rounded-full bg-brand-gold px-4 py-1.5">
+        <span class="h-2 w-2 rounded-full bg-neutral-900"></span>
+        <span class="text-xs font-bold uppercase tracking-widest text-neutral-900">
+          {PROMO.hook}
+        </span>
+      </div>
+
+      <h1 class="font-display text-hero leading-none text-white">
+        Formando<br />
+        <span class="text-brand-gold">Campeones</span><br />
+        dentro y fuera<br />
+        de la cancha
+      </h1>
+
+      <p class="max-w-md text-base leading-relaxed text-white/85 md:text-lg">
+        {SITE.shortDescription}
+        <br />
+        <strong class="font-semibold text-white">
+          {SCHEDULE.daysHuman} · {SCHEDULE.hoursHuman}
+        </strong>
+      </p>
+
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <BrandButton
+          href={WA_HERO}
+          variant="cta-gold"
+          size="lg"
+          target="_blank"
+          ariaLabel="Inscribirse gratis en Chuter FC vía WhatsApp"
+        >
+          ¡Quiero inscribirme gratis!
+        </BrandButton>
+        <BrandButton href="#programas" variant="outline-white" size="lg">
+          Ver programas
+        </BrandButton>
+      </div>
+
+      <div class="flex items-center gap-2 pt-2">
+        <svg
+          aria-hidden="true"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          class="shrink-0 text-brand-gold"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+        </svg>
+        <span class="text-sm text-white/80">
+          Reconocidos por <strong class="font-semibold text-white">INDER</strong>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
