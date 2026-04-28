@@ -1,0 +1,61 @@
+---
+import { getImage } from 'astro:assets';
+import Section from '@/components/layout/Section.astro';
+import Container from '@/components/layout/Container.astro';
+import SectionHeading from '@/components/layout/SectionHeading.astro';
+import GalleryLightbox from '@/components/interactive/GalleryLightbox';
+
+import img1 from '@/assets/images/img1.webp';
+import img2 from '@/assets/images/img2.webp';
+import img3 from '@/assets/images/img3.webp';
+import img4 from '@/assets/images/img4.webp';
+import img5 from '@/assets/images/img5.webp';
+import img6 from '@/assets/images/img6.webp';
+import img7 from '@/assets/images/img7.webp';
+
+const rawImages = [
+  { src: img1, alt: 'Niños entrenando fútbol en Chuter FC — cancha Los Algarrobillos' },
+  { src: img2, alt: 'Práctica de control del balón en Chuter FC' },
+  { src: img3, alt: 'Entrenamiento grupal de la categoría Benjamín en Chuter FC' },
+  { src: img4, alt: 'Sesión de formación técnica con niños de Chuter FC' },
+  { src: img5, alt: 'Categoría Baby disfrutando su primer entrenamiento en Chuter FC' },
+  { src: img6, alt: 'Cancha de la Provincia durante entrenamiento de Chuter FC' },
+  { src: img7, alt: 'Niño de Chuter FC celebrando un gol en práctica' },
+];
+
+const images = await Promise.all(
+  rawImages.map(async ({ src, alt }) => {
+    const thumb = await getImage({ src, width: 480, height: 480, format: 'webp', quality: 80, fit: 'cover' });
+    const full = await getImage({ src, width: 1080, format: 'webp', quality: 85 });
+    return {
+      src: thumb.src,
+      fullSrc: full.src,
+      alt,
+      width: full.attributes.width as number,
+      height: full.attributes.height as number,
+    };
+  }),
+);
+
+const lightboxImages = images.map(({ src, fullSrc, alt, width, height }) => ({
+  src: fullSrc,
+  thumbnail: src,
+  alt,
+  width,
+  height,
+}));
+---
+
+<Section id="galeria" variant="white">
+  <Container>
+    <SectionHeading
+      eyebrow="Fotos del club"
+      title="En Acción"
+      subtitle="Momentos reales de nuestros entrenamientos en la Cancha de la Provincia, Los Algarrobillos."
+    />
+
+    <div class="mt-10">
+      <GalleryLightbox images={lightboxImages} client:visible />
+    </div>
+  </Container>
+</Section>
