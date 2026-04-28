@@ -1,0 +1,40 @@
+---
+interface Props {
+  tag?: 'h2' | 'h3';
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  align?: 'left' | 'center';
+  light?: boolean;
+}
+
+const {
+  tag: Tag = 'h2',
+  eyebrow,
+  title,
+  subtitle,
+  align = 'center',
+  light = false,
+} = Astro.props;
+
+const alignClass = align === 'center' ? 'text-center mx-auto' : 'text-left';
+const subtitleColor = light ? 'text-white/80' : 'text-neutral-500';
+const eyebrowColor = light ? 'text-brand-gold' : 'text-brand-gold-deep';
+const titleColor = light ? 'text-white' : 'text-brand-navy';
+---
+
+<div class={`max-w-3xl space-y-3 ${alignClass}`}>
+  {eyebrow && (
+    <p class={`text-xs font-semibold uppercase tracking-widest ${eyebrowColor}`}>
+      {eyebrow}
+    </p>
+  )}
+  <Tag class={`font-display text-display ${titleColor}`}>
+    {title}
+  </Tag>
+  {subtitle && (
+    <p class={`text-lg leading-relaxed ${subtitleColor}`}>
+      {subtitle}
+    </p>
+  )}
+</div>

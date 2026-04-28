@@ -1,0 +1,25 @@
+---
+import { WA_HERO } from '@/lib/whatsapp';
+
+interface Props {
+  href?: string;
+  label?: string;
+  class?: string;
+}
+
+const {
+  href = WA_HERO,
+  label = 'Inscribirse gratis vía WhatsApp',
+  class: className = '',
+} = Astro.props;
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={label}
+  class={className}
+>
+  <slot />
+</a>

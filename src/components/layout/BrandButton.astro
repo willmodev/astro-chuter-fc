@@ -1,0 +1,48 @@
+---
+interface Props {
+  href: string;
+  variant?: 'cta-gold' | 'outline-navy' | 'outline-white';
+  size?: 'md' | 'lg';
+  class?: string;
+  target?: '_blank' | '_self';
+  rel?: string;
+  ariaLabel?: string;
+}
+
+const {
+  href,
+  variant = 'cta-gold',
+  size = 'md',
+  class: className = '',
+  target,
+  rel,
+  ariaLabel,
+} = Astro.props;
+
+const baseClasses =
+  'inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-150 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2 active:scale-95';
+
+const sizeClasses = size === 'lg' ? 'px-8 py-4 text-base' : 'px-6 py-3 text-sm';
+
+const variantClasses: Record<string, string> = {
+  'cta-gold':
+    'bg-brand-gold text-neutral-900 shadow-lg shadow-brand-gold/30 hover:bg-brand-gold-deep',
+  'outline-navy':
+    'border-2 border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white',
+  'outline-white':
+    'border-2 border-white text-white hover:bg-white hover:text-brand-navy',
+};
+
+const isExternal = target === '_blank';
+const resolvedRel = rel ?? (isExternal ? 'noopener noreferrer' : undefined);
+---
+
+<a
+  href={href}
+  target={target}
+  rel={resolvedRel}
+  aria-label={ariaLabel}
+  class={`${baseClasses} ${sizeClasses} ${variantClasses[variant]} ${className}`}
+>
+  <slot />
+</a>
