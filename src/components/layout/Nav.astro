@@ -1,0 +1,28 @@
+---
+import { NAV_LINKS } from '@/lib/site';
+
+interface Props {
+  class?: string;
+  light?: boolean;
+}
+
+const { class: className = '', light = false } = Astro.props;
+const linkColor = light
+  ? 'text-white/90 hover:text-white'
+  : 'text-neutral-700 hover:text-brand-navy';
+---
+
+<nav aria-label="Menú principal">
+  <ul class={`flex items-center gap-6 ${className}`}>
+    {NAV_LINKS.map(({ label, href }) => (
+      <li>
+        <a
+          href={href}
+          class={`text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2 focus-visible:rounded ${linkColor}`}
+        >
+          {label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

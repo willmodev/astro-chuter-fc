@@ -1,0 +1,21 @@
+---
+interface Props {
+  class?: string;
+  light?: boolean;
+}
+
+const { class: className = '', light = false } = Astro.props;
+const textColor = light ? 'text-white' : 'text-brand-navy';
+const accentColor = light ? 'text-brand-gold' : 'text-brand-gold';
+---
+
+<a
+  href="/#inicio"
+  aria-label="Chuter FC — Ir al inicio"
+  class={`flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2 focus-visible:rounded ${className}`}
+>
+  <!-- TODO: pedir a Camilo — logo SVG en alta calidad. Mientras tanto, logotipo textual. -->
+  <span class={`font-display text-2xl leading-none tracking-wide ${textColor}`}>
+    CHUTER<span class={accentColor}>FC</span>
+  </span>
+</a>
