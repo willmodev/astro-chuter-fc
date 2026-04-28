@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '@/components/layout/Section.astro';
+import Container from '@/components/layout/Container.astro';
+import SectionHeading from '@/components/layout/SectionHeading.astro';
+import CoachCard from '@/components/sections/CoachCard.astro';
+
+const formadores = (await getCollection('formadores')).sort(
+  (a, b) => a.data.orden - b.data.orden,
+);
+---
+
+<Section id="formadores" variant="light">
+  <Container>
+    <SectionHeading
+      eyebrow="El equipo detrás del club"
+      title="Nuestros Formadores"
+      subtitle="Profesionales comprometidos con el desarrollo integral de cada niño y niña."
+    />
+
+    <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:gap-12">
+      {formadores.map((formador) => (
+        <CoachCard
+          nombre={formador.data.nombre}
+          rol={formador.data.rol}
+          bio={formador.data.bio}
+          foto={formador.data.foto}
+          instagram={formador.data.instagram}
+        />
+      ))}
+    </div>
+  </Container>
+</Section>

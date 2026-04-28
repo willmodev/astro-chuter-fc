@@ -1,0 +1,78 @@
+---
+import Section from '@/components/layout/Section.astro';
+import Container from '@/components/layout/Container.astro';
+import SectionHeading from '@/components/layout/SectionHeading.astro';
+import BrandButton from '@/components/layout/BrandButton.astro';
+import { WA_HERO } from '@/lib/whatsapp';
+
+const stats = [
+  { value: '5', label: 'Categorías', sub: 'Baby a Infantil' },
+  { value: '3x', label: 'Entrenamientos', sub: 'por semana' },
+  { value: 'INDER', label: 'Aval oficial', sub: 'Reconocimiento deportivo' },
+];
+---
+
+<Section id="nosotros" variant="white">
+  <Container>
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div class="space-y-6">
+        <SectionHeading
+          align="left"
+          eyebrow="Sobre el club"
+          title="Somos Chuter FC"
+          subtitle="Una escuela de fútbol del barrio, con corazón y método. Formamos niños y niñas de Los Algarrobillos en disciplina, trabajo en equipo y amor por el deporte."
+        />
+
+        <p class="text-base leading-relaxed text-neutral-600">
+          Chuter F.C. nació con la convicción de que cada niño merece un espacio seguro
+          para aprender, crecer y brillar. Avalados por el INDER, nuestro enfoque va
+          más allá del fútbol: formamos personas íntegras que triunfan dentro y fuera
+          de la cancha.
+        </p>
+        <p class="text-base leading-relaxed text-neutral-600">
+          Nuestro programa se adapta a cada etapa de desarrollo, desde los primeros
+          pasos en categoría Baby hasta la preparación competitiva de la categoría
+          Infantil.
+        </p>
+
+        <div class="flex items-center gap-3 rounded-xl border border-brand-navy/20 bg-brand-navy/5 px-4 py-3">
+          <svg
+            aria-hidden="true"
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            class="shrink-0 text-brand-navy"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+          </svg>
+          <div>
+            <p class="text-sm font-semibold text-brand-navy">
+              Reconocimiento Deportivo — INDER
+            </p>
+            <p class="text-xs text-neutral-500">
+              Club avalado oficialmente. Tu hijo entrena con respaldo institucional.
+            </p>
+          </div>
+        </div>
+
+        <BrandButton href={WA_HERO} variant="cta-gold" size="md" target="_blank">
+          ¡Inscripción gratis!
+        </BrandButton>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-1">
+        {stats.map(({ value, label, sub }) => (
+          <div class="rounded-2xl border border-neutral-200 bg-neutral-50 p-6 text-center lg:text-left">
+            <p class="font-display text-[3rem] leading-none text-brand-navy">{value}</p>
+            <p class="mt-1 text-sm font-semibold text-neutral-700">{label}</p>
+            <p class="text-xs text-neutral-500">{sub}</p>
+          </div>
+        ))}
+        <!-- TODO: pedir a Camilo — logros del club (torneos, posiciones, años de trayectoria) para reemplazar los stats de arriba -->
+      </div>
+    </div>
+  </Container>
+</Section>

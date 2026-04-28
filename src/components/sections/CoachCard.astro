@@ -1,0 +1,65 @@
+---
+interface Props {
+  nombre: string;
+  rol: string;
+  bio: string;
+  foto: string;
+  instagram?: string;
+}
+
+const { nombre, rol, bio, instagram } = Astro.props;
+const esPlaceholder = bio.startsWith('TODO:');
+const igUrl = instagram ? `https://instagram.com/${instagram}` : undefined;
+---
+
+<article class="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:text-left">
+  <div class="relative shrink-0">
+    <div class="h-24 w-24 overflow-hidden rounded-full border-4 border-brand-gold/30 bg-brand-navy/10 sm:h-28 sm:w-28">
+      <!-- TODO: pedir a Camilo — foto profesional del formador -->
+      <div
+        class="flex h-full w-full items-center justify-center bg-brand-navy/5"
+        aria-label={`Foto de ${nombre} — próximamente`}
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1"
+          class="text-brand-navy/30"
+        >
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+        </svg>
+      </div>
+    </div>
+    {igUrl && (
+      <a
+        href={igUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Instagram de ${nombre}`}
+        class="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 text-white shadow-md transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2"
+      >
+        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+        </svg>
+      </a>
+    )}
+  </div>
+
+  <div class="flex-1 space-y-2">
+    <h3 class="font-display text-h3 text-brand-navy">{nombre}</h3>
+    <p class="text-sm font-semibold uppercase tracking-wide text-brand-gold-deep">{rol}</p>
+    {esPlaceholder ? (
+      <p class="text-sm italic text-neutral-400">
+        Bio próximamente — {nombre} comparte su visión del fútbol formativo.
+      </p>
+    ) : (
+      <p class="text-sm leading-relaxed text-neutral-600">{bio}</p>
+    )}
+  </div>
+</article>
