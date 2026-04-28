@@ -1,18 +1,44 @@
 ---
-import { Button } from "@/components/ui/button";
+import "@/styles/global.css";
 ---
 
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>Chuter FC</title>
 	</head>
-	<body>
-		<h1 class="text-4xl font-bold">Chuter FC</h1>
-		<Button client:load>Probando shadcn</Button>
+	<body class="bg-background text-foreground">
+		<main class="mx-auto max-w-3xl space-y-6 p-8">
+			<p class="text-sm uppercase tracking-widest text-brand-gold-deep">
+				Smoke test paso A
+			</p>
+			<h1 class="font-display text-hero text-brand-navy">
+				Chuter FC
+			</h1>
+			<p class="text-lg text-neutral-700">
+				Tipografía Bebas Neue + Inter, paleta navy/gold y tokens listos.
+			</p>
+			<div class="flex flex-wrap gap-3">
+				<span class="rounded-full bg-brand-navy px-4 py-2 text-sm text-white">
+					navy
+				</span>
+				<span class="rounded-full bg-brand-blue px-4 py-2 text-sm text-white">
+					blue
+				</span>
+				<span class="rounded-full bg-brand-gold px-4 py-2 text-sm text-neutral-900">
+					gold
+				</span>
+				<span class="rounded-full bg-brand-gold-deep px-4 py-2 text-sm text-white">
+					gold-deep
+				</span>
+				<span class="rounded-full bg-whatsapp px-4 py-2 text-sm text-white">
+					whatsapp
+				</span>
+			</div>
+		</main>
 	</body>
 </html>
