@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '@/components/layout/Section.astro';
+import Container from '@/components/layout/Container.astro';
+import SectionHeading from '@/components/layout/SectionHeading.astro';
+
+const testimonios = (await getCollection('testimonios')).sort(
+  (a, b) => a.data.orden - b.data.orden,
+);
+const todosPlaceholder = testimonios.every((t) => t.data.esPlaceholder);
+---
+
+<Section id="testimonios" variant="navy">
+  <Container>
+    <SectionHeading
+      eyebrow="Lo que dicen los papás"
+      title="Testimonios"
+      subtitle="La confianza de las familias es nuestro mayor logro."
+      light
+    />
+
+    {todosPlaceholder && (
+      <p class="mt-6 text-center text-sm text-white/50">
+        ✦ Pronto aquí estarán las historias reales de las familias Chuter FC ✦
+      </p>
+    )}
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {testimonios.map((t) => (
+        <article class="flex flex-col gap-4 rounded-2xl bg-white p-6">
+          <div class="flex gap-1" aria-label="5 estrellas">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <svg
+                key={i}
+                aria-hidden="true"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="#F5C842"
+                class="shrink-0"
+              >
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+            ))}
+          </div>
+
+          {t.data.esPlaceholder ? (
+            <p class="flex-1 text-sm italic leading-relaxed text-neutral-400">
+              "Aquí va el testimonio real de esta familia. ¡Próximamente!"
+            </p>
+          ) : (
+            <p class="flex-1 text-sm leading-relaxed text-neutral-700">
+              "{t.data.texto}"
+            </p>
+          )}
+
+          <footer class="mt-auto border-t border-neutral-100 pt-4">
+            <p class="text-sm font-semibold text-brand-navy">{t.data.autor}</p>
+            <p class="text-xs text-neutral-500">{t.data.relacion}</p>
+          </footer>
+        </article>
+      ))}
+    </div>
+  </Container>
+</Section>
