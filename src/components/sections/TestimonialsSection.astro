@@ -7,7 +7,9 @@ import SectionHeading from '@/components/layout/SectionHeading.astro';
 const testimonios = (await getCollection('testimonios')).sort(
   (a, b) => a.data.orden - b.data.orden,
 );
-const todosPlaceholder = testimonios.every((t) => t.data.esPlaceholder);
+
+// Duplicamos la lista para que el loop CSS sea infinito sin saltos
+const testimoniosLoop = [...testimonios, ...testimonios];
 ---
 
 <Section id="testimonios" variant="navy">
@@ -18,20 +20,18 @@ const todosPlaceholder = testimonios.every((t) => t.data.esPlaceholder);
       subtitle="La confianza de las familias es nuestro mayor logro."
       light
     />
+  </Container>
 
-    {todosPlaceholder && (
-      <p class="mt-6 text-center text-sm text-white/50">
-        ✦ Pronto aquí estarán las historias reales de las familias Chuter FC ✦
-      </p>
-    )}
-
-    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {testimonios.map((t) => (
-        <article class="flex flex-col gap-4 rounded-2xl bg-white p-6">
+  <div class="testimonials-marquee mt-10 md:mt-14">
+    <div class="testimonials-track">
+      {testimoniosLoop.map((t, i) => (
+        <article
+          class="testimonial-card flex shrink-0 flex-col gap-4 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-white/5"
+          aria-hidden={i >= testimonios.length}
+        >
           <div class="flex gap-1" aria-label="5 estrellas">
-            {Array.from({ length: 5 }).map((_, i) => (
+            {Array.from({ length: 5 }).map(() => (
               <svg
-                key={i}
                 aria-hidden="true"
                 width="16"
                 height="16"
@@ -44,15 +44,9 @@ const todosPlaceholder = testimonios.every((t) => t.data.esPlaceholder);
             ))}
           </div>
 
-          {t.data.esPlaceholder ? (
-            <p class="flex-1 text-sm italic leading-relaxed text-neutral-400">
-              "Aquí va el testimonio real de esta familia. ¡Próximamente!"
-            </p>
-          ) : (
-            <p class="flex-1 text-sm leading-relaxed text-neutral-700">
-              "{t.data.texto}"
-            </p>
-          )}
+          <p class="flex-1 text-sm leading-relaxed text-neutral-700">
+            "{t.data.texto}"
+          </p>
 
           <footer class="mt-auto border-t border-neutral-100 pt-4">
             <p class="text-sm font-semibold text-brand-navy">{t.data.autor}</p>
@@ -61,5 +55,71 @@ const todosPlaceholder = testimonios.every((t) => t.data.esPlaceholder);
         </article>
       ))}
     </div>
-  </Container>
+  </div>
 </Section>
+
+<style>
+  .testimonials-marquee {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 6%,
+      black 94%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 6%,
+      black 94%,
+      transparent 100%
+    );
+  }
+
+  .testimonials-track {
+    display: flex;
+    gap: 1.5rem;
+    width: max-content;
+    padding: 0.5rem 0.75rem;
+    animation: testimonials-scroll 70s linear infinite;
+  }
+
+  .testimonials-marquee:hover .testimonials-track,
+  .testimonials-marquee:focus-within .testimonials-track {
+    animation-play-state: paused;
+  }
+
+  .testimonial-card {
+    width: 320px;
+    min-height: 220px;
+  }
+
+  @keyframes testimonials-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      /* Movemos -50% porque la lista está duplicada */
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .testimonials-track {
+      animation: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 80rem;
+      margin: 0 auto;
+      padding: 0.5rem 1rem;
+    }
+    .testimonials-marquee {
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+  }
+</style>
