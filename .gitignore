@@ -22,3 +22,11 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# vercel
+.vercel/
+
+# artefactos de auditoría visual (screenshots locales, sin llegar a producción)
+.playwright-mcp/
+audit-*.jpeg
+audit-*.png
