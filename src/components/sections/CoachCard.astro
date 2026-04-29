@@ -7,7 +7,7 @@ interface Props {
   instagram?: string;
 }
 
-const { nombre, rol, bio, instagram } = Astro.props;
+const { nombre, rol, bio, foto, instagram } = Astro.props;
 const esPlaceholder = bio.startsWith('TODO:');
 const igUrl = instagram ? `https://instagram.com/${instagram}` : undefined;
 ---
@@ -15,26 +15,37 @@ const igUrl = instagram ? `https://instagram.com/${instagram}` : undefined;
 <article class="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:text-left">
   <div class="relative shrink-0">
     <div class="h-24 w-24 overflow-hidden rounded-full border-4 border-brand-gold/30 bg-brand-navy/10 sm:h-28 sm:w-28">
-      <!-- TODO: pedir a Camilo — foto profesional del formador -->
-      <div
-        class="flex h-full w-full items-center justify-center bg-brand-navy/5"
-        aria-label={`Foto de ${nombre} — próximamente`}
-        role="img"
-      >
-        <svg
-          aria-hidden="true"
-          width="40"
-          height="40"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1"
-          class="text-brand-navy/30"
+      {foto ? (
+        <img
+          src={foto}
+          alt={`Foto de ${nombre}`}
+          width="112"
+          height="112"
+          loading="lazy"
+          decoding="async"
+          class="h-full w-full object-cover"
+        />
+      ) : (
+        <div
+          class="flex h-full w-full items-center justify-center bg-brand-navy/5"
+          aria-label={`Foto de ${nombre} — próximamente`}
+          role="img"
         >
-          <circle cx="12" cy="8" r="4" />
-          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-        </svg>
-      </div>
+          <svg
+            aria-hidden="true"
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            class="text-brand-navy/30"
+          >
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+          </svg>
+        </div>
+      )}
     </div>
     {igUrl && (
       <a
