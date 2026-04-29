@@ -20,16 +20,13 @@ export const CONTACT = {
   instagramHandle: '@1chuter',
 } as const;
 
-// TODO: pedir a Camilo — confirmar ciudad y departamento exactos del barrio
-// Los Algarrobillos. Por ahora se dejan placeholders genéricos para que el
-// JSON-LD se renderice sin asumir ubicación incorrecta.
+// TODO: pedir a Camilo — confirmar ciudad y departamento exactos del barrio Los Algarrobillos
 export const LOCATION = {
   venue: 'Cancha de la Provincia',
   neighborhood: 'Los Algarrobillos',
   city: 'Colombia',
   region: '',
   country: 'CO',
-  mapsEmbedUrl: import.meta.env.PUBLIC_GOOGLE_MAPS_EMBED_URL ?? '',
 } as const;
 
 export const SCHEDULE = {

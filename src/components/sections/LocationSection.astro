@@ -2,10 +2,8 @@
 import Section from '@/components/layout/Section.astro';
 import Container from '@/components/layout/Container.astro';
 import SectionHeading from '@/components/layout/SectionHeading.astro';
+import StylizedMap from '@/components/sections/StylizedMap.astro';
 import { LOCATION, SCHEDULE, CONTACT } from '@/lib/site';
-
-const mapsUrl = LOCATION.mapsEmbedUrl;
-const hasMaps = Boolean(mapsUrl);
 ---
 
 <Section id="ubicacion" variant="light">
@@ -68,37 +66,7 @@ const hasMaps = Boolean(mapsUrl);
         </div>
       </div>
 
-      <div class="overflow-hidden rounded-2xl bg-neutral-200 shadow-lg">
-        {hasMaps ? (
-          <iframe
-            src={mapsUrl}
-            width="100%"
-            height="380"
-            style="border:0;"
-            allowfullscreen
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            title="Mapa de la Cancha de la Provincia, Los Algarrobillos"
-            class="block w-full"
-          />
-        ) : (
-          <div
-            class="flex h-[380px] flex-col items-center justify-center gap-3 bg-brand-navy/5 text-center"
-            role="img"
-            aria-label="Mapa pendiente — próximamente"
-          >
-            <svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-brand-navy/30">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
-            </svg>
-            <div>
-              <p class="text-sm font-medium text-neutral-500">Cancha de la Provincia</p>
-              <p class="text-xs text-neutral-400">Los Algarrobillos</p>
-              <!-- TODO: pedir a Camilo — link embed de Google Maps -->
-              <p class="mt-1 text-xs text-neutral-400 italic">Mapa próximamente</p>
-            </div>
-          </div>
-        )}
-      </div>
+      <StylizedMap />
     </div>
   </Container>
 </Section>
