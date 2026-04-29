@@ -10,22 +10,25 @@ const formadores = (await getCollection('formadores')).sort(
 );
 ---
 
-<Section id="formadores" variant="light">
+<Section id="formadores" variant="cream-grain">
   <Container>
     <SectionHeading
+      align="center"
+      numero="03"
       eyebrow="El equipo detrás del club"
-      title="Nuestros Formadores"
-      subtitle="Profesionales comprometidos con el desarrollo integral de cada niño y niña."
+      title="Profesionales que entienden el barrio."
+      subtitle="Comprometidos con el desarrollo integral de cada niño y niña que pasa por la cancha."
     />
 
-    <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:gap-12">
-      {formadores.map((formador) => (
+    <div class="mx-auto mt-12 grid max-w-5xl gap-8 sm:grid-cols-1 lg:gap-10">
+      {formadores.map((formador, index) => (
         <CoachCard
           nombre={formador.data.nombre}
           rol={formador.data.rol}
           bio={formador.data.bio}
           foto={formador.data.foto}
           instagram={formador.data.instagram}
+          numero={String(index + 1).padStart(2, '0')}
         />
       ))}
     </div>

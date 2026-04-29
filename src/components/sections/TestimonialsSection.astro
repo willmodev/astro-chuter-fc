@@ -12,31 +12,43 @@ const testimonios = (await getCollection('testimonios')).sort(
 const testimoniosLoop = [...testimonios, ...testimonios];
 ---
 
-<Section id="testimonios" variant="navy">
+<Section id="testimonios" variant="navy" class="overflow-hidden">
+  <!-- Quote mark gigante decorativa -->
+  <span class="pointer-events-none absolute -left-8 top-8 select-none font-serif text-[16rem] leading-none text-brand-gold/10 md:text-[22rem]" aria-hidden="true" style="font-variation-settings: 'opsz' 144, 'wght' 700;">
+    «
+  </span>
+
   <Container>
     <SectionHeading
+      align="center"
+      numero="05"
       eyebrow="Lo que dicen los papás"
-      title="Testimonios"
-      subtitle="La confianza de las familias es nuestro mayor logro."
+      title="Familias que ya hacen parte del barrio."
+      subtitle="La confianza de las familias es el mayor logro del club."
       light
     />
   </Container>
 
-  <div class="testimonials-marquee mt-10 md:mt-14">
+  <div class="testimonials-marquee mt-12 md:mt-16">
     <div class="testimonials-track">
       {testimoniosLoop.map((t, i) => (
         <article
-          class="testimonial-card flex shrink-0 flex-col gap-4 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-white/5"
+          class="testimonial-card relative flex shrink-0 flex-col gap-3 rounded-sm border border-brand-cream/10 bg-brand-cream p-6 shadow-xl"
           aria-hidden={i >= testimonios.length}
         >
-          <div class="flex gap-1" aria-label="5 estrellas">
+          <!-- Quote mark pequeño esquina superior -->
+          <span class="absolute -top-3 left-5 font-serif text-5xl leading-none text-brand-clay" aria-hidden="true" style="font-variation-settings: 'opsz' 144, 'wght' 700;">
+            "
+          </span>
+
+          <div class="flex items-center gap-1 pt-2" aria-label="5 estrellas">
             {Array.from({ length: 5 }).map(() => (
               <svg
                 aria-hidden="true"
-                width="16"
-                height="16"
+                width="14"
+                height="14"
                 viewBox="0 0 24 24"
-                fill="#F5C842"
+                fill="#C44B2C"
                 class="shrink-0"
               >
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -44,13 +56,13 @@ const testimoniosLoop = [...testimonios, ...testimonios];
             ))}
           </div>
 
-          <p class="flex-1 text-sm leading-relaxed text-neutral-700">
-            "{t.data.texto}"
+          <p class="flex-1 font-serif text-[0.95rem] leading-snug text-brand-navy-deep" style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 400;">
+            {t.data.texto}
           </p>
 
-          <footer class="mt-auto border-t border-neutral-100 pt-4">
-            <p class="text-sm font-semibold text-brand-navy">{t.data.autor}</p>
-            <p class="text-xs text-neutral-500">{t.data.relacion}</p>
+          <footer class="border-t border-dashed border-brand-navy/20 pt-3">
+            <p class="font-display text-base text-brand-navy-deep">{t.data.autor}</p>
+            <p class="text-[0.7rem] uppercase tracking-wider text-brand-navy/55">{t.data.relacion}</p>
           </footer>
         </article>
       ))}

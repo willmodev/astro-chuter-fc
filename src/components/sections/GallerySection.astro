@@ -14,17 +14,17 @@ import img6 from '@/assets/images/img6.webp';
 import img7 from '@/assets/images/img7.webp';
 
 const rawImages = [
-  { src: img1, alt: 'Niños entrenando fútbol en Chuter FC — cancha Los Algarrobillos' },
-  { src: img2, alt: 'Práctica de control del balón en Chuter FC' },
-  { src: img3, alt: 'Entrenamiento grupal de la categoría Benjamín en Chuter FC' },
-  { src: img4, alt: 'Sesión de formación técnica con niños de Chuter FC' },
-  { src: img5, alt: 'Categoría Baby disfrutando su primer entrenamiento en Chuter FC' },
-  { src: img6, alt: 'Cancha de la Provincia durante entrenamiento de Chuter FC' },
-  { src: img7, alt: 'Niño de Chuter FC celebrando un gol en práctica' },
+  { src: img1, alt: 'Niños entrenando fútbol en Chuter FC — cancha Los Algarrobillos', gridClass: 'md:col-span-2 md:row-span-2' },
+  { src: img2, alt: 'Práctica de control del balón en Chuter FC', gridClass: '' },
+  { src: img3, alt: 'Entrenamiento grupal de la categoría Benjamín en Chuter FC', gridClass: 'md:row-span-2' },
+  { src: img4, alt: 'Sesión de formación técnica con niños de Chuter FC', gridClass: '' },
+  { src: img5, alt: 'Categoría Baby disfrutando su primer entrenamiento en Chuter FC', gridClass: 'md:col-span-2' },
+  { src: img6, alt: 'Cancha de la Provincia durante entrenamiento de Chuter FC', gridClass: '' },
+  { src: img7, alt: 'Niño de Chuter FC celebrando un gol en práctica', gridClass: '' },
 ];
 
 const images = await Promise.all(
-  rawImages.map(async ({ src, alt }) => {
+  rawImages.map(async ({ src, alt, gridClass }) => {
     const thumb = await getImage({ src, width: 480, height: 600, format: 'webp', quality: 80, fit: 'cover' });
     const full = await getImage({ src, width: 1080, format: 'webp', quality: 85 });
     return {
@@ -33,28 +33,37 @@ const images = await Promise.all(
       alt,
       width: full.attributes.width as number,
       height: full.attributes.height as number,
+      gridClass,
     };
   }),
 );
 
-const lightboxImages = images.map(({ src, fullSrc, alt, width, height }) => ({
+const lightboxImages = images.map(({ src, fullSrc, alt, width, height, gridClass }) => ({
   src: fullSrc,
   thumbnail: src,
   alt,
   width,
   height,
+  gridClass,
 }));
 ---
 
 <Section id="galeria" variant="white">
   <Container>
-    <SectionHeading
-      eyebrow="Fotos del club"
-      title="En Acción"
-      subtitle="Momentos reales de nuestros entrenamientos en la Cancha de la Provincia, Los Algarrobillos."
-    />
+    <div class="grid items-end gap-6 md:grid-cols-[1fr_auto] md:gap-12">
+      <SectionHeading
+        align="left"
+        numero="04"
+        eyebrow="Fotos del club"
+        title="En acción, con el barrio."
+        subtitle="Momentos reales de nuestros entrenamientos en la Cancha de la Provincia, Los Algarrobillos."
+      />
+      <p class="hidden font-serif italic text-sm text-brand-navy/70 md:block md:max-w-[18rem] md:text-right" style="font-variation-settings: 'opsz' 144, 'wght' 400;">
+        «Cada foto es una jugada, una sonrisa, una historia que se está escribiendo en la cancha.»
+      </p>
+    </div>
 
-    <div class="mt-10">
+    <div class="mt-12">
       <GalleryLightbox images={lightboxImages} client:visible />
     </div>
   </Container>

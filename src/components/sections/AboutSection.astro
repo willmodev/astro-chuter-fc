@@ -7,52 +7,54 @@ import { WA_HERO } from '@/lib/whatsapp';
 
 const stats = [
   { value: '5', label: 'Categorías', sub: 'Baby a Infantil' },
-  { value: '3x', label: 'Entrenamientos', sub: 'por semana' },
-  { value: 'INDER', label: 'Aval oficial', sub: 'Reconocimiento deportivo' },
+  { value: '3×', label: 'Entrenamientos', sub: 'por semana' },
+  { value: 'INDER', label: 'Aval oficial', sub: 'reconocimiento deportivo' },
 ];
 ---
 
 <Section id="nosotros" variant="white">
   <Container>
-    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-      <div class="space-y-6">
+    <div class="grid items-start gap-12 lg:grid-cols-[3fr_2fr] lg:gap-20">
+      <div class="space-y-8">
         <SectionHeading
           align="left"
+          numero="02"
           eyebrow="Sobre el club"
-          title="Somos Chuter FC"
-          subtitle="Una escuela de fútbol del barrio, con corazón y método. Formamos niños y niñas de Los Algarrobillos en disciplina, trabajo en equipo y amor por el deporte."
+          title="Una escuela del barrio, con corazón y método."
+          subtitle="Formamos niños y niñas de Los Algarrobillos en disciplina, trabajo en equipo y amor por el deporte."
         />
 
-        <p class="text-base leading-relaxed text-neutral-600">
-          Chuter F.C. nació con la convicción de que cada niño merece un espacio seguro
-          para aprender, crecer y brillar. Avalados por el INDER, nuestro enfoque va
-          más allá del fútbol: formamos personas íntegras que triunfan dentro y fuera
-          de la cancha.
-        </p>
-        <p class="text-base leading-relaxed text-neutral-600">
-          Nuestro programa se adapta a cada etapa de desarrollo, desde los primeros
-          pasos en categoría Baby hasta la preparación competitiva de la categoría
-          Infantil.
-        </p>
+        <div class="space-y-5">
+          <p class="font-serif text-xl leading-snug text-brand-navy-deep" style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 450;">
+            Chuter F.C. nació con la convicción de que cada niño merece un espacio seguro
+            para aprender, crecer y brillar.
+          </p>
+          <p class="text-base leading-relaxed text-neutral-600">
+            Avalados por el INDER, nuestro enfoque va más allá del fútbol: formamos
+            personas íntegras que triunfan dentro y fuera de la cancha. Nuestro programa
+            se adapta a cada etapa de desarrollo, desde los primeros pasos en categoría
+            Baby hasta la preparación competitiva de la categoría Infantil.
+          </p>
+        </div>
 
-        <div class="flex items-center gap-3 rounded-xl border border-brand-navy/20 bg-brand-navy/5 px-4 py-3">
+        <div class="relative inline-flex items-center gap-4 rounded-sm border-l-4 border-brand-clay bg-brand-cream px-5 py-4">
           <svg
             aria-hidden="true"
-            width="32"
-            height="32"
+            width="36"
+            height="36"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             stroke-width="1.5"
-            class="shrink-0 text-brand-navy"
+            class="shrink-0 text-brand-clay"
           >
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
           </svg>
           <div>
-            <p class="text-sm font-semibold text-brand-navy">
-              Reconocimiento Deportivo — INDER
+            <p class="font-display text-lg leading-tight text-brand-navy-deep">
+              Reconocimiento Deportivo · INDER
             </p>
-            <p class="text-xs text-neutral-500">
+            <p class="font-serif text-sm italic text-neutral-600" style="font-variation-settings: 'opsz' 144, 'wght' 400;">
               Club avalado oficialmente. Tu hijo entrena con respaldo institucional.
             </p>
           </div>
@@ -63,15 +65,55 @@ const stats = [
         </BrandButton>
       </div>
 
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-1">
-        {stats.map(({ value, label, sub }) => (
-          <div class="rounded-2xl border border-neutral-200 bg-neutral-50 p-6 text-center lg:text-left">
-            <p class="font-display text-[3rem] leading-none text-brand-navy">{value}</p>
-            <p class="mt-1 text-sm font-semibold text-neutral-700">{label}</p>
-            <p class="text-xs text-neutral-500">{sub}</p>
+      <!-- Bloque editorial: caja navy con manifesto -->
+      <aside class="relative">
+        <div class="relative overflow-hidden rounded-sm bg-brand-navy-deep p-8 text-brand-cream shadow-2xl shadow-brand-navy/30 md:p-10">
+          <!-- Pattern de líneas (cancha) -->
+          <div class="pointer-events-none absolute inset-0 opacity-[0.08]" aria-hidden="true">
+            <svg viewBox="0 0 200 200" class="h-full w-full" preserveAspectRatio="none">
+              <pattern id="aboutLines" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#FBF6E4" stroke-width="0.5" />
+              </pattern>
+              <rect width="200" height="200" fill="url(#aboutLines)" />
+            </svg>
           </div>
-        ))}
-      </div>
+
+          <!-- Quote mark gigante -->
+          <div class="pointer-events-none absolute -left-2 -top-4 select-none font-serif text-[12rem] leading-none text-brand-gold/30" aria-hidden="true" style="font-variation-settings: 'opsz' 144, 'SOFT' 100, 'wght' 700;">
+            «
+          </div>
+
+          <div class="relative">
+            <p class="section-marker text-sm italic text-brand-gold">Manifiesto Chuter</p>
+            <p class="mt-4 font-serif text-2xl leading-tight md:text-[1.6rem]" style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'wght' 400;">
+              No formamos solo jugadores.<br />
+              Formamos <em class="text-brand-gold not-italic font-display tracking-wide">campeones de la vida</em> con balón en los pies.
+            </p>
+            <div class="mt-8 flex items-center gap-3">
+              <span class="h-px w-10 bg-brand-gold/50"></span>
+              <p class="text-xs uppercase tracking-[0.2em] text-brand-cream/70">Camilo & Ebed Shaday — CEOs</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stamp circular flotante "Desde 2024" -->
+        <div class="absolute -bottom-4 -right-4 flex h-24 w-24 -rotate-12 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-lg">
+          <span class="section-marker text-center text-xs italic leading-tight text-brand-navy-deep px-2">
+            est.<br /><span class="font-display text-xl not-italic">2024</span>
+          </span>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Stats row -->
+    <div class="mt-16 grid grid-cols-1 overflow-hidden border-y-2 border-brand-navy-deep sm:grid-cols-3">
+      {stats.map(({ value, label, sub }, idx) => (
+        <div class:list={['relative px-6 py-8 text-center', idx > 0 && 'sm:border-l-2 sm:border-brand-navy-deep']}>
+          <p class="font-display text-[4rem] leading-none text-brand-navy-deep md:text-[5rem]">{value}</p>
+          <p class="mt-2 font-serif italic text-base text-brand-clay" style="font-variation-settings: 'opsz' 144, 'wght' 500;">{label}</p>
+          <p class="mt-1 text-[0.65rem] uppercase tracking-[0.2em] text-neutral-500">{sub}</p>
+        </div>
+      ))}
     </div>
   </Container>
 </Section>

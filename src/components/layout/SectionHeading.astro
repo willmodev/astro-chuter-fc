@@ -2,6 +2,7 @@
 interface Props {
   tag?: 'h2' | 'h3';
   eyebrow?: string;
+  numero?: string;
   title: string;
   subtitle?: string;
   align?: 'left' | 'center';
@@ -11,29 +12,44 @@ interface Props {
 const {
   tag: Tag = 'h2',
   eyebrow,
+  numero,
   title,
   subtitle,
   align = 'center',
   light = false,
 } = Astro.props;
 
-const alignClass = align === 'center' ? 'text-center mx-auto' : 'text-left';
-const subtitleColor = light ? 'text-white/80' : 'text-neutral-500';
+const isCenter = align === 'center';
+const subtitleColor = light ? 'text-white/75' : 'text-neutral-600';
 const eyebrowColor = light ? 'text-brand-gold' : 'text-brand-gold-deep';
-const titleColor = light ? 'text-white' : 'text-brand-navy';
+const titleColor = light ? 'text-white' : 'text-brand-navy-deep';
+const ruleColor = light ? 'bg-brand-gold/40' : 'bg-brand-navy/15';
+const numeroColor = light ? 'text-brand-gold' : 'text-brand-navy';
 ---
 
-<div class={`max-w-3xl space-y-3 ${alignClass}`}>
-  {eyebrow && (
-    <p class={`text-xs font-semibold uppercase tracking-widest ${eyebrowColor}`}>
-      {eyebrow}
-    </p>
+<div class:list={['max-w-3xl', isCenter && 'mx-auto text-center']}>
+  {(numero || eyebrow) && (
+    <div class:list={['flex items-center gap-3 pb-4', isCenter && 'justify-center']}>
+      {numero && (
+        <span class:list={['section-marker text-base italic', numeroColor]}>
+          Nº {numero}
+        </span>
+      )}
+      {numero && eyebrow && (
+        <span class:list={['inline-block h-px w-10', ruleColor]} aria-hidden="true"></span>
+      )}
+      {eyebrow && (
+        <p class:list={['text-[0.7rem] font-bold uppercase tracking-[0.22em]', eyebrowColor]}>
+          {eyebrow}
+        </p>
+      )}
+    </div>
   )}
-  <Tag class={`font-display text-display ${titleColor}`}>
+  <Tag class:list={['font-display text-display leading-[0.95]', titleColor]}>
     {title}
   </Tag>
   {subtitle && (
-    <p class={`text-lg leading-relaxed ${subtitleColor}`}>
+    <p class:list={['mt-4 max-w-2xl text-base leading-relaxed md:text-lg', subtitleColor, isCenter && 'mx-auto']}>
       {subtitle}
     </p>
   )}

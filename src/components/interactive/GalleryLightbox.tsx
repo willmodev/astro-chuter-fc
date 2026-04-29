@@ -8,6 +8,7 @@ interface GalleryImage {
   alt: string;
   width: number;
   height: number;
+  gridClass?: string;
 }
 
 interface GalleryLightboxProps {
@@ -45,13 +46,13 @@ export default function GalleryLightbox({ images }: GalleryLightboxProps) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:auto-rows-[200px] md:gap-4 lg:auto-rows-[240px]">
         {images.map((image, index) => (
           <button
             key={index}
             onClick={() => openAt(index)}
             aria-label={`Ver imagen ${index + 1}: ${image.alt}`}
-            className="group relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2"
+            className={`group relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2 md:aspect-auto md:h-full ${image.gridClass ?? ''}`}
           >
             <img
               src={image.thumbnail}

@@ -1,7 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource-variable/fraunces";
 @import "@fontsource/bebas-neue/400.css";
 
 @custom-variant dark (&:is(.dark *));
@@ -12,6 +13,10 @@
     --color-brand-blue: #4A90E2;
     --color-brand-gold: #F5C842;
     --color-brand-gold-deep: #D4A82A;
+    --color-brand-cream: #FBF6E4;
+    --color-brand-cream-deep: #F2EAC7;
+    --color-brand-field: #2D6A3E;
+    --color-brand-clay: #C44B2C;
 
     --color-neutral-950: #0A0F1A;
     --color-neutral-900: #0F1B2D;
@@ -26,10 +31,10 @@
     --color-error: #EF4444;
 
     --text-hero: 3rem;
-    --text-hero--line-height: 1;
+    --text-hero--line-height: 0.95;
     --text-hero--letter-spacing: -0.02em;
     --text-display: 2.25rem;
-    --text-display--line-height: 1.05;
+    --text-display--line-height: 1.02;
     --text-display--letter-spacing: -0.01em;
     --text-h2: 1.75rem;
     --text-h2--line-height: 1.15;
@@ -38,8 +43,9 @@
 }
 
 @theme inline {
-    --font-sans: 'Inter Variable', system-ui, sans-serif;
+    --font-sans: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
     --font-display: 'Bebas Neue', sans-serif;
+    --font-serif: 'Fraunces Variable', 'Times New Roman', serif;
     --font-heading: var(--font-display);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
@@ -176,11 +182,93 @@
         font-family: var(--font-display);
         letter-spacing: 0.005em;
     }
+    .font-serif {
+        font-family: var(--font-serif);
+        font-variation-settings: "opsz" 144, "SOFT" 50;
+    }
     *:focus-visible {
         outline: 2px solid var(--color-brand-gold);
         outline-offset: 2px;
         border-radius: 4px;
     }
+}
+
+/* ============================================================
+   Textura de papel / grano sutil — capa decorativa
+   ============================================================ */
+.bg-grain {
+    position: relative;
+}
+.bg-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.07 0 0 0 0 0.13 0 0 0 0.07 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+}
+
+/* ============================================================
+   Líneas de cancha en marca de agua para fondos cremosos
+   ============================================================ */
+.bg-pitch-lines {
+    background-image:
+      linear-gradient(transparent 0%, transparent calc(100% - 1px), rgba(27, 58, 107, 0.06) 100%),
+      linear-gradient(90deg, transparent 0%, transparent calc(100% - 1px), rgba(27, 58, 107, 0.04) 100%);
+    background-size: 80px 80px, 80px 80px;
+}
+
+/* ============================================================
+   Cinta diagonal estilo "promo stamp"
+   ============================================================ */
+.diagonal-stripes {
+    background-image: repeating-linear-gradient(
+      135deg,
+      currentColor 0,
+      currentColor 8px,
+      transparent 8px,
+      transparent 16px
+    );
+}
+
+/* ============================================================
+   Marker de sección numerado (estilo magazine)
+   ============================================================ */
+.section-marker {
+    font-family: var(--font-serif);
+    font-variation-settings: "opsz" 144, "SOFT" 30, "wght" 400;
+    font-style: italic;
+    font-feature-settings: "ss01", "ss02";
+}
+
+/* ============================================================
+   Animación de entrada para cards (stagger via animation-delay)
+   ============================================================ */
+@keyframes cardRise {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-rise {
+    animation: cardRise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ============================================================
+   Hover tilt sutil para trading cards
+   ============================================================ */
+.card-tilt {
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+    transform-style: preserve-3d;
+}
+.card-tilt:hover {
+    transform: translateY(-6px) rotate(-0.5deg);
 }
 
 @media (prefers-reduced-motion: reduce) {

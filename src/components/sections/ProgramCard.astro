@@ -10,29 +10,34 @@ interface Props {
   descripcion: string;
   icono: string;
   color: 'navy' | 'blue' | 'gold';
+  numero?: string;
+  class?: string;
 }
 
-const { nombre, nacidos, edadAprox, horario, descripcion, color, icono } = Astro.props;
+const { nombre, nacidos, edadAprox, horario, descripcion, color, icono, numero = '', class: className = '' } = Astro.props;
 
-const colorMap: Record<string, { icon: string; badge: string; title: string }> = {
+const palette: Record<string, { accent: string; chip: string; ring: string; hover: string }> = {
   navy: {
-    icon: 'bg-brand-navy/10 text-brand-navy',
-    badge: 'bg-brand-navy/10 text-brand-navy',
-    title: 'text-brand-navy',
+    accent: 'text-brand-navy-deep',
+    chip: 'bg-brand-navy text-brand-cream',
+    ring: 'group-hover:ring-brand-navy/30',
+    hover: 'hover:border-brand-navy/40',
   },
   blue: {
-    icon: 'bg-brand-blue/10 text-brand-blue',
-    badge: 'bg-brand-blue/10 text-brand-blue',
-    title: 'text-brand-blue',
+    accent: 'text-brand-blue',
+    chip: 'bg-brand-blue text-brand-cream',
+    ring: 'group-hover:ring-brand-blue/30',
+    hover: 'hover:border-brand-blue/40',
   },
   gold: {
-    icon: 'bg-brand-gold/20 text-brand-gold-deep',
-    badge: 'bg-brand-gold/20 text-brand-gold-deep',
-    title: 'text-brand-gold-deep',
+    accent: 'text-brand-clay',
+    chip: 'bg-brand-clay text-brand-cream',
+    ring: 'group-hover:ring-brand-clay/30',
+    hover: 'hover:border-brand-clay/40',
   },
 };
 
-const c = colorMap[color];
+const c = palette[color];
 const waLink = waCategory(nombre);
 
 const iconMap = { Baby, Footprints, Target, Trophy, Medal };
@@ -40,35 +45,89 @@ const Icon = iconMap[icono as keyof typeof iconMap] ?? Trophy;
 ---
 
 <article
-  class="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl md:p-8"
+  class:list={[
+    'group relative flex h-full flex-col overflow-hidden rounded-sm border border-brand-navy/10 bg-brand-cream p-6 shadow-sm transition-all duration-500 ring-1 ring-transparent card-tilt md:p-7',
+    c.hover,
+    c.ring,
+    className,
+  ]}
 >
-  <div class={`flex h-14 w-14 items-center justify-center rounded-2xl ${c.icon}`}>
-    <Icon size={28} strokeWidth={1.75} aria-hidden="true" />
+  <!-- Diagonal stripes esquina superior derecha (decorativa) -->
+  <div class="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rotate-12 opacity-15">
+    <div class={`h-full w-full diagonal-stripes ${c.accent}`}></div>
   </div>
 
-  <span
-    class={`mt-4 inline-flex w-fit items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${c.badge}`}
-  >
-    Nacidos {nacidos}
-  </span>
+  <!-- Numero jersey grande (filigrana detrás) -->
+  {numero && (
+    <span
+      class={`pointer-events-none absolute -bottom-6 -right-2 select-none font-display text-[8rem] leading-none opacity-[0.07] ${c.accent}`}
+      aria-hidden="true"
+    >
+      {numero}
+    </span>
+  )}
 
-  <h3 class={`mt-3 font-display text-h3 ${c.title}`}>{nombre}</h3>
-  <p class="mt-0.5 text-xs text-neutral-500">{edadAprox}</p>
-  <p class="mt-3 flex-1 text-sm leading-relaxed text-neutral-600">{descripcion}</p>
+  <!-- Header: chip categoria + jersey number visible -->
+  <header class="flex items-start justify-between gap-3">
+    <span
+      class:list={['inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-wider', c.chip]}
+    >
+      <span class="h-1.5 w-1.5 rounded-full bg-current opacity-70"></span>
+      Categoría
+    </span>
+    {numero && (
+      <span class={`section-marker text-sm italic ${c.accent}`}>
+        Nº {numero}
+      </span>
+    )}
+  </header>
 
-  <div class="mt-4 flex items-center gap-1.5 text-xs text-neutral-500">
-    <Calendar size={14} strokeWidth={1.5} aria-hidden="true" class="shrink-0" />
-    <span>{horario}</span>
+  <!-- Icono + Nombre principal -->
+  <div class="mt-6 flex items-end gap-3">
+    <div class={`flex h-12 w-12 items-center justify-center rounded-full bg-white/70 ring-1 ring-brand-navy/10 ${c.accent}`}>
+      <Icon size={24} strokeWidth={1.75} aria-hidden="true" />
+    </div>
+    <h3 class={`font-display text-[2.5rem] leading-[0.85] ${c.accent}`}>
+      {nombre}
+    </h3>
   </div>
 
-  <a
-    href={waLink}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label={`Inscribir a mi hijo en la categoría ${nombre} vía WhatsApp`}
-    class="mt-5 flex items-center justify-center gap-1.5 rounded-full border-2 border-brand-navy px-3 py-2.5 text-sm font-semibold text-brand-navy transition-colors duration-150 hover:bg-brand-navy hover:text-white focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2"
-  >
-    Inscribirme
-    <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
-  </a>
+  <!-- Línea separadora dashed editorial -->
+  <hr class="mt-5 border-t border-dashed border-brand-navy/20" />
+
+  <!-- Datos: nacidos + edad -->
+  <dl class="mt-5 space-y-3 text-sm">
+    <div class="flex items-baseline justify-between gap-3">
+      <dt class="text-[0.7rem] font-bold uppercase tracking-wider text-brand-navy/60">Nacidos</dt>
+      <dd class="font-serif text-base italic text-brand-navy-deep" style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 500;">{nacidos}</dd>
+    </div>
+    <div class="flex items-baseline justify-between gap-3">
+      <dt class="text-[0.7rem] font-bold uppercase tracking-wider text-brand-navy/60">Edad</dt>
+      <dd class="font-display text-lg leading-none text-brand-navy-deep">{edadAprox}</dd>
+    </div>
+  </dl>
+
+  <!-- Descripción -->
+  <p class="mt-5 flex-1 text-sm leading-relaxed text-brand-navy-deep/75">{descripcion}</p>
+
+  <!-- Footer: horario + CTA -->
+  <footer class="mt-6 space-y-4">
+    <div class="flex items-center gap-2 text-[0.7rem] uppercase tracking-wider text-brand-navy/60">
+      <Calendar size={13} strokeWidth={1.75} aria-hidden="true" class="shrink-0" />
+      <span>{horario}</span>
+    </div>
+
+    <a
+      href={waLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Inscribir a mi hijo en la categoría ${nombre} vía WhatsApp`}
+      class:list={[
+        'group/btn relative flex items-center justify-between gap-1.5 overflow-hidden rounded-sm border border-brand-navy-deep px-4 py-3 text-xs font-bold uppercase tracking-wider text-brand-navy-deep transition-all hover:bg-brand-navy-deep hover:text-brand-cream focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2',
+      ]}
+    >
+      <span>Inscribirme</span>
+      <ArrowRight size={14} strokeWidth={2.5} class="transition-transform group-hover/btn:translate-x-1" />
+    </a>
+  </footer>
 </article>

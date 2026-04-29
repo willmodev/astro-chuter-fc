@@ -10,16 +10,23 @@ const programas = (await getCollection('programas')).sort(
 );
 ---
 
-<Section id="programas" variant="light">
+<Section id="programas" variant="cream-grain">
   <Container>
-    <SectionHeading
-      eyebrow="Categorías por año de nacimiento"
-      title="Nuestros Programas"
-      subtitle="Cada niño y niña en la categoría que le corresponde según su año de nacimiento, con una metodología adaptada a su etapa de desarrollo."
-    />
+    <div class="grid items-end gap-8 md:grid-cols-[1fr_auto] md:gap-16">
+      <SectionHeading
+        align="left"
+        numero="01"
+        eyebrow="Categorías por año de nacimiento"
+        title="Cinco etapas, una misma cancha."
+        subtitle="Cada niño y niña en la categoría que le corresponde según su año de nacimiento, con metodología adaptada a su etapa de desarrollo."
+      />
+      <p class="hidden font-serif italic text-sm text-brand-navy/70 md:block md:max-w-xs md:text-right" style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 400;">
+        «Nada de improvisar — formamos por edad, con un plan que crece con el chico.»
+      </p>
+    </div>
 
-    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
-      {programas.map((programa) => (
+    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-6">
+      {programas.map((programa, index) => (
         <ProgramCard
           nombre={programa.data.nombre}
           nacidos={programa.data.nacidos}
@@ -28,20 +35,26 @@ const programas = (await getCollection('programas')).sort(
           descripcion={programa.data.descripcion}
           icono={programa.data.icono}
           color={programa.data.color}
+          numero={String(index + 1).padStart(2, '0')}
+          class={index < 2 ? 'lg:col-span-3' : 'lg:col-span-2'}
         />
       ))}
     </div>
 
-    <p class="mt-8 text-center text-sm text-neutral-500">
-      ¿No sabés en qué categoría entra tu hijo o hija?{' '}
-      <a
-        href="https://wa.me/573015216830?text=Hola%20Chuter%20FC%2C%20quiero%20saber%20en%20qué%20categoría%20va%20mi%20hijo"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="font-medium text-brand-navy underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-brand-gold"
-      >
-        Consultanos por WhatsApp
-      </a>
-    </p>
+    <div class="mt-10 flex items-center justify-center gap-3">
+      <span class="h-px flex-1 max-w-[80px] bg-brand-navy/15" aria-hidden="true"></span>
+      <p class="text-center text-sm text-brand-navy-deep/70">
+        ¿No sabés en qué categoría entra tu hijo o hija?{' '}
+        <a
+          href="https://wa.me/573015216830?text=Hola%20Chuter%20FC%2C%20quiero%20saber%20en%20qué%20categoría%20va%20mi%20hijo"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-semibold text-brand-navy-deep underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-brand-gold"
+        >
+          Consultanos por WhatsApp →
+        </a>
+      </p>
+      <span class="h-px flex-1 max-w-[80px] bg-brand-navy/15" aria-hidden="true"></span>
+    </div>
   </Container>
 </Section>

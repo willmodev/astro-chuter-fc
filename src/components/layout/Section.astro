@@ -2,7 +2,7 @@
 interface Props {
   id?: string;
   class?: string;
-  variant?: 'light' | 'dark' | 'navy' | 'white';
+  variant?: 'light' | 'dark' | 'navy' | 'white' | 'cream' | 'cream-grain';
 }
 
 const { id, class: className = '', variant = 'light' } = Astro.props;
@@ -10,14 +10,16 @@ const { id, class: className = '', variant = 'light' } = Astro.props;
 const variantClasses: Record<string, string> = {
   light: 'bg-neutral-50',
   dark: 'bg-neutral-900 text-white',
-  navy: 'bg-brand-navy text-white',
+  navy: 'bg-brand-navy-deep text-white',
   white: 'bg-white',
+  cream: 'bg-brand-cream',
+  'cream-grain': 'bg-brand-cream bg-grain',
 };
 ---
 
 <section
   id={id}
-  class={`py-16 md:py-24 ${variantClasses[variant]} ${className}`}
+  class:list={['relative py-16 md:py-24', variantClasses[variant], className]}
 >
   <slot />
 </section>

@@ -3,18 +3,18 @@ import { Image } from 'astro:assets';
 import heroImg from '@/assets/images/hero.jpg';
 import BrandButton from '@/components/layout/BrandButton.astro';
 import { WA_HERO } from '@/lib/whatsapp';
-import { SITE, PROMO, SCHEDULE } from '@/lib/site';
+import { SCHEDULE } from '@/lib/site';
 ---
 
 <section
   id="inicio"
-  class="relative flex min-h-[70vh] items-center overflow-hidden md:min-h-[85vh]"
+  class="relative isolate flex min-h-[88vh] items-center overflow-hidden bg-brand-navy-deep"
   aria-label="Sección principal de Chuter FC"
 >
   <Image
     src={heroImg}
     alt="Entrenamiento de niños en Chuter FC — Cancha de la Provincia, Los Algarrobillos"
-    class="absolute inset-0 h-full w-full object-cover object-center"
+    class="absolute inset-0 h-full w-full object-cover object-[20%_center]"
     widths={[640, 960, 1440]}
     sizes="100vw"
     loading="eager"
@@ -22,33 +22,62 @@ import { SITE, PROMO, SCHEDULE } from '@/lib/site';
     quality={85}
   />
 
-  <div class="absolute inset-0 bg-brand-navy/72"></div>
+  <!-- Overlay base navy -->
+  <div class="absolute inset-0 bg-gradient-to-r from-brand-navy-deep/95 via-brand-navy-deep/85 to-brand-navy/75"></div>
+  <!-- Bloom dorado sutil esquina sup-izq -->
+  <div class="pointer-events-none absolute -left-24 -top-24 h-[480px] w-[480px] rounded-full bg-brand-gold/15 blur-3xl"></div>
+  <!-- Grain overlay -->
+  <div class="pointer-events-none absolute inset-0 bg-grain opacity-60 mix-blend-overlay"></div>
 
-  <div class="relative z-10 mx-auto w-full max-w-7xl px-4 py-20 md:px-6 lg:px-8">
-    <div class="max-w-2xl space-y-6">
-      <div class="inline-flex items-center gap-2 rounded-full bg-brand-gold px-4 py-1.5">
-        <span class="h-2 w-2 rounded-full bg-neutral-900"></span>
-        <span class="text-xs font-bold uppercase tracking-widest text-neutral-900">
-          {PROMO.hook}
+  <!-- Cinta diagonal vertical lateral derecha (decorativa) -->
+  <div class="pointer-events-none absolute right-0 top-0 hidden h-full w-24 lg:block">
+    <div class="h-full w-full diagonal-stripes text-brand-gold/10"></div>
+  </div>
+
+  <!-- Marker editorial vertical "Nº 00 · Inicio" -->
+  <div class="pointer-events-none absolute left-6 top-1/2 hidden -translate-y-1/2 -rotate-90 origin-left lg:block">
+    <span class="section-marker text-sm text-white/40">Nº 00 · Inicio</span>
+  </div>
+
+  <div class="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 md:px-6 lg:grid-cols-[1.5fr_1fr] lg:gap-16 lg:px-12 lg:py-24">
+    <!-- Columna principal -->
+    <div class="space-y-8">
+      <!-- Eyebrow editorial: número + label + rule -->
+      <div class="flex items-center gap-4">
+        <span class="section-marker text-base italic text-brand-gold">Nº 00</span>
+        <span class="h-px w-12 bg-brand-gold/50" aria-hidden="true"></span>
+        <span class="text-[0.7rem] font-bold uppercase tracking-[0.28em] text-brand-gold">
+          Club Deportivo · Los Algarrobillos
         </span>
       </div>
 
-      <h1 class="font-display text-hero leading-none text-white">
+      <!-- Headline mixto display + serif italic -->
+      <h1 class="font-display text-[clamp(3rem,8vw,7rem)] leading-[0.88] text-white">
         Formando<br />
-        <span class="text-brand-gold">Campeones</span><br />
-        dentro y fuera<br />
-        de la cancha
+        <span class="font-serif italic font-light text-brand-gold" style="font-variation-settings: 'opsz' 144, 'SOFT' 100, 'wght' 300;">campeones</span><br />
+        dentro y<br />
+        fuera de la<br />
+        <span class="relative inline-block">
+          cancha
+          <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M2 8 Q 50 2, 100 6 T 198 7" stroke="#F5C842" stroke-width="3" fill="none" stroke-linecap="round" />
+          </svg>
+        </span>.
       </h1>
 
-      <p class="max-w-md text-base leading-relaxed text-white/85 md:text-lg">
-        {SITE.shortDescription}
-        <br />
-        <strong class="font-semibold text-white">
-          {SCHEDULE.daysHuman} · {SCHEDULE.hoursHuman}
-        </strong>
-      </p>
+      <!-- Sub copy y horario -->
+      <div class="max-w-xl space-y-2">
+        <p class="text-base leading-relaxed text-white/80 md:text-lg">
+          Escuela de fútbol formativo para niños y niñas en Los Algarrobillos.
+          Avalada por <span class="font-semibold text-white">INDER</span>.
+        </p>
+        <p class="text-sm font-semibold uppercase tracking-wider text-brand-gold">
+          {SCHEDULE.daysHuman} — {SCHEDULE.hoursHuman}
+        </p>
+      </div>
 
-      <div class="flex flex-col gap-3 sm:flex-row">
+      <!-- CTAs -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
         <BrandButton
           href={WA_HERO}
           variant="cta-gold"
@@ -58,28 +87,75 @@ import { SITE, PROMO, SCHEDULE } from '@/lib/site';
         >
           ¡Quiero inscribirme gratis!
         </BrandButton>
-        <BrandButton href="#programas" variant="outline-white" size="lg">
+        <a
+          href="#programas"
+          class="group inline-flex items-center gap-2 px-2 py-3 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:text-brand-gold focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-4"
+        >
           Ver programas
-        </BrandButton>
+          <span aria-hidden="true" class="inline-block transition-transform group-hover:translate-x-1">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Columna lateral: ticket card -->
+    <aside class="relative self-end lg:self-center">
+      <div class="relative rotate-[1.5deg] overflow-hidden rounded-sm border border-brand-gold/30 bg-brand-cream p-6 shadow-2xl shadow-black/40 md:p-8">
+        <!-- Header del ticket -->
+        <div class="flex items-baseline justify-between border-b border-dashed border-brand-navy/25 pb-3">
+          <span class="font-display text-2xl tracking-wider text-brand-navy-deep">CUPO 2026</span>
+          <span class="section-marker text-xs italic text-brand-clay">edición limitada</span>
+        </div>
+
+        <!-- Contenido -->
+        <div class="mt-4 space-y-3">
+          <p class="font-display text-5xl leading-none text-brand-clay">¡GRATIS!</p>
+          <p class="font-serif italic text-lg leading-snug text-brand-navy-deep" style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 400;">
+            La inscripción no te cuesta nada. Solo traer a tu hijo o hija con ganas de jugar.
+          </p>
+        </div>
+
+        <!-- Stats minis -->
+        <dl class="mt-5 grid grid-cols-3 gap-2 border-t border-dashed border-brand-navy/25 pt-4 text-center">
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-wider text-brand-navy/60">Categorías</dt>
+            <dd class="font-display text-2xl leading-none text-brand-navy-deep">5</dd>
+          </div>
+          <div class="border-x border-dashed border-brand-navy/25">
+            <dt class="text-[0.65rem] uppercase tracking-wider text-brand-navy/60">Edades</dt>
+            <dd class="font-display text-2xl leading-none text-brand-navy-deep">5–14</dd>
+          </div>
+          <div>
+            <dt class="text-[0.65rem] uppercase tracking-wider text-brand-navy/60">x Semana</dt>
+            <dd class="font-display text-2xl leading-none text-brand-navy-deep">3</dd>
+          </div>
+        </dl>
+
+        <!-- Stamp circular gold -->
+        <div class="absolute -right-4 -top-4 flex h-20 w-20 -rotate-12 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-lg">
+          <span class="section-marker text-xs italic leading-none text-brand-navy-deep text-center px-2">
+            avalado<br />INDER
+          </span>
+        </div>
+
+        <!-- Notch lateral (tipo ticket cortado) -->
+        <div class="absolute -left-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-brand-navy-deep"></div>
+        <div class="absolute -right-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-brand-navy-deep"></div>
       </div>
 
-      <div class="flex items-center gap-2 pt-2">
-        <svg
-          aria-hidden="true"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          class="shrink-0 text-brand-gold"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-        </svg>
-        <span class="text-sm text-white/80">
-          Reconocidos por <strong class="font-semibold text-white">INDER</strong>
-        </span>
-      </div>
+      <!-- Sombra/halo dorado detrás -->
+      <div class="pointer-events-none absolute -inset-4 -z-10 rounded-md bg-gradient-to-br from-brand-gold/20 to-transparent blur-2xl"></div>
+    </aside>
+  </div>
+
+  <!-- Strip inferior con "scroll" hint -->
+  <div class="absolute bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-brand-navy-deep/60 backdrop-blur-sm">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 text-[0.65rem] uppercase tracking-[0.25em] text-white/60 md:px-6 lg:px-12">
+      <span class="hidden sm:inline">Cancha de la Provincia · Los Algarrobillos</span>
+      <span class="flex items-center gap-2 text-brand-gold">
+        Bajá para descubrir
+        <span class="inline-block animate-bounce" aria-hidden="true">↓</span>
+      </span>
+      <span class="hidden text-white/40 sm:inline section-marker italic normal-case tracking-normal">est. 2024</span>
     </div>
   </div>
 </section>
