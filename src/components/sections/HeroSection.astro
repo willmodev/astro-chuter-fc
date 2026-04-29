@@ -34,21 +34,16 @@ import { SCHEDULE } from '@/lib/site';
     <div class="h-full w-full diagonal-stripes text-brand-gold/10"></div>
   </div>
 
-  <!-- Marker editorial vertical "Nº 00 · Inicio" -->
-  <div class="pointer-events-none absolute left-6 top-1/2 hidden -translate-y-1/2 -rotate-90 origin-left lg:block">
-    <span class="section-marker text-sm text-white/40">Nº 00 · Inicio</span>
-  </div>
-
   <div class="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 md:px-6 lg:grid-cols-[1.5fr_1fr] lg:gap-16 lg:px-12 lg:py-24">
     <!-- Columna principal -->
     <div class="space-y-8">
-      <!-- Eyebrow editorial: número + label + rule -->
+      <!-- Eyebrow editorial: dot + label + rule -->
       <div class="flex items-center gap-4">
-        <span class="section-marker text-base italic text-brand-gold">Nº 00</span>
-        <span class="h-px w-12 bg-brand-gold/50" aria-hidden="true"></span>
+        <span class="inline-block h-2 w-2 rounded-full bg-brand-gold" aria-hidden="true"></span>
         <span class="text-[0.7rem] font-bold uppercase tracking-[0.28em] text-brand-gold">
-          Club Deportivo · Los Algarrobillos
+          Chuter F.C. · Los Algarrobillos
         </span>
+        <span class="hidden h-px flex-1 max-w-[120px] bg-brand-gold/40 sm:inline-block" aria-hidden="true"></span>
       </div>
 
       <!-- Headline mixto display + serif italic -->
@@ -99,9 +94,9 @@ import { SCHEDULE } from '@/lib/site';
 
     <!-- Columna lateral: ticket card -->
     <aside class="relative self-end lg:self-center">
-      <div class="relative rotate-[1.5deg] overflow-hidden rounded-sm border border-brand-gold/30 bg-brand-cream p-6 shadow-2xl shadow-black/40 md:p-8">
+      <div class="relative rotate-[1.5deg] rounded-sm border border-brand-gold/30 bg-brand-cream p-6 shadow-2xl shadow-black/40 md:p-8 md:pr-12">
         <!-- Header del ticket -->
-        <div class="flex items-baseline justify-between border-b border-dashed border-brand-navy/25 pb-3">
+        <div class="flex items-baseline justify-between gap-3 border-b border-dashed border-brand-navy/25 pb-3 md:pr-12">
           <span class="font-display text-2xl tracking-wider text-brand-navy-deep">CUPO 2026</span>
           <span class="section-marker text-xs italic text-brand-clay">edición limitada</span>
         </div>
@@ -130,10 +125,10 @@ import { SCHEDULE } from '@/lib/site';
           </div>
         </dl>
 
-        <!-- Stamp circular gold -->
-        <div class="absolute -right-4 -top-4 flex h-20 w-20 -rotate-12 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-lg">
-          <span class="section-marker text-xs italic leading-none text-brand-navy-deep text-center px-2">
-            avalado<br />INDER
+        <!-- Stamp circular gold (solo desktop, en mobile el aval ya aparece en el subcopy del hero) -->
+        <div class="absolute -right-5 -top-5 hidden h-[72px] w-[72px] -rotate-12 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-lg md:flex">
+          <span class="section-marker text-[0.6rem] italic leading-tight text-brand-navy-deep text-center px-1">
+            avalado<br /><span class="font-display text-sm not-italic tracking-wide">INDER</span>
           </span>
         </div>
 
@@ -155,7 +150,7 @@ import { SCHEDULE } from '@/lib/site';
         Bajá para descubrir
         <span class="inline-block animate-bounce" aria-hidden="true">↓</span>
       </span>
-      <span class="hidden text-white/40 sm:inline section-marker italic normal-case tracking-normal">est. 2024</span>
+      <span class="hidden text-white/40 sm:inline section-marker italic normal-case tracking-normal">desde 2024</span>
     </div>
   </div>
 </section>

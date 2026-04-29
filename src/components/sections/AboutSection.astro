@@ -78,10 +78,10 @@ const stats = [
             </svg>
           </div>
 
-          <!-- Quote mark gigante -->
-          <div class="pointer-events-none absolute -left-2 -top-4 select-none font-serif text-[12rem] leading-none text-brand-gold/30" aria-hidden="true" style="font-variation-settings: 'opsz' 144, 'SOFT' 100, 'wght' 700;">
-            «
-          </div>
+          <!-- Quote mark sutil dentro del card -->
+          <span class="pointer-events-none absolute right-6 top-4 select-none font-serif text-6xl leading-none text-brand-gold/30" aria-hidden="true" style="font-variation-settings: 'opsz' 144, 'wght' 700;">
+            "
+          </span>
 
           <div class="relative">
             <p class="section-marker text-sm italic text-brand-gold">Manifiesto Chuter</p>
@@ -96,10 +96,10 @@ const stats = [
           </div>
         </div>
 
-        <!-- Stamp circular flotante "Desde 2024" -->
-        <div class="absolute -bottom-4 -right-4 flex h-24 w-24 -rotate-12 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-lg">
+        <!-- Stamp circular flotante "est. 2024" (solo desktop, mobile lo oculta para no chocar con el footer del manifesto) -->
+        <div class="absolute -bottom-5 -right-5 hidden h-24 w-24 -rotate-12 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-lg md:flex">
           <span class="section-marker text-center text-xs italic leading-tight text-brand-navy-deep px-2">
-            est.<br /><span class="font-display text-xl not-italic">2024</span>
+            desde<br /><span class="font-display text-xl not-italic">2024</span>
           </span>
         </div>
       </aside>
