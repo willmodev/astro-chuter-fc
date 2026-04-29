@@ -28,6 +28,7 @@ const formadores = (await getCollection('formadores')).sort(
           bio={formador.data.bio}
           foto={formador.data.foto}
           instagram={formador.data.instagram}
+          etiqueta={formador.data.etiqueta}
           numero={String(index + 1).padStart(2, '0')}
         />
       ))}

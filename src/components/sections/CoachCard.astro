@@ -5,10 +5,11 @@ interface Props {
   bio: string;
   foto: string;
   instagram?: string;
+  etiqueta?: string;
   numero?: string;
 }
 
-const { nombre, rol, bio, foto, instagram, numero } = Astro.props;
+const { nombre, rol, bio, foto, instagram, etiqueta = 'Formador', numero } = Astro.props;
 const esPlaceholder = bio.startsWith('TODO:');
 const igUrl = instagram ? `https://instagram.com/${instagram}` : undefined;
 ---
@@ -60,10 +61,10 @@ const igUrl = instagram ? `https://instagram.com/${instagram}` : undefined;
           </div>
         )}
       </div>
-      <!-- Tag rotado tipo "FORMADOR" -->
+      <!-- Tag rotado dinámico (FORMADOR / COFUNDADORA / etc.) -->
       <div class="absolute bottom-4 left-0 -translate-x-2 rotate-[-4deg] bg-brand-clay px-3 py-1 shadow-md">
         <span class="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-brand-cream">
-          Formador
+          {etiqueta}
         </span>
       </div>
     </div>

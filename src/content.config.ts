@@ -23,6 +23,7 @@ const formadoresCollection = defineCollection({
     bio: z.string(),
     foto: z.string(),
     instagram: z.string().optional(),
+    etiqueta: z.string().default('Formador'),
     orden: z.number(),
   }),
 });
