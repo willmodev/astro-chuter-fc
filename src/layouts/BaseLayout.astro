@@ -4,6 +4,9 @@ import { pageTitle, buildSportsActivityLocationJsonLd } from '@/lib/seo';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
 import WhatsAppFab from '@/components/layout/WhatsAppFab.astro';
+import PageBoot from '@/components/layout/PageBoot.astro';
+import CursorDot from '@/components/interactive/CursorDot';
+import ScrollProgress from '@/components/interactive/ScrollProgress';
 import '@/styles/global.css';
 
 interface Props {
@@ -64,6 +67,7 @@ const jsonLd = buildSportsActivityLocationJsonLd();
     />
   </head>
   <body class="bg-background text-foreground">
+    <PageBoot />
     <a
       href="#inicio"
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-brand-navy focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
@@ -76,5 +80,7 @@ const jsonLd = buildSportsActivityLocationJsonLd();
     </main>
     <Footer />
     <WhatsAppFab />
+    <ScrollProgress client:idle />
+    <CursorDot client:idle />
   </body>
 </html>

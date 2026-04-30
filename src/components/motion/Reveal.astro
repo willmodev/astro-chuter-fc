@@ -1,0 +1,46 @@
+---
+/**
+ * Reveal — wrapper Astro CSS-only para entrada por scroll.
+ * Cero JavaScript: usa animation-timeline: view() con fallback graceful.
+ *
+ * Uso:
+ *   <Reveal idx={0}>...</Reveal>
+ *   <Reveal idx={2} variant="from-left" range="entry 0% cover 25%">...</Reveal>
+ */
+type Variant = "default" | "soft" | "fade" | "from-left" | "from-right";
+
+interface Props {
+    as?: keyof HTMLElementTagNameMap;
+    idx?: number;
+    variant?: Variant;
+    range?: string;
+    class?: string;
+}
+
+const {
+    as: Tag = "div",
+    idx = 0,
+    variant = "default",
+    range,
+    class: className = "",
+} = Astro.props;
+
+const variantClass: Record<Variant, string> = {
+    default: "",
+    soft: "reveal--soft",
+    fade: "reveal--fade",
+    "from-left": "reveal--from-left",
+    "from-right": "reveal--from-right",
+};
+
+const inlineStyle = [
+    `--idx:${idx}`,
+    range ? `animation-range:${range}` : null,
+]
+    .filter(Boolean)
+    .join("; ");
+---
+
+<Tag class:list={["reveal", variantClass[variant], className]} style={inlineStyle}>
+    <slot />
+</Tag>

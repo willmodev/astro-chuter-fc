@@ -11,10 +11,11 @@ interface Props {
   icono: string;
   color: 'navy' | 'blue' | 'gold';
   numero?: string;
+  idx?: number;
   class?: string;
 }
 
-const { nombre, nacidos, edadAprox, horario, descripcion, color, icono, numero = '', class: className = '' } = Astro.props;
+const { nombre, nacidos, edadAprox, horario, descripcion, color, icono, numero = '', idx = 0, class: className = '' } = Astro.props;
 
 const palette: Record<string, { accent: string; chip: string; ring: string; hover: string }> = {
   navy: {
@@ -44,12 +45,16 @@ const iconMap = { Baby, Footprints, Target, Trophy, Medal };
 const Icon = iconMap[icono as keyof typeof iconMap] ?? Trophy;
 ---
 
+<div
+  class:list={['reveal card-tilt-3d h-full', className]}
+  style={`--idx:${idx}`}
+  data-tilt
+>
 <article
   class:list={[
-    'group relative flex h-full flex-col overflow-hidden rounded-sm border border-brand-navy/10 bg-brand-cream p-6 shadow-sm transition-all duration-500 ring-1 ring-transparent card-tilt md:p-7',
+    'group relative flex h-full flex-col overflow-hidden rounded-sm border border-brand-navy/10 bg-brand-cream p-6 shadow-sm transition-all duration-500 ring-1 ring-transparent md:p-7',
     c.hover,
     c.ring,
-    className,
   ]}
 >
   <!-- Diagonal stripes esquina superior derecha (decorativa) -->
@@ -84,7 +89,7 @@ const Icon = iconMap[icono as keyof typeof iconMap] ?? Trophy;
 
   <!-- Icono + Nombre principal -->
   <div class="mt-6 flex items-end gap-3">
-    <div class={`flex h-12 w-12 items-center justify-center rounded-full bg-white/70 ring-1 ring-brand-navy/10 ${c.accent}`}>
+    <div class={`card-icon-pop flex h-12 w-12 items-center justify-center rounded-full bg-white/70 ring-1 ring-brand-navy/10 ${c.accent}`}>
       <Icon size={24} strokeWidth={1.75} aria-hidden="true" />
     </div>
     <h3 class={`font-display text-[2.5rem] leading-[0.85] ${c.accent}`}>
@@ -131,3 +136,4 @@ const Icon = iconMap[icono as keyof typeof iconMap] ?? Trophy;
     </a>
   </footer>
 </article>
+</div>

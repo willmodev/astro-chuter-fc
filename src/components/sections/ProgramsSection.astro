@@ -36,10 +36,43 @@ const programas = (await getCollection('programas')).sort(
           icono={programa.data.icono}
           color={programa.data.color}
           numero={String(index + 1).padStart(2, '0')}
+          idx={index}
           class={index < 2 ? 'lg:col-span-3' : 'lg:col-span-2'}
         />
       ))}
     </div>
+
+    <script>
+      // Tilt 3D cursor-driven para cards de programas — solo desktop con mouse fino.
+      const supportsHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (supportsHover && !reduced) {
+        const cards = document.querySelectorAll<HTMLElement>('[data-tilt]');
+        cards.forEach((card) => {
+          let frame = 0;
+          card.addEventListener(
+            'pointermove',
+            (e) => {
+              if (frame) return;
+              frame = requestAnimationFrame(() => {
+                const r = card.getBoundingClientRect();
+                const mx = (e.clientX - r.left) / r.width - 0.5;
+                const my = (e.clientY - r.top) / r.height - 0.5;
+                card.style.setProperty('--mx', String(mx));
+                card.style.setProperty('--my', String(my));
+                frame = 0;
+              });
+            },
+            { passive: true },
+          );
+          card.addEventListener('pointerleave', () => {
+            card.style.setProperty('--mx', '0');
+            card.style.setProperty('--my', '0');
+          });
+        });
+      }
+    </script>
 
     <div class="mt-10 flex items-center justify-center gap-3">
       <span class="h-px flex-1 max-w-[80px] bg-brand-navy/15" aria-hidden="true"></span>

@@ -2,6 +2,11 @@
 import { Image } from 'astro:assets';
 import heroImg from '@/assets/images/hero.jpg';
 import BrandButton from '@/components/layout/BrandButton.astro';
+import HeroTicket from '@/components/sections/hero/HeroTicket';
+import HeroBallBg from '@/components/sections/hero/HeroBallBg.astro';
+import HeroScrollHint from '@/components/sections/hero/HeroScrollHint.astro';
+import HeroHeadline from '@/components/sections/hero/HeroHeadline';
+import HeroParallaxLayer from '@/components/sections/hero/HeroParallaxLayer';
 import { WA_HERO } from '@/lib/whatsapp';
 import { SCHEDULE } from '@/lib/site';
 ---
@@ -11,26 +16,34 @@ import { SCHEDULE } from '@/lib/site';
   class="relative isolate flex min-h-[88vh] items-center overflow-hidden bg-brand-navy-deep"
   aria-label="Sección principal de Chuter FC"
 >
-  <Image
-    src={heroImg}
-    alt="Entrenamiento de niños en Chuter FC — Cancha de la Provincia, Los Algarrobillos"
-    class="absolute inset-0 h-full w-full object-cover object-[20%_center]"
-    widths={[640, 960, 1440]}
-    sizes="100vw"
-    loading="eager"
-    fetchpriority="high"
-    quality={85}
-  />
+  <!-- Capa 1 (más lenta): imagen hero, da sensación de fondo profundo -->
+  <HeroParallaxLayer speed={0.55} client:load className="absolute inset-0 z-0">
+    <Image
+      src={heroImg}
+      alt="Entrenamiento de niños en Chuter FC — Cancha de la Provincia, Los Algarrobillos"
+      class="h-[120%] w-full object-cover object-[20%_center]"
+      widths={[640, 960, 1440]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      quality={85}
+    />
+  </HeroParallaxLayer>
 
-  <!-- Overlay base navy -->
-  <div class="absolute inset-0 bg-gradient-to-r from-brand-navy-deep/95 via-brand-navy-deep/85 to-brand-navy/75"></div>
-  <!-- Bloom dorado sutil esquina sup-izq -->
-  <div class="pointer-events-none absolute -left-24 -top-24 h-[480px] w-[480px] rounded-full bg-brand-gold/15 blur-3xl"></div>
+  <!-- Overlay base navy (estático) -->
+  <div class="absolute inset-0 z-[1] bg-gradient-to-r from-brand-navy-deep/95 via-brand-navy-deep/85 to-brand-navy/75"></div>
+
+  <!-- Capa 2 (semi-fast): bloom dorado + pelota SVG, primer plano decorativo -->
+  <HeroParallaxLayer speed={1.25} client:load className="pointer-events-none absolute inset-0 z-[2]">
+    <div class="pointer-events-none absolute -left-24 -top-24 h-[480px] w-[480px] rounded-full bg-brand-gold/15 blur-3xl"></div>
+    <HeroBallBg />
+  </HeroParallaxLayer>
+
   <!-- Grain overlay -->
-  <div class="pointer-events-none absolute inset-0 bg-grain opacity-60 mix-blend-overlay"></div>
+  <div class="pointer-events-none absolute inset-0 z-[3] bg-grain opacity-60 mix-blend-overlay"></div>
 
   <!-- Cinta diagonal vertical lateral derecha (decorativa) -->
-  <div class="pointer-events-none absolute right-0 top-0 hidden h-full w-24 lg:block">
+  <div class="pointer-events-none absolute right-0 top-0 z-[3] hidden h-full w-24 lg:block">
     <div class="h-full w-full diagonal-stripes text-brand-gold/10"></div>
   </div>
 
@@ -38,7 +51,7 @@ import { SCHEDULE } from '@/lib/site';
     <!-- Columna principal -->
     <div class="space-y-8">
       <!-- Eyebrow editorial: dot + label + rule -->
-      <div class="flex items-center gap-4">
+      <div class="reveal-line flex items-center gap-4" style="--idx:0">
         <span class="inline-block h-2 w-2 rounded-full bg-brand-gold" aria-hidden="true"></span>
         <span class="text-[0.7rem] font-bold uppercase tracking-[0.28em] text-brand-gold">
           Chuter F.C. · Los Algarrobillos
@@ -46,22 +59,11 @@ import { SCHEDULE } from '@/lib/site';
         <span class="hidden h-px flex-1 max-w-[120px] bg-brand-gold/40 sm:inline-block" aria-hidden="true"></span>
       </div>
 
-      <!-- Headline mixto display + serif italic -->
-      <h1 class="font-display text-[clamp(3rem,8vw,7rem)] leading-[0.88] text-white">
-        Formando<br />
-        <span class="font-serif italic font-light text-brand-gold" style="font-variation-settings: 'opsz' 144, 'SOFT' 100, 'wght' 300;">campeones</span><br />
-        dentro y<br />
-        fuera de la<br />
-        <span class="relative inline-block">
-          cancha
-          <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M2 8 Q 50 2, 100 6 T 198 7" stroke="#F5C842" stroke-width="3" fill="none" stroke-linecap="round" />
-          </svg>
-        </span>.
-      </h1>
+      <!-- Headline cinematográfico (island con char-by-char + scroll-linked y/opacity) -->
+      <HeroHeadline client:load />
 
       <!-- Sub copy y horario -->
-      <div class="max-w-xl space-y-2">
+      <div class="reveal-line max-w-xl space-y-2" style="--idx:6">
         <p class="text-base leading-relaxed text-white/80 md:text-lg">
           Escuela de fútbol formativo para niños y niñas en Los Algarrobillos.
           Avalada por <span class="font-semibold text-white">INDER</span>.
@@ -72,7 +74,7 @@ import { SCHEDULE } from '@/lib/site';
       </div>
 
       <!-- CTAs -->
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div class="reveal-line flex flex-col gap-3 sm:flex-row sm:items-center" style="--idx:7">
         <BrandButton
           href={WA_HERO}
           variant="cta-gold"
@@ -92,64 +94,15 @@ import { SCHEDULE } from '@/lib/site';
       </div>
     </div>
 
-    <!-- Columna lateral: ticket card -->
-    <aside class="relative self-end lg:self-center">
-      <div class="relative rotate-[1.5deg] rounded-sm border border-brand-gold/30 bg-brand-cream p-6 shadow-2xl shadow-black/40 md:p-8 md:pr-12">
-        <!-- Header del ticket -->
-        <div class="flex items-baseline justify-between gap-3 border-b border-dashed border-brand-navy/25 pb-3 md:pr-12">
-          <span class="font-display text-2xl tracking-wider text-brand-navy-deep">CUPO 2026</span>
-          <span class="section-marker text-xs italic text-brand-clay">edición limitada</span>
-        </div>
-
-        <!-- Contenido -->
-        <div class="mt-4 space-y-3">
-          <p class="font-display text-5xl leading-none text-brand-clay">¡GRATIS!</p>
-          <p class="font-serif italic text-lg leading-snug text-brand-navy-deep" style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 400;">
-            La inscripción no te cuesta nada. Solo traer a tu hijo o hija con ganas de jugar.
-          </p>
-        </div>
-
-        <!-- Stats minis -->
-        <dl class="mt-5 grid grid-cols-3 gap-2 border-t border-dashed border-brand-navy/25 pt-4 text-center">
-          <div>
-            <dt class="text-[0.65rem] uppercase tracking-wider text-brand-navy/60">Categorías</dt>
-            <dd class="font-display text-2xl leading-none text-brand-navy-deep">5</dd>
-          </div>
-          <div class="border-x border-dashed border-brand-navy/25">
-            <dt class="text-[0.65rem] uppercase tracking-wider text-brand-navy/60">Edades</dt>
-            <dd class="font-display text-2xl leading-none text-brand-navy-deep">5–14</dd>
-          </div>
-          <div>
-            <dt class="text-[0.65rem] uppercase tracking-wider text-brand-navy/60">x Semana</dt>
-            <dd class="font-display text-2xl leading-none text-brand-navy-deep">3</dd>
-          </div>
-        </dl>
-
-        <!-- Stamp circular gold (solo desktop, en mobile el aval ya aparece en el subcopy del hero) -->
-        <div class="absolute -right-5 -top-5 hidden h-[72px] w-[72px] -rotate-12 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-lg md:flex">
-          <span class="section-marker text-[0.6rem] italic leading-tight text-brand-navy-deep text-center px-1">
-            avalado<br /><span class="font-display text-sm not-italic tracking-wide">INDER</span>
-          </span>
-        </div>
-
-        <!-- Notch lateral (tipo ticket cortado) -->
-        <div class="absolute -left-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-brand-navy-deep"></div>
-        <div class="absolute -right-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-brand-navy-deep"></div>
-      </div>
-
-      <!-- Sombra/halo dorado detrás -->
-      <div class="pointer-events-none absolute -inset-4 -z-10 rounded-md bg-gradient-to-br from-brand-gold/20 to-transparent blur-2xl"></div>
-    </aside>
+    <!-- Columna lateral: ticket card como island con spring + breathing -->
+    <HeroTicket client:idle />
   </div>
 
   <!-- Strip inferior con "scroll" hint -->
   <div class="absolute bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-brand-navy-deep/60 backdrop-blur-sm">
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 text-[0.65rem] uppercase tracking-[0.25em] text-white/60 md:px-6 lg:px-12">
       <span class="hidden sm:inline">Cancha de la Provincia · Los Algarrobillos</span>
-      <span class="flex items-center gap-2 text-brand-gold">
-        Bajá para descubrir
-        <span class="inline-block animate-bounce" aria-hidden="true">↓</span>
-      </span>
+      <HeroScrollHint />
       <span class="hidden text-white/40 sm:inline section-marker italic normal-case tracking-normal">desde 2024</span>
     </div>
   </div>

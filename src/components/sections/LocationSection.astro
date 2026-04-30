@@ -26,16 +26,16 @@ const wazeUrl = `https://www.waze.com/ul?q=${mapsQuery}&navigate=yes`;
     </div>
 
     <div class="mt-12 grid gap-8 lg:grid-cols-[2fr_3fr] lg:items-stretch">
-      <div class="relative flex flex-col gap-8 rounded-sm border border-brand-navy/15 bg-white p-6 shadow-sm md:p-8 lg:h-full">
-        <!-- Stamp circular -->
-        <div class="absolute -right-3 -top-3 flex h-16 w-16 -rotate-12 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-md">
+      <div class="reveal reveal--from-left relative flex flex-col gap-8 rounded-sm border border-brand-navy/15 bg-white p-6 shadow-sm md:p-8 lg:h-full" style="--idx:0">
+        <!-- Stamp circular giratorio -->
+        <div class="stamp-spin absolute -right-3 -top-3 flex h-16 w-16 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-md">
           <span class="section-marker text-[0.6rem] italic leading-tight text-brand-navy-deep text-center px-1">
             cancha<br /><span class="font-display text-base not-italic">oficial</span>
           </span>
         </div>
         <div class="flex flex-col gap-6">
           <div class="flex gap-4">
-            <div class="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-navy/10 text-brand-navy">
+            <div class="pin-drop mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-navy/10 text-brand-navy">
               <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
@@ -110,7 +110,9 @@ const wazeUrl = `https://www.waze.com/ul?q=${mapsQuery}&navigate=yes`;
         </div>
       </div>
 
-      <StylizedMap />
+      <div class="reveal reveal--from-right" style="--idx:1">
+        <StylizedMap />
+      </div>
     </div>
   </Container>
 </Section>

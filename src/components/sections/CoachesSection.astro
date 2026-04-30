@@ -30,6 +30,7 @@ const formadores = (await getCollection('formadores')).sort(
           instagram={formador.data.instagram}
           etiqueta={formador.data.etiqueta}
           numero={String(index + 1).padStart(2, '0')}
+          idx={index}
         />
       ))}
     </div>

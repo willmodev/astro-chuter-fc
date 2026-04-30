@@ -79,68 +79,80 @@ export default function ContactForm() {
       <input type="checkbox" name="botcheck" className="hidden" aria-hidden="true" />
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
+        <div className="field-wrap relative flex flex-col gap-1.5">
           <label htmlFor="cf-parent" className="text-sm font-medium text-neutral-700">
             Tu nombre (papá/mamá) <span className="text-error" aria-label="campo requerido">*</span>
           </label>
-          <input
-            id="cf-parent"
-            type="text"
-            name="nombre_acudiente"
-            required
-            minLength={2}
-            placeholder="Ej. María González"
-            className="rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
-          />
+          <div className="relative">
+            <input
+              id="cf-parent"
+              type="text"
+              name="nombre_acudiente"
+              required
+              minLength={2}
+              placeholder="Ej. María González"
+              className="w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
+            />
+            <span className="field-underline" aria-hidden="true" />
+          </div>
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="field-wrap relative flex flex-col gap-1.5">
           <label htmlFor="cf-phone" className="text-sm font-medium text-neutral-700">
             Teléfono / WhatsApp <span className="text-error" aria-label="campo requerido">*</span>
           </label>
-          <input
-            id="cf-phone"
-            type="tel"
-            name="telefono"
-            required
-            placeholder="Ej. 300 123 4567"
-            className="rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
-          />
+          <div className="relative">
+            <input
+              id="cf-phone"
+              type="tel"
+              name="telefono"
+              required
+              placeholder="Ej. 300 123 4567"
+              className="w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
+            />
+            <span className="field-underline" aria-hidden="true" />
+          </div>
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
+        <div className="field-wrap relative flex flex-col gap-1.5">
           <label htmlFor="cf-child" className="text-sm font-medium text-neutral-700">
             Nombre del niño / niña <span className="text-error" aria-label="campo requerido">*</span>
           </label>
-          <input
-            id="cf-child"
-            type="text"
-            name="nombre_nino"
-            required
-            minLength={2}
-            placeholder="Ej. Juan Camilo"
-            className="rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
-          />
+          <div className="relative">
+            <input
+              id="cf-child"
+              type="text"
+              name="nombre_nino"
+              required
+              minLength={2}
+              placeholder="Ej. Juan Camilo"
+              className="w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
+            />
+            <span className="field-underline" aria-hidden="true" />
+          </div>
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="field-wrap relative flex flex-col gap-1.5">
           <label htmlFor="cf-year" className="text-sm font-medium text-neutral-700">
             Año de nacimiento del niño/a <span className="text-error" aria-label="campo requerido">*</span>
           </label>
-          <input
-            id="cf-year"
-            type="number"
-            name="anio_nacimiento"
-            required
-            min={2010}
-            max={2022}
-            placeholder="Ej. 2018"
-            value={childYear}
-            onChange={(e) => setChildYear(e.target.value)}
-            className="rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
-          />
+          <div className="relative">
+            <input
+              id="cf-year"
+              type="number"
+              name="anio_nacimiento"
+              required
+              min={2010}
+              max={2022}
+              placeholder="Ej. 2018"
+              value={childYear}
+              onChange={(e) => setChildYear(e.target.value)}
+              className="w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
+            />
+            <span className="field-underline" aria-hidden="true" />
+          </div>
           {suggestedCat && (
             <p className="text-xs text-brand-navy" role="status" aria-live="polite">
               ✓ Categoría sugerida: <strong>{suggestedCat}</strong>
@@ -154,17 +166,20 @@ export default function ContactForm() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="field-wrap relative flex flex-col gap-1.5">
         <label htmlFor="cf-message" className="text-sm font-medium text-neutral-700">
           Mensaje / preguntas (opcional)
         </label>
-        <textarea
-          id="cf-message"
-          name="mensaje"
-          rows={3}
-          placeholder="¿Alguna pregunta sobre horarios, costos o el programa?"
-          className="resize-none rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
-        />
+        <div className="relative">
+          <textarea
+            id="cf-message"
+            name="mensaje"
+            rows={3}
+            placeholder="¿Alguna pregunta sobre horarios, costos o el programa?"
+            className="w-full resize-none rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
+          />
+          <span className="field-underline" aria-hidden="true" />
+        </div>
       </div>
 
       {status === 'error' && (

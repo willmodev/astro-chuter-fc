@@ -7,14 +7,20 @@ interface Props {
   instagram?: string;
   etiqueta?: string;
   numero?: string;
+  idx?: number;
 }
 
-const { nombre, rol, bio, foto, instagram, etiqueta = 'Formador', numero } = Astro.props;
+const { nombre, rol, bio, foto, instagram, etiqueta = 'Formador', numero, idx = 0 } = Astro.props;
 const esPlaceholder = bio.startsWith('TODO:');
 const igUrl = instagram ? `https://instagram.com/${instagram}` : undefined;
+const fromVariant = idx % 2 === 0 ? 'reveal--from-left' : 'reveal--from-right';
 ---
 
-<article class="relative grid grid-cols-1 gap-6 rounded-sm border border-brand-navy/10 bg-brand-cream p-6 shadow-sm md:grid-cols-[200px_1fr] md:gap-8 md:p-8">
+<article
+  class:list={['coach-flip relative grid grid-cols-1 gap-6 rounded-sm border border-brand-navy/10 bg-brand-cream p-6 shadow-sm md:grid-cols-[200px_1fr] md:gap-8 md:p-8']}
+  data-from={idx % 2 === 0 ? 'left' : 'right'}
+  style={`--idx:${idx}`}
+>
   <!-- Filigrana número grande -->
   {numero && (
     <span

@@ -33,7 +33,7 @@ const testimoniosLoop = [...testimonios, ...testimonios];
     <div class="testimonials-track">
       {testimoniosLoop.map((t, i) => (
         <article
-          class="testimonial-card relative flex shrink-0 flex-col gap-3 rounded-sm border border-brand-cream/10 bg-brand-cream p-6 shadow-xl"
+          class="testimonial-card relative flex shrink-0 flex-col gap-3 rounded-sm border border-brand-cream/10 bg-brand-cream p-6 shadow-xl will-change-transform"
           aria-hidden={i >= testimonios.length}
         >
           <!-- Quote mark pequeño esquina superior -->

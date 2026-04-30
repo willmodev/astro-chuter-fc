@@ -3,11 +3,12 @@ import Section from '@/components/layout/Section.astro';
 import Container from '@/components/layout/Container.astro';
 import SectionHeading from '@/components/layout/SectionHeading.astro';
 import BrandButton from '@/components/layout/BrandButton.astro';
+import StatsCounter from '@/components/sections/about/StatsCounter';
 import { WA_HERO } from '@/lib/whatsapp';
 
 const stats = [
-  { value: '5', label: 'Categorías', sub: 'Baby a Infantil' },
-  { value: '3×', label: 'Entrenamientos', sub: 'por semana' },
+  { value: '5', valueNum: 5, label: 'Categorías', sub: 'Baby a Infantil' },
+  { value: '3×', valueNum: 3, valueSuffix: '×', label: 'Entrenamientos', sub: 'por semana' },
   { value: 'INDER', label: 'Aval oficial', sub: 'reconocimiento deportivo' },
 ];
 ---
@@ -25,11 +26,11 @@ const stats = [
         />
 
         <div class="space-y-5">
-          <p class="font-serif text-xl leading-snug text-brand-navy-deep" style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 450;">
+          <p class="reveal font-serif text-xl leading-snug text-brand-navy-deep" style="--idx:0; font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 450;">
             Chuter F.C. nació con la convicción de que cada niño merece un espacio seguro
             para aprender, crecer y brillar.
           </p>
-          <p class="text-base leading-relaxed text-neutral-600">
+          <p class="reveal text-base leading-relaxed text-neutral-600" style="--idx:1">
             Avalados por el INDER, nuestro enfoque va más allá del fútbol: formamos
             personas íntegras que triunfan dentro y fuera de la cancha. Nuestro programa
             se adapta a cada etapa de desarrollo, desde los primeros pasos en categoría
@@ -37,7 +38,7 @@ const stats = [
           </p>
         </div>
 
-        <div class="relative inline-flex items-center gap-4 rounded-sm border-l-4 border-brand-clay bg-brand-cream px-5 py-4">
+        <div class="reveal relative inline-flex items-center gap-4 rounded-sm border-l-4 border-brand-clay bg-brand-cream px-5 py-4" style="--idx:2">
           <svg
             aria-hidden="true"
             width="36"
@@ -66,7 +67,7 @@ const stats = [
       </div>
 
       <!-- Bloque editorial: caja navy con manifesto -->
-      <aside class="relative">
+      <aside class="reveal reveal--from-right relative" style="--idx:0">
         <div class="relative overflow-hidden rounded-sm bg-brand-navy-deep p-8 text-brand-cream shadow-2xl shadow-brand-navy/30 md:p-10">
           <!-- Pattern de líneas (cancha) -->
           <div class="pointer-events-none absolute inset-0 opacity-[0.08]" aria-hidden="true">
@@ -97,7 +98,7 @@ const stats = [
         </div>
 
         <!-- Stamp circular flotante "est. 2024" (solo desktop, mobile lo oculta para no chocar con el footer del manifesto) -->
-        <div class="absolute -bottom-5 -right-5 hidden h-24 w-24 -rotate-12 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-lg md:flex">
+        <div class="stamp-spin absolute -bottom-5 -right-5 hidden h-24 w-24 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-lg md:flex">
           <span class="section-marker text-center text-xs italic leading-tight text-brand-navy-deep px-2">
             desde<br /><span class="font-display text-xl not-italic">2024</span>
           </span>
@@ -105,15 +106,7 @@ const stats = [
       </aside>
     </div>
 
-    <!-- Stats row -->
-    <div class="mt-16 grid grid-cols-1 overflow-hidden border-y-2 border-brand-navy-deep sm:grid-cols-3">
-      {stats.map(({ value, label, sub }, idx) => (
-        <div class:list={['relative px-6 py-8 text-center', idx > 0 && 'sm:border-l-2 sm:border-brand-navy-deep']}>
-          <p class="font-display text-[4rem] leading-none text-brand-navy-deep md:text-[5rem]">{value}</p>
-          <p class="mt-2 font-serif italic text-base text-brand-clay" style="font-variation-settings: 'opsz' 144, 'wght' 500;">{label}</p>
-          <p class="mt-1 text-[0.65rem] uppercase tracking-[0.2em] text-neutral-500">{sub}</p>
-        </div>
-      ))}
-    </div>
+    <!-- Stats row con counters animados -->
+    <StatsCounter client:visible stats={stats} />
   </Container>
 </Section>
