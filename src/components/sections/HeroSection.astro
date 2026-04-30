@@ -21,7 +21,7 @@ import { SCHEDULE } from '@/lib/site';
     <Image
       src={heroImg}
       alt="Entrenamiento de niños en Chuter FC — Cancha de la Provincia, Los Algarrobillos"
-      class="h-[120%] w-full object-cover object-[20%_center]"
+      class="h-[120%] w-full object-cover object-[30%_center] 2xl:[filter:saturate(1.08)]"
       widths={[640, 960, 1440]}
       sizes="100vw"
       loading="eager"
@@ -31,7 +31,9 @@ import { SCHEDULE } from '@/lib/site';
   </HeroParallaxLayer>
 
   <!-- Overlay base navy (estático) -->
-  <div class="absolute inset-0 z-[1] bg-gradient-to-r from-brand-navy-deep/95 via-brand-navy-deep/85 to-brand-navy/75"></div>
+  <div class="absolute inset-0 z-[1] bg-gradient-to-r from-brand-navy-deep/95 via-brand-navy-deep/85 to-brand-navy/55"></div>
+  <!-- Vignette lateral derecho para enmascarar pixelación en pantallas wide sin oscurecer la foto al medio -->
+  <div class="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[40%] bg-gradient-to-l from-brand-navy-deep/50 to-transparent xl:block"></div>
 
   <!-- Capa 2 (semi-fast): bloom dorado + pelota SVG, primer plano decorativo -->
   <HeroParallaxLayer speed={1.25} client:load className="pointer-events-none absolute inset-0 z-[2]">
@@ -43,8 +45,11 @@ import { SCHEDULE } from '@/lib/site';
   <div class="pointer-events-none absolute inset-0 z-[3] bg-grain opacity-60 mix-blend-overlay"></div>
 
   <!-- Cinta diagonal vertical lateral derecha (decorativa) -->
-  <div class="pointer-events-none absolute right-0 top-0 z-[3] hidden h-full w-24 lg:block">
-    <div class="h-full w-full diagonal-stripes text-brand-gold/10"></div>
+  <div class="pointer-events-none absolute right-0 top-0 z-[3] hidden h-full w-16 lg:block xl:w-20">
+    <div
+      class="h-full w-full diagonal-stripes text-brand-gold/[0.04]"
+      style="mask-image: linear-gradient(to right, transparent 0%, black 60%);"
+    ></div>
   </div>
 
   <div class="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 md:px-6 lg:grid-cols-[1.5fr_1fr] lg:gap-16 lg:px-12 lg:py-24">
@@ -53,8 +58,8 @@ import { SCHEDULE } from '@/lib/site';
       <!-- Eyebrow editorial: dot + label + rule -->
       <div class="reveal-line flex items-center gap-4" style="--idx:0">
         <span class="inline-block h-2 w-2 rounded-full bg-brand-gold" aria-hidden="true"></span>
-        <span class="text-[0.7rem] font-bold uppercase tracking-[0.28em] text-brand-gold">
-          Chuter F.C. · Los Algarrobillos
+        <span class="text-[0.7rem] font-bold uppercase tracking-[0.28em] text-brand-gold ml-2">
+          Chuter F.C. | Los Algarrobillos
         </span>
         <span class="hidden h-px flex-1 max-w-[120px] bg-brand-gold/40 sm:inline-block" aria-hidden="true"></span>
       </div>
