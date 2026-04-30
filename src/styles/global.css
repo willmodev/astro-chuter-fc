@@ -175,9 +175,14 @@
         scroll-behavior: smooth;
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
+        /* Bloquea scroll horizontal causado por elementos decorativos con offsets
+           negativos (stamps, balones, números filigrana). `clip` en lugar de
+           `hidden` para no romper `position: sticky` del header ni el FAB fixed. */
+        overflow-x: clip;
     }
     body {
         @apply bg-background text-foreground;
+        overflow-x: clip;
     }
     h1, h2, .font-display {
         font-family: var(--font-display);
