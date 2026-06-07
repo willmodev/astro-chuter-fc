@@ -2,6 +2,12 @@
 
 > Contrato técnico y convenciones del proyecto. Claude Code debe leer este archivo al inicio de cada sesión y respetar todo lo que dice.
 
+## Reglas y documentación
+
+- **Reglas de código limpio (obligatorias):** @.claude/rules/coding-rules.md
+- **Arquitectura del módulo admin:** `docs/ARCHITECTURE.md`
+- **Backlog de historias de usuario (admin):** `docs/backlog.md`
+
 ---
 
 ## Contexto del proyecto
@@ -418,6 +424,25 @@ PUBLIC_GOOGLE_MAPS_EMBED_URL=
 PUBLIC_INSTAGRAM_URL=https://instagram.com/1chuter
 PUBLIC_SITE_URL=https://chuterfc.vercel.app
 WEB3FORMS_ACCESS_KEY=
+
+# Módulo admin (server-only, NUNCA con prefijo PUBLIC_)
+DATABASE_URL=                      # Neon Postgres (cadena pooled)
+BETTER_AUTH_SECRET=                # secreto largo aleatorio
+BETTER_AUTH_URL=https://chuterfc.vercel.app
 ```
 
 Las que empiezan con `PUBLIC_` son accesibles desde el cliente. Las otras solo en server.
+
+---
+
+## Módulo de Administración (back-office)
+
+Panel interno mobile-first para gestionar alumnos, cartera/cobros, uniformes y entrenamientos. Es **interactivo y con datos persistentes** — distinto del sitio público estático.
+
+- **Backlog (historias de usuario):** `docs/backlog.md` · **Arquitectura:** `docs/ARCHITECTURE.md`.
+- **Stack admin:** Neon (Postgres) + Drizzle ORM + Better Auth + Astro Actions + adapter `@astrojs/vercel`.
+- **Estático por defecto:** el marketing NO cambia. Solo `/admin/**`, `/api/**` y Actions usan `export const prerender = false`. No usar `output: 'server'`.
+- **Ruta `/admin`** privada y `noindex` (meta + `robots.txt` + filtro de sitemap). Auth solo para los 2 admins (Camilo, Ebed); sin registro público.
+- **Capas (clean code):** UI en `src/features/admin/` (solo `.tsx`); reglas de negocio puras en `src/lib/domain/`; queries en `src/lib/db/repos/`; orquestación en `src/lib/services/`; RPC en `src/actions/`. Nunca lógica de negocio en componentes/actions.
+- **Estilos:** tokens del design system del admin scopeados bajo `.admin-app` (aislados del sitio público); fidelidad pixel-perfect al prototipo.
+- **Reglas de código limpio** (200 líneas/archivo, SRP, cero `any`, etc.): @.claude/rules/coding-rules.md — aplican aquí estrictamente.

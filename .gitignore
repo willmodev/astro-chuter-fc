@@ -30,3 +30,8 @@ pnpm-debug.log*
 .playwright-mcp/
 audit-*.jpeg
 audit-*.png
+
+# datos reales del club (PII de menores) — fuente local del seed, NO versionar
+*.xlsx
+~$*
+
