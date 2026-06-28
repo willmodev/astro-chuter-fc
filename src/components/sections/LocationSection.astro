@@ -5,7 +5,7 @@ import SectionHeading from '@/components/layout/SectionHeading.astro';
 import StylizedMap from '@/components/sections/StylizedMap.astro';
 import { LOCATION, SCHEDULE, CONTACT } from '@/lib/site';
 
-const mapsQuery = encodeURIComponent(`${LOCATION.venue} ${LOCATION.neighborhood}`);
+const mapsQuery = encodeURIComponent(LOCATION.venue);
 const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
 const wazeUrl = `https://www.waze.com/ul?q=${mapsQuery}&navigate=yes`;
 ---
@@ -18,7 +18,7 @@ const wazeUrl = `https://www.waze.com/ul?q=${mapsQuery}&navigate=yes`;
         numero="08"
         eyebrow="¿Dónde entrenamos?"
         title="La cancha del barrio."
-        subtitle={`${LOCATION.venue} · ${LOCATION.neighborhood}`}
+        subtitle={`${LOCATION.venue} · nuestra sede principal. También entrenamos en la ${LOCATION.secondaryVenue.toLowerCase()}.`}
       />
       <p class="hidden font-serif italic text-sm text-brand-navy/70 md:block md:max-w-[18rem] md:text-right" style="font-variation-settings: 'opsz' 144, 'wght' 400;">
         «Misma hora, misma cancha. Tres veces a la semana, todo el año.»
@@ -42,9 +42,9 @@ const wazeUrl = `https://www.waze.com/ul?q=${mapsQuery}&navigate=yes`;
               </svg>
             </div>
             <div>
-              <p class="text-sm font-semibold text-neutral-700">Cancha</p>
+              <p class="text-sm font-semibold text-neutral-700">Cancha principal</p>
               <p class="text-base text-neutral-600">{LOCATION.venue}</p>
-              <p class="text-sm text-neutral-500">{LOCATION.neighborhood}</p>
+              <p class="mt-1 text-sm text-neutral-500">También entrenamos en la {LOCATION.secondaryVenue.toLowerCase()}</p>
               <!-- TODO: pedir a Camilo — dirección exacta y link de Google Maps -->
             </div>
           </div>

@@ -19,13 +19,20 @@ import { ease } from "@/lib/motion";
  * desvanece, dejando ver mejor la imagen de fondo.
  */
 
-const lines = [
+type HeadlineLine = {
+    text: string;
+    weight: "display" | "serif-italic";
+    color: "white" | "gold";
+    underline?: boolean;
+};
+
+const lines: readonly HeadlineLine[] = [
     { text: "Formando", weight: "display", color: "white" },
     { text: "campeones", weight: "serif-italic", color: "gold" },
     { text: "dentro y", weight: "display", color: "white" },
     { text: "fuera de la", weight: "display", color: "white" },
     { text: "cancha", weight: "display", color: "white", underline: true },
-] as const;
+];
 
 function HeroHeadlineInner() {
     const ref = useRef<HTMLDivElement>(null);

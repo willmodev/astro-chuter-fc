@@ -158,6 +158,11 @@
 .reveal--from-left  { animation-name: reveal-slide-left;  }
 .reveal--from-right { animation-name: reveal-slide-right; }
 
+/* Texto de lectura: alcanza opacidad plena apenas el bloque entra completo,
+   en vez de seguir tenue hasta "cover 60%". Evita que citas/párrafos clave
+   se lean apagados (p.ej. la cita memorial de Historia). */
+.reveal--read { animation-range: entry 0% entry 100%; }
+
 /* Stagger: cada elemento .reveal puede llevar style="--idx:N" */
 .reveal[style*="--idx"] {
     animation-delay: calc(var(--idx, 0) * 90ms);

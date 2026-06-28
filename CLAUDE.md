@@ -32,7 +32,8 @@ Sitio web institucional para el **Club Deportivo Chuter F.C.**, una escuela de f
 - **Instagram:** [@1chuter](https://instagram.com/1chuter)
 
 ### Ubicación
-- **Cancha:** Cancha de la Provincia
+- **Cancha principal:** Cancha Los Algarrobillos
+- **Cancha secundaria:** Cancha del 12 de Octubre
 - **Sector:** Los Algarrobillos
 - *(Dirección exacta y link de Google Maps embed pendientes de confirmar con el dueño)*
 
@@ -45,13 +46,12 @@ Sitio web institucional para el **Club Deportivo Chuter F.C.**, una escuela de f
 
 > Importante: el sitio mostrará SIEMPRE las categorías por año de nacimiento (no por edad fija), porque las edades cambian cada año y el contenido se desactualizaría.
 
-| Categoría | Nacidos en | Edad aprox. (2026) |
-|---|---|---|
-| **Infantil** | 2012 - 2013 | 13-14 años |
-| **Pre-infantil** | 2014 - 2015 | 11-12 años |
-| **Benjamín** | 2016 - 2017 | 9-10 años |
-| **Pony** | 2018 - 2019 | 7-8 años |
-| **Baby** | 2020 - 2021 | 5-6 años |
+| Categoría | Nacidos en | Edad aprox. | Entrenador |
+|---|---|---|---|
+| **Pony** | 2019 - 2022 | 4-7 años | Jorge Carrillo |
+| **Preinfantil** | 2017 - 2018 | 8-9 años | Camilo Andrade |
+| **Infantil** | 2015 - 2016 | 10-11 años | Óscar Cárdenas |
+| **Prejuvenil** | 2012 - 2014 | 12-14 años | Cristian Maestre |
 
 ### Promoción actual
 - **Inscripción gratis** (destacar en hero como hook principal)
@@ -337,7 +337,7 @@ Targets específicos:
 - **JSON-LD Schema.org tipo `SportsActivityLocation`** con datos del club:
   - Nombre: "Club Deportivo Chuter F.C."
   - Teléfono: +57 301 521 6830
-  - Dirección: Cancha de la Provincia, Los Algarrobillos
+  - Dirección: Cancha Los Algarrobillos, Los Algarrobillos
   - URL del logo, fotos
   - `description` mencionando aval INDER
   - `openingHours`: `Mo,We,Fr 16:30-18:00`
@@ -400,7 +400,7 @@ Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar
 
 - [ ] Logo SVG en alta calidad (mientras tanto usar el PNG en `/public/logo-temp.png`)
 - [ ] Costos de mensualidad y matrícula (la inscripción ya sabemos que es gratis)
-- [ ] Dirección exacta de la Cancha de la Provincia + link de Google Maps embed
+- [ ] Dirección exacta de la Cancha Los Algarrobillos + link de Google Maps embed
 - [ ] Confirmar si el horario es uniforme para todas las categorías o varía
 - [ ] Testimonios reales (nombre del padre/madre + texto + foto opcional)
 - [ ] Logros del club (torneos, posiciones, años)

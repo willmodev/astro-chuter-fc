@@ -8,7 +8,7 @@ import HeroScrollHint from '@/components/sections/hero/HeroScrollHint.astro';
 import HeroHeadline from '@/components/sections/hero/HeroHeadline';
 import HeroParallaxLayer from '@/components/sections/hero/HeroParallaxLayer';
 import { WA_HERO } from '@/lib/whatsapp';
-import { SCHEDULE } from '@/lib/site';
+import { SCHEDULE, LOCATION, SITE } from '@/lib/site';
 ---
 
 <section
@@ -20,7 +20,7 @@ import { SCHEDULE } from '@/lib/site';
   <HeroParallaxLayer speed={0.55} client:load className="absolute inset-0 z-0">
     <Image
       src={heroImg}
-      alt="Entrenamiento de niños en Chuter FC — Cancha de la Provincia, Los Algarrobillos"
+      alt="Entrenamiento de niños en Chuter FC — Cancha Los Algarrobillos"
       class="h-[120%] w-full object-cover object-[30%_center] 2xl:[filter:saturate(1.08)]"
       widths={[640, 960, 1440]}
       sizes="100vw"
@@ -55,13 +55,32 @@ import { SCHEDULE } from '@/lib/site';
   <div class="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 md:px-6 lg:grid-cols-[1.5fr_1fr] lg:gap-16 lg:px-12 lg:py-24">
     <!-- Columna principal -->
     <div class="space-y-8">
-      <!-- Eyebrow editorial: dot + label + rule -->
-      <div class="reveal-line flex items-center gap-4" style="--idx:0">
-        <span class="inline-block h-2 w-2 rounded-full bg-brand-gold" aria-hidden="true"></span>
-        <span class="text-[0.7rem] font-bold uppercase tracking-[0.28em] text-brand-gold ml-2">
-          Chuter F.C. | Los Algarrobillos
-        </span>
-        <span class="hidden h-px flex-1 max-w-[120px] bg-brand-gold/40 sm:inline-block" aria-hidden="true"></span>
+      <!-- Eyebrow editorial: dot + label + rule, con badges de canchas -->
+      <div class="reveal-line space-y-3" style="--idx:0">
+        <div class="flex items-center gap-4">
+          <span class="inline-block h-2 w-2 rounded-full bg-brand-gold" aria-hidden="true"></span>
+          <span class="ml-2 text-[0.7rem] font-bold uppercase tracking-[0.28em] text-brand-gold">
+            {SITE.legalName}
+          </span>
+          <span class="hidden h-px max-w-[120px] flex-1 bg-brand-gold/40 sm:inline-block" aria-hidden="true"></span>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 rounded-full border border-brand-gold/40 bg-brand-gold/10 py-1 pl-2.5 pr-1.5 text-[0.72rem] font-semibold text-white">
+            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F5C842" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+            </svg>
+            {LOCATION.venue}
+            <span class="rounded-full bg-brand-gold px-1.5 py-0.5 text-[0.58rem] font-bold uppercase tracking-wide text-brand-navy-deep">Principal</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-2.5 py-1 text-[0.72rem] font-semibold text-white/75">
+            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+            </svg>
+            {LOCATION.secondaryVenueShort}
+          </span>
+        </div>
       </div>
 
       <!-- Headline cinematográfico (island con char-by-char + scroll-linked y/opacity) -->
@@ -106,7 +125,7 @@ import { SCHEDULE } from '@/lib/site';
   <!-- Strip inferior con "scroll" hint -->
   <div class="absolute bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-brand-navy-deep/60 backdrop-blur-sm">
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 text-[0.65rem] uppercase tracking-[0.25em] text-white/60 md:px-6 lg:px-12">
-      <span class="hidden sm:inline">Cancha de la Provincia · Los Algarrobillos</span>
+      <span class="hidden sm:inline">{LOCATION.venue} · {LOCATION.secondaryVenueShort}</span>
       <HeroScrollHint />
       <span class="hidden text-white/40 sm:inline section-marker italic normal-case tracking-normal">desde 2024</span>
     </div>

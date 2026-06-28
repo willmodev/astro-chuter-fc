@@ -22,8 +22,10 @@ export const CONTACT = {
 
 // TODO: pedir a Camilo — confirmar ciudad y departamento exactos del barrio Los Algarrobillos
 export const LOCATION = {
-  venue: 'Cancha de la Provincia',
+  venue: 'Cancha Los Algarrobillos',
   neighborhood: 'Los Algarrobillos',
+  secondaryVenue: 'Cancha del 12 de Octubre',
+  secondaryVenueShort: '12 de Octubre',
   city: 'Colombia',
   region: '',
   country: 'CO',
