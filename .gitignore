@@ -35,3 +35,10 @@ audit-*.png
 *.xlsx
 ~$*
 
+
+## Playwright test artifacts
+.playwright-cli/
+
+## Otros documentos que no deberían versionarse
+docs/comercial/
+references/
