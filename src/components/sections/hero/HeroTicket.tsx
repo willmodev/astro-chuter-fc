@@ -61,7 +61,7 @@ function TicketInner({ avalLabel = "INDER" }: Props) {
                             Categorías
                         </dt>
                         <dd className="font-display text-2xl leading-none text-brand-navy-deep">
-                            5
+                            4
                         </dd>
                     </div>
                     <div className="border-x border-dashed border-brand-navy/25">
@@ -69,7 +69,7 @@ function TicketInner({ avalLabel = "INDER" }: Props) {
                             Edades
                         </dt>
                         <dd className="font-display text-2xl leading-none text-brand-navy-deep">
-                            5–14
+                            4–14
                         </dd>
                     </div>
                     <div>

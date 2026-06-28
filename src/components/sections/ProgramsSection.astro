@@ -17,7 +17,7 @@ const programas = (await getCollection('programas')).sort(
         align="left"
         numero="01"
         eyebrow="Categorías por año de nacimiento"
-        title="Cinco etapas, una misma cancha."
+        title="Cuatro categorías, una misma cancha."
         subtitle="Cada niño y niña en la categoría que le corresponde según su año de nacimiento, con metodología adaptada a su etapa de desarrollo."
       />
       <p class="hidden font-serif italic text-sm text-brand-navy/70 md:block md:max-w-xs md:text-right" style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 400;">
@@ -33,11 +33,12 @@ const programas = (await getCollection('programas')).sort(
           edadAprox={programa.data.edadAprox}
           horario={programa.data.horario}
           descripcion={programa.data.descripcion}
+          entrenador={programa.data.entrenador}
           icono={programa.data.icono}
           color={programa.data.color}
           numero={String(index + 1).padStart(2, '0')}
           idx={index}
-          class={index < 2 ? 'lg:col-span-3' : 'lg:col-span-2'}
+          class={index < 2 ? 'lg:col-span-3' : 'lg:col-span-3'}
         />
       ))}
     </div>

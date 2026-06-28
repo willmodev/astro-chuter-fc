@@ -21,7 +21,7 @@ const testimoniosLoop = [...testimonios, ...testimonios];
   <Container>
     <SectionHeading
       align="center"
-      numero="05"
+      numero="07"
       eyebrow="Lo que dicen los papás"
       title="Familias que ya hacen parte del barrio."
       subtitle="La confianza de las familias es el mayor logro del club."
@@ -91,15 +91,6 @@ const testimoniosLoop = [...testimonios, ...testimonios];
     );
   }
 
-  .testimonials-track {
-    display: flex;
-    gap: 1.5rem;
-    width: max-content;
-    padding: 0.5rem 0.75rem;
-    animation: testimonials-scroll 70s linear infinite;
-  }
-
-  .testimonials-marquee:hover .testimonials-track,
   .testimonials-marquee:focus-within .testimonials-track {
     animation-play-state: paused;
   }
@@ -107,16 +98,6 @@ const testimoniosLoop = [...testimonios, ...testimonios];
   .testimonial-card {
     width: 320px;
     min-height: 220px;
-  }
-
-  @keyframes testimonials-scroll {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      /* Movemos -50% porque la lista está duplicada */
-      transform: translateX(-50%);
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {

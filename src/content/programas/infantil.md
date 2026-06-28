@@ -1,10 +1,11 @@
 ---
 nombre: "Infantil"
-nacidos: "2012 - 2013"
-edadAprox: "13-14 años aprox."
+nacidos: "2015 - 2016"
+edadAprox: "10-11 años aprox."
 horario: "Lunes, miércoles y viernes — 4:30 a 6:00 PM"
-icono: "Medal"
-descripcion: "Alto rendimiento, competencia formal y preparación para etapas siguientes."
+icono: "Trophy"
+entrenador: "Óscar Cárdenas"
+descripcion: "Fundamentos técnicos avanzados, posiciones de juego, táctica y formación deportiva progresiva."
 color: "navy"
-orden: 5
+orden: 3
 ---

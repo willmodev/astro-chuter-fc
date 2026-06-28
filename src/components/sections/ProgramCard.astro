@@ -8,6 +8,7 @@ interface Props {
   edadAprox: string;
   horario: string;
   descripcion: string;
+  entrenador: string;
   icono: string;
   color: 'navy' | 'blue' | 'gold';
   numero?: string;
@@ -15,7 +16,7 @@ interface Props {
   class?: string;
 }
 
-const { nombre, nacidos, edadAprox, horario, descripcion, color, icono, numero = '', idx = 0, class: className = '' } = Astro.props;
+const { nombre, nacidos, edadAprox, horario, descripcion, entrenador, color, icono, numero = '', idx = 0, class: className = '' } = Astro.props;
 
 const palette: Record<string, { accent: string; chip: string; ring: string; hover: string }> = {
   navy: {
@@ -109,6 +110,10 @@ const Icon = iconMap[icono as keyof typeof iconMap] ?? Trophy;
     <div class="flex items-baseline justify-between gap-3">
       <dt class="text-[0.7rem] font-bold uppercase tracking-wider text-brand-navy/60">Edad</dt>
       <dd class="font-display text-lg leading-none text-brand-navy-deep">{edadAprox}</dd>
+    </div>
+    <div class="flex items-baseline justify-between gap-3">
+      <dt class="text-[0.7rem] font-bold uppercase tracking-wider text-brand-navy/60">Entrenador</dt>
+      <dd class="font-serif text-base italic text-brand-navy-deep" style="font-variation-settings:'opsz' 144,'SOFT' 30,'wght' 500;">{entrenador}</dd>
     </div>
   </dl>
 

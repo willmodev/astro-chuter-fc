@@ -128,35 +128,3 @@ import { LOCATION } from '@/lib/site';
   </div>
 </div>
 
-<style>
-  .pin-pulse-outer {
-    transform-origin: center;
-    transform-box: fill-box;
-    animation: pin-pulse 2.4s ease-out infinite;
-  }
-  .pin-pulse-inner {
-    transform-origin: center;
-    transform-box: fill-box;
-    animation: pin-pulse 2.4s ease-out infinite 0.6s;
-  }
-
-  @keyframes pin-pulse {
-    0% {
-      transform: scale(0.6);
-      opacity: 0.7;
-    }
-    80%,
-    100% {
-      transform: scale(2.2);
-      opacity: 0;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .pin-pulse-outer,
-    .pin-pulse-inner {
-      animation: none;
-      opacity: 0.4;
-    }
-  }
-</style>

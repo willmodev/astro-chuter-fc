@@ -1,38 +1,120 @@
 ---
 import { getCollection } from 'astro:content';
-import Section from '@/components/layout/Section.astro';
-import Container from '@/components/layout/Container.astro';
-import SectionHeading from '@/components/layout/SectionHeading.astro';
-import CoachCard from '@/components/sections/CoachCard.astro';
 
 const formadores = (await getCollection('formadores')).sort(
   (a, b) => a.data.orden - b.data.orden,
 );
+const directivos = formadores.filter((f) => f.data.etiqueta === 'Dirección');
+const entrenadores = formadores.filter((f) => f.data.etiqueta === 'Entrenador');
+
+// Años de nacimiento por categoría, desde la colección de programas (única fuente).
+const programas = await getCollection('programas');
+const nacidosPorCategoria = new Map(
+  programas.map((p) => [p.data.nombre, p.data.nacidos]),
+);
+
+function initials(nombre: string): string {
+  return nombre.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
+}
 ---
 
-<Section id="formadores" variant="cream-grain">
-  <Container>
-    <SectionHeading
-      align="center"
-      numero="03"
-      eyebrow="El equipo detrás del club"
-      title="Profesionales que entienden el barrio."
-      subtitle="Comprometidos con el desarrollo integral de cada niño y niña que pasa por la cancha."
-    />
+<section id="equipo" class="relative bg-brand-cream bg-grain py-16 md:py-24">
+  <div class="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
 
-    <div class="mx-auto mt-12 grid max-w-5xl gap-8 sm:grid-cols-1 lg:gap-10">
-      {formadores.map((formador, index) => (
-        <CoachCard
-          nombre={formador.data.nombre}
-          rol={formador.data.rol}
-          bio={formador.data.bio}
-          foto={formador.data.foto}
-          instagram={formador.data.instagram}
-          etiqueta={formador.data.etiqueta}
-          numero={String(index + 1).padStart(2, '0')}
-          idx={index}
-        />
-      ))}
+    <!-- Encabezado -->
+    <div class="mx-auto max-w-3xl text-center">
+      <div class="reveal flex items-center justify-center gap-3 pb-4" style="--idx:0">
+        <span class="section-marker text-base italic text-brand-navy">Nº 05</span>
+        <span class="inline-block h-px w-10 bg-brand-navy/15" aria-hidden="true"></span>
+        <p class="text-[0.7rem] font-bold uppercase tracking-[0.22em] text-brand-gold-deep">El equipo detrás del club</p>
+      </div>
+      <h2 class="reveal font-display text-display leading-[0.95] text-brand-navy-deep" style="--idx:1">
+        Quienes hacen posible el club.
+      </h2>
+      <p class="reveal mx-auto mt-4 max-w-2xl text-base leading-relaxed text-neutral-600 md:text-lg" style="--idx:2">
+        Directivos, profesionales y formadores comprometidos con cada niño y niña que pasa por la cancha.
+      </p>
     </div>
-  </Container>
-</Section>
+
+    <!-- Dirección -->
+    <div class="mt-12">
+      <div class="reveal flex items-center gap-3 pb-1" style="--idx:0">
+        <span class="section-marker text-base italic text-brand-clay">Dirección</span>
+        <span class="inline-block h-px flex-1 bg-brand-navy/15" aria-hidden="true"></span>
+      </div>
+      <div class="mt-6 grid gap-6 md:grid-cols-2">
+        {directivos.map((d, i) => (
+          <article
+            class="coach-flip relative flex items-center gap-5 rounded-sm border border-brand-navy/10 bg-white p-6 shadow-sm md:gap-6 md:p-7"
+            data-from={i % 2 === 0 ? 'left' : 'right'}
+            style={`--idx:${i}`}
+          >
+            <div class="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-brand-navy-deep bg-pitch-lines text-brand-gold shadow-md ring-1 ring-brand-navy/20 md:h-28 md:w-28">
+              <span class="font-display text-4xl leading-none tracking-wide md:text-5xl">
+                {initials(d.data.nombre)}
+              </span>
+              <span class="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-brand-gold/70" aria-hidden="true"></span>
+            </div>
+            <div class="min-w-0">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-navy px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-wider text-brand-cream">
+                {d.data.etiqueta}
+              </span>
+              <h3 class="mt-2 font-display text-[2rem] leading-[0.9] text-brand-navy-deep">{d.data.nombre}</h3>
+              <p class="font-serif text-base italic text-brand-clay" style="font-variation-settings:'opsz' 144,'wght' 500;">
+                {d.data.rol}
+              </p>
+              {d.data.bio && (
+                <p class="mt-2 text-sm leading-relaxed text-brand-navy-deep/70">{d.data.bio}</p>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <!-- Cuerpo técnico -->
+    <div class="mt-12">
+      <div class="reveal flex items-center gap-3 pb-1" style="--idx:0">
+        <span class="section-marker text-base italic text-brand-clay">Cuerpo técnico</span>
+        <span class="inline-block h-px flex-1 bg-brand-navy/15" aria-hidden="true"></span>
+      </div>
+      <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {entrenadores.map((e, i) => (
+          <article
+            class="coach-flip relative flex flex-col items-center gap-4 rounded-sm border border-brand-navy/10 bg-white p-6 text-center shadow-sm"
+            data-from={i % 2 === 0 ? 'left' : 'right'}
+            style={`--idx:${i}`}
+          >
+            <span
+              class="pointer-events-none absolute -bottom-3 right-3 select-none font-display text-[5rem] leading-none text-brand-navy-deep/[0.05]"
+              aria-hidden="true"
+            >
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-brand-navy-deep bg-pitch-lines text-brand-gold shadow-md ring-1 ring-brand-navy/20">
+              <span class="font-display text-4xl leading-none tracking-wide">{initials(e.data.nombre)}</span>
+            </div>
+            <div>
+              <h3 class="font-display text-2xl leading-tight text-brand-navy-deep">{e.data.nombre}</h3>
+              <p class="text-[0.7rem] font-bold uppercase tracking-wider text-brand-gold-deep">Entrenador</p>
+            </div>
+            <div class="mt-auto w-full border-t border-dashed border-brand-navy/20 pt-3">
+              <p class="font-serif text-base italic text-brand-clay" style="font-variation-settings:'opsz' 144,'wght' 500;">
+                Categoría {e.data.rol}
+              </p>
+              {nacidosPorCategoria.has(e.data.rol) && (
+                <p class="mt-1 text-[0.7rem] uppercase tracking-wider text-brand-navy/45">
+                  Nacidos {nacidosPorCategoria.get(e.data.rol)}
+                </p>
+              )}
+              {e.data.bio && (
+                <p class="mt-1 text-[0.7rem] uppercase tracking-wider text-brand-navy/45">{e.data.bio}</p>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
+  </div>
+</section>

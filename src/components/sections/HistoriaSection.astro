@@ -1,0 +1,96 @@
+---
+import { HISTORIA } from '@/lib/historia';
+
+const [primerParrafo, ...restParrafos] = HISTORIA.parrafos;
+
+// Nombre del tributo en dos líneas: nombre de pila / apellidos.
+const palabrasNombre = HISTORIA.tributo.nombre.split(' ');
+const tributoNombreHtml = `${palabrasNombre.slice(0, 2).join(' ')}<br />${palabrasNombre.slice(2).join(' ')}`;
+---
+
+<section id="historia" class="relative overflow-hidden bg-brand-navy-deep bg-pitch-lines py-16 text-brand-cream md:py-24">
+  <span
+    class="pointer-events-none absolute -left-6 top-6 select-none font-serif text-[16rem] leading-none text-brand-gold/10 md:text-[22rem]"
+    aria-hidden="true"
+    style="font-variation-settings:'opsz' 144,'wght' 700;"
+  >«</span>
+
+  <div class="relative mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+    <!-- Encabezado -->
+    <div class="mx-auto max-w-3xl text-center">
+      <div class="reveal flex items-center justify-center gap-3 pb-4" style="--idx:0">
+        <span class="section-marker text-base italic text-brand-gold">Nº 03</span>
+        <span class="inline-block h-px w-10 bg-brand-gold/40" aria-hidden="true"></span>
+        <p class="text-[0.7rem] font-bold uppercase tracking-[0.22em] text-brand-gold">{HISTORIA.eyebrow}</p>
+      </div>
+      <h2 class="reveal font-display text-display leading-[0.95] text-white" style="--idx:1">{HISTORIA.titulo}</h2>
+      <p
+        class="reveal mx-auto mt-4 max-w-2xl font-serif text-lg italic leading-snug text-brand-cream/80 md:text-xl"
+        style="--idx:2; font-variation-settings:'opsz' 144,'SOFT' 40,'wght' 400;"
+      >{HISTORIA.subtitulo}</p>
+    </div>
+
+    <!-- Narrativa + Tributo -->
+    <div class="mt-12 grid gap-10 lg:grid-cols-[1fr_minmax(280px,360px)] lg:gap-14">
+      <div class="reveal space-y-5 text-[0.975rem] leading-relaxed text-brand-cream/85 md:text-base" style="--idx:0">
+        <p>
+          <span class="float-left mr-3 mt-1 font-display text-6xl leading-[0.7] text-brand-gold">D</span>
+          {primerParrafo.slice(1)}
+        </p>
+        {restParrafos.map((p) => (
+          p.includes('Club Deportivo Chuter F.C.')
+            ? <p set:html={p.replace('Club Deportivo Chuter F.C.', '<strong class="font-semibold text-white">Club Deportivo Chuter F.C.</strong>')} />
+            : <p>{p}</p>
+        ))}
+      </div>
+
+      <!-- Tarjeta tributo -->
+      <aside class="reveal reveal--from-right lg:pt-2" style="--idx:1">
+        <figure class="sticky top-24 rounded-sm border border-brand-gold/30 bg-brand-cream p-6 text-brand-navy-deep shadow-2xl shadow-black/40 md:p-7">
+          <div class="flex items-center gap-4">
+            <div class="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-brand-navy-deep bg-pitch-lines text-brand-gold shadow-md ring-1 ring-brand-navy-deep/30">
+              <span class="font-display text-3xl leading-none tracking-wide">{HISTORIA.tributo.iniciales}</span>
+            </div>
+            <div>
+              <p class="text-[0.65rem] font-bold uppercase tracking-[0.22em] text-brand-clay">En memoria</p>
+              <p class="font-display text-2xl leading-[0.95] text-brand-navy-deep" set:html={tributoNombreHtml} />
+              <p class="section-marker text-base italic text-brand-clay">{HISTORIA.tributo.apodo}</p>
+            </div>
+          </div>
+          <dl class="mt-5 space-y-3 border-t border-dashed border-brand-navy/25 pt-4 text-sm">
+            <div class="flex items-baseline justify-between gap-3">
+              <dt class="text-[0.65rem] font-bold uppercase tracking-wider text-brand-navy/55">Posición</dt>
+              <dd class="font-semibold text-brand-navy-deep">Arquero</dd>
+            </div>
+            <div class="flex items-baseline justify-between gap-3">
+              <dt class="text-[0.65rem] font-bold uppercase tracking-wider text-brand-navy/55">Servicio</dt>
+              <dd class="text-right font-semibold text-brand-navy-deep">Suboficial · Armada Nacional</dd>
+            </div>
+            <div class="flex items-baseline justify-between gap-3">
+              <dt class="text-[0.65rem] font-bold uppercase tracking-wider text-brand-navy/55">Legado</dt>
+              <dd class="text-right font-semibold text-brand-navy-deep">Club Deportivo Chuter F.C.</dd>
+            </div>
+          </dl>
+          <p class="mt-4 font-serif text-sm italic leading-snug text-brand-navy-deep/75" style="font-variation-settings:'opsz' 144,'wght' 400;">
+            El club que hoy lleva su nombre es el cumplimiento del sueño que imaginó junto a su hermano.
+          </p>
+        </figure>
+      </aside>
+    </div>
+
+    <!-- Cita memorial -->
+    <figure class="reveal mx-auto mt-14 max-w-4xl border-t border-brand-gold/30 pt-10 text-center" style="--idx:0">
+      <p
+        class="font-serif text-2xl italic leading-snug text-brand-cream md:text-3xl"
+        style="font-variation-settings:'opsz' 144,'SOFT' 50,'wght' 400;"
+      >
+        «En memoria de Jesús David Andrade Guerra <span class="text-brand-gold">"Chuter"</span>, cuyo amor por el fútbol seguirá viviendo en cada niño que persiga sus sueños dentro y fuera de la cancha.»
+      </p>
+      <figcaption class="mt-6 flex items-center justify-center gap-3 text-[0.7rem] uppercase tracking-[0.25em] text-brand-cream/60">
+        <span class="h-px w-8 bg-brand-gold/50" aria-hidden="true"></span>
+        {HISTORIA.citaAutor}
+        <span class="h-px w-8 bg-brand-gold/50" aria-hidden="true"></span>
+      </figcaption>
+    </figure>
+  </div>
+</section>

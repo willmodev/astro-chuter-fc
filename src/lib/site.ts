@@ -3,7 +3,7 @@ export const SITE = {
   legalName: 'Club Deportivo Chuter F.C.',
   tagline: 'Formando campeones dentro y fuera de la cancha',
   description:
-    'Escuela de fútbol para niños y niñas en Los Algarrobillos, avalada por INDER. Inscripción gratis. Categorías Baby, Pony, Benjamín, Pre-infantil e Infantil.',
+    'Escuela de fútbol para niños y niñas en Los Algarrobillos, avalada por INDER. Inscripción gratis. Categorías Pony, Preinfantil, Infantil y Prejuvenil.',
   shortDescription:
     'Escuela de fútbol para niños y niñas en Los Algarrobillos. Avalada por INDER.',
   url: import.meta.env.PUBLIC_SITE_URL ?? 'https://chuterfc.vercel.app',
@@ -59,7 +59,8 @@ export const NAV_LINKS = [
   { label: 'Inicio', href: '#inicio' },
   { label: 'Programas', href: '#programas' },
   { label: 'Nosotros', href: '#nosotros' },
-  { label: 'Formadores', href: '#formadores' },
+  { label: 'Historia', href: '#historia' },
+  { label: 'Equipo', href: '#equipo' },
   { label: 'Galería', href: '#galeria' },
   { label: 'Ubicación', href: '#ubicacion' },
   { label: 'Contacto', href: '#contacto' },

@@ -9,6 +9,7 @@ const programasCollection = defineCollection({
     edadAprox: z.string(),
     horario: z.string(),
     icono: z.string(),
+    entrenador: z.string(),
     descripcion: z.string(),
     color: z.enum(['navy', 'blue', 'gold']).default('navy'),
     orden: z.number(),

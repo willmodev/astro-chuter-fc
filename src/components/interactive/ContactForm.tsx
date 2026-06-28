@@ -1,11 +1,10 @@
 import { useState, type FormEvent } from 'react';
 
 const CATEGORIES = [
-  { label: 'Baby (nacidos 2020-2021)', years: [2020, 2021] },
-  { label: 'Pony (nacidos 2018-2019)', years: [2018, 2019] },
-  { label: 'Benjamín (nacidos 2016-2017)', years: [2016, 2017] },
-  { label: 'Pre-infantil (nacidos 2014-2015)', years: [2014, 2015] },
-  { label: 'Infantil (nacidos 2012-2013)', years: [2012, 2013] },
+  { label: 'Pony (nacidos 2019-2022)', years: [2019, 2020, 2021, 2022] },
+  { label: 'Preinfantil (nacidos 2017-2018)', years: [2017, 2018] },
+  { label: 'Infantil (nacidos 2015-2016)', years: [2015, 2016] },
+  { label: 'Prejuvenil (nacidos 2012-2014)', years: [2012, 2013, 2014] },
 ];
 
 function suggestCategory(birthYear: number): string | null {
@@ -144,7 +143,7 @@ export default function ContactForm() {
               type="number"
               name="anio_nacimiento"
               required
-              min={2010}
+              min={2012}
               max={2022}
               placeholder="Ej. 2018"
               value={childYear}
