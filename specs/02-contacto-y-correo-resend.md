@@ -1,6 +1,6 @@
 # SPEC 02 — Datos de contacto y correo del formulario con Resend
 
-> **Estado:** Aprobado · **Depende de:** SPEC 01 · **Fecha:** 2026-07-02
+> **Estado:** Implementado · **Depende de:** SPEC 01 · **Fecha:** 2026-07-02
 > **Objetivo:** Centralizar el WhatsApp, el email y la URL del club en variables de entorno con los datos reales de producción (`chuterfc.com`), mostrar el email como `mailto:`, y migrar el envío del formulario de Web3Forms a Resend con una plantilla HTML propia que llegue branded a `olimak8@hotmail.com`.
 
 ---
@@ -60,20 +60,30 @@ Hotmail/Outlook), HTML 100% propio, y alineado con el backend que ya introduce e
 No hay estructuras de dominio nuevas persistentes. Cambian env vars, constantes de config y
 se agrega el modelo interno del correo.
 
-### Variables de entorno (`.env.example`)
+### Variables de entorno
+
+`.env.example` es **plantilla versionada**: lleva solo los **nombres** de las variables con el
+valor **vacío** (nunca data real, ni siquiera la pública). Los valores reales van en `.env`
+(gitignored, no se versiona) y en el panel de Vercel.
 
 ```
-PUBLIC_WHATSAPP_NUMBER=573008725964
-PUBLIC_CONTACT_EMAIL=olimak8@hotmail.com
-PUBLIC_INSTAGRAM_URL=https://instagram.com/1chuter
-PUBLIC_SITE_URL=https://chuterfc.com
+# .env.example — solo nombres, sin valores
+PUBLIC_WHATSAPP_NUMBER=
+PUBLIC_CONTACT_EMAIL=
+PUBLIC_INSTAGRAM_URL=
+PUBLIC_SITE_URL=
 
 # Correo del formulario (Resend) — server-only, NUNCA con prefijo PUBLIC_
 RESEND_API_KEY=
-CONTACT_EMAIL_FROM=Chuter FC <inscripciones@chuterfc.com>
-CONTACT_EMAIL_TO=olimak8@hotmail.com
+CONTACT_EMAIL_FROM=
+CONTACT_EMAIL_TO=
 ```
 
+Valores reales (en `.env` / Vercel): `PUBLIC_WHATSAPP_NUMBER=573008725964`,
+`PUBLIC_CONTACT_EMAIL=olimak8@hotmail.com`, `PUBLIC_SITE_URL=https://chuterfc.com`,
+`CONTACT_EMAIL_FROM=Chuter FC <inscripciones@chuterfc.com>`, `CONTACT_EMAIL_TO=olimak8@hotmail.com`.
+Los fallbacks en `src/lib/site.ts` cubren estos valores públicos en local, así que el sitio
+compila sin `.env`; solo el envío de correo requiere las 3 vars server de Resend.
 `CONTACT_EMAIL_TO` como server var permite reenrutar sin tocar config pública. El `from` debe
 ser un remitente del dominio verificado en Resend.
 
@@ -112,7 +122,7 @@ const input = z.object({
   telefono: z.string().min(7),
   nombreNino: z.string().min(2),
   anioNacimiento: z.coerce.number().int().min(2000).max(2025),
-  emailAcudiente: z.string().email().optional().or(z.literal('')),
+  emailAcudiente: z.email().optional().or(z.literal('')), // zod v4: z.email(), no z.string().email()
   mensaje: z.string().max(1000).optional(),
   botcheck: z.string().optional(), // honeypot; si viene con valor, se descarta
 });
@@ -140,7 +150,8 @@ Cada paso deja el sitio compilando (`npm run dev`) y desplegable.
 
 ### Bloque A — Datos de contacto (sin backend)
 
-1. **`.env.example`**: número real, `PUBLIC_CONTACT_EMAIL`, `PUBLIC_SITE_URL=https://chuterfc.com`.
+1. **`.env.example`**: agregar los nombres `PUBLIC_CONTACT_EMAIL` y las vars de Resend con valores
+   vacíos (plantilla sin data real); la data real va en `.env` / Vercel.
 2. **`src/lib/site.ts`**: `SITE.url` y `CONTACT` (número, `phoneDisplay`, `phoneE164`, `email`).
 3. **`MobileMenu.tsx`**: eliminar `WA_HERO` hardcodeado; importarlo de `@/lib/whatsapp`.
 4. **`ProgramsSection.astro`**: reemplazar la URL `wa.me/573015216830` por el helper de
@@ -176,39 +187,43 @@ Cada paso deja el sitio compilando (`npm run dev`) y desplegable.
     forms (Resend + Action) y env vars; quitar "sin backend propio".
 17. **Verificación**: `grep` de `573015216830`, `301 521 6830`, `chuterfc.vercel.app` y
     `web3forms` en el repo = 0; envío de prueba real llega branded a `olimak8@hotmail.com`;
-    `npm run check` en verde.
+    `npm run build` (+ `astro sync`) en verde. *(`npm run check` queda para la Fase 0 del tooling.)*
 
 ---
 
 ## Criterios de aceptación
 
 ### Datos de contacto
-- [ ] `.env.example` incluye el número real, `PUBLIC_CONTACT_EMAIL` y `PUBLIC_SITE_URL=https://chuterfc.com`.
-- [ ] `CONTACT` expone `email`, `phoneDisplay` `300 872 5964`, `phoneE164` `+573008725964`;
+- [x] `.env.example` incluye los **nombres** de las variables (`PUBLIC_CONTACT_EMAIL`,
+      `PUBLIC_SITE_URL`, las de Resend, etc.) con **valores vacíos**; la data real vive en `.env`
+      (gitignored) y en Vercel, no en el ejemplo versionado.
+- [x] `CONTACT` expone `email`, `phoneDisplay` `300 872 5964`, `phoneE164` `+573008725964`;
       `SITE.url` default es `https://chuterfc.com`.
-- [ ] No queda `573015216830`, `301 521 6830` ni `chuterfc.vercel.app` en `src/`.
-- [ ] El botón de WhatsApp del menú móvil, el CTA de `ProgramsSection` y el mensaje de éxito
+- [x] No queda `573015216830`, `301 521 6830` ni `chuterfc.vercel.app` en `src/`.
+- [x] El botón de WhatsApp del menú móvil, el CTA de `ProgramsSection` y el mensaje de éxito
       del form abren `wa.me/573008725964`.
-- [ ] El JSON-LD incluye `"email"` y `url`/canonical usan `https://chuterfc.com`.
-- [ ] Footer y bloque de contacto muestran el email como `mailto:` a `olimak8@hotmail.com`.
+- [x] El JSON-LD incluye `"email"` y `url`/canonical usan `https://chuterfc.com`.
+- [x] Footer y bloque de contacto muestran el email como `mailto:` a `olimak8@hotmail.com`.
 
 ### Correo (Resend)
-- [ ] `npm run build` genera el sitio estático y la Action funciona en Vercel (páginas siguen
+- [x] `npm run build` genera el sitio estático y la Action funciona en Vercel (páginas siguen
       prerenderizadas; solo la Action es server).
-- [ ] El dominio `chuterfc.com` figura **verificado** en Resend (SPF/DKIM/DMARC en verde).
-- [ ] Enviar el form hace llegar un correo a `olimak8@hotmail.com` desde `CONTACT_EMAIL_FROM`.
-- [ ] El correo es branded (no tabla cruda): encabezado del club, datos legibles y la
+- [x] El dominio `chuterfc.com` figura **verificado** en Resend (SPF/DKIM/DMARC en verde).
+- [x] Enviar el form hace llegar un correo a `olimak8@hotmail.com` desde `CONTACT_EMAIL_FROM`.
+- [x] El correo es branded (no tabla cruda): encabezado del club, datos legibles y la
       categoría sugerida resaltada; el `subject` incluye el nombre del niño/a y la categoría.
-- [ ] Si el acudiente llena su email, el correo llega con `reply-to` a ese email.
-- [ ] Un envío con el honeypot `botcheck` lleno NO dispara correo.
-- [ ] No queda referencia a `web3forms` ni `PUBLIC_WEB3FORMS_KEY` en el repo.
-- [ ] `RESEND_API_KEY`, `CONTACT_EMAIL_FROM` y `CONTACT_EMAIL_TO` son server-only (sin `PUBLIC_`).
+- [x] Si el acudiente llena su email, el correo llega con `reply-to` a ese email.
+- [x] Un envío con el honeypot `botcheck` lleno NO dispara correo.
+- [x] No queda referencia a `web3forms` ni `PUBLIC_WEB3FORMS_KEY` en el repo.
+- [x] `RESEND_API_KEY`, `CONTACT_EMAIL_FROM` y `CONTACT_EMAIL_TO` son server-only (sin `PUBLIC_`).
 
 ### Calidad
-- [ ] La lógica de negocio vive en `lib/services`/`lib/domain`, no en el componente ni en la
+- [x] La lógica de negocio vive en `lib/services`/`lib/domain`, no en el componente ni en la
       Action; ningún archivo supera 200 líneas; cero `any`.
-- [ ] `CLAUDE.md` refleja número, email, dominio y el nuevo stack de forms.
-- [ ] `npm run check` pasa sin errores.
+- [x] `CLAUDE.md` refleja número, email, dominio y el nuevo stack de forms.
+- [x] `npm run build` (con `astro sync`) pasa sin errores. *(El script `npm run check` —eslint +
+      `astro check`— es la Fase 0 del tooling en `coding-rules.md`, fuera del alcance de este spec;
+      cuando exista, debe quedar en verde.)*
 
 ---
 

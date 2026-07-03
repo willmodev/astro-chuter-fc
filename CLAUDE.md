@@ -20,15 +20,16 @@ Sitio web institucional para el **Club Deportivo Chuter F.C.**, una escuela de f
 
 **Audiencia:** padres y madres colombianos buscando una academia de fútbol confiable para sus hijos. La mayoría llega desde el celular.
 
-**Estrategia comercial:** este sitio es un **demo gratuito de 1 mes** para el cliente. Si convierte, se compra. Por eso debe verse profesional desde el día 1.
+**Estrategia comercial:** el negocio con el cliente ya está **cerrado**. Esto **NO es un demo/MVP** — es un proyecto **profesional en producción**, ya vendido. El sitio está **en vivo en [chuterfc.com](https://chuterfc.com/)** (dominio propio del club, no `vercel.app`). Todo cambio debe cumplir estándar de producción.
 
 ---
 
 ## Información oficial del club (CONFIRMADA)
 
 ### Contacto
-- **Teléfono / WhatsApp:** 301 521 6830
-- **Formato internacional WhatsApp:** `573015216830`
+- **Teléfono / WhatsApp:** 300 872 5964
+- **Formato internacional WhatsApp:** `573008725964`
+- **Email:** olimak8@hotmail.com
 - **Instagram:** [@1chuter](https://instagram.com/1chuter)
 
 ### Ubicación
@@ -67,12 +68,12 @@ Sitio web institucional para el **Club Deportivo Chuter F.C.**, una escuela de f
 
 ## Stack tecnológico
 
-- **Framework:** Astro 5
+- **Framework:** Astro 6
 - **Lenguaje:** TypeScript con `strict: true`
 - **Estilos:** Tailwind CSS v4
 - **Componentes UI:** shadcn/ui (preset Nova / Radix) — solo en islands React cuando hay interactividad real
 - **Iconos:** `lucide-astro` (y `lucide-react` para islands)
-- **Forms:** Web3Forms o Formspree (sin backend propio)
+- **Forms:** Astro Action (`enviarContacto`) + **Resend** (correo branded desde el dominio propio). El envío corre en una función server on-demand vía adapter `@astrojs/vercel`; las páginas siguen estáticas.
 - **Hosting:** Vercel
 - **Analytics:** Vercel Analytics (gratis)
 
@@ -336,7 +337,8 @@ Targets específicos:
 - `robots.txt` permitiendo todo
 - **JSON-LD Schema.org tipo `SportsActivityLocation`** con datos del club:
   - Nombre: "Club Deportivo Chuter F.C."
-  - Teléfono: +57 301 521 6830
+  - Teléfono: +57 300 872 5964
+  - Email: olimak8@hotmail.com
   - Dirección: Cancha Los Algarrobillos, Los Algarrobillos
   - URL del logo, fotos
   - `description` mencionando aval INDER
@@ -350,17 +352,17 @@ El número siempre debe linkear con un mensaje pre-cargado para facilitar la con
 
 **Hero principal:**
 ```
-https://wa.me/573015216830?text=Hola%20Chuter%20FC%2C%20quiero%20información%20para%20inscribir%20a%20mi%20hijo
+https://wa.me/573008725964?text=Hola%20Chuter%20FC%2C%20quiero%20información%20para%20inscribir%20a%20mi%20hijo
 ```
 
 **Card de categoría específica:**
 ```
-https://wa.me/573015216830?text=Hola%20Chuter%20FC%2C%20quiero%20inscribir%20a%20mi%20hijo%20en%20la%20categoría%20{NOMBRE_CATEGORIA}
+https://wa.me/573008725964?text=Hola%20Chuter%20FC%2C%20quiero%20inscribir%20a%20mi%20hijo%20en%20la%20categoría%20{NOMBRE_CATEGORIA}
 ```
 
 **Botón flotante:**
 ```
-https://wa.me/573015216830?text=Hola%20Chuter%20FC
+https://wa.me/573008725964?text=Hola%20Chuter%20FC
 ```
 
 Centralizar la lógica en `src/lib/whatsapp.ts` con una función helper.
@@ -417,20 +419,28 @@ Para cualquier dato no provisto, usar texto placeholder y marcar con comentario:
 
 ## Variables de entorno
 
-Crear `.env.example` con:
+`.env.example` es plantilla versionada: solo **nombres** de variables con valor **vacío** (nunca
+data real). Los valores reales van en `.env` (gitignored) y en el panel de Vercel.
 ```
-PUBLIC_WHATSAPP_NUMBER=573015216830
+PUBLIC_WHATSAPP_NUMBER=
+PUBLIC_CONTACT_EMAIL=
 PUBLIC_GOOGLE_MAPS_EMBED_URL=
-PUBLIC_INSTAGRAM_URL=https://instagram.com/1chuter
-PUBLIC_SITE_URL=https://chuterfc.vercel.app
-WEB3FORMS_ACCESS_KEY=
+PUBLIC_INSTAGRAM_URL=
+PUBLIC_SITE_URL=
+
+# Correo del formulario (Resend) — server-only, NUNCA con prefijo PUBLIC_
+RESEND_API_KEY=
+CONTACT_EMAIL_FROM=               # remitente del dominio verificado, ej. Chuter FC <inscripciones@chuterfc.com>
+CONTACT_EMAIL_TO=                 # bandeja del club, ej. olimak8@hotmail.com
 
 # Módulo admin (server-only, NUNCA con prefijo PUBLIC_)
 DATABASE_URL=                      # Neon Postgres (cadena pooled)
 BETTER_AUTH_SECRET=                # secreto largo aleatorio
-BETTER_AUTH_URL=https://chuterfc.vercel.app
+BETTER_AUTH_URL=https://chuterfc.com
 ```
 
+Valores públicos reales (en `.env` / Vercel): `PUBLIC_WHATSAPP_NUMBER=573008725964`,
+`PUBLIC_CONTACT_EMAIL=olimak8@hotmail.com`, `PUBLIC_SITE_URL=https://chuterfc.com`.
 Las que empiezan con `PUBLIC_` son accesibles desde el cliente. Las otras solo en server.
 
 ---

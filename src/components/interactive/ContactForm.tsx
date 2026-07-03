@@ -1,49 +1,36 @@
 import { useState, type FormEvent } from 'react';
+import { actions } from 'astro:actions';
 
 import { CONTACT } from '@/lib/site';
 import { WA_FAB } from '@/lib/whatsapp';
-
-const CATEGORIES = [
-  { label: 'Pony (nacidos 2019-2022)', years: [2019, 2020, 2021, 2022] },
-  { label: 'Preinfantil (nacidos 2017-2018)', years: [2017, 2018] },
-  { label: 'Infantil (nacidos 2015-2016)', years: [2015, 2016] },
-  { label: 'Prejuvenil (nacidos 2012-2014)', years: [2012, 2013, 2014] },
-];
-
-function suggestCategory(birthYear: number): string | null {
-  const cat = CATEGORIES.find(({ years }) => years.includes(birthYear));
-  return cat?.label ?? null;
-}
+import { sugerirCategoria } from '@/lib/domain/categoria';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
-const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
+const inputClass =
+  'w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20';
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>('idle');
   const [childYear, setChildYear] = useState('');
-  const suggestedCat = childYear ? suggestCategory(Number(childYear)) : null;
+  const suggestedCat = childYear
+    ? (sugerirCategoria(Number(childYear))?.label ?? null)
+    : null;
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus('submitting');
 
     const form = e.currentTarget;
-    const data = new FormData(form);
+    const { error } = await actions.enviarContacto(new FormData(form));
 
-    try {
-      const res = await fetch(WEB3FORMS_URL, { method: 'POST', body: data });
-      const json = (await res.json()) as { success: boolean };
-      if (json.success) {
-        setStatus('success');
-        form.reset();
-        setChildYear('');
-      } else {
-        setStatus('error');
-      }
-    } catch {
+    if (error) {
       setStatus('error');
+      return;
     }
+    setStatus('success');
+    form.reset();
+    setChildYear('');
   }
 
   if (status === 'success') {
@@ -75,10 +62,7 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-      <input type="hidden" name="access_key" value={import.meta.env.PUBLIC_WEB3FORMS_KEY ?? ''} />
-      <input type="hidden" name="subject" value="Nueva consulta de inscripción — Chuter FC" />
-      <input type="hidden" name="from_name" value="Sitio Chuter FC" />
-      <input type="checkbox" name="botcheck" className="hidden" aria-hidden="true" />
+      <input type="checkbox" name="botcheck" className="hidden" aria-hidden="true" tabIndex={-1} autoComplete="off" />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="field-wrap relative flex flex-col gap-1.5">
@@ -86,15 +70,7 @@ export default function ContactForm() {
             Tu nombre (papá/mamá) <span className="text-error" aria-label="campo requerido">*</span>
           </label>
           <div className="relative">
-            <input
-              id="cf-parent"
-              type="text"
-              name="nombre_acudiente"
-              required
-              minLength={2}
-              placeholder="Ej. María González"
-              className="w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
-            />
+            <input id="cf-parent" type="text" name="nombreAcudiente" required minLength={2} placeholder="Ej. María González" className={inputClass} />
             <span className="field-underline" aria-hidden="true" />
           </div>
         </div>
@@ -104,14 +80,7 @@ export default function ContactForm() {
             Teléfono / WhatsApp <span className="text-error" aria-label="campo requerido">*</span>
           </label>
           <div className="relative">
-            <input
-              id="cf-phone"
-              type="tel"
-              name="telefono"
-              required
-              placeholder="Ej. 300 123 4567"
-              className="w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
-            />
+            <input id="cf-phone" type="tel" name="telefono" required placeholder="Ej. 300 123 4567" className={inputClass} />
             <span className="field-underline" aria-hidden="true" />
           </div>
         </div>
@@ -123,15 +92,7 @@ export default function ContactForm() {
             Nombre del niño / niña <span className="text-error" aria-label="campo requerido">*</span>
           </label>
           <div className="relative">
-            <input
-              id="cf-child"
-              type="text"
-              name="nombre_nino"
-              required
-              minLength={2}
-              placeholder="Ej. Juan Camilo"
-              className="w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
-            />
+            <input id="cf-child" type="text" name="nombreNino" required minLength={2} placeholder="Ej. Juan Camilo" className={inputClass} />
             <span className="field-underline" aria-hidden="true" />
           </div>
         </div>
@@ -144,14 +105,14 @@ export default function ContactForm() {
             <input
               id="cf-year"
               type="number"
-              name="anio_nacimiento"
+              name="anioNacimiento"
               required
               min={2012}
               max={2022}
               placeholder="Ej. 2018"
               value={childYear}
               onChange={(e) => setChildYear(e.target.value)}
-              className="w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
+              className={inputClass}
             />
             <span className="field-underline" aria-hidden="true" />
           </div>
@@ -169,17 +130,21 @@ export default function ContactForm() {
       </div>
 
       <div className="field-wrap relative flex flex-col gap-1.5">
+        <label htmlFor="cf-email" className="text-sm font-medium text-neutral-700">
+          Tu email (opcional)
+        </label>
+        <div className="relative">
+          <input id="cf-email" type="email" name="emailAcudiente" placeholder="Ej. maria@correo.com" className={inputClass} />
+          <span className="field-underline" aria-hidden="true" />
+        </div>
+      </div>
+
+      <div className="field-wrap relative flex flex-col gap-1.5">
         <label htmlFor="cf-message" className="text-sm font-medium text-neutral-700">
           Mensaje / preguntas (opcional)
         </label>
         <div className="relative">
-          <textarea
-            id="cf-message"
-            name="mensaje"
-            rows={3}
-            placeholder="¿Alguna pregunta sobre horarios, costos o el programa?"
-            className="w-full resize-none rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20"
-          />
+          <textarea id="cf-message" name="mensaje" rows={3} placeholder="¿Alguna pregunta sobre horarios, costos o el programa?" className={`resize-none ${inputClass}`} />
           <span className="field-underline" aria-hidden="true" />
         </div>
       </div>
