@@ -4,9 +4,14 @@ import Section from '@/components/layout/Section.astro';
 import Container from '@/components/layout/Container.astro';
 import SectionHeading from '@/components/layout/SectionHeading.astro';
 import ProgramCard from '@/components/sections/ProgramCard.astro';
+import { whatsappURL } from '@/lib/whatsapp';
 
 const programas = (await getCollection('programas')).sort(
   (a, b) => a.data.orden - b.data.orden,
+);
+
+const waConsultaCategoria = whatsappURL(
+  'Hola Chuter FC, quiero saber en qué categoría va mi hijo',
 );
 ---
 
@@ -80,7 +85,7 @@ const programas = (await getCollection('programas')).sort(
       <p class="text-center text-sm text-brand-navy-deep/70">
         ¿No sabés en qué categoría entra tu hijo o hija?{' '}
         <a
-          href="https://wa.me/573015216830?text=Hola%20Chuter%20FC%2C%20quiero%20saber%20en%20qué%20categoría%20va%20mi%20hijo"
+          href={waConsultaCategoria}
           target="_blank"
           rel="noopener noreferrer"
           class="font-semibold text-brand-navy-deep underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-brand-gold"

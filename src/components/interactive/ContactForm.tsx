@@ -1,5 +1,8 @@
 import { useState, type FormEvent } from 'react';
 
+import { CONTACT } from '@/lib/site';
+import { WA_FAB } from '@/lib/whatsapp';
+
 const CATEGORIES = [
   { label: 'Pony (nacidos 2019-2022)', years: [2019, 2020, 2021, 2022] },
   { label: 'Preinfantil (nacidos 2017-2018)', years: [2017, 2018] },
@@ -56,12 +59,12 @@ export default function ContactForm() {
           <p className="mt-1 text-sm text-neutral-500">
             Te contactaremos pronto. También podés escribirnos directo por WhatsApp al{' '}
             <a
-              href="https://wa.me/573015216830"
+              href={WA_FAB}
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-brand-navy underline-offset-2 hover:underline"
             >
-              301 521 6830
+              {CONTACT.phoneDisplay}
             </a>
             .
           </p>

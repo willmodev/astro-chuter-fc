@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Dialog } from 'radix-ui';
 import { Menu, X, MessageCircle } from 'lucide-react';
 
+import { WA_HERO } from '@/lib/whatsapp';
+
 const NAV_LINKS = [
   { label: 'Inicio', href: '#inicio' },
   { label: 'Programas', href: '#programas' },
@@ -12,9 +14,6 @@ const NAV_LINKS = [
   { label: 'Ubicación', href: '#ubicacion' },
   { label: 'Contacto', href: '#contacto' },
 ];
-
-const WA_HERO =
-  'https://wa.me/573015216830?text=Hola%20Chuter%20FC%2C%20quiero%20información%20para%20inscribir%20a%20mi%20hijo';
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);

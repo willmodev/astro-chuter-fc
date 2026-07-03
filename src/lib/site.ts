@@ -6,15 +6,20 @@ export const SITE = {
     'Escuela de fútbol para niños y niñas en Los Algarrobillos, avalada por INDER. Inscripción gratis. Categorías Pony, Preinfantil, Infantil y Prejuvenil.',
   shortDescription:
     'Escuela de fútbol para niños y niñas en Los Algarrobillos. Avalada por INDER.',
-  url: import.meta.env.PUBLIC_SITE_URL ?? 'https://chuterfc.vercel.app',
+  url: import.meta.env.PUBLIC_SITE_URL ?? 'https://chuterfc.com',
   locale: 'es_CO',
   language: 'es',
 } as const;
 
+const whatsappNumber =
+  import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573008725964';
+const numeroNacional = whatsappNumber.replace(/^57/, '');
+
 export const CONTACT = {
-  whatsappNumber: import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573015216830',
-  phoneDisplay: '301 521 6830',
-  phoneE164: '+573015216830',
+  whatsappNumber,
+  phoneE164: `+${whatsappNumber}`,
+  phoneDisplay: numeroNacional.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3'),
+  email: import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'olimak8@hotmail.com',
   instagramUrl:
     import.meta.env.PUBLIC_INSTAGRAM_URL ?? 'https://instagram.com/1chuter',
   instagramHandle: '@1chuter',

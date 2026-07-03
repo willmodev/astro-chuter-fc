@@ -22,6 +22,7 @@ export function buildSportsActivityLocationJsonLd() {
     description: `${SITE.description} Reconocimiento Deportivo otorgado por INDER.`,
     url: SITE.url,
     telephone: CONTACT.phoneE164,
+    email: CONTACT.email,
     image: `${SITE.url}/logo-temp.png`,
     logo: `${SITE.url}/logo-temp.png`,
     sport: 'Soccer',
