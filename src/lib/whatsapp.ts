@@ -17,3 +17,12 @@ export function waCategory(categoryName: string): string {
     `Hola Chuter FC, quiero inscribir a mi hijo en la categoría ${categoryName}`,
   );
 }
+
+// Link a un número arbitrario (p. ej. el acudiente) para recordatorios de
+// cobro desde el admin. Normaliza a formato internacional colombiano.
+export function waTo(phone: string, message?: string): string {
+  const digits = phone.replace(/\D/g, '');
+  const normalized = digits.startsWith('57') ? digits : `57${digits}`;
+  const url = `https://wa.me/${normalized}`;
+  return message ? `${url}?text=${encodeURIComponent(message)}` : url;
+}

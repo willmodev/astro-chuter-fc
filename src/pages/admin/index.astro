@@ -1,0 +1,12 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { AdminApp } from '@/features/admin/AdminApp';
+
+// El back-office es interactivo y privado: se renderiza on-demand,
+// nunca prerenderizado. El resto del sitio sigue estático.
+export const prerender = false;
+---
+
+<AdminLayout>
+  <AdminApp client:only="react" />
+</AdminLayout>

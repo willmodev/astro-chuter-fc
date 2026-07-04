@@ -1,0 +1,16 @@
+/* ============================================================
+   Chuter FC — Admin Design System (portado del prototipo)
+   Punto de entrada: solo @import. Todo re-declarado bajo `.admin-app`
+   para AISLAR el back-office del sitio público (marketing) y viceversa.
+   Se carga únicamente en `AdminLayout.astro`.
+   ============================================================ */
+
+/* Fuentes ya instaladas (fontsource) — mismas familias del marketing */
+@import '@fontsource/bebas-neue/400.css';
+@import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource-variable/fraunces';
+
+/* Partials: tokens y base son estables; el layout crece con cada pantalla */
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/layout.css';
