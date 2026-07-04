@@ -15,5 +15,9 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  integrations: [react(), sitemap()],
+  integrations: [
+    react(),
+    // El back-office es privado: se excluye del sitemap público.
+    sitemap({ filter: (page) => !page.includes('/admin') }),
+  ],
 });
