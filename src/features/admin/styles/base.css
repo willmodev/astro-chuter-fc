@@ -1,0 +1,81 @@
+/* ============================================================
+   Chuter FC — Base + utilidades del DS admin (scopeadas bajo `.admin-app`).
+   Reset ligero y helpers compartidos (.font-display, .eyebrow, .tabular…).
+   ============================================================ */
+.admin-app,
+.admin-app *,
+.admin-app *::before,
+.admin-app *::after {
+  box-sizing: border-box;
+}
+
+.admin-app {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--text-base-lh);
+  color: var(--text-body);
+  background: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.admin-app h1,
+.admin-app h2,
+.admin-app h3,
+.admin-app h4 {
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.admin-app .font-display {
+  font-family: var(--font-display);
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+  font-weight: var(--weight-regular);
+}
+
+.admin-app .font-serif {
+  font-family: var(--font-serif);
+}
+.admin-app .font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.admin-app .tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-app .eyebrow {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.admin-app :focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.admin-app button {
+  font-family: var(--font-sans);
+}
+
+/* Textura de líneas de cancha para paneles navy (motivo del club) */
+.admin-app .bg-pitch-lines {
+  background-image:
+    linear-gradient(transparent calc(100% - 1px), rgba(255, 255, 255, 0.05) 100%),
+    linear-gradient(90deg, transparent calc(100% - 1px), rgba(255, 255, 255, 0.04) 100%);
+  background-size: 64px 64px, 64px 64px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-app *,
+  .admin-app *::before,
+  .admin-app *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

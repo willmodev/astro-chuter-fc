@@ -1,0 +1,185 @@
+/* ============================================================
+   Chuter FC — Layout responsive del shell admin (mobile-first → ≥1024px).
+   Los inline styles del prototipo no soportan media queries, así que el
+   layout que cambia por viewport vive aquí. Este archivo CRECE con cada
+   nueva pantalla (cartera, alumnos, formularios…).
+   ============================================================ */
+
+/* ---- Shell: columna full-height en mobile ---- */
+.admin-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-page);
+  overflow: hidden;
+}
+
+.admin-content {
+  order: 1;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.admin-main::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+.admin-main__inner {
+  width: 100%;
+  padding-bottom: 28px;
+}
+
+/* ---- Tab-bar inferior (mobile) ---- */
+.admin-tabbar {
+  order: 2;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 8px 26px;
+  background: var(--surface-card);
+  border-top: 1px solid var(--border-subtle);
+  box-shadow: 0 -2px 12px rgba(15, 27, 45, 0.05);
+}
+.admin-tabbar__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-faint);
+}
+.admin-tabbar__item[data-active='true'] {
+  color: var(--brand-navy);
+}
+.admin-tabbar__fab {
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  transform: translateX(-50%);
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 3px solid var(--surface-card);
+  background: var(--brand-gold);
+  color: var(--text-on-gold);
+  box-shadow: var(--shadow-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ---- Sidebar (oculta en mobile) ---- */
+.admin-sidebar {
+  display: none;
+}
+
+/* ---- KPIs: 2 columnas base ---- */
+.admin-kpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ============================================================
+   Desktop (≥1024px): sidebar fija + contenido con max-width
+   ============================================================ */
+@media (min-width: 1024px) {
+  .admin-shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  }
+
+  .admin-tabbar {
+    display: none;
+  }
+
+  .admin-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--brand-navy-deep);
+    overflow-y: auto;
+  }
+  .admin-sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 18px 16px;
+  }
+  .admin-sidebar__brand img {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    object-fit: cover;
+    background: #fff;
+  }
+  .admin-sidebar__tag {
+    color: var(--brand-gold);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .admin-sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 12px;
+    flex: 1;
+  }
+  .admin-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.66);
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: background 0.15s, color 0.15s;
+  }
+  .admin-sidebar__link:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+  }
+  .admin-sidebar__link[data-active='true'] {
+    background: var(--brand-navy);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 var(--brand-gold);
+  }
+
+  /* El contenido no se estira: se limita y centra */
+  .admin-main__inner {
+    max-width: var(--content-max);
+    margin: 0 auto;
+  }
+
+  /* KPIs: 4 columnas en desktop */
+  .admin-kpis {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

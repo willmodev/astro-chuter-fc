@@ -1,0 +1,168 @@
+/* ============================================================
+   Chuter FC — Tokens del DS admin, scopeados bajo `.admin-app`.
+   Fuente: references/_ds/.../tokens/*.css. Estable (no crece por pantalla).
+   ============================================================ */
+.admin-app {
+  /* ---- Familias ---- */
+  --font-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
+  --font-sans: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ---- Pesos ---- */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extra: 800;
+
+  /* ---- Escala tipográfica (admin, más densa que marketing) ---- */
+  --text-display: 44px;
+  --text-display-lh: 0.95;
+  --text-h1: 30px;
+  --text-h1-lh: 1.05;
+  --text-h2: 22px;
+  --text-h2-lh: 1.15;
+  --text-h3: 17px;
+  --text-h3-lh: 1.3;
+  --text-lg: 16px;
+  --text-base: 14px;
+  --text-base-lh: 1.5;
+  --text-sm: 13px;
+  --text-xs: 12px;
+  --text-2xs: 11px;
+
+  /* ---- Tracking ---- */
+  --tracking-display: 0.01em;
+  --tracking-eyebrow: 0.12em;
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+
+  /* ---- Brand (escudo del club) ---- */
+  --brand-navy: #1b3a6b;
+  --brand-navy-deep: #0f2647;
+  --brand-navy-ink: #0a1a33;
+  --brand-blue: #4a90e2;
+  --brand-blue-soft: #dbe9fa;
+  --brand-gold: #f5c842;
+  --brand-gold-deep: #d4a82a;
+  --brand-gold-soft: #fbefc4;
+  --brand-cream: #fbf6e4;
+  --brand-cream-deep: #f2eac7;
+
+  /* ---- Neutrales (rampa slate) ---- */
+  --neutral-950: #0a0f1a;
+  --neutral-900: #0f1b2d;
+  --neutral-800: #1e293b;
+  --neutral-700: #334155;
+  --neutral-600: #475569;
+  --neutral-500: #64748b;
+  --neutral-400: #94a3b8;
+  --neutral-300: #cbd5e1;
+  --neutral-200: #e2e8f0;
+  --neutral-100: #f1f5f9;
+  --neutral-50: #f8fafc;
+  --white: #ffffff;
+
+  /* ---- Funcionales / estado ---- */
+  --success: #10b981;
+  --success-deep: #059669;
+  --success-soft: #d1fae5;
+  --warning: #e0a52b;
+  --warning-soft: #fcefcb;
+  --error: #ef4444;
+  --error-deep: #dc2626;
+  --error-soft: #fee2e2;
+  --info: #4a90e2;
+  --info-soft: #dbe9fa;
+  --whatsapp: #25d366;
+
+  /* ---- Celdas de la matriz de cartera ---- */
+  --cell-paid-bg: #d6f3e4;
+  --cell-paid-fg: #0b7a4b;
+  --cell-due-bg: #fbdad9;
+  --cell-due-fg: #b42318;
+  --cell-pending-bg: #eef1f5;
+  --cell-pending-fg: #64748b;
+  --cell-partial-bg: #fcefcb;
+  --cell-partial-fg: #946200;
+  --cell-na-bg: #fbfcfe;
+  --cell-na-fg: #cbd5e1;
+
+  /* ---- Kit del club ---- */
+  --kit-blue: #1b3a6b;
+  --kit-gold: #f5c842;
+
+  /* ---- Alias semánticos (usar ESTOS en componentes) ---- */
+  --bg-app: var(--neutral-100);
+  --bg-page: #eef2f7;
+  --surface-card: var(--white);
+  --surface-sunken: var(--neutral-50);
+  --surface-raised: var(--white);
+  --surface-navy: var(--brand-navy);
+  --surface-navy-deep: var(--brand-navy-deep);
+
+  --text-strong: var(--neutral-900);
+  --text-body: var(--neutral-700);
+  --text-muted: var(--neutral-500);
+  --text-faint: var(--neutral-400);
+  --text-on-navy: var(--white);
+  --text-on-gold: var(--neutral-900);
+
+  --border-subtle: var(--neutral-200);
+  --border-default: var(--neutral-300);
+  --border-strong: var(--neutral-400);
+
+  --accent: var(--brand-gold);
+  --accent-deep: var(--brand-gold-deep);
+  --primary: var(--brand-navy);
+  --primary-deep: var(--brand-navy-deep);
+  --focus-ring: var(--brand-gold);
+
+  /* ---- Espaciado (grid 4px) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ---- Radios ---- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-pill: 999px;
+
+  /* ---- Bordes ---- */
+  --border-width: 1px;
+  --border-width-strong: 2px;
+
+  /* ---- Sombras (suaves, tintadas navy) ---- */
+  --shadow-xs: 0 1px 2px rgba(15, 27, 45, 0.06);
+  --shadow-sm: 0 1px 3px rgba(15, 27, 45, 0.08), 0 1px 2px rgba(15, 27, 45, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 27, 45, 0.08), 0 2px 4px rgba(15, 27, 45, 0.04);
+  --shadow-lg: 0 12px 28px rgba(15, 27, 45, 0.12), 0 4px 8px rgba(15, 27, 45, 0.06);
+  --shadow-pop: 0 16px 40px rgba(15, 27, 45, 0.18);
+  --shadow-gold: 0 6px 18px rgba(212, 168, 42, 0.3);
+  --shadow-inset: inset 0 1px 2px rgba(15, 27, 45, 0.06);
+
+  /* ---- Layout ---- */
+  --sidebar-width: 248px;
+  --topbar-height: 64px;
+  --content-max: 880px;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+  --dur-slow: 260ms;
+}

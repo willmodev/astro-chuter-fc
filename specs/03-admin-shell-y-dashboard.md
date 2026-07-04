@@ -139,25 +139,25 @@ Cada bloque deja `npm run dev` y `npm run build` en verde y el **marketing intac
 ## Criterios de aceptación
 
 ### Ruta y aislamiento
-- [ ] `/admin` carga la isla React (`client:only`), renderiza Dashboard y es `noindex` (meta + `robots.txt` + fuera del `sitemap.xml`).
-- [ ] `npm run build` sigue **estático**: las páginas de marketing quedan prerenderizadas; solo `/admin` es función on-demand. Ninguna página pública cambia de output ni de estilos.
-- [ ] Los tokens del admin viven bajo `.admin-app`: el sitio público no hereda ni un color ni una fuente del DS admin, y viceversa.
+- [x] `/admin` carga la isla React (`client:only`), renderiza Dashboard y es `noindex` (meta + `robots.txt` + fuera del `sitemap.xml`).
+- [x] `npm run build` sigue **estático**: las páginas de marketing quedan prerenderizadas; solo `/admin` es función on-demand. Ninguna página pública cambia de output ni de estilos.
+- [x] Los tokens del admin viven bajo `.admin-app`: el sitio público no hereda ni un color ni una fuente del DS admin, y viceversa.
 
 ### Responsive (mobile-first + adaptativo)
-- [ ] De 320px a desktop: **cero scroll horizontal** en cualquier ancho.
-- [ ] Mobile: header sticky + **tab bar inferior** con FAB dorado; `100dvh` y safe-area respetados.
-- [ ] Desktop (≥1024px): la tab bar muta a **sidebar lateral fija**; los KPIs pasan de 2 a 4 columnas; el contenido respeta un `max-width` (no se estira).
-- [ ] La navegación entre las 4 tabs funciona; `dashboard` es real, las otras 3 muestran "Próximamente"; el FAB abre un placeholder.
+- [x] De 320px a desktop: **cero scroll horizontal** en cualquier ancho.
+- [x] Mobile: header sticky + **tab bar inferior** con FAB dorado; `100dvh` y safe-area respetados.
+- [x] Desktop (≥1024px): la tab bar muta a **sidebar lateral fija**; los KPIs pasan de 2 a 4 columnas; el contenido respeta un `max-width` (no se estira).
+- [x] La navegación entre las 4 tabs funciona; `dashboard` es real, las otras 3 muestran "Próximamente"; el FAB abre un placeholder.
 
 ### Dashboard con datos
-- [ ] Se ven las 6 secciones: hero de recaudo del mes (con % de meta y cartera vencida), KPIs 2×2/1×4, barras de recaudo por mes, cobros pendientes (top 4 morosos con botón WhatsApp), próximos cumpleaños y entreno de hoy.
-- [ ] Las cifras derivan de `src/lib/domain/*` (`estaEnMora`, `saldoPendiente`, `mesesEnMora`) y `format.ts`, no de números hardcodeados en la UI.
-- [ ] Cambiar la fuente de datos implicaría tocar **solo** `useDashboardData.ts` (la mock cumple el mismo contrato que tendrán las Actions); los componentes de pantalla no se tocarían.
+- [x] Se ven las 6 secciones: hero de recaudo del mes (con % de meta y cartera vencida), KPIs 2×2/1×4, barras de recaudo por mes, cobros pendientes (top 4 morosos con botón WhatsApp), próximos cumpleaños y entreno de hoy.
+- [x] Las cifras derivan de `src/lib/domain/*` (`estaEnMora`, `saldoPendiente`, `mesesEnMora`) y `format.ts`, no de números hardcodeados en la UI.
+- [x] Cambiar la fuente de datos implicaría tocar **solo** `useDashboardData.ts` (la mock cumple el mismo contrato que tendrán las Actions); los componentes de pantalla no se tocarían.
 
 ### Calidad
-- [ ] Ningún archivo supera **200 líneas**; cero `any`; sin lógica de negocio dentro de componentes.
-- [ ] La mock queda marcada como **datos ilustrativos** (comentario), no registros reales.
-- [ ] No se agregan dependencias nuevas (todo con lo ya instalado: React 19, `@astrojs/react`, `lucide-react`, fontsource).
+- [x] Ningún archivo supera **200 líneas**; cero `any`; sin lógica de negocio dentro de componentes.
+- [x] La mock queda marcada como **datos ilustrativos** (comentario), no registros reales.
+- [x] No se agregan dependencias nuevas (todo con lo ya instalado: React 19, `@astrojs/react`, `lucide-react`, fontsource).
 
 ---
 
