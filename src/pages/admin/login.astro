@@ -1,0 +1,19 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { LoginScreen } from '@/features/admin/screens/login/LoginScreen';
+
+// Necesita render server (lee la sesión antes de montar la isla) y por eso
+// no se prerenderiza. El middleware ya saca de aquí a quien tenga sesión.
+export const prerender = false;
+
+// Solo se acepta un destino interno del admin (evita open-redirect).
+const nextParam = Astro.url.searchParams.get('next');
+const next =
+  nextParam && nextParam.startsWith('/admin') && !nextParam.startsWith('//')
+    ? nextParam
+    : '/admin';
+---
+
+<AdminLayout title="Ingresar · Chuter FC">
+  <LoginScreen next={next} client:only="react" />
+</AdminLayout>

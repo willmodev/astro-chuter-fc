@@ -5,6 +5,13 @@ import { IconButton } from './chrome/IconButton';
 import { type TabId } from './chrome/tabs';
 import { useDashboardData } from './hooks/useDashboardData';
 import { Dashboard } from './screens/dashboard/Dashboard';
+import { EntrenadorHome } from './screens/entrenador/EntrenadorHome';
+import { MasScreen } from './screens/mas/MasScreen';
+
+export interface AdminAppProps {
+  role: 'admin' | 'entrenador';
+  userName: string;
+}
 
 // Router interno mínimo por estado de vista. Solo `dashboard` renderiza
 // contenido real (llega en el Bloque C); las demás tabs y el FAB muestran
@@ -16,7 +23,15 @@ const META: Record<TabId, { title: string; eyebrow: string }> = {
   mas: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
 };
 
-export function AdminApp() {
+export function AdminApp({ role, userName }: Readonly<AdminAppProps>) {
+  // Gate por rol: el entrenador aún no tiene app propia (otro spec).
+  if (role === 'entrenador') {
+    return <EntrenadorHome userName={userName} />;
+  }
+  return <AdminHome role={role} userName={userName} />;
+}
+
+function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
   const [view, setView] = useState<TabId>('dashboard');
   const [actionOpen, setActionOpen] = useState(false);
   const data = useDashboardData();
@@ -37,9 +52,9 @@ export function AdminApp() {
         eyebrow={meta.eyebrow}
         right={right}
       >
-        {view === 'dashboard' ? (
-          <Dashboard data={data} onNav={setView} />
-        ) : (
+        {view === 'dashboard' && <Dashboard data={data} onNav={setView} />}
+        {view === 'mas' && <MasScreen userName={userName} role={role} />}
+        {(view === 'alumnos' || view === 'cartera') && (
           <ComingSoon label={`${meta.title} · Próximamente`} />
         )}
       </AdminShell>
