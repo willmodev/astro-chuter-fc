@@ -1,0 +1,11 @@
+---
+import AdminPage from './_AdminPage.astro';
+
+// Catch-all de /admin/**: cualquier ruta interna de la isla (alumnos,
+// ficha, cartera, más, equipo…) monta la misma app; el mini-router de la
+// isla decide la vista según `location.pathname`. Las rutas estáticas
+// (`index.astro`, `login.astro`) tienen prioridad sobre este dinámico.
+export const prerender = false;
+---
+
+<AdminPage />
