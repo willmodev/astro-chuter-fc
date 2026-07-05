@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   Bell,
+  ChevronRight,
   CircleCheck,
   Footprints,
   Gift,
@@ -8,9 +9,11 @@ import {
   LayoutDashboard,
   MessageCircle,
   Plus,
+  Search,
   TriangleAlert,
   Users,
   Wallet,
+  X,
   type LucideProps,
 } from 'lucide-react';
 
@@ -20,6 +23,7 @@ import {
 const ICONS = {
   'arrow-left': ArrowLeft,
   bell: Bell,
+  'chevron-right': ChevronRight,
   'circle-check': CircleCheck,
   footprints: Footprints,
   gift: Gift,
@@ -27,9 +31,11 @@ const ICONS = {
   'layout-dashboard': LayoutDashboard,
   'message-circle': MessageCircle,
   plus: Plus,
+  search: Search,
   'triangle-alert': TriangleAlert,
   users: Users,
   wallet: Wallet,
+  x: X,
 } as const;
 
 export type IconName = keyof typeof ICONS;

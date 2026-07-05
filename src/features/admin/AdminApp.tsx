@@ -3,11 +3,13 @@ import { useState } from 'react';
 import { AdminShell } from './chrome/AdminShell';
 import { IconButton } from './chrome/IconButton';
 import { type TabId } from './chrome/tabs';
+import { useModalDialog } from './chrome/useModalDialog';
 import { useDashboardData } from './hooks/useDashboardData';
 import { useAdminRouter } from './router/useAdminRouter';
 import { Dashboard } from './screens/dashboard/Dashboard';
 import { EntrenadorHome } from './screens/entrenador/EntrenadorHome';
 import { EquipoScreen } from './screens/equipo/EquipoScreen';
+import { Alumnos } from './screens/alumnos/Alumnos';
 import { MasMenu } from './screens/mas/MasMenu';
 import type { RutaAdmin } from './router/types';
 
@@ -16,9 +18,9 @@ export interface AdminAppProps {
   userName: string;
 }
 
-// La vista activa la decide la URL (useAdminRouter). Dashboard, Más y
-// Equipo renderizan contenido real; Alumnos/Ficha llegan en los Bloques
-// C/D y Cartera en otro spec (placeholder "Próximamente").
+// La vista activa la decide la URL (useAdminRouter). Dashboard, Alumnos,
+// Más y Equipo renderizan contenido real; la Ficha llega en el Bloque D
+// y Cartera en otro spec (placeholder "Próximamente").
 const META: Record<RutaAdmin['vista'], { title: string; eyebrow: string }> = {
   dashboard: { title: 'Dashboard', eyebrow: 'Temporada 2026' },
   alumnos: { title: 'Alumnos', eyebrow: 'Inscripciones' },
@@ -77,6 +79,11 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
         right={right}
       >
         {ruta.vista === 'dashboard' && <Dashboard data={data} onNav={navegarTab} />}
+        {ruta.vista === 'alumnos' && (
+          <Alumnos
+            onOpenFicha={(alumnoId) => navegar({ vista: 'ficha', alumnoId })}
+          />
+        )}
         {ruta.vista === 'mas' && (
           <MasMenu
             userName={userName}
@@ -87,9 +94,7 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
         {ruta.vista === 'equipo' && (
           <EquipoScreen onBack={() => navegar({ vista: 'mas' })} />
         )}
-        {(ruta.vista === 'alumnos' ||
-          ruta.vista === 'ficha' ||
-          ruta.vista === 'cartera') && (
+        {(ruta.vista === 'ficha' || ruta.vista === 'cartera') && (
           <ComingSoon label={`${meta.title} · Próximamente`} />
         )}
       </AdminShell>
@@ -99,7 +104,7 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
   );
 }
 
-function ComingSoon({ label }: { label: string }) {
+function ComingSoon({ label }: Readonly<{ label: string }>) {
   return (
     <div
       style={{
@@ -120,59 +125,52 @@ function ComingSoon({ label }: { label: string }) {
   );
 }
 
-function ActionPlaceholder({ onClose }: { onClose: () => void }) {
+function ActionPlaceholder({ onClose }: Readonly<{ onClose: () => void }>) {
+  const { ref, alClickBackdrop } = useModalDialog(onClose);
+
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      onClick={onClose}
+    <dialog
+      ref={ref}
+      className="admin-dialog"
+      aria-label="Acción rápida"
+      onClose={onClose}
+      onClick={alClickBackdrop}
       style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 80,
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        background: 'rgba(10,15,26,0.45)',
+        margin: 'auto auto 0',
+        width: '100%',
+        maxWidth: 480,
+        border: 'none',
+        background: 'var(--surface-card)',
+        borderRadius: '22px 22px 0 0',
+        boxShadow: 'var(--shadow-pop)',
+        padding: '28px 24px calc(28px + env(safe-area-inset-bottom))',
+        textAlign: 'center',
       }}
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
+      <p className="eyebrow">Acción rápida</p>
+      <h3 style={{ marginTop: 8, fontSize: 18, fontWeight: 800, color: 'var(--text-strong)' }}>
+        Próximamente
+      </h3>
+      <p style={{ marginTop: 6, fontSize: 13.5, color: 'var(--text-muted)' }}>
+        Registrar pago e inscribir alumno llegan en otro spec.
+      </p>
+      <button
+        onClick={onClose}
         style={{
+          marginTop: 18,
+          height: 44,
           width: '100%',
-          maxWidth: 480,
-          background: 'var(--surface-card)',
-          borderRadius: '22px 22px 0 0',
-          boxShadow: 'var(--shadow-pop)',
-          padding: '28px 24px calc(28px + env(safe-area-inset-bottom))',
-          textAlign: 'center',
+          borderRadius: 'var(--radius-md)',
+          border: 'none',
+          background: 'var(--brand-navy)',
+          color: '#fff',
+          fontSize: 14,
+          fontWeight: 600,
+          cursor: 'pointer',
         }}
       >
-        <p className="eyebrow">Acción rápida</p>
-        <h3 style={{ marginTop: 8, fontSize: 18, fontWeight: 800, color: 'var(--text-strong)' }}>
-          Próximamente
-        </h3>
-        <p style={{ marginTop: 6, fontSize: 13.5, color: 'var(--text-muted)' }}>
-          Registrar pago e inscribir alumno llegan en otro spec.
-        </p>
-        <button
-          onClick={onClose}
-          style={{
-            marginTop: 18,
-            height: 44,
-            width: '100%',
-            borderRadius: 'var(--radius-md)',
-            border: 'none',
-            background: 'var(--brand-navy)',
-            color: '#fff',
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: 'pointer',
-          }}
-        >
-          Entendido
-        </button>
-      </div>
-    </div>
+        Entendido
+      </button>
+    </dialog>
   );
 }
