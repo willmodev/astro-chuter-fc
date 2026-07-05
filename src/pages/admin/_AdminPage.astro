@@ -1,0 +1,16 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { AdminApp } from '@/features/admin/AdminApp';
+
+// Markup común de montaje de la isla admin, compartido por `index.astro`
+// y el catch-all `[...ruta].astro` (el prefijo `_` lo excluye del routing).
+// El middleware garantiza la sesión aquí; si no hubiera, ya habría
+// redirigido a /admin/login.
+const user = Astro.locals.user;
+const role = user?.role === 'admin' ? 'admin' : 'entrenador';
+const userName = user?.name ?? '';
+---
+
+<AdminLayout>
+  <AdminApp role={role} userName={userName} client:only="react" />
+</AdminLayout>

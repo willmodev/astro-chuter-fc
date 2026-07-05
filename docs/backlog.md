@@ -150,9 +150,10 @@ Como administrador quiero ver cada alumno como tarjeta con su tira de meses para
 Como administrador quiero una vista matriz (alumnos × meses) para revisar varios meses a la vez como en el Excel.
 - **Aceptación:** Dado el toggle de vista, cuando elijo "Matriz", entonces veo filas=alumnos, columnas=FEB–DIC con la primera columna fija (sticky); la preferencia se recuerda (R7.2).
 
-### HU-3.3 · Filtrar morosos / con abono — `Must` · Pantalla: Cartera · ☐
+### HU-3.3 · Filtrar morosos / con abono — `Won't` · Pantalla: Cartera · ☐
 Como administrador quiero filtrar morosos o con abono para enfocar la gestión de cobro.
 - **Aceptación:** Dado el segmentado Todos/En mora/Con abono, cuando elijo uno, entonces la lista se filtra coherentemente (mora = tiene ≥1 mes en `due`; abono = tiene ≥1 mes `partial`).
+- **Nota (spec 05, 2026-07-05):** obsoleta — el filtro "con abono" no aplica porque un mes solo se cobra o no se cobra (sin estado `partial`).
 
 ### HU-3.4 · Totales de cartera — `Must` · Pantalla: Cartera/Dashboard · ☐
 Como administrador quiero ver recaudado del año y cartera vencida para conocer la salud financiera.
@@ -167,9 +168,10 @@ Como administrador quiero registrar el pago de uno o varios meses para mantener 
   - Si no hay meses seleccionados, el botón Registrar está deshabilitado.
   - Si el alumno está al día, se muestra "¡Al día! No hay meses por cobrar".
 
-### HU-3.6 · Registrar abono parcial — `Should` · Pantalla: Registrar pago · ☐
+### HU-3.6 · Registrar abono parcial — `Won't` · Pantalla: Registrar pago · ☐
 Como administrador quiero registrar abonos parciales para reflejar pagos incompletos.
 - **Aceptación:** Dado un mes, cuando registro menos que la cuota, entonces el mes queda en estado `partial` (ámbar) y el saldo refleja la mitad pendiente.
+- **Nota (spec 05, 2026-07-05):** obsoleta — decisión de Will: un mes se cobra o no se cobra, sin estados intermedios.
 
 ### HU-3.7 · Enviar recibo por WhatsApp — `Should` · Pantalla: Registrar pago · ☐
 Como administrador quiero enviar un recibo por WhatsApp tras un pago para dar comprobante al acudiente.
@@ -281,7 +283,7 @@ Como administrador quiero exportar la cartera a Excel/CSV para respaldos y conta
 - **R1 — Categoría automática por año de nacimiento.** Mapeo temporada 2026: `2022-2023→SUB 4 · 2020-2021→SUB 6 · 2018-2019→SUB 8 · 2016-2017→SUB 10 · 2014-2015→SUB 12 · 2012-2013→SUB 14 · 2010-2011→SUB 16`. Fórmula: `(año_temporada − año_nac)` redondeado al par superior, acotado a [4,16]. Nunca se muestran edades fijas. (Implementada en `lib/domain/categoria.ts`.)
 - **R2 — Cuota y tarifa de hermanos.** Base **$50.000** COP/mes; **$40.000** cuando el acudiente tiene más de un hijo inscrito. Se detecta hermano por acudiente.
 - **R4 — Detección de hermano.** Por coincidencia de acudiente entre alumnos.
-- **R5 — Estados de cartera.** `paid` (pagado/verde), `due` (mora/rojo), `pending` (pendiente/gris), `partial` (abono/ámbar), `na` (fuera de temporada).
+- **R5 — Estados de cartera.** `paid` (pagado/verde), `due` (mora/rojo), `pending` (pendiente/gris), `na` (fuera de temporada). _(El estado `partial`/abono quedó `Won't` — decisión de Will en spec 05, 2026-07-05: un mes se cobra o no se cobra.)_
 - **R6 — Número de uniforme único por kit.** Avisar duplicados dentro del mismo kit (azul/dorado/oro).
 - **R7.2 — Preferencias de UI** (vista de cartera, mostrar montos) persistidas localmente.
 - **R8 — Formato de dinero COP** (`$45.000`, `$4.82M`, separador de miles con punto).
