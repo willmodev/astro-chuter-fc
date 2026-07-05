@@ -5,8 +5,14 @@ import { AdminApp } from '@/features/admin/AdminApp';
 // El back-office es interactivo y privado: se renderiza on-demand,
 // nunca prerenderizado. El resto del sitio sigue estático.
 export const prerender = false;
+
+// El middleware garantiza la sesión aquí; si no hubiera, ya habría
+// redirigido a /admin/login.
+const user = Astro.locals.user;
+const role = user?.role === 'admin' ? 'admin' : 'entrenador';
+const userName = user?.name ?? '';
 ---
 
 <AdminLayout>
-  <AdminApp client:only="react" />
+  <AdminApp role={role} userName={userName} client:only="react" />
 </AdminLayout>
