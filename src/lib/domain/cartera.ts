@@ -25,3 +25,8 @@ export function mesesEnMora(a: AlumnoCartera): number {
 export function saldoPendiente(a: AlumnoCartera): number {
   return mesesEnMora(a) * a.cuota;
 }
+
+/** ¿Se puede registrar el cobro de un mes? (no pagado y dentro de la temporada) */
+export function esMesCobrable(estado: EstadoMes): boolean {
+  return estado === 'due' || estado === 'pending';
+}

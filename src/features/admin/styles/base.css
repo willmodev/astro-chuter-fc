@@ -76,6 +76,28 @@
   background: rgba(10, 15, 26, 0.45);
 }
 
+/* Bottom sheet en mobile; a partir de desktop (sidebar) se centra como modal */
+.admin-app .admin-sheet {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 480px;
+  border: none;
+  background: var(--surface-card);
+  border-radius: 22px 22px 0 0;
+  box-shadow: var(--shadow-pop);
+  padding: 28px 24px calc(28px + env(safe-area-inset-bottom));
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .admin-app .admin-sheet {
+    margin: auto;
+    width: calc(100% - 32px);
+    border-radius: 22px;
+    padding: 28px 24px;
+  }
+}
+
 /* Solo para lectores de pantalla: oculta visualmente sin quitar del a11y tree */
 .admin-app .sr-only {
   position: absolute;
@@ -87,6 +109,13 @@
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
+}
+
+/* Los buscadores pintan su propio botón de limpiar: fuera la X nativa */
+.admin-app input[type='search']::-webkit-search-cancel-button,
+.admin-app input[type='search']::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 /* Fila de chips desplazable en horizontal sin barra visible (filtros) */
