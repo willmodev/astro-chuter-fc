@@ -1,6 +1,6 @@
 # SPEC 05 — Alumnos y Ficha del alumno (mock) + routing por URL
 
-> **Estado:** Aprobado · **Depende de:** SPEC 03 (shell, mock, DS), SPEC 04 (middleware, roles) · **Fecha:** 2026-07-05
+> **Estado:** Implementado · **Depende de:** SPEC 03 (shell, mock, DS), SPEC 04 (middleware, roles) · **Fecha:** 2026-07-05
 > **Objetivo:** Construir las pantallas **Alumnos** (lista con búsqueda y filtro por categoría) y **Ficha del alumno** (tabs Pagos / Uniforme / Acudiente) con la mock extendida del spec 03, introduciendo **routing por URL real** (`/admin/alumnos`, `/admin/alumnos/:id`) en la isla admin vía catch-all + History API.
 
 ---
@@ -126,37 +126,37 @@ _Verifica:_ deep-link `/admin/alumnos/:id` directo funciona; volver regresa a la
 
 ### Routing por URL
 
-- [ ] `/admin/alumnos`, `/admin/alumnos/:id`, `/admin/cartera`, `/admin/mas` y `/admin/equipo` cargan directo por URL (deep-link) la vista correcta, con sesión activa.
-- [ ] Sin sesión, cualquiera de esas URLs redirige a `/admin/login?next=<ruta>` y tras el login aterriza en la vista pedida.
-- [ ] Navegar entre tabs actualiza la URL sin recargar la página; atrás/adelante del navegador recorren el historial de vistas.
-- [ ] Una ruta desconocida bajo `/admin/**` muestra el Dashboard.
-- [ ] `/admin/login` sigue funcionando igual (no la captura el catch-all).
+- [x] `/admin/alumnos`, `/admin/alumnos/:id`, `/admin/cartera`, `/admin/mas` y `/admin/equipo` cargan directo por URL (deep-link) la vista correcta, con sesión activa.
+- [x] Sin sesión, cualquiera de esas URLs redirige a `/admin/login?next=<ruta>` y tras el login aterriza en la vista pedida.
+- [x] Navegar entre tabs actualiza la URL sin recargar la página; atrás/adelante del navegador recorren el historial de vistas.
+- [x] Una ruta desconocida bajo `/admin/**` muestra el Dashboard.
+- [x] `/admin/login` sigue funcionando igual (no la captura el catch-all).
 
 ### Pantalla Alumnos
 
-- [ ] La lista muestra por alumno: avatar, nombre, categoría, acudiente y estado (al día / en mora con # de meses).
-- [ ] El buscador filtra por nombre **o** acudiente, sin distinguir mayúsculas ni acentos ("jose" encuentra "José").
-- [ ] Los chips de categoría filtran y se combinan con el buscador; "Todas" restablece.
-- [ ] Se ven los contadores "N alumnos" y "N en mora", coherentes con el filtro activo y con los KPIs del Dashboard (misma mock).
-- [ ] Sin coincidencias se muestra "Sin resultados".
-- [ ] Tocar una fila navega a `/admin/alumnos/:id`.
+- [x] La lista muestra por alumno: avatar, nombre, categoría, acudiente y estado (al día / en mora con # de meses).
+- [x] El buscador filtra por nombre **o** acudiente, sin distinguir mayúsculas ni acentos ("jose" encuentra "José").
+- [x] Los chips de categoría filtran y se combinan con el buscador; "Todas" restablece.
+- [x] Se ven los contadores "N alumnos" y "N en mora", coherentes con el filtro activo y con los KPIs del Dashboard (misma mock).
+- [x] Sin coincidencias se muestra "Sin resultados".
+- [x] Tocar una fila navega a `/admin/alumnos/:id`.
 
 ### Pantalla Ficha
 
-- [ ] La cabecera muestra nombre, categoría y estado, con botón volver y acciones "Registrar pago" (placeholder) y "WhatsApp" (abre `wa.me` al celular del acudiente vía `src/lib/whatsapp.ts`).
-- [ ] Tab Pagos: meses FEB–DIC con su estado; tocar un mes cobrable abre el placeholder "Próximamente".
-- [ ] Tab Uniforme: kit/número/talla si entregado, o CTA "Registrar entrega" (placeholder) si pendiente.
-- [ ] Tab Acudiente: acudiente, celular, dirección, documento, año de nacimiento, ingreso y hermanos.
-- [ ] Un `:id` inexistente muestra "Alumno no encontrado" con acción de volver a la lista.
+- [x] La cabecera muestra nombre, categoría y estado, con botón volver y acciones "Registrar pago" (placeholder) y "WhatsApp" (abre `wa.me` al celular del acudiente vía `src/lib/whatsapp.ts`).
+- [x] Tab Pagos: meses FEB–DIC con su estado; tocar un mes cobrable abre el placeholder "Próximamente".
+- [x] Tab Uniforme: kit/número/talla si entregado, o CTA "Registrar entrega" (placeholder) si pendiente.
+- [x] Tab Acudiente: acudiente, celular, dirección, documento, año de nacimiento, ingreso y hermanos.
+- [x] Un `:id` inexistente muestra "Alumno no encontrado" con acción de volver a la lista.
 
 ### Calidad y no-regresión
 
-- [ ] Estados solo binarios por mes (se cobró o no): ninguna UI ni regla introduce "abono/parcial".
-- [ ] Toda la lógica de filtro/estado vive en `src/lib/domain/` (puras); los componentes no calculan negocio.
-- [ ] Cambiar la fuente de datos tocaría solo `useAlumnos`/`useAlumno` (contrato estable para Actions futuras).
-- [ ] `npm run build` sigue estático para el marketing; `/admin/**` noindex y fuera del sitemap.
-- [ ] Ningún archivo > 200 líneas; cero `any`; sin dependencias nuevas.
-- [ ] De 320px a desktop: cero scroll horizontal en ambas pantallas.
+- [x] Estados solo binarios por mes (se cobró o no): ninguna UI ni regla introduce "abono/parcial".
+- [x] Toda la lógica de filtro/estado vive en `src/lib/domain/` (puras); los componentes no calculan negocio.
+- [x] Cambiar la fuente de datos tocaría solo `useAlumnos`/`useAlumno` (contrato estable para Actions futuras).
+- [x] `npm run build` sigue estático para el marketing; `/admin/**` noindex y fuera del sitemap.
+- [x] Ningún archivo > 200 líneas; cero `any`; sin dependencias nuevas.
+- [x] De 320px a desktop: cero scroll horizontal en ambas pantallas.
 
 ---
 
