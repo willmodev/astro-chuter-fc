@@ -1,9 +1,7 @@
 // ⚠️ DATOS ILUSTRATIVOS — no son registros reales del club. Portados del
 // prototipo para dar vida a la UI mientras no hay BD ni Actions. Cuando lleguen
-// los datos reales, se cambia SOLO la fuente (useDashboardData), no la UI.
-import { estaEnMora, saldoPendiente } from '@/lib/domain/cartera';
-
-import type { Alumno, Cumple, Stats, Training } from './types';
+// los datos reales, se cambia SOLO la fuente (el store), no la UI.
+import type { Alumno, Cumple, Training } from './types';
 
 export const CATEGORIES = ['SUB 4', 'SUB 6', 'SUB 8', 'SUB 10', 'SUB 12', 'SUB 14', 'SUB 16'];
 export const MONTHS = ['FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
@@ -53,33 +51,3 @@ export const cumple: Cumple[] = [
   { name: 'Sara Gómez Valencia', cat: 'SUB 8', fecha: '12 jun', dias: 3 },
   { name: 'Martín Cano Díaz', cat: 'SUB 14', fecha: '18 jun', dias: 9 },
 ];
-
-// Estadísticas derivadas de la mock con las reglas de dominio.
-function computeStats(): Stats {
-  const active = students.length;
-  const morosos = students.filter(estaEnMora).length;
-  const upToDate = active - morosos;
-  const recaudo = students.reduce(
-    (sum, s) => sum + s.states.filter((x) => x === 'paid').length * s.cuota,
-    0,
-  );
-  const carteraVencida = students.reduce((sum, s) => sum + saldoPendiente(s), 0);
-  const metaMes = students.reduce((sum, s) => sum + s.cuota, 0);
-  const recaudoMes = students.reduce(
-    (sum, s) => (s.states[CURRENT] === 'paid' ? sum + s.cuota : sum),
-    0,
-  );
-  return {
-    active,
-    upToDate,
-    morosos,
-    pctUpToDate: Math.round((upToDate / active) * 100),
-    recaudo,
-    recaudoMes,
-    carteraVencida,
-    metaMes,
-    pctMeta: Math.round((recaudoMes / metaMes) * 100),
-  };
-}
-
-export const stats: Stats = computeStats();

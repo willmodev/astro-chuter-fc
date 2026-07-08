@@ -4,11 +4,11 @@ import { MONTHS, MONTHS_LONG } from '../../data/mock';
 import type { Alumno, EstadoMes } from '../../data/types';
 
 // Tab Pagos: los 11 meses de la temporada (FEB–DIC) con su estado binario.
-// Un mes cobrable (debe o pendiente) es tocable → registrar cobro
-// (placeholder hasta el spec de Cartera).
+// Un mes cobrable (debe o pendiente) es tocable → navega a Registrar pago
+// con ese mes preseleccionado.
 interface Props {
   alumno: Alumno;
-  onCobrarMes: (mesLong: string) => void;
+  onCobrarMes: (mesIndex: number) => void;
 }
 
 const ESTILO_MES: Record<EstadoMes, { bg: string; fg: string; label: string }> = {
@@ -57,7 +57,7 @@ export function PagosDelAnio({ alumno, onCobrarMes }: Readonly<Props>) {
           <button
             key={mes}
             type="button"
-            onClick={() => onCobrarMes(MONTHS_LONG[i] ?? mes)}
+            onClick={() => onCobrarMes(i)}
             aria-label={`Registrar cobro de ${MONTHS_LONG[i] ?? mes}`}
             style={{ ...estilo, cursor: 'pointer' }}
           >

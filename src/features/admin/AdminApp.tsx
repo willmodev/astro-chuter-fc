@@ -10,8 +10,10 @@ import { Dashboard } from './screens/dashboard/Dashboard';
 import { EntrenadorHome } from './screens/entrenador/EntrenadorHome';
 import { EquipoScreen } from './screens/equipo/EquipoScreen';
 import { Alumnos } from './screens/alumnos/Alumnos';
+import { Cartera } from './screens/cartera/Cartera';
 import { Ficha } from './screens/ficha/Ficha';
 import { MasMenu } from './screens/mas/MasMenu';
+import { Pago } from './screens/pago/Pago';
 import type { RutaAdmin } from './router/types';
 
 export interface AdminAppProps {
@@ -20,24 +22,26 @@ export interface AdminAppProps {
 }
 
 // La vista activa la decide la URL (useAdminRouter). Todas las vistas
-// renderizan contenido real salvo Cartera, que llega en otro spec
-// (placeholder "Próximamente").
+// renderizan contenido real; Uniformes/Entrenamientos/Más real siguen
+// "Próximamente" dentro de sus propias pantallas (otros specs).
 const META: Record<RutaAdmin['vista'], { title: string; eyebrow: string }> = {
   dashboard: { title: 'Dashboard', eyebrow: 'Temporada 2026' },
   alumnos: { title: 'Alumnos', eyebrow: 'Inscripciones' },
   ficha: { title: 'Alumnos', eyebrow: 'Ficha del alumno' },
   cartera: { title: 'Cartera', eyebrow: 'Control de cobros' },
+  pago: { title: 'Cartera', eyebrow: 'Registrar pago' },
   mas: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
   equipo: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
 };
 
 // Tab resaltada en la navegación para cada vista (Ficha cuelga de Alumnos,
-// Equipo cuelga de Más).
+// Equipo cuelga de Más, Pago cuelga de Cartera).
 const TAB_DE_VISTA: Record<RutaAdmin['vista'], TabId> = {
   dashboard: 'dashboard',
   alumnos: 'alumnos',
   ficha: 'alumnos',
   cartera: 'cartera',
+  pago: 'cartera',
   mas: 'mas',
   equipo: 'mas',
 };
@@ -99,10 +103,22 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
           <Ficha
             alumnoId={ruta.alumnoId}
             onVolver={() => navegar({ vista: 'alumnos' })}
+            onRegistrarPago={(mes) =>
+              navegar({ vista: 'pago', alumnoId: ruta.alumnoId, mes })
+            }
           />
         )}
         {ruta.vista === 'cartera' && (
-          <ComingSoon label={`${meta.title} · Próximamente`} />
+          <Cartera
+            onCobrarMes={(alumnoId, mes) => navegar({ vista: 'pago', alumnoId, mes })}
+          />
+        )}
+        {ruta.vista === 'pago' && (
+          <Pago
+            alumnoId={ruta.alumnoId}
+            mes={ruta.mes}
+            onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
+          />
         )}
       </AdminShell>
 
@@ -114,27 +130,6 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
         />
       )}
     </>
-  );
-}
-
-function ComingSoon({ label }: Readonly<{ label: string }>) {
-  return (
-    <div
-      style={{
-        display: 'grid',
-        placeItems: 'center',
-        minHeight: 240,
-        padding: 24,
-        textAlign: 'center',
-      }}
-    >
-      <div>
-        <p className="eyebrow">Chuter FC · Back-office</p>
-        <p style={{ marginTop: 6, fontSize: 15, fontWeight: 600, color: 'var(--text-body)' }}>
-          {label}
-        </p>
-      </div>
-    </div>
   );
 }
 

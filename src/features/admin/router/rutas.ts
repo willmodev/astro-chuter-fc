@@ -5,7 +5,7 @@ import type { RutaAdmin } from './types';
 // alumnos (un id numérico inexistente lo resuelve la Ficha con su estado
 // "Alumno no encontrado").
 export function parseRuta(pathname: string): RutaAdmin {
-  const [raiz, vista, id, ...resto] = pathname.split('/').filter(Boolean);
+  const [raiz, vista, id, sub, ...resto] = pathname.split('/').filter(Boolean);
 
   if (raiz !== 'admin' || resto.length > 0) return { vista: 'dashboard' };
   if (vista === undefined) return { vista: 'dashboard' };
@@ -13,9 +13,9 @@ export function parseRuta(pathname: string): RutaAdmin {
   if (vista === 'alumnos') {
     if (id === undefined) return { vista: 'alumnos' };
     const alumnoId = Number(id);
-    return Number.isInteger(alumnoId) && alumnoId > 0
-      ? { vista: 'ficha', alumnoId }
-      : { vista: 'alumnos' };
+    if (!Number.isInteger(alumnoId) || alumnoId <= 0) return { vista: 'alumnos' };
+    if (sub === undefined) return { vista: 'ficha', alumnoId };
+    return sub === 'pago' ? { vista: 'pago', alumnoId } : { vista: 'alumnos' };
   }
 
   if (id !== undefined) return { vista: 'dashboard' };
@@ -31,6 +31,8 @@ export function rutaAPath(ruta: RutaAdmin): string {
       return '/admin';
     case 'ficha':
       return `/admin/alumnos/${ruta.alumnoId}`;
+    case 'pago':
+      return `/admin/alumnos/${ruta.alumnoId}/pago`;
     default:
       return `/admin/${ruta.vista}`;
   }
