@@ -12,6 +12,7 @@ import { EquipoScreen } from './screens/equipo/EquipoScreen';
 import { Alumnos } from './screens/alumnos/Alumnos';
 import { Ficha } from './screens/ficha/Ficha';
 import { MasMenu } from './screens/mas/MasMenu';
+import { Pago } from './screens/pago/Pago';
 import type { RutaAdmin } from './router/types';
 
 export interface AdminAppProps {
@@ -105,6 +106,13 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
         )}
         {ruta.vista === 'cartera' && (
           <ComingSoon label={`${meta.title} · Próximamente`} />
+        )}
+        {ruta.vista === 'pago' && (
+          <Pago
+            alumnoId={ruta.alumnoId}
+            mes={ruta.mes}
+            onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
+          />
         )}
       </AdminShell>
 
