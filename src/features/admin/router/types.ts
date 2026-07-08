@@ -5,5 +5,6 @@ export type RutaAdmin =
   | { vista: 'alumnos' }
   | { vista: 'ficha'; alumnoId: number }
   | { vista: 'cartera' }
+  | { vista: 'pago'; alumnoId: number; mes?: number }
   | { vista: 'mas' }
   | { vista: 'equipo' };

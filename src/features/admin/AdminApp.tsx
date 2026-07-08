@@ -27,17 +27,19 @@ const META: Record<RutaAdmin['vista'], { title: string; eyebrow: string }> = {
   alumnos: { title: 'Alumnos', eyebrow: 'Inscripciones' },
   ficha: { title: 'Alumnos', eyebrow: 'Ficha del alumno' },
   cartera: { title: 'Cartera', eyebrow: 'Control de cobros' },
+  pago: { title: 'Cartera', eyebrow: 'Registrar pago' },
   mas: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
   equipo: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
 };
 
 // Tab resaltada en la navegación para cada vista (Ficha cuelga de Alumnos,
-// Equipo cuelga de Más).
+// Equipo cuelga de Más, Pago cuelga de Cartera).
 const TAB_DE_VISTA: Record<RutaAdmin['vista'], TabId> = {
   dashboard: 'dashboard',
   alumnos: 'alumnos',
   ficha: 'alumnos',
   cartera: 'cartera',
+  pago: 'cartera',
   mas: 'mas',
   equipo: 'mas',
 };
