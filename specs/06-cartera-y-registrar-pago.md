@@ -1,6 +1,6 @@
 # SPEC 06 — Cartera + Registrar pago (mock)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 03 (shell, mock, DS), SPEC 04 (middleware, roles), SPEC 05 (routing por URL, dominio de cartera, hooks de alumnos) · **Fecha:** 2026-07-08
+> **Estado:** Implementado · **Depende de:** SPEC 03 (shell, mock, DS), SPEC 04 (middleware, roles), SPEC 05 (routing por URL, dominio de cartera, hooks de alumnos) · **Fecha:** 2026-07-08
 > **Objetivo:** Construir las pantallas **Cartera** (tarjetas + matriz alumnos×meses) y **Registrar pago** (selección de meses, método y recibo por WhatsApp), introduciendo un **store mock mutable en memoria** para que registrar un pago vire los meses a pagado y se refleje coherentemente en Cartera, Ficha y Dashboard durante la sesión.
 
 ---
@@ -144,37 +144,37 @@ _Verifica:_ toggle persiste entre recargas; segmento Todos/En mora filtra y ajus
 
 ### Store y coherencia de datos
 
-- [ ] Registrar un pago vira los meses elegidos a "pagado" y el cambio se ve **al instante** en Registrar pago, Ficha, Cartera y Dashboard (misma fuente reactiva).
-- [ ] Los totales (Recaudado año, Cartera vencida, Recaudo mes, % al día, En mora) se **derivan de `states`**; tras un pago se recalculan solos, sin `stats` precocinado.
-- [ ] Recargar la página revierte al mock base (es memoria, no persistencia).
-- [ ] Antes de tocar nada, Dashboard/Alumnos/Ficha muestran las **mismas cifras que en el spec 05** (sin regresión).
+- [x] Registrar un pago vira los meses elegidos a "pagado" y el cambio se ve **al instante** en Registrar pago, Ficha, Cartera y Dashboard (misma fuente reactiva).
+- [x] Los totales (Recaudado año, Cartera vencida, Recaudo mes, % al día, En mora) se **derivan de `states`**; tras un pago se recalculan solos, sin `stats` precocinado.
+- [x] Recargar la página revierte al mock base (es memoria, no persistencia).
+- [x] Antes de tocar nada, Dashboard/Alumnos/Ficha muestran las **mismas cifras que en el spec 05** (sin regresión).
 
 ### Pantalla Cartera
 
-- [ ] Vista Tarjetas: cada tarjeta muestra alumno, categoría, cuota/mes, saldo o "Al día", y tira FEB–DIC con colores R5 (verde/rojo/gris/neutro).
-- [ ] Vista Matriz: filas=alumnos, columnas FEB–DIC, **primera columna sticky**; scrollea dentro de su contenedor sin romper el layout.
-- [ ] El toggle Tarjetas/Matriz cambia la vista y la preferencia **persiste en `localStorage`** entre recargas.
-- [ ] El segmento **Todos / En mora** filtra la lista y ajusta los contadores; se combina con la vista activa.
-- [ ] La cabecera muestra "Recaudado año" y "Cartera vencida" en formato COP, coherentes con el Dashboard.
-- [ ] Tocar una celda cobrable (tarjeta o matriz) navega a Registrar pago con ese mes preseleccionado.
+- [x] Vista Tarjetas: cada tarjeta muestra alumno, categoría, cuota/mes, saldo o "Al día", y tira FEB–DIC con colores R5 (verde/rojo/gris/neutro).
+- [x] Vista Matriz: filas=alumnos, columnas FEB–DIC, **primera columna sticky**; scrollea dentro de su contenedor sin romper el layout.
+- [x] El toggle Tarjetas/Matriz cambia la vista y la preferencia **persiste en `localStorage`** entre recargas.
+- [x] El segmento **Todos / En mora** filtra la lista y ajusta los contadores; se combina con la vista activa.
+- [x] La cabecera muestra "Recaudado año" y "Cartera vencida" en formato COP, coherentes con el Dashboard.
+- [x] Tocar una celda cobrable (tarjeta o matriz) navega a Registrar pago con ese mes preseleccionado.
 
 ### Pantalla Registrar pago
 
-- [ ] Deep-link `/admin/alumnos/:id/pago` monta la pantalla; `:id` inexistente muestra "Alumno no encontrado" con volver.
-- [ ] La preselección respeta el origen: mes tocado → ese mes; botón genérico → primer mes cobrable.
-- [ ] El total = Σ cuotas de los meses marcados, en COP; el botón Registrar está deshabilitado sin meses seleccionados.
-- [ ] El selector ofrece **efectivo** y **transferencia**; el método se guarda con el pago en el store.
-- [ ] Confirmar lleva a una pantalla de éxito; desde ahí "Enviar recibo por WhatsApp" abre `wa.me` al celular del acudiente con mensaje precargado (alumno, meses, total).
-- [ ] Alumno al día muestra "¡Al día! No hay meses por cobrar" sin permitir cobro.
+- [x] Deep-link `/admin/alumnos/:id/pago` monta la pantalla; `:id` inexistente muestra "Alumno no encontrado" con volver.
+- [x] La preselección respeta el origen: mes tocado → ese mes; botón genérico → primer mes cobrable.
+- [x] El total = Σ cuotas de los meses marcados, en COP; el botón Registrar está deshabilitado sin meses seleccionados.
+- [x] El selector ofrece **efectivo** y **transferencia**; el método se guarda con el pago en el store.
+- [x] Confirmar lleva a una pantalla de éxito; desde ahí "Enviar recibo por WhatsApp" abre `wa.me` al celular del acudiente con mensaje precargado (alumno, meses, total).
+- [x] Alumno al día muestra "¡Al día! No hay meses por cobrar" sin permitir cobro.
 
 ### Calidad y no-regresión
 
-- [ ] Estados solo binarios por mes (pagado / no pagado): ninguna UI ni regla introduce "abono/parcial".
-- [ ] Toda la lógica de totales/estado vive en `src/lib/domain/` (puras); los componentes no calculan negocio.
-- [ ] Cambiar la fuente de datos tocaría solo el store y los hooks (contrato estable para Actions futuras).
-- [ ] `npm run build` sigue estático para el marketing; `/admin/**` noindex y fuera del sitemap.
-- [ ] Ningún archivo > 200 líneas; cero `any`; sin dependencias nuevas; `npm run check` en verde.
-- [ ] De 320px a desktop: cero scroll horizontal en ambas pantallas (la matriz scrollea dentro de su contenedor).
+- [x] Estados solo binarios por mes (pagado / no pagado): ninguna UI ni regla introduce "abono/parcial".
+- [x] Toda la lógica de totales/estado vive en `src/lib/domain/` (puras); los componentes no calculan negocio.
+- [x] Cambiar la fuente de datos tocaría solo el store y los hooks (contrato estable para Actions futuras).
+- [x] `npm run build` sigue estático para el marketing; `/admin/**` noindex y fuera del sitemap.
+- [x] Ningún archivo > 200 líneas; cero `any`; sin dependencias nuevas; `npm run check` en verde (script `check` aún no existe en el repo — se verificó con `tsc --noEmit` + `build`, equivalente hasta que se instale el tooling de la Fase 0 de `coding-rules.md`).
+- [x] De 320px a desktop: cero scroll horizontal en ambas pantallas (la matriz scrollea dentro de su contenedor).
 
 ---
 
