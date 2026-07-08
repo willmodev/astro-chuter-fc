@@ -14,9 +14,10 @@ import { UniformeTab } from './UniformeTab';
 interface Props {
   alumnoId: number;
   onVolver: () => void;
+  onRegistrarPago: (mes?: number) => void;
 }
 
-export function Ficha({ alumnoId, onVolver }: Readonly<Props>) {
+export function Ficha({ alumnoId, onVolver, onRegistrarPago }: Readonly<Props>) {
   const alumno = useAlumno(alumnoId);
   const [tab, setTab] = useState<TabFicha>('pagos');
   const [aviso, setAviso] = useState<string | null>(null);
@@ -27,23 +28,10 @@ export function Ficha({ alumnoId, onVolver }: Readonly<Props>) {
 
   return (
     <div style={{ display: 'grid', gap: 14, padding: '14px 16px 0' }}>
-      <FichaHeader
-        alumno={alumno}
-        onVolver={onVolver}
-        onRegistrarPago={() =>
-          setAviso('El registro de pagos llega en el spec de Cartera.')
-        }
-      />
+      <FichaHeader alumno={alumno} onVolver={onVolver} onRegistrarPago={() => onRegistrarPago()} />
       <TabsFicha tab={tab} onTab={setTab} />
 
-      {tab === 'pagos' && (
-        <PagosDelAnio
-          alumno={alumno}
-          onCobrarMes={(mesLong) =>
-            setAviso(`El cobro de ${mesLong} llega en el spec de Cartera.`)
-          }
-        />
-      )}
+      {tab === 'pagos' && <PagosDelAnio alumno={alumno} onCobrarMes={onRegistrarPago} />}
       {tab === 'uniforme' && (
         <UniformeTab
           alumno={alumno}

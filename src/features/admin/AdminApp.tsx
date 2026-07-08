@@ -102,6 +102,9 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
           <Ficha
             alumnoId={ruta.alumnoId}
             onVolver={() => navegar({ vista: 'alumnos' })}
+            onRegistrarPago={(mes) =>
+              navegar({ vista: 'pago', alumnoId: ruta.alumnoId, mes })
+            }
           />
         )}
         {ruta.vista === 'cartera' && (
