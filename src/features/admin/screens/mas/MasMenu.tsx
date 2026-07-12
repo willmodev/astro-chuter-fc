@@ -1,12 +1,12 @@
-import { Users } from 'lucide-react';
-
 import { Card } from '../../ui/Card';
+import { BotonMenu } from './BotonMenu';
 import { useLogout } from './useLogout';
 
 interface Props {
   userName: string;
   role: 'admin' | 'entrenador';
   onOpenEquipo: () => void;
+  onOpenUniformes: () => void;
 }
 
 const ROL_LABEL: Record<Props['role'], string> = {
@@ -14,7 +14,12 @@ const ROL_LABEL: Record<Props['role'], string> = {
   entrenador: 'Entrenador',
 };
 
-export function MasMenu({ userName, role, onOpenEquipo }: Readonly<Props>) {
+export function MasMenu({
+  userName,
+  role,
+  onOpenEquipo,
+  onOpenUniformes,
+}: Readonly<Props>) {
   const { saliendo, cerrarSesion } = useLogout();
 
   return (
@@ -32,33 +37,20 @@ export function MasMenu({ userName, role, onOpenEquipo }: Readonly<Props>) {
       </Card>
 
       {role === 'admin' && (
-        <button
-          type="button"
+        <BotonMenu
+          icon="users"
+          label="Equipo"
+          hint="Gestionar usuarios"
           onClick={onOpenEquipo}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            height: 56,
-            padding: '0 18px',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--border-subtle)',
-            background: 'var(--surface-card)',
-            boxShadow: 'var(--shadow-sm)',
-            color: 'var(--text-strong)',
-            fontSize: 15,
-            fontWeight: 600,
-            cursor: 'pointer',
-            textAlign: 'left',
-          }}
-        >
-          <Users size={20} strokeWidth={1.75} color="var(--brand-navy)" />
-          <span style={{ flex: 1 }}>Equipo</span>
-          <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>
-            Gestionar usuarios
-          </span>
-        </button>
+        />
       )}
+
+      <BotonMenu
+        icon="shirt"
+        label="Uniformes"
+        hint="Control de kits"
+        onClick={onOpenUniformes}
+      />
 
       <button
         type="button"

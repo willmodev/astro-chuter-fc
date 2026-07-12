@@ -15,6 +15,7 @@ import { Cartera } from './screens/cartera/Cartera';
 import { Ficha } from './screens/ficha/Ficha';
 import { MasMenu } from './screens/mas/MasMenu';
 import { Pago } from './screens/pago/Pago';
+import { Uniformes } from './screens/uniformes/Uniformes';
 import type { RutaAdmin } from './router/types';
 
 export interface AdminAppProps {
@@ -103,6 +104,7 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
             userName={userName}
             role={role}
             onOpenEquipo={() => navegar({ vista: 'equipo' })}
+            onOpenUniformes={() => navegar({ vista: 'uniformes' })}
           />
         )}
         {ruta.vista === 'equipo' && (
@@ -148,7 +150,9 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
           />
         )}
         {ruta.vista === 'uniformes' && (
-          <p className="p-4 text-sm opacity-60">Uniformes (en construcción)…</p>
+          <Uniformes
+            onEntrega={(alumnoId) => navegar({ vista: 'uniformeEntrega', alumnoId })}
+          />
         )}
         {ruta.vista === 'uniformeEntrega' && (
           <p className="p-4 text-sm opacity-60">Registrar uniforme (en construcción)…</p>
