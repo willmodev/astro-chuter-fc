@@ -1,8 +1,60 @@
 // Reglas puras de uniformes — capa de dominio, sin UI ni datos.
-// Alimentan la alerta de la pantalla Uniformes (HU-5.2) y la advertencia del
-// form de entrega (HU-5.3).
+// Alimentan la alerta de la pantalla Uniformes (HU-5.2), la advertencia del
+// form de entrega (HU-5.3) y el modelo de 4 estados (spec 08).
 
 export type TipoKit = 'AZUL' | 'DORADO';
+
+// Los dos ejes independientes de un uniforme (espejan `Alumno`).
+export type EjeEntrega = 'entregado' | 'pendiente';
+export type EjePago = 'pagado' | 'pendiente';
+
+// Estado derivado del cruce de los dos ejes (entrega × pago).
+export type EstadoUniforme = 'completo' | 'porEntregar' | 'porCobrar' | 'sinIniciar';
+
+/**
+ * Estado del uniforme a partir de sus dos ejes (spec 08). e = entregado, p = pagado:
+ *   e && p  → 'completo'    (entregado y pagado)
+ *  !e && p  → 'porEntregar' (pagó · falta entregar)
+ *   e && !p → 'porCobrar'   (entregado · falta el pago → etiqueta "Pago pendiente")
+ *  !e && !p → 'sinIniciar'  (sin pagar ni entregar)
+ */
+export function estadoUniforme(
+  uniforme: EjeEntrega,
+  uniformePago: EjePago,
+): EstadoUniforme {
+  const entregado = uniforme === 'entregado';
+  const pagado = uniformePago === 'pagado';
+  if (entregado && pagado) return 'completo';
+  if (!entregado && pagado) return 'porEntregar';
+  if (entregado && !pagado) return 'porCobrar';
+  return 'sinIniciar';
+}
+
+// Tono del design system por estado (mapea a los `tone` del Badge).
+type TonoEstado = 'paid' | 'info' | 'due' | 'pending';
+
+// Metadatos presentacionales por estado: label, descripción y tono. La etiqueta
+// de `porCobrar` es "Pago pendiente" (no "Por cobrar"): esta deuda de uniforme
+// NO entra a cartera, así el admin no la busca ahí.
+export const ESTADO_UNIFORME_META: Record<
+  EstadoUniforme,
+  { label: string; desc: string; tone: TonoEstado }
+> = {
+  completo: { label: 'Completo', desc: 'Entregado y pagado', tone: 'paid' },
+  porEntregar: { label: 'Por entregar', desc: 'Pagó · falta entregar', tone: 'info' },
+  porCobrar: { label: 'Pago pendiente', desc: 'Entregado · falta el pago', tone: 'due' },
+  sinIniciar: { label: 'Sin iniciar', desc: 'Sin pagar ni entregar', tone: 'pending' },
+};
+
+// Orden por prioridad de acción para la lista del tab Estado. `porCobrar`
+// primero: mercancía entregada sin pagar = plata en riesgo real (máxima
+// urgencia); la pagada sin entregar es menor riesgo (el club ya tiene el dinero).
+export const ORDEN_ESTADO_UNIFORME: readonly EstadoUniforme[] = [
+  'porCobrar',
+  'porEntregar',
+  'sinIniciar',
+  'completo',
+];
 
 // Subconjunto estructural que necesita la regla. `Alumno` (capa de datos) lo
 // cumple, sin que el dominio dependa de la capa de features.

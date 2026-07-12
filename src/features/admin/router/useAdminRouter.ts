@@ -20,6 +20,7 @@ function esEstadoNavegacion(valor: unknown): valor is EstadoNavegacion {
 export function useAdminRouter(): {
   ruta: RutaAdmin;
   navegar: (destino: RutaAdmin) => void;
+  volver: () => void;
 } {
   const [ruta, setRuta] = useState<RutaAdmin>(() =>
     parseRuta(window.location.pathname),
@@ -48,5 +49,11 @@ export function useAdminRouter(): {
     setRuta(destino);
   }, []);
 
-  return { ruta, navegar };
+  // Vuelve a la ruta anterior real del historial (popstate re-sincroniza la
+  // vista). Respeta de dónde vino el usuario en vez de forzar un destino fijo.
+  const volver = useCallback((): void => {
+    window.history.back();
+  }, []);
+
+  return { ruta, navegar, volver };
 }
