@@ -28,20 +28,28 @@ const META: Record<RutaAdmin['vista'], { title: string; eyebrow: string }> = {
   dashboard: { title: 'Dashboard', eyebrow: 'Temporada 2026' },
   alumnos: { title: 'Alumnos', eyebrow: 'Inscripciones' },
   ficha: { title: 'Alumnos', eyebrow: 'Ficha del alumno' },
+  alumnoNuevo: { title: 'Alumnos', eyebrow: 'Inscribir alumno' },
+  alumnoEditar: { title: 'Alumnos', eyebrow: 'Editar alumno' },
   cartera: { title: 'Cartera', eyebrow: 'Control de cobros' },
   pago: { title: 'Cartera', eyebrow: 'Registrar pago' },
+  uniformes: { title: 'Uniformes', eyebrow: 'Control de kits' },
+  uniformeEntrega: { title: 'Alumnos', eyebrow: 'Registrar uniforme' },
   mas: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
   equipo: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
 };
 
-// Tab resaltada en la navegación para cada vista (Ficha cuelga de Alumnos,
-// Equipo cuelga de Más, Pago cuelga de Cartera).
+// Tab resaltada en la navegación para cada vista (Ficha/form/entrega cuelgan de
+// Alumnos, Equipo/Uniformes cuelgan de Más, Pago cuelga de Cartera).
 const TAB_DE_VISTA: Record<RutaAdmin['vista'], TabId> = {
   dashboard: 'dashboard',
   alumnos: 'alumnos',
   ficha: 'alumnos',
+  alumnoNuevo: 'alumnos',
+  alumnoEditar: 'alumnos',
   cartera: 'cartera',
   pago: 'cartera',
+  uniformes: 'mas',
+  uniformeEntrega: 'alumnos',
   mas: 'mas',
   equipo: 'mas',
 };
@@ -119,6 +127,18 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
             mes={ruta.mes}
             onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
           />
+        )}
+        {ruta.vista === 'alumnoNuevo' && (
+          <p className="p-4 text-sm opacity-60">Form de alumno (en construcción)…</p>
+        )}
+        {ruta.vista === 'alumnoEditar' && (
+          <p className="p-4 text-sm opacity-60">Editar alumno (en construcción)…</p>
+        )}
+        {ruta.vista === 'uniformes' && (
+          <p className="p-4 text-sm opacity-60">Uniformes (en construcción)…</p>
+        )}
+        {ruta.vista === 'uniformeEntrega' && (
+          <p className="p-4 text-sm opacity-60">Registrar uniforme (en construcción)…</p>
         )}
       </AdminShell>
 

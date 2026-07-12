@@ -4,7 +4,11 @@ export type RutaAdmin =
   | { vista: 'dashboard' }
   | { vista: 'alumnos' }
   | { vista: 'ficha'; alumnoId: number }
+  | { vista: 'alumnoNuevo' }
+  | { vista: 'alumnoEditar'; alumnoId: number }
   | { vista: 'cartera' }
   | { vista: 'pago'; alumnoId: number; mes?: number }
+  | { vista: 'uniformes' }
+  | { vista: 'uniformeEntrega'; alumnoId: number }
   | { vista: 'mas' }
   | { vista: 'equipo' };
