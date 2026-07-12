@@ -401,7 +401,7 @@ Centralizar la lógica en `src/lib/whatsapp.ts` con una función helper.
 Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar como placeholders:
 
 - [ ] Logo SVG en alta calidad (mientras tanto usar el PNG en `/public/logo-temp.png`)
-- [ ] Costos de mensualidad y matrícula (la inscripción ya sabemos que es gratis)
+- [x] Costos confirmados (cliente, 2026-07-10): mensualidad **$50.000 COP/jugador sin descuento por hermanos**; uniforme **$100.000 COP** ($80.000 c/u si son hermanos); inscripción gratis. El descuento de hermanos es del **uniforme**, no de la mensualidad.
 - [ ] Dirección exacta de la Cancha Los Algarrobillos + link de Google Maps embed
 - [ ] Confirmar si el horario es uniforme para todas las categorías o varía
 - [ ] Testimonios reales (nombre del padre/madre + texto + foto opcional)

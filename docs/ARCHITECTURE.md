@@ -55,7 +55,7 @@ Services (lib/services)  ── combinan repos + dominio
 
 Regla de oro: **la lógica de negocio vive en `lib/domain` (puro, testeable), nunca en componentes, actions o schema.**
 
-- **`lib/domain/*`** — reglas puras: `categoriaDeAnio`, `cuotaConDescuentoHermano`, `estadoCelda`, `saldoPendiente`, `estaEnMora`, `mesesEnMora`, `recaudoDelMes`, `recaudoAnio`, `carteraVencida`, `progresoVsMeta`, `numerosDuplicados`.
+- **`lib/domain/*`** — reglas puras: `categoriaDeAnio`, `precioUniforme` (con descuento de hermanos, R9 — la mensualidad no tiene descuento, R2), `estadoCelda`, `saldoPendiente`, `estaEnMora`, `mesesEnMora`, `recaudoDelMes`, `recaudoAnio`, `carteraVencida`, `progresoVsMeta`, `numerosDuplicados`.
 - **`lib/db/repos/*`** — un repo por agregado; solo queries Drizzle, devuelven filas tipadas.
 - **`lib/services/*`** — orquestación (p.ej. `cartera.ts` arma la matriz alumnos×meses combinando repos + dominio).
 - **`actions/*`** — RPC tipado con validación Zod; un módulo por agregado; cada handler llama `requireUser` primero.
@@ -99,7 +99,7 @@ Un archivo por agregado en `src/lib/db/schema/`, re-export desde `schema/index.t
 | `categorias.ts` | `categorias` (code, añoDesde, añoHasta) | `CATEGORIAS` |
 | `acudientes.ts` | `acudientes` (nombre, celular, direccion) | cols acudiente en `SUB n` |
 | `alumnos.ts` | `alumnos` (nombre, identificacion, anioNacimiento, categoriaId, acudienteId, fechaInicio, activo) | `SUB n` |
-| `tarifas.ts` | `tarifas` (categoriaId/año, cuotaCop, descuentoHermanoCop) | col CUOTA |
+| `tarifas.ts` | `tarifas` (año, cuotaCop, uniformeCop, uniformeHermanoCop) | col CUOTA + aclaración cliente 2026-07-10 (R2/R9) |
 | `pagos.ts` | `pagos` (alumnoId, anio, mes enum, estado enum, montoCop, metodo, pagadoEn) | celdas FEB–DIC |
 | `uniformes.ts` | `uniformes` (alumnoId, kit enum, numero, modelo, talla, entregado) | `UNIFORMES` |
 | `entrenamientos.ts` | `entrenamientos` + `sesiones`/`bloques` | `PLANIFICACION` |
