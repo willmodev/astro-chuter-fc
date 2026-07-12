@@ -15,6 +15,7 @@ import { Cartera } from './screens/cartera/Cartera';
 import { Ficha } from './screens/ficha/Ficha';
 import { MasMenu } from './screens/mas/MasMenu';
 import { Pago } from './screens/pago/Pago';
+import { UniformeEntrega } from './screens/uniforme-entrega/UniformeEntrega';
 import { Uniformes } from './screens/uniformes/Uniformes';
 import type { RutaAdmin } from './router/types';
 
@@ -120,6 +121,9 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
             onRegistrarPago={(mes) =>
               navegar({ vista: 'pago', alumnoId: ruta.alumnoId, mes })
             }
+            onRegistrarUniforme={() =>
+              navegar({ vista: 'uniformeEntrega', alumnoId: ruta.alumnoId })
+            }
           />
         )}
         {ruta.vista === 'cartera' && (
@@ -155,7 +159,11 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
           />
         )}
         {ruta.vista === 'uniformeEntrega' && (
-          <p className="p-4 text-sm opacity-60">Registrar uniforme (en construcción)…</p>
+          <UniformeEntrega
+            alumnoId={ruta.alumnoId}
+            onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
+            onGuardado={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
+          />
         )}
       </AdminShell>
 

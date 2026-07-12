@@ -1,5 +1,5 @@
-// Campo de texto etiquetado y reutilizable del form de alumno: label + input
-// con estado de error por campo. Sin lógica de negocio.
+// Campo de texto etiquetado y reutilizable: label + input con estado de error
+// por campo. Primitivo presentacional, sin lógica de negocio.
 interface Props {
   label: string;
   value: string;

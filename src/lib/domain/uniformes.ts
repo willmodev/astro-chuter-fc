@@ -11,6 +11,10 @@ interface AlumnoUniforme {
   tipoKit: TipoKit | null;
 }
 
+interface AlumnoUniformeId extends AlumnoUniforme {
+  id: number;
+}
+
 /**
  * Números repetidos dentro de un kit (R6): los que aparecen en 2+ alumnos con
  * uniforme del mismo `kit`. Ordenados ascendente. Ignora `numero`/`tipoKit` nulos.
@@ -29,4 +33,19 @@ export function numerosDuplicados(
     .filter(([, n]) => n > 1)
     .map(([numero]) => numero)
     .sort((a, b) => a - b);
+}
+
+/**
+ * ¿El `numero` ya está usado en ese `kit` por otro alumno? (excluye `idActual`).
+ * Alimenta la advertencia no bloqueante del form de entrega (HU-5.3).
+ */
+export function numeroOcupado(
+  alumnos: readonly AlumnoUniformeId[],
+  kit: TipoKit,
+  numero: number,
+  idActual?: number,
+): boolean {
+  return alumnos.some(
+    (a) => a.id !== idActual && a.tipoKit === kit && a.numero === numero,
+  );
 }

@@ -6,6 +6,7 @@ import { normaliza, type DatosAlumnoInput } from '@/lib/domain/alumnos';
 import { esMesCobrable, statesIniciales } from '@/lib/domain/cartera';
 import { ANIO_TEMPORADA, subDeAnio } from '@/lib/domain/categoria';
 import { CUOTA_MENSUAL } from '@/lib/domain/precios';
+import type { TipoKit } from '@/lib/domain/uniformes';
 
 import { CURRENT, MONTHS, students } from './mock';
 import type { Alumno } from './types';
@@ -16,6 +17,13 @@ export type MetodoPago = 'efectivo' | 'transferencia';
 // dominio para no duplicar la forma (migra igual a Actions).
 export interface DatosAlumno extends DatosAlumnoInput {
   dir?: string;
+}
+
+export interface EntregaUniforme {
+  tipoKit: TipoKit;
+  numero: number;
+  talla: string;
+  pago: 'pagado' | 'pendiente';
 }
 
 let alumnos: Alumno[] = students;
@@ -118,6 +126,24 @@ export function actualizarAlumno(id: number, datos: DatosAlumno): void {
       : a,
   );
   recalcularHermanos(acuPrevio, normaliza(datos.acu));
+  notificar();
+}
+
+// Registrar/corregir entrega de uniforme: marca 'entregado' y guarda kit,
+// número, talla y estado de pago. Sobreescribe una entrega previa (corrección).
+export function guardarUniforme(alumnoId: number, entrega: EntregaUniforme): void {
+  alumnos = alumnos.map((a) =>
+    a.id === alumnoId
+      ? {
+          ...a,
+          uniforme: 'entregado',
+          tipoKit: entrega.tipoKit,
+          numero: entrega.numero,
+          talla: entrega.talla,
+          uniformePago: entrega.pago,
+        }
+      : a,
+  );
   notificar();
 }
 

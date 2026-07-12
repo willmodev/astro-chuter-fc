@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { ProximamenteDialog } from '../../chrome/ProximamenteDialog';
 import { useAlumno } from '../../hooks/useAlumno';
 import { AcudienteTab } from './AcudienteTab';
 import { AlumnoNoEncontrado } from './AlumnoNoEncontrado';
@@ -16,12 +15,18 @@ interface Props {
   onVolver: () => void;
   onEditar: () => void;
   onRegistrarPago: (mes?: number) => void;
+  onRegistrarUniforme: () => void;
 }
 
-export function Ficha({ alumnoId, onVolver, onEditar, onRegistrarPago }: Readonly<Props>) {
+export function Ficha({
+  alumnoId,
+  onVolver,
+  onEditar,
+  onRegistrarPago,
+  onRegistrarUniforme,
+}: Readonly<Props>) {
   const alumno = useAlumno(alumnoId);
   const [tab, setTab] = useState<TabFicha>('pagos');
-  const [aviso, setAviso] = useState<string | null>(null);
 
   if (!alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
@@ -39,22 +44,9 @@ export function Ficha({ alumnoId, onVolver, onEditar, onRegistrarPago }: Readonl
 
       {tab === 'pagos' && <PagosDelAnio alumno={alumno} onCobrarMes={onRegistrarPago} />}
       {tab === 'uniforme' && (
-        <UniformeTab
-          alumno={alumno}
-          onRegistrarEntrega={() =>
-            setAviso('El registro de entregas llega en el spec de Uniformes.')
-          }
-        />
+        <UniformeTab alumno={alumno} onRegistrarEntrega={onRegistrarUniforme} />
       )}
       {tab === 'acudiente' && <AcudienteTab alumno={alumno} />}
-
-      {aviso && (
-        <ProximamenteDialog
-          eyebrow="Ficha del alumno"
-          mensaje={aviso}
-          onClose={() => setAviso(null)}
-        />
-      )}
     </div>
   );
 }

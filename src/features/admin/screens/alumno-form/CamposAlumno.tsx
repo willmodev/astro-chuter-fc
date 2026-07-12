@@ -1,8 +1,8 @@
 import type { ErroresAlumno } from '@/lib/domain/alumnos';
 
+import { CampoTexto } from '../../ui/CampoTexto';
 import { AutocompleteAcudiente } from './AutocompleteAcudiente';
 import { BadgeCategoria } from './BadgeCategoria';
-import { CampoTexto } from './CampoTexto';
 import type { FormValores } from './useAlumnoForm';
 
 // Campos del form de alumno. Solo presenta: recibe valores, errores y setters
