@@ -23,7 +23,6 @@ export interface EntregaUniforme {
   tipoKit: TipoKit;
   numero: number;
   talla: string;
-  pago: 'pagado' | 'pendiente';
 }
 
 let alumnos: Alumno[] = students;
@@ -129,9 +128,22 @@ export function actualizarAlumno(id: number, datos: DatosAlumno): void {
   notificar();
 }
 
-// Registrar/corregir entrega de uniforme: marca 'entregado' y guarda kit,
-// número, talla y estado de pago. Sobreescribe una entrega previa (corrección).
-export function guardarUniforme(alumnoId: number, entrega: EntregaUniforme): void {
+// Pago del uniforme (spec 08): setea solo el eje `uniformePago`, sin tocar la
+// entrega. Idempotente: fijar el mismo valor no altera el resto del alumno.
+export function registrarPagoUniforme(alumnoId: number, pagado: boolean): void {
+  const valor = pagado ? 'pagado' : 'pendiente';
+  alumnos = alumnos.map((a) =>
+    a.id === alumnoId ? { ...a, uniformePago: valor } : a,
+  );
+  notificar();
+}
+
+// Entrega del uniforme (spec 08): marca 'entregado' y guarda kit/número/talla.
+// NO toca el pago (es un registro aparte). Sobreescribe una entrega previa.
+export function registrarEntregaUniforme(
+  alumnoId: number,
+  entrega: EntregaUniforme,
+): void {
   alumnos = alumnos.map((a) =>
     a.id === alumnoId
       ? {
@@ -140,8 +152,18 @@ export function guardarUniforme(alumnoId: number, entrega: EntregaUniforme): voi
           tipoKit: entrega.tipoKit,
           numero: entrega.numero,
           talla: entrega.talla,
-          uniformePago: entrega.pago,
         }
+      : a,
+  );
+  notificar();
+}
+
+// Anular entrega (spec 08): vuelve a 'pendiente' y limpia número/kit; conserva
+// la talla (atributo del alumno) y el pago intactos. Idempotente.
+export function anularEntrega(alumnoId: number): void {
+  alumnos = alumnos.map((a) =>
+    a.id === alumnoId
+      ? { ...a, uniforme: 'pendiente', numero: null, tipoKit: null }
       : a,
   );
   notificar();

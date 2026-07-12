@@ -73,7 +73,7 @@ export function AdminApp({ role, userName }: Readonly<AdminAppProps>) {
 }
 
 function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
-  const { ruta, navegar } = useAdminRouter();
+  const { ruta, navegar, volver } = useAdminRouter();
   const [actionOpen, setActionOpen] = useState(false);
   const data = useDashboardData();
   const meta = META[ruta.vista];
@@ -159,11 +159,7 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
           />
         )}
         {ruta.vista === 'uniformeEntrega' && (
-          <UniformeEntrega
-            alumnoId={ruta.alumnoId}
-            onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
-            onGuardado={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
-          />
+          <UniformeEntrega alumnoId={ruta.alumnoId} onVolver={volver} />
         )}
       </AdminShell>
 

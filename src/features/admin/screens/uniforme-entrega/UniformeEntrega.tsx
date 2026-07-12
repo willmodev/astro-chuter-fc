@@ -1,24 +1,36 @@
+import { useState } from 'react';
+
 import { Icon } from '../../chrome/Icon';
 import { AlumnoNoEncontrado } from '../ficha/AlumnoNoEncontrado';
-import { CamposEntrega } from './CamposEntrega';
-import { ResumenEntrega } from './ResumenEntrega';
+import { AccionesUniforme } from './AccionesUniforme';
+import { HojaEntrega } from './HojaEntrega';
+import { TarjetaEstado } from './TarjetaEstado';
 import { useUniformeEntrega } from './useUniformeEntrega';
 
-// Flujo Registrar/corregir entrega de uniforme (HU-5.3): kit + número + talla +
-// pago, precio según R9 y advertencia no bloqueante de número repetido. Solo
-// orquesta; reglas (precio, número ocupado, hermanos) viven en el dominio.
+// Pantalla de uniforme (spec 08): pago y entrega como registros independientes
+// (modelo de 4 estados). Solo orquesta; reglas (estado, precio, número ocupado,
+// hermanos) viven en el dominio y las escrituras en el store.
 interface Props {
   alumnoId: number;
   onVolver: () => void;
-  onGuardado: () => void;
 }
 
-export function UniformeEntrega({ alumnoId, onVolver, onGuardado }: Readonly<Props>) {
-  const form = useUniformeEntrega({ alumnoId, onGuardado });
+export function UniformeEntrega({ alumnoId, onVolver }: Readonly<Props>) {
+  const form = useUniformeEntrega({ alumnoId });
+  const [hojaAbierta, setHojaAbierta] = useState(false);
 
   if (!form.alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
   }
+
+  const confirmarEntrega = (): void => {
+    form.guardarEntrega();
+    setHojaAbierta(false);
+  };
+  const anularEntrega = (): void => {
+    form.anularEntrega();
+    setHojaAbierta(false);
+  };
 
   return (
     <div style={{ display: 'grid', gap: 16, padding: '14px 16px 24px' }}>
@@ -55,20 +67,34 @@ export function UniformeEntrega({ alumnoId, onVolver, onGuardado }: Readonly<Pro
             {form.alumno.name}
           </strong>
           <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
-            {form.alumno.cat} · {form.esCorreccion ? 'Corregir uniforme' : 'Registrar uniforme'}
+            {form.alumno.cat} · Uniforme
           </span>
         </div>
       </div>
 
-      <CamposEntrega valores={form.valores} setCampo={form.setCampo} />
+      <TarjetaEstado estado={form.estado} entregado={form.entregado} pagado={form.pagado} />
 
-      <ResumenEntrega
+      <AccionesUniforme
+        pagado={form.pagado}
+        entregado={form.entregado}
         precio={form.precio}
-        repetido={form.repetido}
-        valido={form.valido}
-        esCorreccion={form.esCorreccion}
-        onConfirmar={form.guardar}
+        detalleEntrega={form.detalleEntrega}
+        onTogglePago={form.togglePago}
+        onAbrirEntrega={() => setHojaAbierta(true)}
       />
+
+      {hojaAbierta && (
+        <HojaEntrega
+          entregado={form.entregado}
+          valores={form.valores}
+          setCampo={form.setCampo}
+          valido={form.valido}
+          repetido={form.repetido}
+          onConfirmar={confirmarEntrega}
+          onAnular={anularEntrega}
+          onClose={() => setHojaAbierta(false)}
+        />
+      )}
     </div>
   );
 }

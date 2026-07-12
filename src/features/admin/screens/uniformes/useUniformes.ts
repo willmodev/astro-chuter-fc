@@ -10,11 +10,11 @@ export interface UniformesData {
   totalEntregados: number;
   totalPendientes: number; // global (los que faltan por entregar)
   duplicados: number[];
-  porEntregar: Alumno[]; // global, orden alfabético
 }
 
-// Deriva la vista de Uniformes del store: entregados del kit ordenados por
-// número, pendientes globales y números duplicados (R6). Reactivo a las entregas.
+// Deriva el tab Numeración del store: entregados del kit ordenados por número,
+// pendientes globales (contador) y números duplicados (R6). Reactivo a las
+// entregas. La sección "Por entregar" se movió al tab Estado (spec 08).
 export function useUniformes(kit: TipoKit): UniformesData {
   const alumnos = useSyncExternalStore(subscribe, getAlumnos);
 
@@ -22,15 +22,12 @@ export function useUniformes(kit: TipoKit): UniformesData {
     const entregados = alumnos
       .filter((a) => a.tipoKit === kit && a.uniforme === 'entregado')
       .sort((a, b) => (a.numero ?? 0) - (b.numero ?? 0));
-    const porEntregar = alumnos
-      .filter((a) => a.uniforme === 'pendiente')
-      .sort((a, b) => a.name.localeCompare(b.name, 'es'));
+    const totalPendientes = alumnos.filter((a) => a.uniforme === 'pendiente').length;
     return {
       entregados,
       totalEntregados: entregados.length,
-      totalPendientes: porEntregar.length,
+      totalPendientes,
       duplicados: numerosDuplicados(alumnos, kit),
-      porEntregar,
     };
   }, [alumnos, kit]);
 }

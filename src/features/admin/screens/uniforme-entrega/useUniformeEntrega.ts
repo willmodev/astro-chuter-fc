@@ -2,9 +2,18 @@ import { useState } from 'react';
 
 import { esHermano } from '@/lib/domain/alumnos';
 import { precioUniforme } from '@/lib/domain/precios';
-import { numeroOcupado, type TipoKit } from '@/lib/domain/uniformes';
+import {
+  estadoUniforme,
+  numeroOcupado,
+  type EstadoUniforme,
+  type TipoKit,
+} from '@/lib/domain/uniformes';
 
-import { guardarUniforme } from '../../data/store';
+import {
+  anularEntrega,
+  registrarEntregaUniforme,
+  registrarPagoUniforme,
+} from '../../data/store';
 import type { Alumno } from '../../data/types';
 import { useAlumnos } from '../../hooks/useAlumnos';
 
@@ -12,12 +21,12 @@ export interface EntregaValores {
   kit: TipoKit;
   numero: string;
   talla: string;
-  pago: 'pagado' | 'pendiente';
 }
+
+const KIT_LABEL: Record<TipoKit, string> = { AZUL: 'Azul', DORADO: 'Dorado' };
 
 interface Args {
   alumnoId: number;
-  onGuardado: () => void;
 }
 
 function estadoInicial(a: Alumno | undefined): EntregaValores {
@@ -25,14 +34,17 @@ function estadoInicial(a: Alumno | undefined): EntregaValores {
     kit: a?.tipoKit ?? 'AZUL',
     numero: a?.numero != null ? String(a.numero) : '',
     talla: a?.talla ?? '',
-    pago: a?.uniformePago ?? 'pendiente',
   };
 }
 
-export function useUniformeEntrega({ alumnoId, onGuardado }: Args) {
+// Orquesta los dos registros independientes del uniforme (spec 08): pago y
+// entrega mutan ejes distintos del store; el estado derivado sale del dominio.
+export function useUniformeEntrega({ alumnoId }: Args) {
   const { alumnos } = useAlumnos();
   const alumno = alumnos.find((a) => a.id === alumnoId);
-  const [valores, setValores] = useState<EntregaValores>(() => estadoInicial(alumno));
+  const [valores, setValores] = useState<EntregaValores>(() =>
+    estadoInicial(alumno),
+  );
 
   const setCampo = <K extends keyof EntregaValores>(
     campo: K,
@@ -48,25 +60,39 @@ export function useUniformeEntrega({ alumnoId, onGuardado }: Args) {
     alumno ? esHermano(alumnos, alumno.acu, alumno.id) : false,
   );
 
-  const guardar = (): void => {
+  const entregado = alumno?.uniforme === 'entregado';
+  const pagado = alumno?.uniformePago === 'pagado';
+  const estado: EstadoUniforme = estadoUniforme(
+    alumno?.uniforme ?? 'pendiente',
+    alumno?.uniformePago ?? 'pendiente',
+  );
+  const detalleEntrega =
+    entregado && alumno
+      ? `Kit ${KIT_LABEL[alumno.tipoKit ?? 'AZUL']} · Nº ${alumno.numero ?? '—'} · Talla ${alumno.talla}`
+      : null;
+
+  const guardarEntrega = (): void => {
     if (!valido) return;
-    guardarUniforme(alumnoId, {
+    registrarEntregaUniforme(alumnoId, {
       tipoKit: valores.kit,
       numero,
       talla: valores.talla.trim(),
-      pago: valores.pago,
     });
-    onGuardado();
   };
 
   return {
     alumno,
+    estado,
+    entregado,
+    pagado,
+    precio,
+    detalleEntrega,
     valores,
     setCampo,
     valido,
     repetido,
-    precio,
-    esCorreccion: alumno?.uniforme === 'entregado',
-    guardar,
+    togglePago: () => registrarPagoUniforme(alumnoId, !pagado),
+    guardarEntrega,
+    anularEntrega: () => anularEntrega(alumnoId),
   };
 }
