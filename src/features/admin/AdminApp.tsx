@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
+import { AccionRapidaMenu } from './chrome/AccionRapidaMenu';
 import { AdminShell } from './chrome/AdminShell';
 import { IconButton } from './chrome/IconButton';
-import { ProximamenteDialog } from './chrome/ProximamenteDialog';
 import { type TabId } from './chrome/tabs';
 import { useDashboardData } from './hooks/useDashboardData';
 import { useAdminRouter } from './router/useAdminRouter';
+import { AlumnoForm } from './screens/alumno-form/AlumnoForm';
 import { Dashboard } from './screens/dashboard/Dashboard';
 import { EntrenadorHome } from './screens/entrenador/EntrenadorHome';
 import { EquipoScreen } from './screens/equipo/EquipoScreen';
@@ -111,6 +112,9 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
           <Ficha
             alumnoId={ruta.alumnoId}
             onVolver={() => navegar({ vista: 'alumnos' })}
+            onEditar={() =>
+              navegar({ vista: 'alumnoEditar', alumnoId: ruta.alumnoId })
+            }
             onRegistrarPago={(mes) =>
               navegar({ vista: 'pago', alumnoId: ruta.alumnoId, mes })
             }
@@ -129,10 +133,19 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
           />
         )}
         {ruta.vista === 'alumnoNuevo' && (
-          <p className="p-4 text-sm opacity-60">Form de alumno (en construcción)…</p>
+          <AlumnoForm
+            modo="nuevo"
+            onVolver={() => navegar({ vista: 'alumnos' })}
+            onGuardado={(alumnoId) => navegar({ vista: 'ficha', alumnoId })}
+          />
         )}
         {ruta.vista === 'alumnoEditar' && (
-          <p className="p-4 text-sm opacity-60">Editar alumno (en construcción)…</p>
+          <AlumnoForm
+            modo="editar"
+            alumnoId={ruta.alumnoId}
+            onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
+            onGuardado={(alumnoId) => navegar({ vista: 'ficha', alumnoId })}
+          />
         )}
         {ruta.vista === 'uniformes' && (
           <p className="p-4 text-sm opacity-60">Uniformes (en construcción)…</p>
@@ -143,9 +156,15 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
       </AdminShell>
 
       {actionOpen && (
-        <ProximamenteDialog
-          eyebrow="Acción rápida"
-          mensaje="Registrar pago e inscribir alumno llegan en otro spec."
+        <AccionRapidaMenu
+          onInscribir={() => {
+            setActionOpen(false);
+            navegar({ vista: 'alumnoNuevo' });
+          }}
+          onRegistrarPago={() => {
+            setActionOpen(false);
+            navegar({ vista: 'cartera' });
+          }}
           onClose={() => setActionOpen(false)}
         />
       )}

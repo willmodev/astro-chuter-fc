@@ -12,10 +12,16 @@ import type { Alumno } from '../../data/types';
 interface Props {
   alumno: Alumno;
   onVolver: () => void;
+  onEditar: () => void;
   onRegistrarPago: () => void;
 }
 
-export function FichaHeader({ alumno, onVolver, onRegistrarPago }: Readonly<Props>) {
+export function FichaHeader({
+  alumno,
+  onVolver,
+  onEditar,
+  onRegistrarPago,
+}: Readonly<Props>) {
   const enMora = estadoAlumno(alumno) === 'mora';
   const meses = mesesEnMora(alumno);
 
@@ -65,6 +71,26 @@ export function FichaHeader({ alumno, onVolver, onRegistrarPago }: Readonly<Prop
         ) : (
           <Badge tone="paid">Al día</Badge>
         )}
+        <button
+          type="button"
+          onClick={onEditar}
+          aria-label="Editar alumno"
+          style={{
+            width: 38,
+            height: 38,
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-subtle)',
+            background: 'var(--surface-sunken)',
+            color: 'var(--brand-navy)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}
+        >
+          <Icon name="pencil" size={17} />
+        </button>
       </div>
 
       <div style={{ display: 'flex', gap: 10 }}>
