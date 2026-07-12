@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
+import { AccionRapidaMenu } from './chrome/AccionRapidaMenu';
 import { AdminShell } from './chrome/AdminShell';
 import { IconButton } from './chrome/IconButton';
-import { ProximamenteDialog } from './chrome/ProximamenteDialog';
 import { type TabId } from './chrome/tabs';
 import { useDashboardData } from './hooks/useDashboardData';
 import { useAdminRouter } from './router/useAdminRouter';
+import { AlumnoForm } from './screens/alumno-form/AlumnoForm';
 import { Dashboard } from './screens/dashboard/Dashboard';
 import { EntrenadorHome } from './screens/entrenador/EntrenadorHome';
 import { EquipoScreen } from './screens/equipo/EquipoScreen';
@@ -14,6 +15,8 @@ import { Cartera } from './screens/cartera/Cartera';
 import { Ficha } from './screens/ficha/Ficha';
 import { MasMenu } from './screens/mas/MasMenu';
 import { Pago } from './screens/pago/Pago';
+import { UniformeEntrega } from './screens/uniforme-entrega/UniformeEntrega';
+import { Uniformes } from './screens/uniformes/Uniformes';
 import type { RutaAdmin } from './router/types';
 
 export interface AdminAppProps {
@@ -28,20 +31,28 @@ const META: Record<RutaAdmin['vista'], { title: string; eyebrow: string }> = {
   dashboard: { title: 'Dashboard', eyebrow: 'Temporada 2026' },
   alumnos: { title: 'Alumnos', eyebrow: 'Inscripciones' },
   ficha: { title: 'Alumnos', eyebrow: 'Ficha del alumno' },
+  alumnoNuevo: { title: 'Alumnos', eyebrow: 'Inscribir alumno' },
+  alumnoEditar: { title: 'Alumnos', eyebrow: 'Editar alumno' },
   cartera: { title: 'Cartera', eyebrow: 'Control de cobros' },
   pago: { title: 'Cartera', eyebrow: 'Registrar pago' },
+  uniformes: { title: 'Uniformes', eyebrow: 'Control de kits' },
+  uniformeEntrega: { title: 'Alumnos', eyebrow: 'Registrar uniforme' },
   mas: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
   equipo: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
 };
 
-// Tab resaltada en la navegación para cada vista (Ficha cuelga de Alumnos,
-// Equipo cuelga de Más, Pago cuelga de Cartera).
+// Tab resaltada en la navegación para cada vista (Ficha/form/entrega cuelgan de
+// Alumnos, Equipo/Uniformes cuelgan de Más, Pago cuelga de Cartera).
 const TAB_DE_VISTA: Record<RutaAdmin['vista'], TabId> = {
   dashboard: 'dashboard',
   alumnos: 'alumnos',
   ficha: 'alumnos',
+  alumnoNuevo: 'alumnos',
+  alumnoEditar: 'alumnos',
   cartera: 'cartera',
   pago: 'cartera',
+  uniformes: 'mas',
+  uniformeEntrega: 'alumnos',
   mas: 'mas',
   equipo: 'mas',
 };
@@ -94,6 +105,7 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
             userName={userName}
             role={role}
             onOpenEquipo={() => navegar({ vista: 'equipo' })}
+            onOpenUniformes={() => navegar({ vista: 'uniformes' })}
           />
         )}
         {ruta.vista === 'equipo' && (
@@ -103,8 +115,14 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
           <Ficha
             alumnoId={ruta.alumnoId}
             onVolver={() => navegar({ vista: 'alumnos' })}
+            onEditar={() =>
+              navegar({ vista: 'alumnoEditar', alumnoId: ruta.alumnoId })
+            }
             onRegistrarPago={(mes) =>
               navegar({ vista: 'pago', alumnoId: ruta.alumnoId, mes })
+            }
+            onRegistrarUniforme={() =>
+              navegar({ vista: 'uniformeEntrega', alumnoId: ruta.alumnoId })
             }
           />
         )}
@@ -120,12 +138,45 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
             onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
           />
         )}
+        {ruta.vista === 'alumnoNuevo' && (
+          <AlumnoForm
+            modo="nuevo"
+            onVolver={() => navegar({ vista: 'alumnos' })}
+            onGuardado={(alumnoId) => navegar({ vista: 'ficha', alumnoId })}
+          />
+        )}
+        {ruta.vista === 'alumnoEditar' && (
+          <AlumnoForm
+            modo="editar"
+            alumnoId={ruta.alumnoId}
+            onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
+            onGuardado={(alumnoId) => navegar({ vista: 'ficha', alumnoId })}
+          />
+        )}
+        {ruta.vista === 'uniformes' && (
+          <Uniformes
+            onEntrega={(alumnoId) => navegar({ vista: 'uniformeEntrega', alumnoId })}
+          />
+        )}
+        {ruta.vista === 'uniformeEntrega' && (
+          <UniformeEntrega
+            alumnoId={ruta.alumnoId}
+            onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
+            onGuardado={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
+          />
+        )}
       </AdminShell>
 
       {actionOpen && (
-        <ProximamenteDialog
-          eyebrow="Acción rápida"
-          mensaje="Registrar pago e inscribir alumno llegan en otro spec."
+        <AccionRapidaMenu
+          onInscribir={() => {
+            setActionOpen(false);
+            navegar({ vista: 'alumnoNuevo' });
+          }}
+          onRegistrarPago={() => {
+            setActionOpen(false);
+            navegar({ vista: 'cartera' });
+          }}
           onClose={() => setActionOpen(false)}
         />
       )}

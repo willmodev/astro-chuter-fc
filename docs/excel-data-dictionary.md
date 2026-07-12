@@ -35,7 +35,7 @@
 | anio_nacimiento | `CATEGORIAS` col. AÑO (determina la categoría) |
 | categoria_id | FK → categoria (se **calcula** del año, R1; no se digita) |
 | acudiente_id | FK → acudiente |
-| cuota_mensual | `CATEGORIAS` col. CUOTA (50.000 / 40.000) |
+| cuota_mensual | `CATEGORIAS` col. CUOTA (50.000 / 40.000 — ver nota de migración: la mensualidad real es $50.000 para todos) |
 | fecha_inicio | `CATEGORIAS` col. INCIO (sic) |
 | activo | nuevo (booleano) |
 
@@ -70,7 +70,7 @@
 - **R1 · Categoría automática.** Se calcula del año de nacimiento (no se digita). Mapeo temporada 2026:
   `2022-2023→SUB 4 · 2020-2021→SUB 6 · 2018-2019→SUB 8 · 2016-2017→SUB 10 · 2014-2015→SUB 12 · 2012-2013→SUB 14 · 2010-2011→SUB 16`.
   Fórmula general: `categoria = (año_temporada − año_nacimiento)` redondeado al **par superior**, acotado a [4, 16].
-- **R2 · Cuota y descuento.** Base **$50.000** COP/mes; **$40.000** cuando el acudiente tiene más de un hijo inscrito (hermanos). El sistema detecta hermanos por acudiente y sugiere la tarifa.
+- **R2 · Cuota y descuento.** **Corregida por el cliente (2026-07-10):** la mensualidad es **$50.000** COP/mes por jugador **sin descuento por hermanos**; el descuento de hermanos aplica al **uniforme** ($100.000 → $80.000 c/u). La detección de hermanos por acudiente (R4) se mantiene. _(La versión anterior — $40.000 de mensualidad a hermanos — salió de la col. CUOTA del Excel y era una interpretación errónea.)_
 - **R3 · Estado de pago.** Cobro mensual FEB–DIC. Estado por mes: PAGADO / PENDIENTE / PARCIAL. "Mora" = uno o más meses vencidos sin pagar.
 - **R4 · Acudiente y hermanos.** Un acudiente puede tener varios alumnos; no duplicar el acudiente (vincular varios niños al mismo registro).
 - **R5 · Validación.** Identificación requerida y única (hoy hay vacías y de pocos dígitos); celular de 10 dígitos; categoría nunca vacía ni "SUB" sin número.
@@ -82,5 +82,6 @@
 - **Categorías incompletas:** hay filas sin categoría o con "SUB" sin número → recalcular por año al migrar.
 - **Identificaciones:** varios documentos de 7 dígitos o vacíos → revisar antes de cargar.
 - **Pagos históricos:** las columnas de meses están vacías hoy → arrancar el control de pagos desde la salida en vivo del módulo (no inventar histórico).
+- **CUOTA 40.000:** hay filas con 40.000 en `CATEGORIAS`, pero el cliente aclaró (2026-07-10) que la mensualidad es $50.000 para todos → confirmar qué representan esas filas antes del seed (¿dato viejo? ¿acuerdo puntual?).
 
 > El seed (`scripts/seed-from-excel.mjs`, HU-8.1) lee el Excel **local**, aplica R1/R5 y carga datos limpios; es idempotente por documento.

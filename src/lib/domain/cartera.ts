@@ -4,6 +4,9 @@
 
 export type EstadoMes = 'paid' | 'due' | 'pending' | 'na';
 
+// Meses de la temporada (FEB..DIC). `states` siempre tiene esta longitud.
+export const MESES_TEMPORADA = 11;
+
 // Subconjunto estructural que necesitan las reglas. `Alumno` (en la capa de
 // datos) lo cumple, sin que el dominio dependa de la capa de features.
 interface AlumnoCartera {
@@ -64,4 +67,16 @@ export function pctAlDia(alumnos: readonly AlumnoCartera[]): number {
 /** Total a cobrar en Registrar pago: cuota × cantidad de meses marcados. */
 export function totalPago(cuota: number, nMeses: number): number {
   return cuota * nMeses;
+}
+
+/**
+ * States de un alumno recién inscrito: meses previos al ingreso `na`, del mes
+ * de ingreso (`mesVivo`) en adelante `pending`. Nunca `due` → no nace en mora.
+ * `mesVivo` se acota a [0, MESES_TEMPORADA − 1] (FEB → todo pending; DIC → 10 na).
+ */
+export function statesIniciales(mesVivo: number): EstadoMes[] {
+  const inicio = Math.min(Math.max(mesVivo, 0), MESES_TEMPORADA - 1);
+  return Array.from({ length: MESES_TEMPORADA }, (_, i) =>
+    i < inicio ? 'na' : 'pending',
+  );
 }

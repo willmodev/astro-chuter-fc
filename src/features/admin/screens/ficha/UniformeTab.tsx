@@ -41,11 +41,32 @@ export function UniformeTab({ alumno, onRegistrarEntrega }: Readonly<Props>) {
 
   return (
     <Card>
-      <div style={{ marginTop: -11, marginBottom: -12 }}>
+      <div style={{ marginTop: -11 }}>
         <FilaDato label="Kit">{alumno.tipoKit ?? '—'}</FilaDato>
         <FilaDato label="Número">{alumno.numero ?? '—'}</FilaDato>
         <FilaDato label="Talla">{alumno.talla}</FilaDato>
+        <FilaDato label="Pago">
+          {alumno.uniformePago === 'pagado' ? 'Pagado' : 'Pendiente'}
+        </FilaDato>
       </div>
+      <button
+        type="button"
+        onClick={onRegistrarEntrega}
+        style={{
+          marginTop: 14,
+          width: '100%',
+          height: 42,
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--border-subtle)',
+          background: 'var(--surface-sunken)',
+          color: 'var(--brand-navy)',
+          fontSize: 13.5,
+          fontWeight: 700,
+          cursor: 'pointer',
+        }}
+      >
+        Corregir entrega
+      </button>
     </Card>
   );
 }

@@ -123,7 +123,7 @@ Como administrador quiero ver el detalle de un alumno (pagos, uniforme, acudient
 Como administrador quiero inscribir un alumno calculando su categoría y tarifa automáticamente para evitar errores y agilizar.
 - **Aceptación:**
   - Dado el año de nacimiento, cuando lo ingreso, entonces la **categoría se calcula automáticamente** (R1) y se muestra como badge.
-  - Dado que el acudiente ya tiene otro hijo inscrito, cuando ingreso su nombre, entonces se detecta y se aplica **tarifa de hermanos** (R2/R4) con aviso visible.
+  - Dado que el acudiente ya tiene otro hijo inscrito, cuando ingreso su nombre, entonces se detecta el **hermano** (R4) y se muestra aviso del **descuento de uniforme** (R9); la mensualidad no cambia (R2).
   - Documento requerido y único; con < 8 dígitos muestra error.
   - Campos requeridos: nombre, documento, año nac., acudiente, celular. Al guardar se crea el alumno (y el acudiente si es nuevo).
 
@@ -254,8 +254,8 @@ Como administrador quiero configurar la vista de cartera (tarjetas/matriz) y mos
 - **Aceptación:** Dado que cambio la preferencia, cuando regreso, entonces se mantiene (persistida en `localStorage`).
 
 ### HU-7.3 · Gestionar tarifas/cuotas — `Could` · ☐
-Como administrador quiero configurar la cuota mensual y el descuento de hermanos para reflejar cambios de precio.
-- **Aceptación:** Dado la configuración, cuando actualizo la cuota base o el descuento, entonces los nuevos cálculos usan esos valores (sin alterar pagos ya registrados).
+Como administrador quiero configurar la cuota mensual y el precio/descuento del uniforme (R2/R9) para reflejar cambios de precio.
+- **Aceptación:** Dado la configuración, cuando actualizo la cuota o los precios del uniforme, entonces los nuevos cálculos usan esos valores (sin alterar pagos ya registrados).
 
 ### HU-7.4 · Gestionar categorías — `Could` · ☐
 Como administrador quiero ajustar los rangos de año por categoría para mantener el sistema vigente cada temporada.
@@ -281,17 +281,19 @@ Como administrador quiero exportar la cartera a Excel/CSV para respaldos y conta
 ## Reglas de negocio (referencia)
 
 - **R1 — Categoría automática por año de nacimiento.** Mapeo temporada 2026: `2022-2023→SUB 4 · 2020-2021→SUB 6 · 2018-2019→SUB 8 · 2016-2017→SUB 10 · 2014-2015→SUB 12 · 2012-2013→SUB 14 · 2010-2011→SUB 16`. Fórmula: `(año_temporada − año_nac)` redondeado al par superior, acotado a [4,16]. Nunca se muestran edades fijas. (Implementada en `lib/domain/categoria.ts`.)
-- **R2 — Cuota y tarifa de hermanos.** Base **$50.000** COP/mes; **$40.000** cuando el acudiente tiene más de un hijo inscrito. Se detecta hermano por acudiente.
+- **R2 — Mensualidad.** **$50.000** COP/mes por jugador, **sin descuento por hermanos**. _(Corregida por el cliente, 2026-07-10: la versión anterior daba $40.000 a hermanos; ese descuento en realidad aplica al uniforme, ver R9.)_
 - **R4 — Detección de hermano.** Por coincidencia de acudiente entre alumnos.
 - **R5 — Estados de cartera.** `paid` (pagado/verde), `due` (mora/rojo), `pending` (pendiente/gris), `na` (fuera de temporada). _(El estado `partial`/abono quedó `Won't` — decisión de Will en spec 05, 2026-07-05: un mes se cobra o no se cobra.)_
 - **R6 — Número de uniforme único por kit.** Avisar duplicados dentro del mismo kit (azul/dorado/oro).
 - **R7.2 — Preferencias de UI** (vista de cartera, mostrar montos) persistidas localmente.
 - **R8 — Formato de dinero COP** (`$45.000`, `$4.82M`, separador de miles con punto).
+- **R9 — Precio del uniforme y descuento de hermanos.** Uniforme **$100.000** COP; **$80.000** cada uno cuando son hermanos (detección por acudiente, R4). _(Aclaración del cliente, 2026-07-10.)_
 - **Marca:** verde WhatsApp `#25D366` reservado solo para cobros/recordatorios; sin emojis en la UI; "Infantil" siempre bien escrito (no replicar el typo del flyer).
 
 ## Notas / pendientes del cliente (placeholders)
 
-- Costos de mensualidad/matrícula (la inscripción es gratis) — confirmar valores reales.
+- ~~Costos de mensualidad/matrícula~~ **Confirmados (cliente, 2026-07-10):** mensualidad $50.000/jugador sin descuento; uniforme $100.000 ($80.000 c/u hermanos); inscripción gratis.
+- Aclarar qué significan las filas con CUOTA 40.000 en el Excel (la mensualidad no tiene descuento de hermanos — ¿dato viejo o acuerdo puntual?).
 - Dirección exacta + Google Maps de la Cancha de la Provincia.
 - Confirmar si el horario varía por categoría.
 - Bios y fotos de los formadores.
