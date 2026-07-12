@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin } from 'better-auth/plugins';
+import { adminAc, userAc } from 'better-auth/plugins/admin/access';
 
 import { db } from '@/lib/db/client';
 import * as schema from '@/lib/db/schema';
@@ -45,7 +46,9 @@ export const auth = betterAuth({
   },
   plugins: [
     admin({
-      // El enum de BD acota `role` a estos dos valores.
+      // Roles reales del club: infiere `role: 'admin' | 'entrenador'` en createUser.
+      // admin = permisos completos (adminAc); entrenador = rol vacío (userAc).
+      roles: { admin: adminAc, entrenador: userAc },
       defaultRole: 'entrenador',
       adminRoles: ['admin'],
     }),
