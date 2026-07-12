@@ -1,6 +1,6 @@
 # SPEC 07 — Form de alumno + Uniformes (mock)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 03 (shell, mock, DS), SPEC 05 (routing por URL, dominio, hooks), SPEC 06 (store mutable, patrón de escritura) · **Fecha:** 2026-07-10
+> **Estado:** Implementado · **Depende de:** SPEC 03 (shell, mock, DS), SPEC 05 (routing por URL, dominio, hooks), SPEC 06 (store mutable, patrón de escritura) · **Fecha:** 2026-07-10
 > **Objetivo:** Construir el **Form de alumno** (inscribir/editar con categoría automática R1 y detección de hermanos R4) y las pantallas de **Uniformes** (control por kit con alerta de números repetidos R6 + registrar entrega con precio y pago R9), cerrando los Must de UI restantes (EPIC 2 y 5) sobre el store mock.
 
 ---
@@ -148,43 +148,43 @@ _Verifica:_ la entrega marca `entregado` y se refleja al instante en Ficha y Uni
 
 ### Routing
 
-- [ ] `/admin/alumnos/nuevo`, `/admin/alumnos/:id/editar`, `/admin/uniformes` y `/admin/alumnos/:id/uniforme` cargan directo por URL con sesión activa; sin sesión redirigen a `/admin/login?next=<ruta>`.
-- [ ] `/admin/alumnos/nuevo` abre el form vacío (no se interpreta como ficha); un `:id` inexistente en editar/entrega muestra "Alumno no encontrado" con volver.
-- [ ] Atrás/adelante del navegador recorren el flujo sin recargar la página.
+- [x] `/admin/alumnos/nuevo`, `/admin/alumnos/:id/editar`, `/admin/uniformes` y `/admin/alumnos/:id/uniforme` cargan directo por URL con sesión activa; sin sesión redirigen a `/admin/login?next=<ruta>`.
+- [x] `/admin/alumnos/nuevo` abre el form vacío (no se interpreta como ficha); un `:id` inexistente en editar/entrega muestra "Alumno no encontrado" con volver.
+- [x] Atrás/adelante del navegador recorren el flujo sin recargar la página.
 
 ### Form de alumno
 
-- [ ] El FAB abre el menú con "Inscribir alumno" (→ form) y "Registrar pago" (→ Cartera); el placeholder "Próximamente" del FAB ya no existe.
-- [ ] Al digitar el año de nacimiento aparece el badge de categoría automática (SUB 4–16, R1); año fuera de rango muestra error y no permite guardar.
-- [ ] El autocomplete de acudiente sugiere existentes sin distinguir mayúsculas/acentos; elegir uno dispara el aviso de **hermano detectado con descuento de uniforme (R9)** y la cuota mostrada sigue siendo **$50.000** (R2).
-- [ ] Documento: requerido, ≥8 dígitos y **único** (también al editar); celular de 10 dígitos; errores visibles por campo.
-- [ ] Guardar en modo nuevo crea el alumno (meses previos `na`, del mes vivo en adelante `pending` — **no nace en mora**) y navega a su Ficha; aparece en Alumnos, Cartera y Dashboard con cifras coherentes.
-- [ ] "Editar" desde la Ficha abre el form precargado; cambiar el año recalcula la categoría; al guardar, la Ficha refleja los cambios.
-- [ ] `hermanos` se recalcula para todos los alumnos del mismo acudiente al registrar/editar.
+- [x] El FAB abre el menú con "Inscribir alumno" (→ form) y "Registrar pago" (→ Cartera); el placeholder "Próximamente" del FAB ya no existe.
+- [x] Al digitar el año de nacimiento aparece el badge de categoría automática (SUB 4–16, R1); año fuera de rango muestra error y no permite guardar.
+- [x] El autocomplete de acudiente sugiere existentes sin distinguir mayúsculas/acentos; elegir uno dispara el aviso de **hermano detectado con descuento de uniforme (R9)** y la cuota mostrada sigue siendo **$50.000** (R2).
+- [x] Documento: requerido, ≥8 dígitos y **único** (también al editar); celular de 10 dígitos; errores visibles por campo.
+- [x] Guardar en modo nuevo crea el alumno (meses previos `na`, del mes vivo en adelante `pending` — **no nace en mora**) y navega a su Ficha; aparece en Alumnos, Cartera y Dashboard con cifras coherentes.
+- [x] "Editar" desde la Ficha abre el form precargado; cambiar el año recalcula la categoría; al guardar, la Ficha refleja los cambios.
+- [x] `hermanos` se recalcula para todos los alumnos del mismo acudiente al registrar/editar.
 
 ### Pantalla Uniformes
 
-- [ ] La entrada "Uniformes" en Más navega a `/admin/uniformes`.
-- [ ] El toggle AZUL/DORADO filtra el listado; los contadores Entregados/Pendientes cuadran con los datos.
-- [ ] El listado del kit va ordenado por número y muestra nombre, categoría, talla y estado de pago del uniforme.
-- [ ] Si hay números repetidos dentro del kit, se muestra una alerta indicando cuáles (R6).
-- [ ] "Por entregar" lista los alumnos sin uniforme con acción "Asignar".
+- [x] La entrada "Uniformes" en Más navega a `/admin/uniformes`.
+- [x] El toggle AZUL/DORADO filtra el listado; los contadores Entregados/Pendientes cuadran con los datos.
+- [x] El listado del kit va ordenado por número y muestra nombre, categoría, talla y estado de pago del uniforme.
+- [x] Si hay números repetidos dentro del kit, se muestra una alerta indicando cuáles (R6).
+- [x] "Por entregar" lista los alumnos sin uniforme con acción "Asignar".
 
 ### Flujo Registrar entrega
 
-- [ ] Se llega desde la Ficha (tab Uniforme, ya sin placeholder) y desde "Asignar" en Uniformes.
-- [ ] El form captura kit + número + talla + pago y muestra el precio: $100.000, u **$80.000 si el alumno tiene hermanos** (R9).
-- [ ] Elegir un número ya usado en ese kit advierte antes de confirmar pero **permite guardar**; la alerta de Uniformes lo refleja después.
-- [ ] Guardar marca `entregado` y se ve al instante en Ficha y Uniformes; una entrega existente se puede corregir con el form precargado.
+- [x] Se llega desde la Ficha (tab Uniforme, ya sin placeholder) y desde "Asignar" en Uniformes.
+- [x] El form captura kit + número + talla + pago y muestra el precio: $100.000, u **$80.000 si el alumno tiene hermanos** (R9).
+- [x] Elegir un número ya usado en ese kit advierte antes de confirmar pero **permite guardar**; la alerta de Uniformes lo refleja después.
+- [x] Guardar marca `entregado` y se ve al instante en Ficha y Uniformes; una entrega existente se puede corregir con el form precargado.
 
 ### Calidad y no-regresión
 
-- [ ] La mock ya no tiene cuotas de $40.000; los totales derivados siguen coherentes entre Dashboard, Cartera y Ficha.
-- [ ] Toda la lógica (categoría, validación, precios, duplicados, hermanos) vive en `src/lib/domain/` (puras); los componentes no calculan negocio.
-- [ ] Contratos del store estables: migrar a Actions no cambiaría la forma de `registrarAlumno`/`actualizarAlumno`/`guardarUniforme`.
-- [ ] `npm run build` sigue estático para el marketing; `/admin/**` noindex y fuera del sitemap.
-- [ ] Ningún archivo > 200 líneas; cero `any`; sin dependencias nuevas; `tsc --noEmit` + `build` en verde.
-- [ ] De 320px a desktop: cero scroll horizontal en las 3 pantallas nuevas.
+- [x] La mock ya no tiene cuotas de $40.000; los totales derivados siguen coherentes entre Dashboard, Cartera y Ficha.
+- [x] Toda la lógica (categoría, validación, precios, duplicados, hermanos) vive en `src/lib/domain/` (puras); los componentes no calculan negocio.
+- [x] Contratos del store estables: migrar a Actions no cambiaría la forma de `registrarAlumno`/`actualizarAlumno`/`guardarUniforme`.
+- [x] `npm run build` sigue estático para el marketing; `/admin/**` noindex y fuera del sitemap.
+- [x] Ningún archivo > 200 líneas; cero `any`; sin dependencias nuevas; `tsc --noEmit` + `build` en verde.
+- [x] De 320px a desktop: cero scroll horizontal en las 3 pantallas nuevas.
 
 ---
 
