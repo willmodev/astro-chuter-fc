@@ -1,9 +1,10 @@
 import { AdminShell } from './chrome/AdminShell';
 import { TABS_ENTRENADOR, type TabId } from './chrome/tabs';
 import { useAdminRouter } from './router/useAdminRouter';
-import { EnConstruccion } from './screens/EnConstruccion';
 import { Entrenos } from './screens/entrenos/Entrenos';
-import { MasMenu } from './screens/mas/MasMenu';
+import { Ficha } from './screens/ficha/Ficha';
+import { MasEntrenador } from './screens/mas/MasEntrenador';
+import { Plantel } from './screens/plantel/Plantel';
 import { Sesion } from './screens/sesion/Sesion';
 import type { RutaAdmin } from './router/types';
 
@@ -80,19 +81,19 @@ export function EntrenadorApp({ userId, userName, cats }: Readonly<EntrenadorApp
         />
       )}
       {ruta.vista === 'plantel' && (
-        <EnConstruccion nombre={`Plantel (${cats.join(', ') || 'sin categorías'})`} />
-      )}
-      {ruta.vista === 'ficha' && <EnConstruccion nombre="Ficha readOnly" />}
-      {/* Variante propia del entrenador en el bloque D; mientras tanto la
-          compartida (su botón Uniformes rebota en el gate hacia Entrenos). */}
-      {ruta.vista === 'mas' && (
-        <MasMenu
-          userName={userName}
-          role="entrenador"
-          onOpenEquipo={() => navegar({ vista: 'entrenos' })}
-          onOpenUniformes={() => navegar({ vista: 'entrenos' })}
+        <Plantel
+          cats={cats}
+          onOpenFicha={(alumnoId) => navegar({ vista: 'ficha', alumnoId })}
         />
       )}
+      {ruta.vista === 'ficha' && (
+        <Ficha
+          alumnoId={ruta.alumnoId}
+          readOnly
+          onVolver={() => navegar({ vista: 'plantel' })}
+        />
+      )}
+      {ruta.vista === 'mas' && <MasEntrenador userName={userName} cats={cats} />}
     </AdminShell>
   );
 }

@@ -7,13 +7,19 @@ import type { Alumno } from '../../data/types';
 
 // Tab Uniforme (spec 08): muestra los DOS ejes (Entregado/Sin entregar +
 // Pagado/Sin pagar) con su estado derivado; kit/número si fue entregado. El CTA
-// navega a la pantalla de uniforme (la gestión no es inline).
+// navega a la pantalla de uniforme (la gestión no es inline). En modo readOnly
+// (entrenador, spec 09) muestra SOLO la entrega: sin estado de pago ni CTA.
 interface Props {
   alumno: Alumno;
-  onRegistrarEntrega: () => void;
+  readOnly?: boolean;
+  onRegistrarEntrega?: () => void;
 }
 
-export function UniformeTab({ alumno, onRegistrarEntrega }: Readonly<Props>) {
+export function UniformeTab({
+  alumno,
+  readOnly = false,
+  onRegistrarEntrega,
+}: Readonly<Props>) {
   const entregado = alumno.uniforme === 'entregado';
   const pagado = alumno.uniformePago === 'pagado';
   const meta = ESTADO_UNIFORME_META[estadoUniforme(alumno.uniforme, alumno.uniformePago)];
@@ -21,18 +27,22 @@ export function UniformeTab({ alumno, onRegistrarEntrega }: Readonly<Props>) {
   return (
     <Card>
       <div style={{ display: 'grid', gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-          <span style={{ fontSize: 13.5, color: 'var(--text-muted)' }}>{meta.desc}</span>
-          <Badge tone={meta.tone}>{meta.label}</Badge>
-        </div>
+        {!readOnly && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+            <span style={{ fontSize: 13.5, color: 'var(--text-muted)' }}>{meta.desc}</span>
+            <Badge tone={meta.tone}>{meta.label}</Badge>
+          </div>
+        )}
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <Badge tone={entregado ? 'paid' : 'pending'} dot>
             {entregado ? 'Entregado' : 'Sin entregar'}
           </Badge>
-          <Badge tone={pagado ? 'paid' : 'pending'} dot>
-            {pagado ? 'Pagado' : 'Sin pagar'}
-          </Badge>
+          {!readOnly && (
+            <Badge tone={pagado ? 'paid' : 'pending'} dot>
+              {pagado ? 'Pagado' : 'Sin pagar'}
+            </Badge>
+          )}
         </div>
 
         {entregado && (
@@ -44,6 +54,7 @@ export function UniformeTab({ alumno, onRegistrarEntrega }: Readonly<Props>) {
         )}
       </div>
 
+      {!readOnly && (
       <button
         type="button"
         onClick={onRegistrarEntrega}
@@ -62,6 +73,7 @@ export function UniformeTab({ alumno, onRegistrarEntrega }: Readonly<Props>) {
       >
         {entregado ? 'Gestionar uniforme' : 'Registrar uniforme'}
       </button>
+      )}
     </Card>
   );
 }
