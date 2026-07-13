@@ -9,7 +9,7 @@ import { useDashboardData } from './hooks/useDashboardData';
 import { useAdminRouter } from './router/useAdminRouter';
 import { AlumnoForm } from './screens/alumno-form/AlumnoForm';
 import { Dashboard } from './screens/dashboard/Dashboard';
-import { EnConstruccion } from './screens/EnConstruccion';
+import { Entrenamientos } from './screens/entrenamientos/Entrenamientos';
 import { EquipoScreen } from './screens/equipo/EquipoScreen';
 import { Alumnos } from './screens/alumnos/Alumnos';
 import { Cartera } from './screens/cartera/Cartera';
@@ -120,6 +120,7 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
             role={role}
             onOpenEquipo={() => navegar({ vista: 'equipo' })}
             onOpenUniformes={() => navegar({ vista: 'uniformes' })}
+            onOpenEntrenamientos={() => navegar({ vista: 'entrenamientos' })}
           />
         )}
         {ruta.vista === 'equipo' && (
@@ -176,7 +177,7 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
           <UniformeEntrega alumnoId={ruta.alumnoId} onVolver={volver} />
         )}
         {ruta.vista === 'entrenamientos' && (
-          <EnConstruccion nombre="Entrenamientos" />
+          <Entrenamientos onBack={() => navegar({ vista: 'mas' })} />
         )}
       </AdminShell>
 

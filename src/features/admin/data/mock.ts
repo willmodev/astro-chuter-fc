@@ -61,6 +61,20 @@ export const cumple: Cumple[] = [
 // semana actual se derivan (no se pre-crean) hasta que el profesor registre.
 export const semanas: Semana[] = generarSemanas(new Date());
 
+// Cats de los entrenadores DE EJEMPLO, solo para que la vista admin derive el
+// roster (asistencia). En BD real vendrán de `user.cats` (auth, spec 04); el
+// store mock vive por pestaña, así que el admin solo ve estos registros.
+export interface EntrenadorMock {
+  id: string;
+  nombre: string;
+  cats: string[];
+}
+
+export const entrenadoresMock: EntrenadorMock[] = [
+  { id: 'ent-camilo', nombre: 'Camilo Andrade', cats: ['SUB 4', 'SUB 6', 'SUB 8'] },
+  { id: 'ent-ebed', nombre: 'Ebed Calderón', cats: ['SUB 10', 'SUB 12', 'SUB 14', 'SUB 16'] },
+];
+
 const [, w1, w2] = semanas;
 
 function plan(

@@ -7,6 +7,7 @@ interface Props {
   role: 'admin' | 'entrenador';
   onOpenEquipo: () => void;
   onOpenUniformes: () => void;
+  onOpenEntrenamientos: () => void;
 }
 
 const ROL_LABEL: Record<Props['role'], string> = {
@@ -19,6 +20,7 @@ export function MasMenu({
   role,
   onOpenEquipo,
   onOpenUniformes,
+  onOpenEntrenamientos,
 }: Readonly<Props>) {
   const { saliendo, cerrarSesion } = useLogout();
 
@@ -51,6 +53,15 @@ export function MasMenu({
         hint="Control de kits"
         onClick={onOpenUniformes}
       />
+
+      {role === 'admin' && (
+        <BotonMenu
+          icon="calendar-days"
+          label="Entrenamientos"
+          hint="Lo que registran los profesores"
+          onClick={onOpenEntrenamientos}
+        />
+      )}
 
       <button
         type="button"
