@@ -1,6 +1,6 @@
 # SPEC 09 — Entrenamientos + app del Profesor (mock)
 
-> **Estado:** Aprobado · **Depende de:** SPEC 03 (shell, DS, mock), SPEC 04 (roles admin/entrenador, `cats` por usuario), SPEC 05 (routing por URL, alumnos/ficha), SPEC 08 (ficha/uniforme, patrón Sheet) · **Fecha:** 2026-07-12
+> **Estado:** Implementado · **Depende de:** SPEC 03 (shell, DS, mock), SPEC 04 (roles admin/entrenador, `cats` por usuario), SPEC 05 (routing por URL, alumnos/ficha), SPEC 08 (ficha/uniforme, patrón Sheet) · **Fecha:** 2026-07-12
 > **Objetivo:** Darle al entrenador su app propia — plan semanal (tema + objetivos), sesiones por día con la planeación de TactalPad como imagen y asistencia (pasar lista), plantel de sus categorías y ficha de alumno en solo lectura sin datos de dinero — y al admin la vista de solo lectura de lo que registran los profesores, sobre el store mock.
 
 ---
@@ -156,40 +156,40 @@ _Verifica:_ el admin ve lo registrado en la mock; no hay ningún control de edic
 
 ### Routing y roles
 
-- [ ] `/admin/entrenos`, `/admin/entrenos/:weekId/:day`, `/admin/plantel` y `/admin/entrenamientos` cargan directo por URL con sesión activa; sin sesión redirigen a `/admin/login?next=<ruta>`.
-- [ ] Un entrenador logueado aterriza en Entrenos (el placeholder "Tu panel está en camino" ya no existe) y sus tabs son Entrenos / Alumnos / Más, sin FAB.
-- [ ] Un entrenador que navega a una vista de admin (`/admin/cartera`, `/admin/equipo`, …) es redirigido a `/admin/entrenos`; `/admin/entrenamientos` es solo para admin.
+- [x] `/admin/entrenos`, `/admin/entrenos/:weekId/:day`, `/admin/plantel` y `/admin/entrenamientos` cargan directo por URL con sesión activa; sin sesión redirigen a `/admin/login?next=<ruta>`.
+- [x] Un entrenador logueado aterriza en Entrenos (el placeholder "Tu panel está en camino" ya no existe) y sus tabs son Entrenos / Alumnos / Más, sin FAB.
+- [x] Un entrenador que navega a una vista de admin (`/admin/cartera`, `/admin/equipo`, …) es redirigido a `/admin/entrenos`; `/admin/entrenamientos` es solo para admin.
 
 ### Plan semanal y sesiones
 
-- [ ] La home muestra sede/horario, chips de semanas (actual + pasadas), la card del plan semanal y una DayCard por día Lun/Mié/Vie.
-- [ ] El plan semanal (tema + objetivos) se registra/edita en una hoja modal y se refleja en la home y en la vista del admin.
-- [ ] La semana actual muestra el badge "N por registrar" cuando hay sesiones sin registrar.
-- [ ] La sesión del día muestra Activación y Vuelta a la calma como fases fijas (no editables) y captura la **imagen de la parte central** con preview local, reemplazable, más una nota opcional.
-- [ ] Registrar una sesión guarda imagen/nota + asistencia, marca la DayCard como registrada (con thumbnail) y muestra la pastilla presentes/total con el tono correcto.
-- [ ] Una sesión de una semana pasada se puede abrir y corregir (imagen, nota y asistencia).
-- [ ] `guardarPlanSemana` y `guardarSesion` son idempotentes: guardar dos veces no duplica ni corrompe.
+- [x] La home muestra sede/horario, chips de semanas (actual + pasadas), la card del plan semanal y una DayCard por día Lun/Mié/Vie.
+- [x] El plan semanal (tema + objetivos) se registra/edita en una hoja modal y se refleja en la home y en la vista del admin.
+- [x] La semana actual muestra el badge "N por registrar" cuando hay sesiones sin registrar.
+- [x] La sesión del día muestra Activación y Vuelta a la calma como fases fijas (no editables) y captura la **imagen de la parte central** con preview local, reemplazable, más una nota opcional.
+- [x] Registrar una sesión guarda imagen/nota + asistencia, marca la DayCard como registrada (con thumbnail) y muestra la pastilla presentes/total con el tono correcto.
+- [x] Una sesión de una semana pasada se puede abrir y corregir (imagen, nota y asistencia).
+- [x] `guardarPlanSemana` y `guardarSesion` son idempotentes: guardar dos veces no duplica ni corrompe.
 
 ### Plantel y ficha
 
-- [ ] El plantel lista solo los alumnos de las categorías del entrenador, con buscador (nombre/acudiente, sin acentos) y filtro por categoría.
-- [ ] La ficha en modo readOnly no muestra el tab Pagos, ni estados de mora/cuota, ni el estado de pago del uniforme, ni botones de escritura; sí muestra datos del alumno, entrega de uniforme y acudiente.
-- [ ] Para el admin, la ficha sigue exactamente como en los specs 05–08.
+- [x] El plantel lista solo los alumnos de las categorías del entrenador, con buscador (nombre/acudiente, sin acentos) y filtro por categoría.
+- [x] La ficha en modo readOnly no muestra el tab Pagos, ni estados de mora/cuota, ni el estado de pago del uniforme, ni botones de escritura; sí muestra datos del alumno, entrega de uniforme y acudiente.
+- [x] Para el admin, la ficha sigue exactamente como en los specs 05–08.
 
 ### Vista del admin
 
-- [ ] Desde Más (solo admin) se abre Entrenamientos: por semana y entrenador se ven tema/objetivos del plan y las sesiones (thumbnail + asistencia).
-- [ ] No existe ningún control de edición en esa vista.
+- [x] Desde Más (solo admin) se abre Entrenamientos: por semana y entrenador se ven tema/objetivos del plan y las sesiones (thumbnail + asistencia).
+- [x] No existe ningún control de edición en esa vista.
 
 ### Docs
 
-- [ ] `docs/backlog.md` actualizado: rol entrenador documentado, EPIC 6 reescrito con las HUs del modelo real (plan semanal, imagen, asistencia) y HU-6.1/6.2 originales marcadas obsoletas con nota y fecha.
+- [x] `docs/backlog.md` actualizado: rol entrenador documentado, EPIC 6 reescrito con las HUs del modelo real (plan semanal, imagen, asistencia) y HU-6.1/6.2 originales marcadas obsoletas con nota y fecha.
 
 ### Calidad y no-regresión
 
-- [ ] Ningún archivo > 200 líneas; cero `any`; sin dependencias nuevas; `tsc --noEmit` + `build` en verde.
-- [ ] Marketing estático; `/admin/**` noindex y fuera del sitemap.
-- [ ] De 320px a desktop: cero scroll horizontal en las pantallas nuevas.
+- [x] Ningún archivo > 200 líneas; cero `any`; sin dependencias nuevas; `tsc --noEmit` + `build` en verde.
+- [x] Marketing estático; `/admin/**` noindex y fuera del sitemap.
+- [x] De 320px a desktop: cero scroll horizontal en las pantallas nuevas.
 
 ---
 
