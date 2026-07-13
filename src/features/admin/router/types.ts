@@ -1,5 +1,7 @@
 // Rutas de la isla admin. La URL es la única fuente de verdad de la vista:
 // cada variante corresponde a un path bajo /admin/** (ver rutas.ts).
+import type { DiaEntreno } from '@/lib/domain/entrenos';
+
 export type RutaAdmin =
   | { vista: 'dashboard' }
   | { vista: 'alumnos' }
@@ -11,4 +13,8 @@ export type RutaAdmin =
   | { vista: 'uniformes' }
   | { vista: 'uniformeEntrega'; alumnoId: number }
   | { vista: 'mas' }
-  | { vista: 'equipo' };
+  | { vista: 'equipo' }
+  | { vista: 'entrenos' }
+  | { vista: 'sesion'; weekId: string; day: DiaEntreno }
+  | { vista: 'plantel' }
+  | { vista: 'entrenamientos' };

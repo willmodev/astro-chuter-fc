@@ -9,8 +9,10 @@ import { AdminApp } from '@/features/admin/AdminApp';
 const user = Astro.locals.user;
 const role = user?.role === 'admin' ? 'admin' : 'entrenador';
 const userName = user?.name ?? '';
+// Categorías del entrenador (viven en la sesión de Better Auth, spec 04).
+const cats = user?.cats ?? [];
 ---
 
 <AdminLayout>
-  <AdminApp role={role} userName={userName} client:only="react" />
+  <AdminApp role={role} userName={userName} cats={cats} client:only="react" />
 </AdminLayout>

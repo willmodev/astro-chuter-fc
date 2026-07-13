@@ -1,4 +1,14 @@
+import { normaliza } from '@/lib/domain/alumnos';
+import { DIAS_ENTRENO, type DiaEntreno } from '@/lib/domain/entrenos';
+
 import type { RutaAdmin } from './types';
+
+// El día viaja en la URL como slug sin acentos ("Miércoles" ↔ "miercoles").
+function diaDeSlug(slug: string): DiaEntreno | null {
+  return DIAS_ENTRENO.find((d) => normaliza(d) === slug) ?? null;
+}
+
+const WEEK_ID = /^w-\d+$/;
 
 // Conversión pura pathname ↔ RutaAdmin. Parseo defensivo: cualquier ruta
 // desconocida cae al dashboard y un :id no numérico cae a la lista de
@@ -23,12 +33,24 @@ export function parseRuta(pathname: string): RutaAdmin {
     return { vista: 'alumnos' };
   }
 
+  if (vista === 'entrenos') {
+    if (id === undefined) return { vista: 'entrenos' };
+    // /admin/entrenos/:weekId/:day — semana o día inválidos caen a entrenos.
+    const day = sub === undefined ? null : diaDeSlug(sub);
+    if (WEEK_ID.test(id) && day !== null) {
+      return { vista: 'sesion', weekId: id, day };
+    }
+    return { vista: 'entrenos' };
+  }
+
   if (id !== undefined) return { vista: 'dashboard' };
   if (
     vista === 'cartera' ||
     vista === 'mas' ||
     vista === 'equipo' ||
-    vista === 'uniformes'
+    vista === 'uniformes' ||
+    vista === 'plantel' ||
+    vista === 'entrenamientos'
   ) {
     return { vista };
   }
@@ -49,6 +71,8 @@ export function rutaAPath(ruta: RutaAdmin): string {
       return `/admin/alumnos/${ruta.alumnoId}/pago`;
     case 'uniformeEntrega':
       return `/admin/alumnos/${ruta.alumnoId}/uniforme`;
+    case 'sesion':
+      return `/admin/entrenos/${ruta.weekId}/${normaliza(ruta.day)}`;
     default:
       return `/admin/${ruta.vista}`;
   }

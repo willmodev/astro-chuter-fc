@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { AccionRapidaMenu } from './chrome/AccionRapidaMenu';
 import { AdminShell } from './chrome/AdminShell';
 import { IconButton } from './chrome/IconButton';
-import { type TabId } from './chrome/tabs';
+import { TABS_ADMIN, type TabId } from './chrome/tabs';
+import { EntrenadorApp } from './EntrenadorApp';
 import { useDashboardData } from './hooks/useDashboardData';
 import { useAdminRouter } from './router/useAdminRouter';
 import { AlumnoForm } from './screens/alumno-form/AlumnoForm';
 import { Dashboard } from './screens/dashboard/Dashboard';
-import { EntrenadorHome } from './screens/entrenador/EntrenadorHome';
+import { EnConstruccion } from './screens/EnConstruccion';
 import { EquipoScreen } from './screens/equipo/EquipoScreen';
 import { Alumnos } from './screens/alumnos/Alumnos';
 import { Cartera } from './screens/cartera/Cartera';
@@ -22,11 +23,12 @@ import type { RutaAdmin } from './router/types';
 export interface AdminAppProps {
   role: 'admin' | 'entrenador';
   userName: string;
+  cats: string[];
 }
 
-// La vista activa la decide la URL (useAdminRouter). Todas las vistas
-// renderizan contenido real; Uniformes/Entrenamientos/Más real siguen
-// "Próximamente" dentro de sus propias pantallas (otros specs).
+// La vista activa la decide la URL (useAdminRouter). Las vistas del
+// entrenador (entrenos/sesion/plantel) nunca llegan acá: el gate del router
+// las convierte en 'entrenamientos'; sus entradas son inertes (exhaustividad).
 const META: Record<RutaAdmin['vista'], { title: string; eyebrow: string }> = {
   dashboard: { title: 'Dashboard', eyebrow: 'Temporada 2026' },
   alumnos: { title: 'Alumnos', eyebrow: 'Inscripciones' },
@@ -39,10 +41,14 @@ const META: Record<RutaAdmin['vista'], { title: string; eyebrow: string }> = {
   uniformeEntrega: { title: 'Alumnos', eyebrow: 'Registrar uniforme' },
   mas: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
   equipo: { title: 'Más', eyebrow: 'Club Chuter F.C.' },
+  entrenamientos: { title: 'Más', eyebrow: 'Entrenamientos' },
+  entrenos: { title: 'Más', eyebrow: 'Entrenamientos' },
+  sesion: { title: 'Más', eyebrow: 'Entrenamientos' },
+  plantel: { title: 'Más', eyebrow: 'Entrenamientos' },
 };
 
 // Tab resaltada en la navegación para cada vista (Ficha/form/entrega cuelgan de
-// Alumnos, Equipo/Uniformes cuelgan de Más, Pago cuelga de Cartera).
+// Alumnos, Equipo/Uniformes/Entrenamientos cuelgan de Más, Pago de Cartera).
 const TAB_DE_VISTA: Record<RutaAdmin['vista'], TabId> = {
   dashboard: 'dashboard',
   alumnos: 'alumnos',
@@ -55,6 +61,10 @@ const TAB_DE_VISTA: Record<RutaAdmin['vista'], TabId> = {
   uniformeEntrega: 'alumnos',
   mas: 'mas',
   equipo: 'mas',
+  entrenamientos: 'mas',
+  entrenos: 'mas',
+  sesion: 'mas',
+  plantel: 'mas',
 };
 
 const RUTA_DE_TAB: Record<TabId, RutaAdmin> = {
@@ -62,18 +72,20 @@ const RUTA_DE_TAB: Record<TabId, RutaAdmin> = {
   alumnos: { vista: 'alumnos' },
   cartera: { vista: 'cartera' },
   mas: { vista: 'mas' },
+  entrenos: { vista: 'entrenos' },
+  plantel: { vista: 'plantel' },
 };
 
-export function AdminApp({ role, userName }: Readonly<AdminAppProps>) {
-  // Gate por rol: el entrenador aún no tiene app propia (otro spec).
+export function AdminApp({ role, userName, cats }: Readonly<AdminAppProps>) {
+  // Gate por rol: cada rol monta su app; el router refuerza vista a vista.
   if (role === 'entrenador') {
-    return <EntrenadorHome userName={userName} />;
+    return <EntrenadorApp userName={userName} cats={cats} />;
   }
-  return <AdminHome role={role} userName={userName} />;
+  return <AdminHome role={role} userName={userName} cats={cats} />;
 }
 
 function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
-  const { ruta, navegar, volver } = useAdminRouter();
+  const { ruta, navegar, volver } = useAdminRouter('admin');
   const [actionOpen, setActionOpen] = useState(false);
   const data = useDashboardData();
   const meta = META[ruta.vista];
@@ -87,6 +99,7 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
   return (
     <>
       <AdminShell
+        tabs={TABS_ADMIN}
         active={TAB_DE_VISTA[ruta.vista]}
         onTab={navegarTab}
         onAction={() => setActionOpen(true)}
@@ -160,6 +173,9 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
         )}
         {ruta.vista === 'uniformeEntrega' && (
           <UniformeEntrega alumnoId={ruta.alumnoId} onVolver={volver} />
+        )}
+        {ruta.vista === 'entrenamientos' && (
+          <EnConstruccion nombre="Entrenamientos" />
         )}
       </AdminShell>
 
