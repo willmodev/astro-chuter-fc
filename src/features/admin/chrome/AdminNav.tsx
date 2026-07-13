@@ -1,25 +1,27 @@
 import { Icon } from './Icon';
-import { TABS, type TabId } from './tabs';
+import type { TabDef, TabId } from './tabs';
 
-// Navegación responsive: en mobile es tab-bar inferior con FAB dorado
-// central; en desktop (≥1024px) muta a sidebar lateral fija. Ambas
-// variantes se renderizan y `admin.css` decide cuál se muestra por ancho.
+// Navegación responsive: en mobile es tab-bar inferior (con FAB dorado
+// central solo si hay `onAction`); en desktop (≥1024px) muta a sidebar
+// lateral fija. Ambas variantes se renderizan y `admin.css` decide cuál
+// se muestra por ancho. Las tabs las decide el rol (spec 09).
 interface Props {
+  tabs: readonly TabDef[];
   active: TabId;
   onTab: (id: TabId) => void;
-  onAction: () => void;
+  onAction?: () => void;
 }
 
-export function AdminNav({ active, onTab, onAction }: Props) {
+export function AdminNav({ tabs, active, onTab, onAction }: Readonly<Props>) {
   return (
     <>
-      <Sidebar active={active} onTab={onTab} />
-      <TabBar active={active} onTab={onTab} onAction={onAction} />
+      <Sidebar tabs={tabs} active={active} onTab={onTab} />
+      <TabBar tabs={tabs} active={active} onTab={onTab} onAction={onAction} />
     </>
   );
 }
 
-function Sidebar({ active, onTab }: Omit<Props, 'onAction'>) {
+function Sidebar({ tabs, active, onTab }: Readonly<Omit<Props, 'onAction'>>) {
   return (
     <aside className="admin-sidebar bg-pitch-lines">
       <div className="admin-sidebar__brand">
@@ -32,7 +34,7 @@ function Sidebar({ active, onTab }: Omit<Props, 'onAction'>) {
         </div>
       </div>
       <nav className="admin-sidebar__nav">
-        {TABS.map((t) => {
+        {tabs.map((t) => {
           const on = active === t.id;
           return (
             <button
@@ -51,8 +53,8 @@ function Sidebar({ active, onTab }: Omit<Props, 'onAction'>) {
   );
 }
 
-function TabBar({ active, onTab, onAction }: Props) {
-  const item = (t: (typeof TABS)[number]) => {
+function TabBar({ tabs, active, onTab, onAction }: Readonly<Props>) {
+  const item = (t: TabDef) => {
     const on = active === t.id;
     return (
       <button
@@ -68,16 +70,21 @@ function TabBar({ active, onTab, onAction }: Props) {
       </button>
     );
   };
+  // Con FAB, las tabs se parten en dos mitades y el hueco central lo ocupa el
+  // botón flotante; sin FAB (entrenador) se reparten parejas (flex: 1).
+  const mitad = Math.ceil(tabs.length / 2);
   return (
     <nav className="admin-tabbar">
-      {item(TABS[0])}
-      {item(TABS[1])}
-      <div style={{ width: 64, flexShrink: 0 }} />
-      {item(TABS[2])}
-      {item(TABS[3])}
-      <button onClick={onAction} aria-label="Acción rápida" className="admin-tabbar__fab">
-        <Icon name="plus" size={28} strokeWidth={2.4} />
-      </button>
+      {(onAction ? tabs.slice(0, mitad) : tabs).map(item)}
+      {onAction && (
+        <>
+          <div style={{ width: 64, flexShrink: 0 }} />
+          {tabs.slice(mitad).map(item)}
+          <button onClick={onAction} aria-label="Acción rápida" className="admin-tabbar__fab">
+            <Icon name="plus" size={28} strokeWidth={2.4} />
+          </button>
+        </>
+      )}
     </nav>
   );
 }

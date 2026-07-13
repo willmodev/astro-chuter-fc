@@ -1,23 +1,27 @@
-// Selector segmentado de las 3 tabs de la Ficha.
+// Selector segmentado de las tabs de la Ficha. En modo readOnly (entrenador,
+// spec 09) la Ficha pasa `tabs` sin 'pagos'; por defecto están las 3.
 export type TabFicha = 'pagos' | 'uniforme' | 'acudiente';
 
 interface Props {
   tab: TabFicha;
   onTab: (tab: TabFicha) => void;
+  tabs?: readonly TabFicha[];
 }
 
-const TABS: readonly { id: TabFicha; label: string }[] = [
-  { id: 'pagos', label: 'Pagos' },
-  { id: 'uniforme', label: 'Uniforme' },
-  { id: 'acudiente', label: 'Acudiente' },
-];
+const LABELS: Record<TabFicha, string> = {
+  pagos: 'Pagos',
+  uniforme: 'Uniforme',
+  acudiente: 'Acudiente',
+};
 
-export function TabsFicha({ tab, onTab }: Readonly<Props>) {
+const TODAS: readonly TabFicha[] = ['pagos', 'uniforme', 'acudiente'];
+
+export function TabsFicha({ tab, onTab, tabs = TODAS }: Readonly<Props>) {
   return (
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
+        gridTemplateColumns: `repeat(${tabs.length}, 1fr)`,
         gap: 4,
         padding: 4,
         borderRadius: 'var(--radius-md)',
@@ -25,13 +29,13 @@ export function TabsFicha({ tab, onTab }: Readonly<Props>) {
         border: '1px solid var(--border-subtle)',
       }}
     >
-      {TABS.map((t) => {
-        const activa = tab === t.id;
+      {tabs.map((id) => {
+        const activa = tab === id;
         return (
           <button
-            key={t.id}
+            key={id}
             type="button"
-            onClick={() => onTab(t.id)}
+            onClick={() => onTab(id)}
             aria-pressed={activa}
             style={{
               height: 36,
@@ -45,7 +49,7 @@ export function TabsFicha({ tab, onTab }: Readonly<Props>) {
               cursor: 'pointer',
             }}
           >
-            {t.label}
+            {LABELS[id]}
           </button>
         );
       })}

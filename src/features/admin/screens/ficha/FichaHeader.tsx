@@ -8,21 +8,24 @@ import { Badge } from '../../ui/Badge';
 import type { Alumno } from '../../data/types';
 
 // Cabecera de la Ficha: volver, identidad (avatar, nombre, categoría),
-// estado y acciones "Registrar pago" (placeholder) + WhatsApp real.
+// estado y acciones "Registrar pago" + WhatsApp. En modo readOnly
+// (entrenador, spec 09) solo identidad: sin mora, sin editar, sin acciones.
 interface Props {
   alumno: Alumno;
   onVolver: () => void;
-  onEditar: () => void;
-  onRegistrarPago: () => void;
+  readOnly?: boolean;
+  onEditar?: () => void;
+  onRegistrarPago?: () => void;
 }
 
 export function FichaHeader({
   alumno,
   onVolver,
+  readOnly = false,
   onEditar,
   onRegistrarPago,
 }: Readonly<Props>) {
-  const enMora = estadoAlumno(alumno) === 'mora';
+  const enMora = !readOnly && estadoAlumno(alumno) === 'mora';
   const meses = mesesEnMora(alumno);
 
   return (
@@ -64,13 +67,15 @@ export function FichaHeader({
             {alumno.cat}
           </span>
         </div>
-        {enMora ? (
-          <Badge tone="due">
-            {meses} {meses === 1 ? 'mes' : 'meses'}
-          </Badge>
-        ) : (
-          <Badge tone="paid">Al día</Badge>
-        )}
+        {!readOnly &&
+          (enMora ? (
+            <Badge tone="due">
+              {meses} {meses === 1 ? 'mes' : 'meses'}
+            </Badge>
+          ) : (
+            <Badge tone="paid">Al día</Badge>
+          ))}
+        {!readOnly && (
         <button
           type="button"
           onClick={onEditar}
@@ -91,8 +96,10 @@ export function FichaHeader({
         >
           <Icon name="pencil" size={17} />
         </button>
+        )}
       </div>
 
+      {!readOnly && (
       <div style={{ display: 'flex', gap: 10 }}>
         <button
           type="button"
@@ -137,6 +144,7 @@ export function FichaHeader({
           <Icon name="message-circle" size={18} /> WhatsApp
         </a>
       </div>
+      )}
     </div>
   );
 }

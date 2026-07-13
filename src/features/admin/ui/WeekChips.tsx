@@ -1,33 +1,26 @@
-import { CATEGORIA_TODAS } from '@/lib/domain/alumnos';
+import type { Semana } from '@/lib/domain/entrenos';
 
-import { CATEGORIES } from '../../data/mock';
-
-// Chips de categoría combinables con el buscador. "Todas" restablece.
-// `opciones` permite acotarlas (p. ej. solo las cats del entrenador, spec 09).
+// Selector de semana (historial de entrenos): chips scrolleables, la semana
+// actual se distingue con el prefijo "Sem ·". Compartido por la home del
+// entrenador y la vista Entrenamientos del admin (spec 09).
 interface Props {
+  semanas: readonly Semana[];
   value: string;
-  onChange: (cat: string) => void;
-  opciones?: readonly string[];
+  onChange: (weekId: string) => void;
 }
 
-const OPCIONES = [CATEGORIA_TODAS, ...CATEGORIES];
-
-export function ChipsCategoria({
-  value,
-  onChange,
-  opciones = OPCIONES,
-}: Readonly<Props>) {
+export function WeekChips({ semanas, value, onChange }: Readonly<Props>) {
   return (
     <fieldset style={{ margin: 0, padding: 0, border: 'none', minWidth: 0 }}>
-      <legend className="sr-only">Filtrar por categoría</legend>
+      <legend className="sr-only">Elegir semana</legend>
       <div className="chips-row">
-        {opciones.map((cat) => {
-          const activa = value === cat;
+        {semanas.map((w) => {
+          const activa = value === w.id;
           return (
             <button
-              key={cat}
+              key={w.id}
               type="button"
-              onClick={() => onChange(cat)}
+              onClick={() => onChange(w.id)}
               aria-pressed={activa}
               style={{
                 flexShrink: 0,
@@ -43,7 +36,7 @@ export function ChipsCategoria({
                 whiteSpace: 'nowrap',
               }}
             >
-              {cat}
+              {w.current ? `Sem · ${w.label}` : w.label}
             </button>
           );
         })}

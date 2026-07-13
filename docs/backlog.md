@@ -7,7 +7,8 @@
 
 ## Roles
 
-- **Administrador** (Camilo Andrade, Ebed Shaday Calderón) — único rol en v1. Acceso total al back-office.
+- **Administrador** (Camilo Andrade, Ebed Shaday Calderón) — acceso total al back-office. El admin raíz crea otros admins y entrenadores desde Equipo (spec 04); sin registro público.
+- **Entrenador (formador)** — existe desde el spec 04 (`role: 'entrenador'` + `cats` por usuario en Better Auth). Tiene app propia (spec 09): plan semanal, sesiones del día con asistencia, plantel de sus categorías y ficha de alumno en solo lectura **sin datos de dinero**. No accede a dashboard, cartera, uniformes ni equipo.
 - *(Futuro)* **Acudiente** — portal de solo lectura para ver el estado de pagos de su hijo. Fuera de alcance v1.
 
 ## Convenciones del backlog
@@ -231,15 +232,47 @@ Como administrador quiero ver quién no tiene uniforme para gestionar entregas.
 
 ---
 
-## EPIC 6 — Entrenamientos
+## EPIC 6 — Entrenamientos (app del profesor)
 
-### HU-6.1 · Ver planificación — `Should` · Pantalla: Entrenamientos · ☐
-Como administrador/formador quiero ver la planificación por día y categoría para organizar las sesiones.
-- **Aceptación:** Selector de día (Lun/Mié/Vie); tarjetas por categoría con horario, tema, fases (activación/central/vuelta a la calma) y formador. Cabecera con sede y horario del club.
+> Reescrito por el **spec 09** (2026-07-13). El modelo real del club es **semanal por entrenador** (Excel de planeación): cabecera con tema + objetivos; **Activación muscular** y **Vuelta a la calma** son fases **fijas** (no se digitan); lo único que varía es la **parte central** de cada día, planeada en TactalPad y registrada como **una imagen por día** (Lun/Mié/Vie) + asistencia. El profesor registra; el admin solo lee.
 
-### HU-6.2 · Editar sesión — `Could` · Pantalla: Entrenamientos · ☐
-Como formador quiero editar el tema y las fases de una sesión para ajustar la planificación.
-- **Aceptación:** Dado una sesión, cuando pulso "Editar", entonces puedo modificar tema, fases y formador; al guardar se persiste.
+### ~~HU-6.1 · Ver planificación~~ — **Obsoleta** (spec 09, 2026-07-13)
+> Suponía planificación "por día y categoría" con tema y fases digitadas. Reemplazada por HU-6.3–6.6 (plan semanal + imagen de parte central + asistencia).
+
+### ~~HU-6.2 · Editar sesión~~ — **Obsoleta** (spec 09, 2026-07-13)
+> Suponía que admin/formador editaban tema y fases. Las fases son fijas y el admin **no edita** (la planificación es responsabilidad del profesor). Reemplazada por HU-6.4 y HU-6.7.
+
+### HU-6.3 · Plan semanal del entrenador — `Must` · Pantalla: Entrenos · ☑ (mock, spec 09)
+Como entrenador quiero registrar el tema y los objetivos de mi semana para tener la cabecera de mi planeación en la app.
+- **Aceptación:** Dado la home de Entrenos, cuando guardo tema + objetivos en la hoja modal, entonces el plan aparece en mi home y en la vista del admin; guardar dos veces no duplica (idempotente).
+
+### HU-6.4 · Registrar la sesión del día — `Must` · Pantalla: Sesión · ☑ (mock, spec 09)
+Como entrenador quiero registrar la parte central del día como imagen de TactalPad (con nota opcional) para dejar constancia de la planeación.
+- **Aceptación:** Dado un día Lun/Mié/Vie, cuando subo la imagen (preview local, reemplazable) y guardo, entonces la DayCard queda registrada con thumbnail; Activación y Vuelta a la calma se muestran fijas, no editables.
+
+### HU-6.5 · Pasar lista — `Must` · Pantalla: Sesión · ☑ (mock, spec 09)
+Como entrenador quiero marcar presentes/ausentes de mi roster para llevar la asistencia de cada sesión.
+- **Aceptación:** Dado el roster de mis categorías, cuando marco P/A y guardo, entonces la pastilla muestra presentes = roster − ausentes con el tono correcto (verde sin ausentes, info ≥ 70 %, alerta < 70 %).
+
+### HU-6.6 · Historial semanal corregible — `Should` · Pantalla: Entrenos · ☑ (mock, spec 09)
+Como entrenador quiero ver la semana actual y ~3 pasadas para corregir sesiones olvidadas.
+- **Aceptación:** Dado los chips de semana, cuando abro una sesión pasada, entonces puedo corregir imagen, nota y asistencia con la misma pantalla; la semana actual muestra el badge "N por registrar".
+
+### HU-6.7 · Vista del admin (solo lectura) — `Must` · Pantalla: Entrenamientos · ☑ (mock, spec 09)
+Como administrador quiero ver por semana y entrenador el plan y las sesiones registradas para supervisar sin editar.
+- **Aceptación:** Dado Más → Entrenamientos (solo admin), cuando elijo una semana, entonces veo por entrenador tema/objetivos y sesiones (thumbnail + asistencia); no existe ningún control de edición.
+
+### HU-6.8 · Plantel del profesor — `Must` · Pantalla: Alumnos (entrenador) · ☑ (mock, spec 09)
+Como entrenador quiero ver solo los alumnos de mis categorías, con buscador y filtro, para gestionar mi grupo.
+- **Aceptación:** Dado mis `cats`, cuando busco por nombre/acudiente (sin acentos) o filtro por categoría, entonces la lista se acota; roster vacío muestra empty state con hint de revisar categorías en Equipo.
+
+### HU-6.9 · Ficha sin datos de dinero — `Must` · Pantalla: Ficha (readOnly) · ☑ (mock, spec 09)
+Como entrenador quiero abrir la ficha de un alumno sin ver su situación de pagos para respetar la privacidad de las familias.
+- **Aceptación:** Dado la ficha en modo readOnly, entonces no hay tab Pagos, ni mora/cuota, ni estado de pago del uniforme, ni botones de escritura; sí se ven datos del alumno, la entrega del uniforme y el acudiente.
+
+### HU-6.10 · Persistencia de entrenamientos — `Must` · ☐
+Como club queremos que planes, sesiones y asistencia sobrevivan a la recarga para que el registro sea real.
+- **Aceptación:** BD (Neon) + Actions + subida de la imagen a **Vercel Blob** (compresión cliente a WebP); al recargar, todo lo registrado persiste. *(Spec de persistencia, fuera del 09.)*
 
 ---
 

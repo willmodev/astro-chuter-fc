@@ -9,24 +9,30 @@ import { TabsFicha, type TabFicha } from './TabsFicha';
 import { UniformeTab } from './UniformeTab';
 
 // Ficha del alumno (HU-2.3): cabecera con acciones + tabs Pagos /
-// Uniforme / Acudiente. Solo orquesta; reglas en dominio, datos en hook.
+// Uniforme / Acudiente. En modo readOnly (entrenador, spec 09) desaparece
+// todo lo de plata: tab Pagos, mora, pago del uniforme y acciones de
+// escritura. Solo orquesta; reglas en dominio, datos en hook.
 interface Props {
   alumnoId: number;
   onVolver: () => void;
-  onEditar: () => void;
-  onRegistrarPago: (mes?: number) => void;
-  onRegistrarUniforme: () => void;
+  readOnly?: boolean;
+  onEditar?: () => void;
+  onRegistrarPago?: (mes?: number) => void;
+  onRegistrarUniforme?: () => void;
 }
+
+const TABS_READONLY: readonly TabFicha[] = ['uniforme', 'acudiente'];
 
 export function Ficha({
   alumnoId,
   onVolver,
+  readOnly = false,
   onEditar,
   onRegistrarPago,
   onRegistrarUniforme,
 }: Readonly<Props>) {
   const alumno = useAlumno(alumnoId);
-  const [tab, setTab] = useState<TabFicha>('pagos');
+  const [tab, setTab] = useState<TabFicha>(readOnly ? 'uniforme' : 'pagos');
 
   if (!alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
@@ -37,14 +43,25 @@ export function Ficha({
       <FichaHeader
         alumno={alumno}
         onVolver={onVolver}
+        readOnly={readOnly}
         onEditar={onEditar}
-        onRegistrarPago={() => onRegistrarPago()}
+        onRegistrarPago={() => onRegistrarPago?.()}
       />
-      <TabsFicha tab={tab} onTab={setTab} />
+      <TabsFicha
+        tab={tab}
+        onTab={setTab}
+        tabs={readOnly ? TABS_READONLY : undefined}
+      />
 
-      {tab === 'pagos' && <PagosDelAnio alumno={alumno} onCobrarMes={onRegistrarPago} />}
+      {tab === 'pagos' && !readOnly && (
+        <PagosDelAnio alumno={alumno} onCobrarMes={(mes) => onRegistrarPago?.(mes)} />
+      )}
       {tab === 'uniforme' && (
-        <UniformeTab alumno={alumno} onRegistrarEntrega={onRegistrarUniforme} />
+        <UniformeTab
+          alumno={alumno}
+          readOnly={readOnly}
+          onRegistrarEntrega={onRegistrarUniforme}
+        />
       )}
       {tab === 'acudiente' && <AcudienteTab alumno={alumno} />}
     </div>
