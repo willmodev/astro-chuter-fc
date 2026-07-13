@@ -22,6 +22,7 @@ import type { RutaAdmin } from './router/types';
 
 export interface AdminAppProps {
   role: 'admin' | 'entrenador';
+  userId: string;
   userName: string;
   cats: string[];
 }
@@ -76,12 +77,12 @@ const RUTA_DE_TAB: Record<TabId, RutaAdmin> = {
   plantel: { vista: 'plantel' },
 };
 
-export function AdminApp({ role, userName, cats }: Readonly<AdminAppProps>) {
+export function AdminApp({ role, userId, userName, cats }: Readonly<AdminAppProps>) {
   // Gate por rol: cada rol monta su app; el router refuerza vista a vista.
   if (role === 'entrenador') {
-    return <EntrenadorApp userName={userName} cats={cats} />;
+    return <EntrenadorApp userId={userId} userName={userName} cats={cats} />;
   }
-  return <AdminHome role={role} userName={userName} cats={cats} />;
+  return <AdminHome role={role} userId={userId} userName={userName} cats={cats} />;
 }
 
 function AdminHome({ role, userName }: Readonly<AdminAppProps>) {

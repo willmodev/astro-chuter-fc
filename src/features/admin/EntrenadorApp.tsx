@@ -2,10 +2,13 @@ import { AdminShell } from './chrome/AdminShell';
 import { TABS_ENTRENADOR, type TabId } from './chrome/tabs';
 import { useAdminRouter } from './router/useAdminRouter';
 import { EnConstruccion } from './screens/EnConstruccion';
+import { Entrenos } from './screens/entrenos/Entrenos';
 import { MasMenu } from './screens/mas/MasMenu';
+import { Sesion } from './screens/sesion/Sesion';
 import type { RutaAdmin } from './router/types';
 
 export interface EntrenadorAppProps {
+  userId: string;
   userName: string;
   cats: string[];
 }
@@ -40,7 +43,7 @@ const RUTA_DE_TAB: Partial<Record<TabId, RutaAdmin>> = {
   mas: { vista: 'mas' },
 };
 
-export function EntrenadorApp({ userName, cats }: Readonly<EntrenadorAppProps>) {
+export function EntrenadorApp({ userId, userName, cats }: Readonly<EntrenadorAppProps>) {
   const { ruta, navegar } = useAdminRouter('entrenador');
   const meta = META[ruta.vista] ?? META_DEFAULT;
 
@@ -57,9 +60,24 @@ export function EntrenadorApp({ userName, cats }: Readonly<EntrenadorAppProps>) 
       title={meta.title}
       eyebrow={meta.eyebrow}
     >
-      {ruta.vista === 'entrenos' && <EnConstruccion nombre="Entrenos" />}
+      {ruta.vista === 'entrenos' && (
+        <Entrenos
+          entrenadorId={userId}
+          entrenadorNombre={userName}
+          cats={cats}
+          onOpenSesion={(weekId, day) => navegar({ vista: 'sesion', weekId, day })}
+        />
+      )}
       {ruta.vista === 'sesion' && (
-        <EnConstruccion nombre={`Sesión ${ruta.day} (${ruta.weekId})`} />
+        <Sesion
+          entrenadorId={userId}
+          entrenadorNombre={userName}
+          cats={cats}
+          weekId={ruta.weekId}
+          day={ruta.day}
+          onVolver={() => navegar({ vista: 'entrenos' })}
+          onGuardado={() => navegar({ vista: 'entrenos' })}
+        />
       )}
       {ruta.vista === 'plantel' && (
         <EnConstruccion nombre={`Plantel (${cats.join(', ') || 'sin categorías'})`} />
