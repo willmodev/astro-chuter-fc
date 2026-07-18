@@ -1,3 +1,4 @@
+import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
 import { AlumnoNoEncontrado } from '../ficha/AlumnoNoEncontrado';
 import { AvisoHermano } from './AvisoHermano';
@@ -17,11 +18,18 @@ interface Props {
 export function AlumnoForm({ modo, alumnoId, onVolver, onGuardado }: Readonly<Props>) {
   const form = useAlumnoForm({ modo, alumnoId, onGuardado });
 
+  if (form.estado !== 'listo') {
+    return <EstadoCarga estado={form.estado} onReintentar={form.recargar} />;
+  }
   if (!form.existe) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
   }
 
-  const cta = modo === 'nuevo' ? 'Inscribir alumno' : 'Guardar cambios';
+  const cta = form.enviando
+    ? 'Guardando…'
+    : modo === 'nuevo'
+      ? 'Inscribir alumno'
+      : 'Guardar cambios';
 
   return (
     <div style={{ display: 'grid', gap: 16, padding: '14px 16px 24px' }}>
@@ -61,9 +69,16 @@ export function AlumnoForm({ modo, alumnoId, onVolver, onGuardado }: Readonly<Pr
 
       {form.hermano && <AvisoHermano />}
 
+      {form.errorServidor && (
+        <p style={{ margin: 0, fontSize: 13, color: 'var(--error)', fontWeight: 600 }}>
+          {form.errorServidor}
+        </p>
+      )}
+
       <button
         type="button"
-        onClick={form.guardar}
+        onClick={() => void form.guardar()}
+        disabled={form.enviando}
         style={{
           height: 48,
           borderRadius: 'var(--radius-md)',
@@ -72,7 +87,8 @@ export function AlumnoForm({ modo, alumnoId, onVolver, onGuardado }: Readonly<Pr
           color: '#fff',
           fontSize: 15,
           fontWeight: 700,
-          cursor: 'pointer',
+          cursor: form.enviando ? 'default' : 'pointer',
+          opacity: form.enviando ? 0.7 : 1,
         }}
       >
         {cta}

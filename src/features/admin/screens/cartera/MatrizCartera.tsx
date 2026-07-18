@@ -1,8 +1,7 @@
 import type { CSSProperties } from 'react';
 
-import { esMesCobrable } from '@/lib/domain/cartera';
+import { esMesCobrable, MESES_VISIBLES as MONTHS } from '@/lib/domain/cartera';
 
-import { MONTHS } from '../../data/mock';
 import type { Alumno, EstadoMes } from '../../data/types';
 
 interface Props {

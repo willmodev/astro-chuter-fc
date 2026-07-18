@@ -10,14 +10,14 @@ import {
 } from '@/lib/domain/entrenos';
 import { listaPasada } from '@/lib/domain/sesion';
 
+import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 import { semanas } from '../../data/mock';
-import { getAlumnos, subscribe as subscribeAlumnos } from '../../data/store';
 import {
   guardarAsistencia as persistirAsistencia,
   guardarPlaneacion as persistirPlaneacion,
   sesionDe,
 } from '../../data/store-entrenos';
-import type { Alumno } from '../../data/types';
+import type { AlumnoPlantel } from '../../data/types';
 
 export interface ParamsSesion {
   entrenadorId: string;
@@ -38,7 +38,7 @@ export interface SesionData {
   setNota: (v: string) => void;
   elegirImagen: (file: File) => void;
   guardarPlaneacion: () => void;
-  roster: Alumno[];
+  roster: AlumnoPlantel[];
   estaAusente: (alumnoId: number) => boolean;
   marcar: (alumnoId: number, presente: boolean) => void;
   asistencia: ResumenAsistencia;
@@ -49,7 +49,7 @@ export interface SesionData {
 
 export function useSesion(params: ParamsSesion): SesionData {
   const { entrenadorId, entrenadorNombre, weekId, day } = params;
-  const alumnos = useSyncExternalStore(subscribeAlumnos, getAlumnos);
+  const { alumnos } = useAlumnosPlantel();
 
   const semana = semanas.find((w) => w.id === weekId) ?? null;
   // Snapshot al montar: el borrador es local y se persiste solo al guardar.

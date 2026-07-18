@@ -1,12 +1,36 @@
-import { useMemo, useSyncExternalStore } from 'react';
+import { actions } from 'astro:actions';
+import { useCallback, useEffect, useState } from 'react';
 
-import { getAlumnos, subscribe } from '../data/store';
+import type { EstadoCargaValor } from '../chrome/EstadoCarga';
 import type { Alumno } from '../data/types';
 
-// Contrato estable que consume la Ficha: `undefined` = alumno no encontrado
-// (la pantalla muestra su estado propio). Misma fuente (store) que el resto;
-// reactivo a `registrarPago`.
-export function useAlumno(id: number): Alumno | undefined {
-  const alumnos = useSyncExternalStore(subscribe, getAlumnos);
-  return useMemo(() => alumnos.find((a) => a.id === id), [alumnos, id]);
+// Ficha/Pago: un alumno servido por `alumnos.listar` (admin). `alumno` es
+// `undefined` si no existe (la pantalla muestra su propio estado). Refetch tras
+// mutación (pesimista) al re-montar la vista.
+export interface AlumnoData {
+  alumno: Alumno | undefined;
+  estado: EstadoCargaValor;
+  recargar: () => Promise<void>;
+}
+
+export function useAlumno(id: number): AlumnoData {
+  const [alumno, setAlumno] = useState<Alumno | undefined>(undefined);
+  const [estado, setEstado] = useState<EstadoCargaValor>('cargando');
+
+  const recargar = useCallback(async () => {
+    setEstado('cargando');
+    const { data, error } = await actions.alumnos.listar();
+    if (error || !data || data.rol !== 'admin') {
+      setEstado('error');
+      return;
+    }
+    setAlumno(data.alumnos.find((a) => a.id === id));
+    setEstado('listo');
+  }, [id]);
+
+  useEffect(() => {
+    void recargar();
+  }, [recargar]);
+
+  return { alumno, estado, recargar };
 }

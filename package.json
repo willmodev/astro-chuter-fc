@@ -12,6 +12,7 @@
     "astro": "astro",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx scripts/seed-from-excel.mjs",
     "db:seed:admin": "tsx scripts/seed-admin.mjs"
   },
   "dependencies": {
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.10",
+    "exceljs": "^4.4.0",
     "prettier": "^3.8.3",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.8.0",

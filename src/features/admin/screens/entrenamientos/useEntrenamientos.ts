@@ -2,10 +2,10 @@ import { useMemo, useState, useSyncExternalStore } from 'react';
 
 import { DIAS_ENTRENO, rosterDe, type Semana } from '@/lib/domain/entrenos';
 
+import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 import { entrenadoresMock, semanas } from '../../data/mock';
-import { getAlumnos, subscribe as subscribeAlumnos } from '../../data/store';
 import { getPlanes, getSesiones, subscribe } from '../../data/store-entrenos';
-import type { Alumno, PlanSemana, Sesion } from '../../data/types';
+import type { AlumnoPlantel, PlanSemana, Sesion } from '../../data/types';
 
 // Lo registrado en una semana, agrupado por entrenador (solo lectura del
 // admin). El roster sale de las cats mock; en BD real vendrá de user.cats.
@@ -15,7 +15,7 @@ export interface GrupoEntrenador {
   cats: string[];
   plan: PlanSemana | null;
   sesiones: Sesion[];
-  roster: Alumno[];
+  roster: AlumnoPlantel[];
 }
 
 export interface EntrenamientosData {
@@ -29,7 +29,7 @@ function grupoDe(
   id: string,
   planes: PlanSemana[],
   sesiones: Sesion[],
-  alumnos: Alumno[],
+  alumnos: AlumnoPlantel[],
 ): GrupoEntrenador {
   const meta = entrenadoresMock.find((e) => e.id === id);
   const nombre =
@@ -54,7 +54,7 @@ function grupoDe(
 export function useEntrenamientos(): EntrenamientosData {
   const todasSesiones = useSyncExternalStore(subscribe, getSesiones);
   const todosPlanes = useSyncExternalStore(subscribe, getPlanes);
-  const alumnos = useSyncExternalStore(subscribeAlumnos, getAlumnos);
+  const { alumnos } = useAlumnosPlantel();
   const actual = semanas.find((w) => w.current) ?? semanas[0];
   const [weekId, setWeekId] = useState(actual.id);
 

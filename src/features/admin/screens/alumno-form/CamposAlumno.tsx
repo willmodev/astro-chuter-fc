@@ -42,15 +42,13 @@ export function CamposAlumno({
       />
       <div style={{ display: 'grid', gap: 8 }}>
         <CampoTexto
-          label="Año de nacimiento"
-          value={valores.anio}
-          onChange={(v) => setCampo('anio', v.replace(/\D/g, ''))}
-          placeholder="Ej. 2018"
-          inputMode="numeric"
-          maxLength={4}
-          error={errores.anio}
+          label="Fecha de nacimiento"
+          value={valores.fechaNacimiento}
+          onChange={(v) => setCampo('fechaNacimiento', v)}
+          type="date"
+          error={errores.fechaNacimiento}
         />
-        <BadgeCategoria anio={Number(valores.anio)} />
+        <BadgeCategoria fechaNacimiento={valores.fechaNacimiento} />
       </div>
       <AutocompleteAcudiente
         value={valores.acu}

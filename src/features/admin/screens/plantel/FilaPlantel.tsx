@@ -1,11 +1,11 @@
 import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
-import type { Alumno } from '../../data/types';
+import type { AlumnoPlantel } from '../../data/types';
 
 // Fila del plantel del entrenador: identidad + categoría/acudiente. A
 // diferencia de FilaAlumno (admin), NO expone estado de mora ni plata.
 interface Props {
-  alumno: Alumno;
+  alumno: AlumnoPlantel;
   onOpen: () => void;
 }
 

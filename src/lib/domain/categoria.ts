@@ -22,6 +22,13 @@ export const ANIO_TEMPORADA = 2026;
 const SUB_MIN = 4;
 const SUB_MAX = 16;
 
+// Catálogo fijo de categorías del admin (chips de filtro). Deriva del rango
+// [SUB_MIN, SUB_MAX] en pasos de 2, para no repetir la lista a mano.
+export const SUBS: string[] = Array.from(
+  { length: (SUB_MAX - SUB_MIN) / 2 + 1 },
+  (_, i) => `SUB ${SUB_MIN + i * 2}`,
+);
+
 /**
  * Categoría "SUB N" del alumno: (añoTemporada − año) redondeado al par superior,
  * acotado a [4, 16]. Fuera de ese rango no hay categoría → `null`.
@@ -33,4 +40,13 @@ export function subDeAnio(anio: number): string | null {
   const par = Math.ceil(diff / 2) * 2;
   if (par < SUB_MIN || par > SUB_MAX) return null;
   return `SUB ${par}`;
+}
+
+/**
+ * Categoría "SUB N" a partir de la fecha de nacimiento (spec 11): delega en
+ * `subDeAnio` sobre el año. La fecha debe venir parseada en zona local para que
+ * un cumpleaños del 1-ene no corra de año (ver riesgo TZ del spec).
+ */
+export function subDeFecha(fechaNacimiento: Date): string | null {
+  return subDeAnio(fechaNacimiento.getFullYear());
 }

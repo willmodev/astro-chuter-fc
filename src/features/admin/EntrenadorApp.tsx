@@ -2,7 +2,7 @@ import { AdminShell } from './chrome/AdminShell';
 import { TABS_ENTRENADOR, type TabId } from './chrome/tabs';
 import { useAdminRouter } from './router/useAdminRouter';
 import { Entrenos } from './screens/entrenos/Entrenos';
-import { Ficha } from './screens/ficha/Ficha';
+import { FichaPlantel } from './screens/plantel/FichaPlantel';
 import { MasEntrenador } from './screens/mas/MasEntrenador';
 import { Plantel } from './screens/plantel/Plantel';
 import { Sesion } from './screens/sesion/Sesion';
@@ -87,9 +87,8 @@ export function EntrenadorApp({ userId, userName, cats }: Readonly<EntrenadorApp
         />
       )}
       {ruta.vista === 'ficha' && (
-        <Ficha
+        <FichaPlantel
           alumnoId={ruta.alumnoId}
-          readOnly
           onVolver={() => navegar({ vista: 'plantel' })}
         />
       )}

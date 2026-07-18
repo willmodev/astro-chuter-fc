@@ -1,10 +1,11 @@
 import { Card } from '../../ui/Card';
 import { FilaDato } from './FilaDato';
-import type { Alumno } from '../../data/types';
+import type { AlumnoPlantel } from '../../data/types';
 
-// Tab Acudiente: datos de contacto y de inscripción del alumno.
+// Tab Acudiente: datos de contacto y de inscripción del alumno. Usa el
+// subconjunto sin dinero (`AlumnoPlantel`) → sirve al admin y al entrenador.
 interface Props {
-  alumno: Alumno;
+  alumno: AlumnoPlantel;
 }
 
 export function AcudienteTab({ alumno }: Readonly<Props>) {

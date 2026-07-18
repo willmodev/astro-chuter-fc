@@ -7,6 +7,7 @@ interface Props {
   placeholder?: string;
   error?: string;
   inputMode?: 'text' | 'numeric' | 'tel';
+  type?: 'text' | 'date';
   opcional?: boolean;
   maxLength?: number;
 }
@@ -18,6 +19,7 @@ export function CampoTexto({
   placeholder,
   error,
   inputMode = 'text',
+  type = 'text',
   opcional = false,
   maxLength,
 }: Readonly<Props>) {
@@ -32,6 +34,7 @@ export function CampoTexto({
         )}
       </span>
       <input
+        type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

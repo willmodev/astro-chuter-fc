@@ -1,6 +1,5 @@
 import { CATEGORIA_TODAS } from '@/lib/domain/alumnos';
-
-import { CATEGORIES } from '../../data/mock';
+import { SUBS as CATEGORIES } from '@/lib/domain/categoria';
 
 // Chips de categoría combinables con el buscador. "Todas" restablece.
 // `opciones` permite acotarlas (p. ej. solo las cats del entrenador, spec 09).

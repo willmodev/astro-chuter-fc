@@ -1,19 +1,20 @@
 import type { CSSProperties } from 'react';
 
+import type { DashboardStats } from '@/lib/services/dashboard';
+
 import { SectionLabel } from '../../chrome/SectionLabel';
 import type { TabId } from '../../chrome/tabs';
-import type { DashboardData } from '../../hooks/useDashboardData';
 import { CobrosPendientes } from './CobrosPendientes';
-import { EntrenoDeHoy } from './EntrenoDeHoy';
 import { HeroRecaudo } from './HeroRecaudo';
 import { KpisGrid } from './KpisGrid';
 import { ProximosCumples } from './ProximosCumples';
 import { RecaudoPorMes } from './RecaudoPorMes';
 
-// Pantalla Dashboard: compone las 6 secciones a partir del contrato estable
-// `DashboardData`. Sin lógica de negocio aquí (vive en dominio + hook).
+// Pantalla Dashboard: compone las secciones a partir de `dashboard.stats`.
+// Sin EntrenoDeHoy (vuelve con la persistencia de entrenos, spec 13); los
+// cumpleaños ya son reales. Sin lógica de negocio aquí (vive en dominio/servicio).
 interface Props {
-  data: DashboardData;
+  data: DashboardStats;
   onNav: (tab: TabId) => void;
 }
 
@@ -46,18 +47,7 @@ export function Dashboard({ data, onNav }: Readonly<Props>) {
       <CobrosPendientes morosos={data.morosos} onOpen={() => onNav('alumnos')} />
 
       <SectionLabel>Próximos cumpleaños</SectionLabel>
-      <ProximosCumples cumple={data.cumple} />
-
-      <SectionLabel
-        action={
-          <button onClick={() => onNav('mas')} style={ghostLink}>
-            Planificar
-          </button>
-        }
-      >
-        Entrenamiento de hoy
-      </SectionLabel>
-      <EntrenoDeHoy entreno={data.entrenoHoy} />
+      <ProximosCumples cumple={data.cumples} />
     </div>
   );
 }

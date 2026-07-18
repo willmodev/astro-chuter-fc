@@ -3,7 +3,7 @@ import type { ResumenAsistencia } from '@/lib/domain/entrenos';
 import { Icon } from '../../chrome/Icon';
 import { AsistenciaLista } from './AsistenciaLista';
 import { BotonGuardar } from './BotonGuardar';
-import type { Alumno } from '../../data/types';
+import type { AlumnoPlantel } from '../../data/types';
 
 // Bloque de asistencia con CTA propio. Gate por fecha: un día que aún no llega
 // se muestra deshabilitado con hint; el día del entreno (o pasado) se puede
@@ -12,7 +12,7 @@ interface Props {
   puedeLista: boolean;
   listaExistente: boolean;
   asistencia: ResumenAsistencia;
-  roster: readonly Alumno[];
+  roster: readonly AlumnoPlantel[];
   estaAusente: (alumnoId: number) => boolean;
   onMarcar: (alumnoId: number, presente: boolean) => void;
   onGuardar: () => void;

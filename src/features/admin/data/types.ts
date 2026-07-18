@@ -2,15 +2,17 @@
 // Actions reales. Nomenclatura SUB 4–16 tal cual el prototipo.
 // `EstadoMes` y `Semana`/`DiaEntreno` son propiedad del dominio (fuente única).
 import type { EstadoMes } from '@/lib/domain/cartera';
+import type { Cumple } from '@/lib/domain/cumples';
 import type { DiaEntreno, Semana } from '@/lib/domain/entrenos';
 
-export type { EstadoMes, DiaEntreno, Semana };
+export type { EstadoMes, DiaEntreno, Semana, Cumple };
 
 export interface Alumno {
   id: number;
   name: string;
   cat: string; // "SUB 10"
   anio: number; // año de nacimiento
+  fechaNacimiento: string | null; // 'YYYY-MM-DD'; null en migrados (el form la completa)
   doc: string;
   acu: string; // acudiente
   phone: string; // "301 521 6830"
@@ -23,14 +25,23 @@ export interface Alumno {
   numero: number | null;
   tipoKit: 'AZUL' | 'DORADO' | null;
   talla: string;
-  states: EstadoMes[]; // 11 meses FEB..DIC
+  states: EstadoMes[]; // una entrada por mes visible (ENE..MES_FIN_COBRO)
 }
 
-export interface Cumple {
+// Vista del entrenador: identidad + contacto SIN datos de dinero (cuota,
+// estados de pago, saldo). El service nunca envía más que esto a un entrenador
+// (seguridad por rol en servidor, spec 11).
+export interface AlumnoPlantel {
+  id: number;
   name: string;
   cat: string;
-  fecha: string;
-  dias: number;
+  anio: number;
+  doc: string;
+  acu: string;
+  phone: string;
+  dir: string;
+  desde: string;
+  hermanos: number; // conteo de hermanos: no es dato de dinero
 }
 
 export interface Training {

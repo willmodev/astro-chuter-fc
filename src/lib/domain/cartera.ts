@@ -4,8 +4,75 @@
 
 export type EstadoMes = 'paid' | 'due' | 'pending' | 'na';
 
-// Meses de la temporada (FEB..DIC). `states` siempre tiene esta longitud.
-export const MESES_TEMPORADA = 11;
+export type MetodoPago = 'efectivo' | 'transferencia';
+
+// ─── Modelo por año calendario (spec 11) ───
+// La BD guarda solo pagos reales; el estado de cada mes se DERIVA aquí.
+
+export const MESES = [
+  'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC',
+] as const;
+export type Mes = (typeof MESES)[number];
+
+export const NOMBRE_MES: Record<Mes, string> = {
+  ENE: 'Enero', FEB: 'Febrero', MAR: 'Marzo', ABR: 'Abril',
+  MAY: 'Mayo', JUN: 'Junio', JUL: 'Julio', AGO: 'Agosto',
+  SEP: 'Septiembre', OCT: 'Octubre', NOV: 'Noviembre', DIC: 'Diciembre',
+};
+
+// Arranque del club: meses previos (incl. ENE/FEB 2026) quedan `na`.
+export const ARRANQUE_CLUB = { anio: 2026, mes: 'MAR' } as const satisfies {
+  anio: number;
+  mes: Mes;
+};
+
+// Última mensualidad cobrada del año. ← ÚNICA constante a tocar si Camilo dice DIC.
+export const MES_FIN_COBRO: Mes = 'NOV';
+
+const idxMes = (mes: Mes): number => MESES.indexOf(mes);
+const ordinal = (anio: number, mes: Mes): number => anio * 12 + idxMes(mes);
+const ordinalFecha = (f: Date): number => f.getFullYear() * 12 + f.getMonth();
+
+// Tira de meses visibles en cartera/ficha: ENE..MES_FIN_COBRO.
+export const MESES_VISIBLES: Mes[] = MESES.slice(0, idxMes(MES_FIN_COBRO) + 1);
+
+// `states` siempre tiene esta longitud (una entrada por mes visible).
+export const MESES_TEMPORADA = MESES_VISIBLES.length;
+
+// Nombres largos alineados a la tira visible (para títulos/tooltips en la UI).
+export const MESES_VISIBLES_LARGOS: string[] = MESES_VISIBLES.map((m) => NOMBRE_MES[m]);
+
+// Índice del mes en curso dentro de la tira visible (acotado a [0, len−1]).
+// Fuente única: la usa el dashboard (servidor) y la cartera/pago (cliente).
+export function indiceMesVivo(hoy: Date): number {
+  const idx = MESES_VISIBLES.indexOf(MESES[hoy.getMonth()]);
+  return Math.min(Math.max(idx, 0), MESES_VISIBLES.length - 1);
+}
+
+/**
+ * Estado DERIVADO de un mes (ya no se almacena):
+ *   na      → mes < arranque del club, o mes < ingreso del alumno, o mes > fin de cobro
+ *   paid    → existe pago real
+ *   due     → cobrable y ya vencido (mes < mes vivo)
+ *   pending → cobrable y no vencido (mes ≥ mes vivo)
+ */
+export function estadoDelMes(params: {
+  anio: number;
+  mes: Mes;
+  pagado: boolean;
+  fechaInicio: Date;
+  hoy: Date;
+}): EstadoMes {
+  const { anio, mes, pagado, fechaInicio, hoy } = params;
+  const actual = ordinal(anio, mes);
+  const esNa =
+    actual < ordinal(ARRANQUE_CLUB.anio, ARRANQUE_CLUB.mes) ||
+    actual < ordinalFecha(fechaInicio) ||
+    idxMes(mes) > idxMes(MES_FIN_COBRO);
+  if (esNa) return 'na';
+  if (pagado) return 'paid';
+  return actual < ordinalFecha(hoy) ? 'due' : 'pending';
+}
 
 // Subconjunto estructural que necesitan las reglas. `Alumno` (en la capa de
 // datos) lo cumple, sin que el dominio dependa de la capa de features.
@@ -67,16 +134,4 @@ export function pctAlDia(alumnos: readonly AlumnoCartera[]): number {
 /** Total a cobrar en Registrar pago: cuota × cantidad de meses marcados. */
 export function totalPago(cuota: number, nMeses: number): number {
   return cuota * nMeses;
-}
-
-/**
- * States de un alumno recién inscrito: meses previos al ingreso `na`, del mes
- * de ingreso (`mesVivo`) en adelante `pending`. Nunca `due` → no nace en mora.
- * `mesVivo` se acota a [0, MESES_TEMPORADA − 1] (FEB → todo pending; DIC → 10 na).
- */
-export function statesIniciales(mesVivo: number): EstadoMes[] {
-  const inicio = Math.min(Math.max(mesVivo, 0), MESES_TEMPORADA - 1);
-  return Array.from({ length: MESES_TEMPORADA }, (_, i) =>
-    i < inicio ? 'na' : 'pending',
-  );
 }

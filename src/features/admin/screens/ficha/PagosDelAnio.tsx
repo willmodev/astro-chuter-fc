@@ -1,6 +1,9 @@
-import { esMesCobrable } from '@/lib/domain/cartera';
+import {
+  esMesCobrable,
+  MESES_VISIBLES as MONTHS,
+  MESES_VISIBLES_LARGOS as MONTHS_LONG,
+} from '@/lib/domain/cartera';
 
-import { MONTHS, MONTHS_LONG } from '../../data/mock';
 import type { Alumno, EstadoMes } from '../../data/types';
 
 // Tab Pagos: los 11 meses de la temporada (FEB–DIC) con su estado binario.

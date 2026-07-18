@@ -1,7 +1,7 @@
 ﻿// Reglas puras de la lista de alumnos — capa de dominio, sin UI ni datos.
 // Búsqueda y filtro corren en cliente sobre la lista completa (~100 alumnos);
 // Cartera reutilizará estas mismas funciones.
-import { subDeAnio } from './categoria';
+import { subDeFecha } from './categoria';
 import { mesesEnMora, type EstadoMes } from './cartera';
 
 // Subconjunto estructural que necesita el filtro. `Alumno` (capa de datos)
@@ -13,6 +13,10 @@ interface AlumnoBuscable {
 }
 
 export const CATEGORIA_TODAS = 'Todas';
+
+// Error de regla de negocio de alumnos (documento duplicado, fecha inválida…).
+// El Action lo traduce a un error de transporte legible (BAD_REQUEST).
+export class AlumnoReglaError extends Error {}
 
 export interface FiltroAlumnos {
   query: string;
@@ -57,19 +61,30 @@ export function estadoAlumno(a: {
 
 // --- Inscribir / editar alumno (HU-2.4, HU-2.5) ---
 
-// Núcleo validable del form (sin `dir`, opcional). El store extiende este tipo.
+// Núcleo validable del form (sin `dir`, opcional). La fecha de nacimiento
+// reemplaza al año (spec 11): un solo campo, la categoría se deriva de ella.
 export interface DatosAlumnoInput {
   name: string;
   doc: string;
-  anio: number;
+  fechaNacimiento: string; // 'YYYY-MM-DD'
   acu: string;
   phone: string;
 }
 
-export type CampoAlumno = 'name' | 'doc' | 'anio' | 'acu' | 'phone';
+export type CampoAlumno = 'name' | 'doc' | 'fechaNacimiento' | 'acu' | 'phone';
 export type ErroresAlumno = Partial<Record<CampoAlumno, string>>;
 
 const soloDigitos = (texto: string): string => texto.replace(/\D/g, '');
+
+// 'YYYY-MM-DD' → Date local válida, o null (formato malo o fecha imposible).
+export function parseFechaNacimiento(iso: string): Date | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+  const [y, m, d] = iso.split('-').map(Number);
+  const fecha = new Date(y, m - 1, d);
+  const real =
+    fecha.getFullYear() === y && fecha.getMonth() === m - 1 && fecha.getDate() === d;
+  return real ? fecha : null;
+}
 
 interface AlumnoDocumento {
   id: number;
@@ -107,8 +122,11 @@ export function validarAlumno(
   if (soloDigitos(datos.phone).length !== 10)
     errores.phone = 'El celular debe tener 10 dígitos.';
 
-  if (subDeAnio(datos.anio) === null)
-    errores.anio = 'El año no corresponde a ninguna categoría (SUB 4–16).';
+  const fecha = parseFechaNacimiento(datos.fechaNacimiento);
+  if (fecha === null)
+    errores.fechaNacimiento = 'La fecha de nacimiento es obligatoria.';
+  else if (subDeFecha(fecha) === null)
+    errores.fechaNacimiento = 'La fecha no corresponde a ninguna categoría (SUB 4–16).';
 
   return errores;
 }
