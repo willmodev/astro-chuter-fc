@@ -24,7 +24,22 @@ export interface Alumno {
   numero: number | null;
   tipoKit: 'AZUL' | 'DORADO' | null;
   talla: string;
-  states: EstadoMes[]; // 11 meses FEB..DIC
+  states: EstadoMes[]; // una entrada por mes visible (ENE..MES_FIN_COBRO)
+}
+
+// Vista del entrenador: identidad + contacto SIN datos de dinero (cuota,
+// estados de pago, saldo). El service nunca envía más que esto a un entrenador
+// (seguridad por rol en servidor, spec 11).
+export interface AlumnoPlantel {
+  id: number;
+  name: string;
+  cat: string;
+  anio: number;
+  doc: string;
+  acu: string;
+  phone: string;
+  dir: string;
+  desde: string;
 }
 
 export interface Training {

@@ -12,6 +12,12 @@ export const MESES = [
 ] as const;
 export type Mes = (typeof MESES)[number];
 
+export const NOMBRE_MES: Record<Mes, string> = {
+  ENE: 'Enero', FEB: 'Febrero', MAR: 'Marzo', ABR: 'Abril',
+  MAY: 'Mayo', JUN: 'Junio', JUL: 'Julio', AGO: 'Agosto',
+  SEP: 'Septiembre', OCT: 'Octubre', NOV: 'Noviembre', DIC: 'Diciembre',
+};
+
 // Arranque del club: meses previos (incl. ENE/FEB 2026) quedan `na`.
 export const ARRANQUE_CLUB = { anio: 2026, mes: 'MAR' } as const satisfies {
   anio: number;

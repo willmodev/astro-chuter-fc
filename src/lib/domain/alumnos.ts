@@ -14,6 +14,10 @@ interface AlumnoBuscable {
 
 export const CATEGORIA_TODAS = 'Todas';
 
+// Error de regla de negocio de alumnos (documento duplicado, fecha inválida…).
+// El Action lo traduce a un error de transporte legible (BAD_REQUEST).
+export class AlumnoReglaError extends Error {}
+
 export interface FiltroAlumnos {
   query: string;
   cat: string; // CATEGORIA_TODAS o una categoría exacta ("SUB 10")
