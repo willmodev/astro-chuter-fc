@@ -2,9 +2,10 @@
 // Actions reales. Nomenclatura SUB 4–16 tal cual el prototipo.
 // `EstadoMes` y `Semana`/`DiaEntreno` son propiedad del dominio (fuente única).
 import type { EstadoMes } from '@/lib/domain/cartera';
+import type { Cumple } from '@/lib/domain/cumples';
 import type { DiaEntreno, Semana } from '@/lib/domain/entrenos';
 
-export type { EstadoMes, DiaEntreno, Semana };
+export type { EstadoMes, DiaEntreno, Semana, Cumple };
 
 export interface Alumno {
   id: number;
@@ -24,13 +25,6 @@ export interface Alumno {
   tipoKit: 'AZUL' | 'DORADO' | null;
   talla: string;
   states: EstadoMes[]; // 11 meses FEB..DIC
-}
-
-export interface Cumple {
-  name: string;
-  cat: string;
-  fecha: string;
-  dias: number;
 }
 
 export interface Training {

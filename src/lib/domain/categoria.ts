@@ -34,3 +34,12 @@ export function subDeAnio(anio: number): string | null {
   if (par < SUB_MIN || par > SUB_MAX) return null;
   return `SUB ${par}`;
 }
+
+/**
+ * Categoría "SUB N" a partir de la fecha de nacimiento (spec 11): delega en
+ * `subDeAnio` sobre el año. La fecha debe venir parseada en zona local para que
+ * un cumpleaños del 1-ene no corra de año (ver riesgo TZ del spec).
+ */
+export function subDeFecha(fechaNacimiento: Date): string | null {
+  return subDeAnio(fechaNacimiento.getFullYear());
+}
