@@ -60,8 +60,7 @@ export interface Sesion {
   day: DiaEntreno;
   parteCentralImg: string | null; // object URL local (mock); URL de Blob al persistir
   parteCentralNota: string; // texto corto opcional de respaldo
-  registrado: boolean;
-  ausentes: number[]; // ids de alumnos ausentes
+  ausentes: number[] | null; // null = lista NO pasada; [] = pasada, todos presentes
 }
 
 export interface Stats {

@@ -33,9 +33,11 @@ export interface Semana {
   label: string; // "8 – 12 jun"
   sub: string; // "Semana actual" | "Hace 2 semanas"
   current: boolean;
+  inicio: Date; // lunes 00:00 local — permite derivar la fecha de cada día
 }
 
 export const SEMANAS_PASADAS = 3;
+export const SEMANAS_FUTURAS = 1; // permite planear la próxima semana con antelación
 
 const MESES_CORTOS = [
   'ene', 'feb', 'mar', 'abr', 'may', 'jun',
@@ -73,15 +75,21 @@ function labelSemana(lunes: Date): string {
 }
 
 function subSemana(offset: number): string {
+  if (offset < 0) return offset === -1 ? 'Próxima semana' : `En ${-offset} semanas`;
   if (offset === 0) return 'Semana actual';
   if (offset === 1) return 'Semana pasada';
   return `Hace ${offset} semanas`;
 }
 
-/** Semana viva + `SEMANAS_PASADAS` anteriores. Fecha inyectable (testeable). */
+/**
+ * `SEMANAS_FUTURAS` próximas + semana viva + `SEMANAS_PASADAS` anteriores,
+ * ordenadas de futura a pasada (0 = actual). Fecha inyectable (testeable).
+ */
 export function generarSemanas(hoy: Date): Semana[] {
   const base = lunesDe(hoy);
-  return Array.from({ length: SEMANAS_PASADAS + 1 }, (_, offset) => {
+  const total = SEMANAS_FUTURAS + SEMANAS_PASADAS + 1;
+  return Array.from({ length: total }, (_, i) => {
+    const offset = i - SEMANAS_FUTURAS; // -futuras … +pasadas
     const lunes = new Date(base);
     lunes.setDate(lunes.getDate() - offset * 7);
     const n = numeroSemana(lunes);
@@ -91,8 +99,31 @@ export function generarSemanas(hoy: Date): Semana[] {
       label: labelSemana(lunes),
       sub: subSemana(offset),
       current: offset === 0,
+      inicio: new Date(lunes),
     };
   });
+}
+
+// ─── Fechas y gate de la lista ───
+// (los estados derivados de la sesión viven en `./sesion`)
+
+/** Fecha (00:00 local) del día de entreno dentro de su semana. */
+export function fechaDe(semana: Semana, day: DiaEntreno): Date {
+  const d = new Date(semana.inicio);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + DIAS_ENTRENO.indexOf(day) * 2);
+  return d;
+}
+
+/** La lista se habilita cuando el día ya llegó (hoy inclusive); pasado sí. */
+export function puedePasarLista(
+  semana: Semana,
+  day: DiaEntreno,
+  hoy: Date,
+): boolean {
+  const hoyMid = new Date(hoy);
+  hoyMid.setHours(0, 0, 0, 0);
+  return fechaDe(semana, day).getTime() <= hoyMid.getTime();
 }
 
 // ─── Roster y asistencia ───
@@ -105,18 +136,18 @@ export interface ResumenAsistencia {
 }
 
 /**
- * Asistencia de una sesión: presentes = roster − ausentes. Solo cuenta
- * ausentes que siguen en el roster (ids huérfanos no restan).
+ * Asistencia de una sesión con lista pasada: presentes = roster − ausentes.
+ * Solo cuenta ausentes que siguen en el roster (ids huérfanos no restan).
  */
 export function asistenciaDe(
-  sesion: { ausentes: readonly number[] },
+  ausentes: readonly number[],
   roster: readonly { id: number }[],
 ): ResumenAsistencia {
   const total = roster.length;
-  const ausentes = roster.filter((a) => sesion.ausentes.includes(a.id)).length;
-  const presentes = total - ausentes;
+  const cuentaAusentes = roster.filter((a) => ausentes.includes(a.id)).length;
+  const presentes = total - cuentaAusentes;
   const pct = total === 0 ? 0 : Math.round((presentes / total) * 100);
-  return { presentes, ausentes, total, pct };
+  return { presentes, ausentes: cuentaAusentes, total, pct };
 }
 
 /** Alumnos cuyas categorías pertenecen al entrenador (compara sin acentos). */

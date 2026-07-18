@@ -1,7 +1,8 @@
-import { useId, type ChangeEvent } from 'react';
+import { useId, useState, type ChangeEvent } from 'react';
 
 import { Icon } from '../../chrome/Icon';
 import { CampoTexto } from '../../ui/CampoTexto';
+import { VisorImagen } from '../../ui/VisorImagen';
 
 // Parte central del día: la planeación hecha en TactalPad entra como imagen
 // (file input + preview local, reemplazable) con nota de respaldo opcional.
@@ -14,6 +15,7 @@ interface Props {
 
 export function ParteCentral({ img, nota, setNota, onElegirImagen }: Readonly<Props>) {
   const inputId = useId();
+  const [verVisor, setVerVisor] = useState(false);
 
   const alCambiar = (e: ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
@@ -36,18 +38,34 @@ export function ParteCentral({ img, nota, setNota, onElegirImagen }: Readonly<Pr
       <span className="eyebrow">Parte central · planeación TactalPad</span>
 
       {img !== null && (
-        <img
-          src={img}
-          alt="Planeación de la parte central"
+        <button
+          type="button"
+          onClick={() => setVerVisor(true)}
+          aria-label="Ampliar la planeación"
           style={{
-            width: '100%',
-            maxHeight: 260,
-            objectFit: 'contain',
-            borderRadius: 'var(--radius-md)',
+            padding: 0,
             border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-md)',
             background: 'var(--surface-sunken)',
+            cursor: 'zoom-in',
+            overflow: 'hidden',
           }}
-        />
+        >
+          <img
+            src={img}
+            alt="Planeación de la parte central"
+            style={{
+              display: 'block',
+              width: '100%',
+              maxHeight: 260,
+              objectFit: 'contain',
+            }}
+          />
+        </button>
+      )}
+
+      {verVisor && img !== null && (
+        <VisorImagen src={img} onClose={() => setVerVisor(false)} />
       )}
 
       <label

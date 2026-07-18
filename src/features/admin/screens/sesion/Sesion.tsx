@@ -3,14 +3,16 @@ import { useEffect } from 'react';
 import { FASE_ACTIVACION, FASE_VUELTA_CALMA } from '@/lib/domain/entrenos';
 
 import { Icon } from '../../chrome/Icon';
-import { AsistenciaLista } from './AsistenciaLista';
+import { AsistenciaBloque } from './AsistenciaBloque';
+import { BotonGuardar } from './BotonGuardar';
 import { FaseFijaCard } from './FaseFijaCard';
 import { ParteCentral } from './ParteCentral';
 import { useSesion, type ParamsSesion } from './useSesion';
 
-// Sesión del día (spec 09): fases fijas arriba/abajo, la parte central como
-// imagen de TactalPad + nota, y pasar lista. La misma pantalla registra la
-// semana viva y corrige el historial.
+// Sesión del día (spec 10): dos registros independientes con su propio CTA —
+// planeación (parte central: imagen + nota, editable en cualquier momento) y
+// asistencia (pasar lista, solo desde el día del entreno). La misma pantalla
+// registra la semana viva y corrige el historial.
 interface Props extends ParamsSesion {
   onVolver: () => void;
   onGuardado: () => void;
@@ -24,6 +26,15 @@ export function Sesion({ onVolver, onGuardado, ...params }: Readonly<Props>) {
     if (s.semana === null) onVolver();
   }, [s.semana, onVolver]);
   if (s.semana === null) return null;
+
+  const guardarPlaneacion = (): void => {
+    s.guardarPlaneacion();
+    onGuardado();
+  };
+  const guardarAsistencia = (): void => {
+    s.guardarAsistencia();
+    onGuardado();
+  };
 
   return (
     <div style={{ display: 'grid', gap: 12, padding: '14px 16px 0' }}>
@@ -65,53 +76,20 @@ export function Sesion({ onVolver, onGuardado, ...params }: Readonly<Props>) {
         onElegirImagen={s.elegirImagen}
       />
       <FaseFijaCard icono="wind" fase={FASE_VUELTA_CALMA} />
+      <BotonGuardar label="Guardar planeación" onClick={guardarPlaneacion} />
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '6px 2px 0',
-        }}
-      >
-        <span className="eyebrow">Pasar lista</span>
-        <span
-          style={{
-            fontSize: 12,
-            fontWeight: 700,
-            color: s.asistencia.ausentes > 0 ? 'var(--error-deep)' : 'var(--success-deep)',
-          }}
-        >
-          {s.asistencia.presentes}/{s.asistencia.total} presentes
-        </span>
-      </div>
-      <AsistenciaLista roster={s.roster} estaAusente={s.estaAusente} onMarcar={s.marcar} />
+      <div style={{ height: 1, background: 'var(--border-subtle)', margin: '6px 0' }} />
 
-      <button
-        type="button"
-        onClick={() => {
-          s.guardar();
-          onGuardado();
-        }}
-        style={{
-          height: 48,
-          borderRadius: 'var(--radius-md)',
-          border: 'none',
-          background: 'var(--brand-gold)',
-          color: 'var(--text-on-gold)',
-          fontSize: 15,
-          fontWeight: 800,
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8,
-          marginBottom: 8,
-        }}
-      >
-        <Icon name="check" size={17} strokeWidth={2.4} />
-        {s.existente ? 'Guardar cambios' : 'Guardar entrenamiento'}
-      </button>
+      <AsistenciaBloque
+        puedeLista={s.puedeLista}
+        listaExistente={s.listaExistente}
+        asistencia={s.asistencia}
+        roster={s.roster}
+        estaAusente={s.estaAusente}
+        onMarcar={s.marcar}
+        onGuardar={guardarAsistencia}
+      />
+      <div style={{ height: 8 }} />
     </div>
   );
 }
