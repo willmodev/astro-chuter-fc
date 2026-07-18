@@ -64,31 +64,69 @@ export function guardarPlanSemana(datos: DatosPlanSemana): void {
   notificar();
 }
 
-// Registro/corrección de la sesión de un día: imagen + nota + asistencia.
-export interface DatosSesion {
+// Identidad común de una sesión: quién, qué semana y qué día.
+interface RefSesion {
   entrenadorId: string;
   entrenadorNombre: string;
   weekId: string;
   day: DiaEntreno;
+}
+
+function idDe(ref: RefSesion): string {
+  return `${ref.entrenadorId}-${ref.weekId}-${ref.day}`;
+}
+
+// Upsert que preserva los campos que no toca (planeación no pisa lista y
+// viceversa). El upsert es idempotente: guardar dos veces no duplica.
+function upsertSesion(id: string, construir: (previa: Sesion | null) => Sesion): void {
+  const previa = sesiones.find((s) => s.id === id) ?? null;
+  const nueva = construir(previa);
+  sesiones = previa
+    ? sesiones.map((s) => (s.id === id ? nueva : s))
+    : [...sesiones, nueva];
+  notificar();
+}
+
+// Planeación del día (imagen + nota). No toca la asistencia: si la sesión no
+// existía, nace con `ausentes: null` (lista aún no pasada).
+export interface DatosPlaneacion extends RefSesion {
   parteCentralImg: string | null;
   parteCentralNota: string;
+}
+
+export function guardarPlaneacion(datos: DatosPlaneacion): void {
+  const id = idDe(datos);
+  const parteCentralNota = datos.parteCentralNota.trim();
+  upsertSesion(id, (previa) => ({
+    id,
+    entrenadorId: datos.entrenadorId,
+    entrenadorNombre: datos.entrenadorNombre,
+    weekId: datos.weekId,
+    day: datos.day,
+    parteCentralImg: datos.parteCentralImg,
+    parteCentralNota,
+    ausentes: previa?.ausentes ?? null,
+  }));
+}
+
+// Asistencia del día. No toca la planeación: si la sesión no existía, nace sin
+// imagen ni nota. `ausentes: []` = lista pasada, todos presentes.
+export interface DatosAsistencia extends RefSesion {
   ausentes: number[];
 }
 
-// Crea o actualiza la sesión del día y la marca `registrado`. Idempotente:
-// el mismo contrato sirve para registrar y para corregir historial.
-export function guardarSesion(datos: DatosSesion): void {
-  const nueva: Sesion = {
-    ...datos,
-    id: `${datos.entrenadorId}-${datos.weekId}-${datos.day}`,
-    parteCentralNota: datos.parteCentralNota.trim(),
-    registrado: true,
-  };
-  const existe = sesiones.some((s) => s.id === nueva.id);
-  sesiones = existe
-    ? sesiones.map((s) => (s.id === nueva.id ? { ...s, ...nueva } : s))
-    : [...sesiones, nueva];
-  notificar();
+export function guardarAsistencia(datos: DatosAsistencia): void {
+  const id = idDe(datos);
+  upsertSesion(id, (previa) => ({
+    id,
+    entrenadorId: datos.entrenadorId,
+    entrenadorNombre: datos.entrenadorNombre,
+    weekId: datos.weekId,
+    day: datos.day,
+    parteCentralImg: previa?.parteCentralImg ?? null,
+    parteCentralNota: previa?.parteCentralNota ?? '',
+    ausentes: datos.ausentes,
+  }));
 }
 
 export function subscribe(listener: () => void): () => void {

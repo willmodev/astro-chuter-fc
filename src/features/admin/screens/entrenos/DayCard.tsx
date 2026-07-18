@@ -1,4 +1,9 @@
-import { asistenciaDe, type DiaEntreno } from '@/lib/domain/entrenos';
+import {
+  asistenciaDe,
+  listaPasada,
+  planeada,
+  type DiaEntreno,
+} from '@/lib/domain/entrenos';
 
 import { Icon } from '../../chrome/Icon';
 import { AsistPill } from '../../ui/AsistPill';
@@ -15,7 +20,7 @@ interface Props {
 }
 
 export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
-  const registrada = sesion?.registrado === true;
+  const registrada = planeada(sesion) && listaPasada(sesion);
   return (
     <button
       type="button"
@@ -72,7 +77,7 @@ export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
               {sesion.parteCentralNota || 'Parte central'}
             </span>
             <span style={{ display: 'block', marginTop: 7 }}>
-              <AsistPill asistencia={asistenciaDe(sesion, roster)} />
+              <AsistPill asistencia={asistenciaDe(sesion.ausentes ?? [], roster)} />
             </span>
           </span>
           <span style={{ color: 'var(--text-faint)', flexShrink: 0, display: 'flex' }}>

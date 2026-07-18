@@ -86,7 +86,7 @@ export function SesionRow({ sesion, roster }: Readonly<Props>) {
           {sesion.parteCentralNota || 'Parte central'}
         </span>
         <span style={{ display: 'block', marginTop: 6 }}>
-          <AsistPill asistencia={asistenciaDe(sesion, roster)} />
+          <AsistPill asistencia={asistenciaDe(sesion.ausentes ?? [], roster)} />
         </span>
       </span>
     </div>

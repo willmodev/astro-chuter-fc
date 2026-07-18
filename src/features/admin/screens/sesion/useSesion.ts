@@ -10,7 +10,11 @@ import {
 
 import { semanas } from '../../data/mock';
 import { getAlumnos, subscribe as subscribeAlumnos } from '../../data/store';
-import { guardarSesion, sesionDe } from '../../data/store-entrenos';
+import {
+  guardarAsistencia,
+  guardarPlaneacion,
+  sesionDe,
+} from '../../data/store-entrenos';
 import type { Alumno } from '../../data/types';
 
 export interface ParamsSesion {
@@ -72,15 +76,9 @@ export function useSesion(params: ParamsSesion): SesionData {
   };
 
   const guardar = (): void => {
-    guardarSesion({
-      entrenadorId,
-      entrenadorNombre,
-      weekId,
-      day,
-      parteCentralImg: img,
-      parteCentralNota: nota,
-      ausentes,
-    });
+    const ref = { entrenadorId, entrenadorNombre, weekId, day };
+    guardarPlaneacion({ ...ref, parteCentralImg: img, parteCentralNota: nota });
+    guardarAsistencia({ ...ref, ausentes });
   };
 
   return {
@@ -93,7 +91,7 @@ export function useSesion(params: ParamsSesion): SesionData {
     roster,
     estaAusente,
     marcar,
-    asistencia: asistenciaDe({ ausentes }, roster),
+    asistencia: asistenciaDe(ausentes, roster),
     guardar,
   };
 }

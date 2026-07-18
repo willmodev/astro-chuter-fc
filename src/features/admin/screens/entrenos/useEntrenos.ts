@@ -2,6 +2,8 @@ import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 
 import {
   DIAS_ENTRENO,
+  listaPasada,
+  planeada,
   rosterDe,
   type DiaEntreno,
   type Semana,
@@ -61,9 +63,10 @@ export function useEntrenos(
     [mias],
   );
 
-  const porRegistrar = DIAS_ENTRENO.filter(
-    (d) => sesionDeDia(d)?.registrado !== true,
-  ).length;
+  const porRegistrar = DIAS_ENTRENO.filter((d) => {
+    const s = sesionDeDia(d);
+    return !planeada(s) || !listaPasada(s);
+  }).length;
 
   const guardarPlan = useCallback(
     (tema: string, objetivos: string) => {
