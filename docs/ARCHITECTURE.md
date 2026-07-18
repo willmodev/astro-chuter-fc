@@ -92,39 +92,37 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
 
 ## 4. Capa de datos (Drizzle + Neon, mapeo al Excel)
 
-Un archivo por agregado en `src/lib/db/schema/`, re-export desde `schema/index.ts`. Cada uno < 200 líneas.
+> **Actualizado por el spec 11 (2026-07-18).** El modelo real corrige lo que esta sección proponía antes: los pagos son **filas solo de meses realmente pagados** (`due/pending/na` se **derivan** en dominio, no se almacenan); **no hay tablas `categorias` ni `tarifas`** (la categoría se calcula de la fecha de nacimiento, R1; la cuota es constante, R2); el acudiente va **denormalizado** en `alumnos`. Uniformes reales se modelan en el **spec 12** (dos kits AZUL/ORO con abonos), no aquí.
+
+Un archivo por agregado en `src/lib/db/schema/`, re-export desde `schema/index.ts`. Cada uno < 200 líneas. Tablas vigentes tras el spec 11:
 
 | Archivo schema | Tablas | Origen Excel |
 |---|---|---|
-| `categorias.ts` | `categorias` (code, añoDesde, añoHasta) | `CATEGORIAS` |
-| `acudientes.ts` | `acudientes` (nombre, celular, direccion) | cols acudiente en `SUB n` |
-| `alumnos.ts` | `alumnos` (nombre, identificacion, anioNacimiento, categoriaId, acudienteId, fechaInicio, activo) | `SUB n` |
-| `tarifas.ts` | `tarifas` (año, cuotaCop, uniformeCop, uniformeHermanoCop) | col CUOTA + aclaración cliente 2026-07-10 (R2/R9) |
-| `pagos.ts` | `pagos` (alumnoId, anio, mes enum, estado enum, montoCop, metodo, pagadoEn) | celdas FEB–DIC |
-| `uniformes.ts` | `uniformes` (alumnoId, kit enum, numero, modelo, talla, entregado) | `UNIFORMES` |
-| `entrenamientos.ts` | `entrenamientos` + `sesiones`/`bloques` | `PLANIFICACION` |
+| `alumnos.ts` | `alumnos` (nombre, documento, anioNacimiento, fechaNacimiento null, acudiente/celular/direccion denormalizados, fechaInicio, activo) | hoja `CATEGORIAS` |
+| `pagos.ts` | `pagos` (alumnoId, anio, mes enum, montoCop, metodo null, pagadoEn null, registradoPor) — **fila solo al pagar** | color verde de celdas MAR–NOV |
 | `auth.ts` | `user, session, account, verification` | Better Auth |
 
+Pendientes en sus propios specs: `uniformes` (spec 12, por kit + abonos), `entrenamientos`/`sesiones` (spec 13, con Vercel Blob).
+
 ```ts
-// Ejemplo: src/lib/db/schema/pagos.ts (corazón de la cartera)
-export const mesEnum = pgEnum('mes', ['FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC']);
-export const estadoPagoEnum = pgEnum('estado_pago', ['paid','due','pending','partial','na']);
+// src/lib/db/schema/pagos.ts (corazón de la cartera) — fila SOLO cuando se paga
+export const mesEnum = pgEnum('mes', ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC']);
 export const pagos = pgTable('pagos', {
   id: serial('id').primaryKey(),
   alumnoId: integer('alumno_id').notNull().references(() => alumnos.id, { onDelete: 'cascade' }),
-  anio: integer('anio').notNull(),
+  anio: integer('anio').notNull(),                 // 2026, 2027… (filtro por año)
   mes: mesEnum('mes').notNull(),
-  estado: estadoPagoEnum('estado').notNull().default('pending'),
-  montoCop: integer('monto_cop').notNull().default(0),
-  metodo: text('metodo'),
-  pagadoEn: timestamp('pagado_en'),
-});
-export type Pago = typeof pagos.$inferSelect;
-export type NuevoPago = typeof pagos.$inferInsert;
+  montoCop: integer('monto_cop').notNull(),         // cuota vigente al pagar
+  metodo: text('metodo'),                           // 'efectivo' | 'transferencia' | null (seed)
+  pagadoEn: timestamp('pagado_en'),                 // null en pagos del seed
+  registradoPor: text('registrado_por').references(() => user.id), // null en seed
+}, (t) => [unique().on(t.alumnoId, t.anio, t.mes)]); // un pago por alumno-mes-año
 ```
 
+- El enum trae los 12 meses aunque hoy solo se cobre hasta NOV: la ventana de cobro vive en dominio (`MES_FIN_COBRO`), cambiarla no toca la BD.
+- `due/pending/na` **no existen como columna**: los deriva `estadoDelMes` en `lib/domain/cartera.ts` a partir de los pagos reales + `fechaInicio` del alumno + `ARRANQUE_CLUB` (MAR 2026) + mes vivo.
 - `drizzle.config.ts` en raíz; migraciones en `drizzle/`.
-- **Seed:** `scripts/seed-from-excel.mjs` parsea el Excel con `xlsx`, upsert idempotente por documento, reusando `lib/domain`.
+- **Seed:** `scripts/seed-from-excel.mjs` (con `exceljs`, **devDependency**) lee el Excel **local**, marca pago por **color de relleno** de la celda (verde = pagado), upsert idempotente por documento, reusando `lib/domain`. `xlsx` no sirve: no lee estilos de celda y los estilos **son** los datos.
 
 ---
 

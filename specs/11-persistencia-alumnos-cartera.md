@@ -1,6 +1,6 @@
 # SPEC 11 — Persistencia core: alumnos y cartera reales
 
-> **Estado:** Aprobado · **Depende de:** SPEC 04 (Neon + Drizzle + Better Auth + middleware), SPEC 05–06 (dominio de cartera y alumnos, hooks, routing), SPEC 08–10 (decisiones que este spec respeta: pago binario, roles) · **Fecha:** 2026-07-18
+> **Estado:** Implementado · **Depende de:** SPEC 04 (Neon + Drizzle + Better Auth + middleware), SPEC 05–06 (dominio de cartera y alumnos, hooks, routing), SPEC 08–10 (decisiones que este spec respeta: pago binario, roles) · **Fecha:** 2026-07-18
 > **Objetivo:** Conectar el admin a la base de datos real — schema Drizzle y Astro Actions para alumnos y pagos, seed idempotente desde el Excel del club (leyendo los pagos del color de las celdas), migración de los hooks del mock a Actions sin tocar la UI, y modelo de cartera por año calendario (ENE–NOV, fin configurable) con fecha de cumpleaños opcional.
 
 ---
@@ -177,40 +177,40 @@ _Verifica:_ flujo completo en `npm run dev` contra Neon: login → dashboard rea
 
 ### Persistencia y datos
 
-- [ ] Registrar un pago, crear un alumno o editarlo **sobrevive a recargar la página** y a cerrar/abrir sesión (los datos viven en Neon, no en memoria).
-- [ ] La tabla `pagos` solo contiene filas de meses realmente pagados; `due/pending/na` nunca se almacenan.
-- [ ] No se puede registrar dos veces el mismo alumno-año-mes (constraint único) ni duplicar documento de alumno.
-- [ ] El seed carga los 77 alumnos del Excel y sus pagos cuadran con los fills verdes por mes (MAR 44 · ABR 54 · MAY 50 · JUN 35 · JUL 5 · AGO–NOV 1); re-ejecutarlo no duplica ni altera nada.
-- [ ] Las filas anómalas del Excel (año inválido, documento vacío/duplicado) se reportan en consola con número de fila y se omiten sin abortar el seed.
+- [x] Registrar un pago, crear un alumno o editarlo **sobrevive a recargar la página** y a cerrar/abrir sesión (los datos viven en Neon, no en memoria).
+- [x] La tabla `pagos` solo contiene filas de meses realmente pagados; `due/pending/na` nunca se almacenan.
+- [x] No se puede registrar dos veces el mismo alumno-año-mes (constraint único) ni duplicar documento de alumno.
+- [x] El seed carga los 77 alumnos del Excel y sus pagos cuadran con los fills verdes por mes (MAR 44 · ABR 54 · MAY 50 · JUN 35 · JUL 5 · AGO–NOV 1); re-ejecutarlo no duplica ni altera nada.
+- [x] Las filas anómalas del Excel (año inválido, documento vacío/duplicado) se reportan en consola con número de fila y se omiten sin abortar el seed.
 
 ### Cartera por año calendario
 
-- [ ] La tira de meses muestra ENE–NOV; para 2026, ENE y FEB aparecen `na` para todos (arranque del club en marzo).
-- [ ] Un alumno con `fechaInicio` posterior a marzo muestra `na` en los meses previos a su ingreso.
-- [ ] Cambiar `MES_FIN_COBRO` a `'DIC'` hace aparecer diciembre en cartera, ficha, pago y totales **sin tocar BD ni ninguna otra parte del código**.
-- [ ] Saldo, mora, recaudo del mes/año, cartera vencida y meta salen de los pagos reales y cuadran entre dashboard, cartera y ficha.
+- [x] La tira de meses muestra ENE–NOV; para 2026, ENE y FEB aparecen `na` para todos (arranque del club en marzo).
+- [x] Un alumno con `fechaInicio` posterior a marzo muestra `na` en los meses previos a su ingreso.
+- [x] Cambiar `MES_FIN_COBRO` a `'DIC'` hace aparecer diciembre en cartera, ficha, pago y totales **sin tocar BD ni ninguna otra parte del código**.
+- [x] Saldo, mora, recaudo del mes/año, cartera vencida y meta salen de los pagos reales y cuadran entre dashboard, cartera y ficha.
 
 ### Fecha de nacimiento y cumpleaños
 
-- [ ] El form pide fecha de nacimiento (requerida, sin campo año); la categoría se deriva de la fecha y se muestra como badge.
-- [ ] Al editar un alumno migrado (fecha null), el campo llega vacío y obliga a completarlo antes de guardar.
-- [ ] El dashboard muestra próximos cumpleaños solo de alumnos con fecha completa, ordenados por proximidad (incluye el cruce de año).
-- [ ] La card EntrenoDeHoy ya no está en el dashboard.
+- [x] El form pide fecha de nacimiento (requerida, sin campo año); la categoría se deriva de la fecha y se muestra como badge.
+- [x] Al editar un alumno migrado (fecha null), el campo llega vacío y obliga a completarlo antes de guardar.
+- [x] El dashboard muestra próximos cumpleaños solo de alumnos con fecha completa, ordenados por proximidad (incluye el cruce de año).
+- [x] La card EntrenoDeHoy ya no está en el dashboard.
 
 ### Seguridad por rol (en servidor)
 
-- [ ] Toda Action niega sin sesión (`UNAUTHORIZED`), verificable con una petición directa sin cookie.
-- [ ] La respuesta de red de `alumnos.listar` para un entrenador no contiene cuota, estados de pago ni saldo, y solo trae alumnos de sus `cats` (verificado en el payload, no solo en la UI).
-- [ ] Un entrenador no puede invocar `pagos.registrar` ni `alumnos.crear/editar`.
+- [x] Toda Action niega sin sesión (`UNAUTHORIZED`), verificable con una petición directa sin cookie.
+- [x] La respuesta de red de `alumnos.listar` para un entrenador no contiene cuota, estados de pago ni saldo, y solo trae alumnos de sus `cats` (verificado en el payload, no solo en la UI).
+- [x] Un entrenador no puede invocar `pagos.registrar` ni `alumnos.crear/editar`.
 
 ### UI y no-regresión
 
-- [ ] Alumnos, ficha, cartera, pago, form, plantel y dashboard funcionan contra la BD con la misma estructura visual; hay estado de carga y de error en cada pantalla migrada.
-- [ ] Pantalla Uniformes y tab Uniforme muestran el aviso de migración (sin datos mock mezclados); Entrenos sigue en mock intacto.
-- [ ] `data/store.ts` y el mock de alumnos no existen más en el bundle.
-- [ ] Ningún archivo > 200 líneas; cero `any`; `tsc --noEmit` + `build` en verde; `exceljs` solo como devDependency (no aparece en ningún bundle del sitio).
-- [ ] Marketing prerenderizado intacto; `/admin/**` noindex y fuera del sitemap.
-- [ ] Docs actualizadas: `ARCHITECTURE.md` §4, `excel-data-dictionary.md`, `backlog.md`.
+- [x] Alumnos, ficha, cartera, pago, form, plantel y dashboard funcionan contra la BD con la misma estructura visual; hay estado de carga y de error en cada pantalla migrada.
+- [x] Pantalla Uniformes y tab Uniforme muestran el aviso de migración (sin datos mock mezclados); Entrenos sigue en mock intacto.
+- [x] `data/store.ts` y el mock de alumnos no existen más en el bundle.
+- [x] Ningún archivo > 200 líneas; cero `any`; `tsc --noEmit` + `build` en verde; `exceljs` solo como devDependency (no aparece en ningún bundle del sitio).
+- [x] Marketing prerenderizado intacto; `/admin/**` noindex y fuera del sitemap.
+- [x] Docs actualizadas: `ARCHITECTURE.md` §4, `excel-data-dictionary.md`, `backlog.md`.
 
 ---
 

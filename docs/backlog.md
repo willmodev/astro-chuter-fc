@@ -57,9 +57,10 @@ Como administrador quiero que la app admin tenga la identidad visual del club (n
 Como dueño del club quiero que el panel no aparezca en buscadores para mantenerlo privado.
 - **Aceptación técnica:** `<meta name="robots" content="noindex,nofollow">` en `AdminLayout`; `Disallow: /admin` en `public/robots.txt`; sitemap excluye `/admin`.
 
-### HU-0.5 · Base de datos y migraciones — `Must` · ☐
+### HU-0.5 · Base de datos y migraciones — `Must` · ☑ (spec 11)
 Como equipo técnico quiero la conexión a Neon y migraciones versionadas para persistir datos de forma confiable.
 - **Aceptación técnica:** `drizzle.config.ts`, cliente Neon singleton, `db:generate`/`db:migrate` funcionando contra una rama de Neon.
+- **Hecho (spec 11):** schema `alumnos` + `pagos` migrado a Neon; `db:generate`/`db:migrate`/`db:seed` en `package.json`.
 
 ---
 
@@ -98,7 +99,9 @@ Como dueño del club quiero solo cuentas autorizadas (Camilo, Ebed) sin registro
 
 ## EPIC 2 — Gestión de alumnos
 
-### HU-2.1 · Listar y buscar alumnos — `Must` · Pantalla: Alumnos · ☐
+> **Persistencia real (spec 11, 2026-07-18).** Las HUs de alumnos, cartera y dashboard que estaban sobre el store mock (specs 03–10) ahora corren contra Neon + Drizzle + Actions. La UI no cambió de estructura; se marcan ☑ las afectadas con nota. Uniformes reales quedan para el spec 12 (aviso de migración mientras tanto).
+
+### HU-2.1 · Listar y buscar alumnos — `Must` · Pantalla: Alumnos · ☑ (spec 11)
 Como administrador quiero ver y buscar alumnos por nombre o acudiente para encontrarlos rápido.
 - **Aceptación:**
   - Dado el listado, cuando escribo en el buscador, entonces se filtran alumnos cuyo nombre **o** acudiente coincide (sin distinguir mayúsculas/acentos).
@@ -112,25 +115,25 @@ Como administrador quiero filtrar por categoría (SUB 4–16) para revisar un gr
   - Dado los chips de categoría, cuando elijo una, entonces el listado y el contador se actualizan a esa categoría.
   - "Todas" restablece el filtro. El filtro de categoría se combina con el buscador.
 
-### HU-2.3 · Ver ficha del alumno — `Must` · Pantalla: Ficha · ☐
+### HU-2.3 · Ver ficha del alumno — `Must` · Pantalla: Ficha · ☑ (spec 11)
 Como administrador quiero ver el detalle de un alumno (pagos, uniforme, acudiente) para tener su información completa.
 - **Aceptación:**
   - Dado un alumno, cuando abro su ficha, entonces veo cabecera con nombre, categoría y estado, y acciones "Registrar pago" y "WhatsApp".
-  - Pestaña **Pagos del año:** lista de meses FEB–DIC con estado por mes; tocar un mes cobrable abre Registrar pago en ese mes.
-  - Pestaña **Uniforme:** kit/numero/talla si entregado, o CTA "Registrar entrega" si pendiente.
+  - Pestaña **Pagos del año:** lista de meses **ENE–NOV** (`MESES_VISIBLES`) con estado por mes; tocar un mes cobrable abre Registrar pago en ese mes.
+  - Pestaña **Uniforme:** aviso "migración de uniformes en camino" (spec 11); modelo por kit + entrega en el spec 12.
   - Pestaña **Acudiente:** acudiente, celular, dirección, documento, año nac., ingreso, hermanos.
 
-### HU-2.4 · Inscribir alumno — `Must` · Pantalla: Form · ☐
+### HU-2.4 · Inscribir alumno — `Must` · Pantalla: Form · ☑ (spec 11)
 Como administrador quiero inscribir un alumno calculando su categoría y tarifa automáticamente para evitar errores y agilizar.
 - **Aceptación:**
-  - Dado el año de nacimiento, cuando lo ingreso, entonces la **categoría se calcula automáticamente** (R1) y se muestra como badge.
+  - Dada la **fecha de nacimiento** (requerida, sin campo año — spec 11), cuando la ingreso, entonces la **categoría se calcula automáticamente** (R1, vía `subDeFecha`) y se muestra como badge.
   - Dado que el acudiente ya tiene otro hijo inscrito, cuando ingreso su nombre, entonces se detecta el **hermano** (R4) y se muestra aviso del **descuento de uniforme** (R9); la mensualidad no cambia (R2).
   - Documento requerido y único; con < 8 dígitos muestra error.
   - Campos requeridos: nombre, documento, año nac., acudiente, celular. Al guardar se crea el alumno (y el acudiente si es nuevo).
 
-### HU-2.5 · Editar alumno — `Should` · Pantalla: Form · ☐
+### HU-2.5 · Editar alumno — `Should` · Pantalla: Form · ☑ (spec 11)
 Como administrador quiero editar los datos de un alumno para mantenerlos actualizados.
-- **Aceptación:** Dado un alumno existente, cuando abro "Editar", entonces el formulario viene precargado; al guardar se persisten los cambios y la categoría se recalcula si cambia el año.
+- **Aceptación:** Dado un alumno existente, cuando abro "Editar", entonces el formulario viene precargado; al guardar se persisten los cambios y la categoría se recalcula si cambia la fecha. Al editar un **migrado** (fecha null), el campo fecha de nacimiento llega vacío y obliga a completarlo (spec 11).
 
 ### HU-2.6 · Retirar / desactivar alumno — `Could` · ☐
 Como administrador quiero marcar un alumno como retirado para que no cuente en activos sin perder su historial.
@@ -140,11 +143,11 @@ Como administrador quiero marcar un alumno como retirado para que no cuente en a
 
 ## EPIC 3 — Cartera y cobros ★
 
-### HU-3.1 · Cartera en tarjetas (móvil) — `Must` · Pantalla: Cartera · ☐
+### HU-3.1 · Cartera en tarjetas (móvil) — `Must` · Pantalla: Cartera · ☑ (spec 11)
 Como administrador quiero ver cada alumno como tarjeta con su tira de meses para revisar la cartera cómodamente en el celular.
 - **Aceptación:**
-  - Cada tarjeta muestra alumno, categoría, cuota/mes, saldo o "Al día", y una tira FEB–DIC de celdas de color deslizable.
-  - Colores: verde=pagado, rojo=mora, gris=pendiente, ámbar=abono, neutro=fuera de temporada (R5).
+  - Cada tarjeta muestra alumno, categoría, cuota/mes, saldo o "Al día", y una tira **ENE–NOV** (`MESES_VISIBLES`) de celdas de color deslizable; ENE/FEB 2026 en `na`.
+  - Colores: verde=pagado, rojo=mora, gris=pendiente, neutro=fuera de temporada (R5, sin `partial`).
   - Tocar una celda cobrable abre Registrar pago en ese mes.
 
 ### HU-3.2 · Cartera en matriz — `Should` · Pantalla: Cartera · ☐
@@ -156,12 +159,13 @@ Como administrador quiero filtrar morosos o con abono para enfocar la gestión d
 - **Aceptación:** Dado el segmentado Todos/En mora/Con abono, cuando elijo uno, entonces la lista se filtra coherentemente (mora = tiene ≥1 mes en `due`; abono = tiene ≥1 mes `partial`).
 - **Nota (spec 05, 2026-07-05):** obsoleta — el filtro "con abono" no aplica porque un mes solo se cobra o no se cobra (sin estado `partial`).
 
-### HU-3.4 · Totales de cartera — `Must` · Pantalla: Cartera/Dashboard · ☐
+### HU-3.4 · Totales de cartera — `Must` · Pantalla: Cartera/Dashboard · ☑ (spec 11)
 Como administrador quiero ver recaudado del año y cartera vencida para conocer la salud financiera.
-- **Aceptación:** Se muestran "Recaudado año" (Σ pagos + ½ abonos) y "Cartera vencida" (Σ meses en mora + ½ de abonos) con formato COP (R8). Los totales reflejan los pagos registrados.
+- **Aceptación:** Se muestran "Recaudado año" (Σ pagos) y "Cartera vencida" (Σ meses en mora) con formato COP (R8). Los totales salen de los **pagos reales** en Neon y cuadran entre dashboard, cartera y ficha (sin `partial`).
 
-### HU-3.5 · Registrar pago ★ — `Must` · Pantalla: Registrar pago · ☐
+### HU-3.5 · Registrar pago ★ — `Must` · Pantalla: Registrar pago · ☑ (spec 11)
 Como administrador quiero registrar el pago de uno o varios meses para mantener la cartera al día.
+- **Persistencia (spec 11):** `pagos.registrar` hace upsert (ignora ya pagados), mutación **pesimista** (confirma → refetch); el pago **sobrevive a recargar**.
 - **Aceptación:**
   - Dado un alumno con meses pendientes/mora/abono, cuando abro Registrar pago, entonces se preseleccionan meses razonables (el mes tocado, o el primero en mora).
   - Cuando selecciono 1+ meses, entonces el **total = Σ cuotas** (½ cuota si el mes estaba en abono) en formato COP.
@@ -186,11 +190,11 @@ Como administrador quiero contactar por WhatsApp a un moroso desde la lista para
 
 ## EPIC 4 — Dashboard (inicio)
 
-### HU-4.1 · Recaudo del mes vs meta — `Must` · Pantalla: Dashboard · ☐
+### HU-4.1 · Recaudo del mes vs meta — `Must` · Pantalla: Dashboard · ☑ (spec 11)
 Como administrador quiero ver cuánto llevo recaudado este mes contra la meta para saber cómo voy.
 - **Aceptación:** Hero muestra recaudo del mes en curso (formato corto COP), barra de progreso y % vs meta (meta = Σ cuotas esperadas), más "Cartera vencida".
 
-### HU-4.2 · KPIs principales — `Must` · Pantalla: Dashboard · ☐
+### HU-4.2 · KPIs principales — `Must` · Pantalla: Dashboard · ☑ (spec 11)
 Como administrador quiero indicadores clave de un vistazo para tomar decisiones rápidas.
 - **Aceptación:** Tarjetas con: Alumnos activos, % al día (con N de M), En mora (# alumnos), Recaudo año. Cada KPI con su acento de color.
 
@@ -198,23 +202,27 @@ Como administrador quiero indicadores clave de un vistazo para tomar decisiones 
 Como administrador quiero una mini gráfica de recaudo por mes para ver la tendencia.
 - **Aceptación:** Barras por mes hasta el mes en curso; cada barra proporcional al recaudo del mes (paid + ½ partial).
 
-### HU-4.4 · Cobros pendientes — `Must` · Pantalla: Dashboard · ☐
+### HU-4.4 · Cobros pendientes — `Must` · Pantalla: Dashboard · ☑ (spec 11)
 Como administrador quiero ver los principales morosos con acceso rápido para priorizar el cobro.
 - **Aceptación:** Lista de hasta 4 morosos ordenados por saldo desc.; cada uno con # meses, saldo, acceso a su ficha y botón WhatsApp; enlace "Ver cartera".
 
-### HU-4.5 · Próximos cumpleaños — `Could` · Pantalla: Dashboard · ☐
+### HU-4.5 · Próximos cumpleaños — `Must` · Pantalla: Dashboard · ☑ (spec 11)
 Como administrador quiero ver cumpleaños próximos para felicitar a los niños.
 - **Aceptación:** Carrusel horizontal con nombre, categoría y fecha de los próximos cumpleaños.
+- **Nota (spec 11):** sube de `Could` a **`Must` por pedido explícito del cliente**. Muestra solo alumnos con fecha de nacimiento completa, ordenados por proximidad (incluye el cruce de año, vía `proximosCumples`). Los 77 migrados aparecen al completar su fecha en el form.
 
 ### HU-4.6 · Entrenamiento del día — `Should` · Pantalla: Dashboard · ☐
 Como administrador quiero ver el entrenamiento de hoy para tenerlo presente.
 - **Aceptación:** Tarjeta(s) con el foco de la sesión del día, categoría y horario; enlace "Planificar".
+- **Nota (spec 11):** la card **EntrenoDeHoy sale del dashboard** al migrar a datos reales (mezclaba mock de entrenos con alumnos reales). Se recablea con la persistencia de entrenos (spec 13).
 
 ---
 
 ## EPIC 5 — Uniformes
 
-### HU-5.1 · Control por kit — `Must` · Pantalla: Uniformes · ☐
+> **Replanteado por el spec 11 (2026-07-18).** La inspección del Excel reveló un modelo distinto al asumido: **dos kits por alumno** (AZUL/ORO, $100.000 c/u), **4 estados por kit** (verde=pagado+entregado · rojo=entregado sin pagar · azul=pagado sin entregar · blanco=nada) y **abonos parciales**. Se implementa completo en el **spec 12** (modelo por kit + seed AZUL/ORO + realineación de UI). Mientras tanto, la pantalla Uniformes y el tab Uniforme de la ficha muestran un **aviso "migración de uniformes en camino"** para no mezclar mock con datos reales.
+
+### HU-5.1 · Control por kit — `Must` · Pantalla: Uniformes · ☐ (→ spec 12)
 Como administrador quiero ver los uniformes entregados por kit (azul/dorado) para llevar el control.
 - **Aceptación:** Toggle de kit; contadores Entregados/Pendientes; listado del kit seleccionado ordenado por número con nombre, categoría y talla.
 
@@ -298,12 +306,13 @@ Como administrador quiero ajustar los rangos de año por categoría para mantene
 
 ## EPIC 8 — Datos reales / migración
 
-### HU-8.1 · Importar datos desde el Excel — `Must` · ☐
+### HU-8.1 · Importar datos desde el Excel — `Must` · ☑ (spec 11, parcial)
 Como dueño del club quiero migrar los datos del Excel actual para arrancar con información real.
 - **Aceptación:**
-  - Dado `docs/CHUTER FC 2026.xlsx`, cuando ejecuto `npm run db:seed`, entonces se crean categorías, acudientes, alumnos, pagos, uniformes y entrenamientos a partir de las hojas correspondientes.
+  - Dado `CHUTER FC 2026.xlsx` (raíz, local), cuando ejecuto `npm run db:seed`, entonces se crean **alumnos y pagos** (pagos desde el **color verde** de MAR–NOV) a partir de la hoja `CATEGORIAS`.
   - El seed es **idempotente** (clave: documento del alumno): re-ejecutar no duplica.
   - El mapeo reusa las reglas de dominio (misma categoría que la app).
+- **Hecho (spec 11):** 77 alumnos + pagos por color; anomalías reportadas y omitidas; conteos por mes cuadran con los fills. **Pendiente (spec 12):** uniformes (kits AZUL/ORO); entrenamientos (spec 13).
 
 ### HU-8.2 · Exportar cartera — `Could` · ☐
 Como administrador quiero exportar la cartera a Excel/CSV para respaldos y contabilidad.
