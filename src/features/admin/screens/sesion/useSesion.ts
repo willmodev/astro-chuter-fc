@@ -2,13 +2,13 @@ import { useMemo, useState, useSyncExternalStore } from 'react';
 
 import {
   asistenciaDe,
-  listaPasada,
   puedePasarLista,
   rosterDe,
   type DiaEntreno,
   type ResumenAsistencia,
   type Semana,
 } from '@/lib/domain/entrenos';
+import { listaPasada } from '@/lib/domain/sesion';
 
 import { semanas } from '../../data/mock';
 import { getAlumnos, subscribe as subscribeAlumnos } from '../../data/store';

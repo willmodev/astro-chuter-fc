@@ -75,7 +75,9 @@ export const entrenadoresMock: EntrenadorMock[] = [
   { id: 'ent-ebed', nombre: 'Ebed Calderón', cats: ['SUB 10', 'SUB 12', 'SUB 14', 'SUB 16'] },
 ];
 
-const [, w1, w2] = semanas;
+// semanas = [próxima, actual, pasada1, pasada2, pasada3]; los ejemplos se
+// anclan a las dos semanas pasadas (la actual y la próxima nacen vacías).
+const [, , w1, w2] = semanas;
 
 function plan(
   entrenadorId: string,

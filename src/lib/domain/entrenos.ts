@@ -37,6 +37,7 @@ export interface Semana {
 }
 
 export const SEMANAS_PASADAS = 3;
+export const SEMANAS_FUTURAS = 1; // permite planear la próxima semana con antelación
 
 const MESES_CORTOS = [
   'ene', 'feb', 'mar', 'abr', 'may', 'jun',
@@ -74,15 +75,21 @@ function labelSemana(lunes: Date): string {
 }
 
 function subSemana(offset: number): string {
+  if (offset < 0) return offset === -1 ? 'Próxima semana' : `En ${-offset} semanas`;
   if (offset === 0) return 'Semana actual';
   if (offset === 1) return 'Semana pasada';
   return `Hace ${offset} semanas`;
 }
 
-/** Semana viva + `SEMANAS_PASADAS` anteriores. Fecha inyectable (testeable). */
+/**
+ * `SEMANAS_FUTURAS` próximas + semana viva + `SEMANAS_PASADAS` anteriores,
+ * ordenadas de futura a pasada (0 = actual). Fecha inyectable (testeable).
+ */
 export function generarSemanas(hoy: Date): Semana[] {
   const base = lunesDe(hoy);
-  return Array.from({ length: SEMANAS_PASADAS + 1 }, (_, offset) => {
+  const total = SEMANAS_FUTURAS + SEMANAS_PASADAS + 1;
+  return Array.from({ length: total }, (_, i) => {
+    const offset = i - SEMANAS_FUTURAS; // -futuras … +pasadas
     const lunes = new Date(base);
     lunes.setDate(lunes.getDate() - offset * 7);
     const n = numeroSemana(lunes);
@@ -98,15 +105,7 @@ export function generarSemanas(hoy: Date): Semana[] {
 }
 
 // ─── Fechas y gate de la lista ───
-
-// Estructura mínima de una sesión para las reglas de estado (sin acoplar la
-// capa de datos; la `Sesion` real cumple estas formas por tipado estructural).
-export interface SesionMinima {
-  day: DiaEntreno;
-  parteCentralImg: string | null;
-  parteCentralNota: string;
-  ausentes: readonly number[] | null;
-}
+// (los estados derivados de la sesión viven en `./sesion`)
 
 /** Fecha (00:00 local) del día de entreno dentro de su semana. */
 export function fechaDe(semana: Semana, day: DiaEntreno): Date {
@@ -125,42 +124,6 @@ export function puedePasarLista(
   const hoyMid = new Date(hoy);
   hoyMid.setHours(0, 0, 0, 0);
   return fechaDe(semana, day).getTime() <= hoyMid.getTime();
-}
-
-// ─── Estados derivados de la sesión ───
-
-/** Tiene planeación: imagen o nota no vacía. */
-export function planeada(
-  sesion: Pick<SesionMinima, 'parteCentralImg' | 'parteCentralNota'> | null,
-): boolean {
-  if (sesion === null) return false;
-  return sesion.parteCentralImg !== null || sesion.parteCentralNota.trim() !== '';
-}
-
-/** La lista ya se pasó: `ausentes` deja de ser `null`. */
-export function listaPasada(
-  sesion: Pick<SesionMinima, 'ausentes'> | null,
-): boolean {
-  return sesion !== null && sesion.ausentes !== null;
-}
-
-/**
- * Pendientes del entrenador en la semana: días sin planear y días ya llegados
- * sin lista (los futuros no son deuda todavía).
- */
-export function pendientesDe(
-  semana: Semana,
-  sesiones: readonly SesionMinima[],
-  hoy: Date,
-): { sinPlanear: number; sinLista: number } {
-  let sinPlanear = 0;
-  let sinLista = 0;
-  for (const day of DIAS_ENTRENO) {
-    const s = sesiones.find((x) => x.day === day) ?? null;
-    if (!planeada(s)) sinPlanear += 1;
-    if (puedePasarLista(semana, day, hoy) && !listaPasada(s)) sinLista += 1;
-  }
-  return { sinPlanear, sinLista };
 }
 
 // ─── Roster y asistencia ───

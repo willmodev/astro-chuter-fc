@@ -1,11 +1,7 @@
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 
-import {
-  pendientesDe,
-  rosterDe,
-  type DiaEntreno,
-  type Semana,
-} from '@/lib/domain/entrenos';
+import { rosterDe, type DiaEntreno, type Semana } from '@/lib/domain/entrenos';
+import { pendientesDe } from '@/lib/domain/sesion';
 
 import { semanas } from '../../data/mock';
 import { getAlumnos, subscribe as subscribeAlumnos } from '../../data/store';
@@ -38,10 +34,11 @@ export function useEntrenos(
   const sesiones = useSyncExternalStore(subscribe, getSesiones);
   const planes = useSyncExternalStore(subscribe, getPlanes);
   const alumnos = useSyncExternalStore(subscribeAlumnos, getAlumnos);
-  const [weekId, setWeekId] = useState(semanas[0].id);
+  const actual = semanas.find((w) => w.current) ?? semanas[0];
+  const [weekId, setWeekId] = useState(actual.id);
   const [hoy] = useState(() => new Date()); // único punto donde se inyecta "hoy"
 
-  const semana = semanas.find((w) => w.id === weekId) ?? semanas[0];
+  const semana = semanas.find((w) => w.id === weekId) ?? actual;
   const roster = useMemo(() => rosterDe(cats, alumnos), [cats, alumnos]);
 
   const mias = useMemo(

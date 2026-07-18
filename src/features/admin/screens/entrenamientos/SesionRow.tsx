@@ -1,8 +1,11 @@
+import { useState } from 'react';
+
 import { asistenciaDe } from '@/lib/domain/entrenos';
 
 import { Icon } from '../../chrome/Icon';
 import { AsistPill } from '../../ui/AsistPill';
 import { Badge } from '../../ui/Badge';
+import { VisorImagen } from '../../ui/VisorImagen';
 import type { Alumno, Sesion } from '../../data/types';
 
 // Fila de una sesión registrada (vista admin, solo lectura): día, thumbnail
@@ -13,6 +16,8 @@ interface Props {
 }
 
 export function SesionRow({ sesion, roster }: Readonly<Props>) {
+  const [verVisor, setVerVisor] = useState(false);
+  const img = sesion.parteCentralImg;
   return (
     <div
       style={{
@@ -40,19 +45,33 @@ export function SesionRow({ sesion, roster }: Readonly<Props>) {
         {sesion.day.slice(0, 3).toUpperCase()}
       </span>
 
-      {sesion.parteCentralImg !== null ? (
-        <img
-          src={sesion.parteCentralImg}
-          alt={`Parte central del ${sesion.day}`}
+      {img !== null ? (
+        <button
+          type="button"
+          onClick={() => setVerVisor(true)}
+          aria-label={`Ampliar la parte central del ${sesion.day}`}
           style={{
             width: 44,
             height: 44,
             flexShrink: 0,
+            padding: 0,
             borderRadius: 'var(--radius-md)',
-            objectFit: 'cover',
             border: '1px solid var(--border-subtle)',
+            cursor: 'zoom-in',
+            overflow: 'hidden',
           }}
-        />
+        >
+          <img
+            src={img}
+            alt={`Parte central del ${sesion.day}`}
+            style={{
+              display: 'block',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        </button>
       ) : (
         <span
           aria-hidden
@@ -96,6 +115,10 @@ export function SesionRow({ sesion, roster }: Readonly<Props>) {
           )}
         </span>
       </span>
+
+      {verVisor && img !== null && (
+        <VisorImagen src={img} onClose={() => setVerVisor(false)} />
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 # SPEC 10 — Asistencia en dos momentos + visor de imagen
 
-> **Estado:** Aprobado · **Depende de:** SPEC 09 (entrenos, sesión del día, DayCard, vista admin de entrenamientos) · **Fecha:** 2026-07-13
+> **Estado:** Implementado · **Depende de:** SPEC 09 (entrenos, sesión del día, DayCard, vista admin de entrenamientos) · **Fecha:** 2026-07-13
 > **Objetivo:** Separar la sesión del día en dos registros independientes — planeación (imagen + nota, editable en cualquier momento) y asistencia (solo desde el día del entreno, corregible hacia atrás) — y agregar un visor a pantalla completa con zoom para la imagen de la parte central, que los entrenadores muestran a los padres en la cancha.
 
 ---
@@ -18,6 +18,7 @@ El spec 09 guarda planeación y asistencia en un solo "Guardar" con default "tod
 - **Dominio** (`src/lib/domain/entrenos.ts`):
   - `fechaDe(semana, day)` y `puedePasarLista(semana, day, hoy)` — la lista se habilita solo cuando el día del entreno ya llegó (fecha inyectable, como el resto del dominio); los días pasados siguen habilitados (corregibles).
   - Estados derivados de la sesión: `planeada` (tiene imagen o nota) y `listaPasada` (`ausentes !== null`) — el flag `registrado` del spec 09 desaparece a favor de la derivación.
+  - `generarSemanas` incluye la **próxima semana** (1 futura) además de la actual y las pasadas, para poder planear con anticipación; la semana **actual** sigue siendo la seleccionada por defecto.
 - **Data / store** (`features/admin/data/`):
   - `Sesion.ausentes: number[] | null` — `null` = lista no pasada (deja de existir el default "todos presentes").
   - `guardarSesion` se divide en dos upserts independientes e idempotentes: `guardarPlaneacion(...)` y `guardarAsistencia(...)`.
@@ -132,36 +133,36 @@ _Verifica:_ el visor abre desde los tres puntos, hace zoom y pan en móvil y des
 
 ### Planeación y asistencia separadas
 
-- [ ] Guardar la planeación (imagen y/o nota) no crea ni modifica asistencia: la DayCard queda "planeada · Sin lista".
-- [ ] Se puede pasar lista sin planeación previa: la DayCard queda "lista sin planeación" con su pastilla N/M.
-- [ ] La lista de un día futuro está deshabilitada con el hint "Disponible el día del entreno"; la de un día pasado se puede pasar o corregir.
-- [ ] La planeación es editable en cualquier momento (pasado, presente o futuro).
-- [ ] `guardarPlaneacion` y `guardarAsistencia` son idempotentes y no se pisan entre sí (guardar una no altera la otra).
-- [ ] Ya no existe el default "todos presentes": la asistencia solo existe cuando el profe la guarda explícitamente.
+- [x] Guardar la planeación (imagen y/o nota) no crea ni modifica asistencia: la DayCard queda "planeada · Sin lista".
+- [x] Se puede pasar lista sin planeación previa: la DayCard queda "lista sin planeación" con su pastilla N/M.
+- [x] La lista de un día futuro está deshabilitada con el hint "Disponible el día del entreno"; la de un día pasado se puede pasar o corregir.
+- [x] La planeación es editable en cualquier momento (pasado, presente o futuro).
+- [x] `guardarPlaneacion` y `guardarAsistencia` son idempotentes y no se pisan entre sí (guardar una no altera la otra).
+- [x] Ya no existe el default "todos presentes": la asistencia solo existe cuando el profe la guarda explícitamente.
 
 ### DayCard y badge
 
-- [ ] La DayCard distingue los 4 estados: vacía / planeada sin lista / lista sin planeación / completa.
-- [ ] La pastilla muestra "N/M presentes" cuando hay lista y "Sin lista" cuando no, en días ya llegados.
-- [ ] El badge de la semana actual muestra los dos contadores ("N sin planear · M sin lista") y "sin lista" no cuenta días futuros.
+- [x] La DayCard distingue los 4 estados: vacía / planeada sin lista / lista sin planeación / completa.
+- [x] La pastilla muestra "N/M presentes" cuando hay lista y "Sin lista" cuando no, en días ya llegados.
+- [x] El badge de la semana actual muestra los dos contadores ("N sin planear · M sin lista") y "sin lista" no cuenta días futuros.
 
 ### Visor de imagen
 
-- [ ] La imagen de la parte central se abre en visor a pantalla completa desde: la sesión, el thumbnail de la DayCard y el thumbnail de la vista admin.
-- [ ] El visor permite zoom (rueda en PC, pinch y doble tap en móvil) y arrastre para desplazarse.
-- [ ] Se cierra con X, Escape o tap en el fondo, sin romper la navegación (atrás/adelante siguen funcionando).
-- [ ] En la DayCard, tocar el thumbnail abre el visor y tocar el resto de la card sigue navegando a la sesión.
+- [x] La imagen de la parte central se abre en visor a pantalla completa desde: la sesión, el thumbnail de la DayCard y el thumbnail de la vista admin.
+- [x] El visor permite zoom (rueda en PC, pinch y doble tap en móvil) y arrastre para desplazarse.
+- [x] Se cierra con X, Escape o tap en el fondo, sin romper la navegación (atrás/adelante siguen funcionando).
+- [x] En la DayCard, tocar el thumbnail abre el visor y tocar el resto de la card sigue navegando a la sesión.
 
 ### Vista del admin
 
-- [ ] Las sesiones sin lista muestran "Sin lista" en lugar de la pastilla de asistencia.
-- [ ] Sigue sin existir ningún control de edición en esa vista.
+- [x] Las sesiones sin lista muestran "Sin lista" en lugar de la pastilla de asistencia. _(verificado por código/tsc; no en pantalla — solo había cuenta de profe disponible)_
+- [x] Sigue sin existir ningún control de edición en esa vista. _(sin cambios respecto al spec 09)_
 
 ### Calidad y no-regresión
 
-- [ ] Ningún archivo > 200 líneas; cero `any`; sin dependencias nuevas; `tsc --noEmit` + `build` en verde.
-- [ ] Marketing estático; `/admin/**` noindex y fuera del sitemap.
-- [ ] De 320px a desktop: cero scroll horizontal en las pantallas tocadas.
+- [x] Ningún archivo > 200 líneas; cero `any`; sin dependencias nuevas; `tsc --noEmit` + `build` en verde.
+- [x] Marketing estático; `/admin/**` noindex y fuera del sitemap.
+- [x] De 320px a desktop: cero scroll horizontal en las pantallas tocadas.
 
 ---
 
@@ -175,6 +176,7 @@ _Verifica:_ el visor abre desde los tres puntos, hace zoom y pan en móvil y des
 - **Sí (Will, 2026-07-13):** **en la DayCard el thumbnail abre el visor y el resto de la card navega.** _Por qué:_ resuelve el conflicto de tap sin quitar el acceso rápido a la imagen, que es lo que se muestra en la cancha.
 - **Sí:** **`ausentes: number[] | null`** con `null` = lista no pasada, y **eliminar el flag `registrado`** a favor de estados derivados (`planeada`, `listaPasada`). _Por qué:_ el flag único no puede representar los 4 estados; derivar evita estados fantasma e inconsistencias.
 - **Sí:** **`Semana` carga la fecha de su lunes** (`inicio`). _Por qué:_ `puedePasarLista` necesita comparar fechas reales; hoy la semana solo tiene label de texto. Sigue siendo dominio puro con fecha inyectable.
+- **Sí (Will, 2026-07-18):** **`generarSemanas` incluye la próxima semana** (1 futura). _Por qué:_ el flujo real es planear un día antes; sin una semana futura navegable no había dónde hacerlo y el gate de lista nunca se ejercitaba (con la fecha de hoy, todos los días de la semana actual ya pasaron). La semana actual sigue seleccionada por defecto; los chips quedan "Próxima · Actual · Pasada · …". Es una extensión menor sobre el modelo de `generarSemanas` del spec 09.
 - **No:** **bloquear la corrección de asistencia en el pasado** — descartado: revertiría el historial corregible del spec 09 y castigaría el olvido, el caso más común.
 - **No:** **restricción de la planeación por fecha** — descartada: planear con anticipación es justamente el objetivo.
 - **No:** **librería de lightbox / abrir imagen en pestaña nueva** — descartadas por la regla de deps y por UX pobre en la cancha, respectivamente.

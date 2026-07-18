@@ -55,9 +55,10 @@ export function useEntrenamientos(): EntrenamientosData {
   const todasSesiones = useSyncExternalStore(subscribe, getSesiones);
   const todosPlanes = useSyncExternalStore(subscribe, getPlanes);
   const alumnos = useSyncExternalStore(subscribeAlumnos, getAlumnos);
-  const [weekId, setWeekId] = useState(semanas[0].id);
+  const actual = semanas.find((w) => w.current) ?? semanas[0];
+  const [weekId, setWeekId] = useState(actual.id);
 
-  const semana = semanas.find((w) => w.id === weekId) ?? semanas[0];
+  const semana = semanas.find((w) => w.id === weekId) ?? actual;
 
   const grupos = useMemo(() => {
     const planes = todosPlanes.filter((p) => p.weekId === semana.id);
