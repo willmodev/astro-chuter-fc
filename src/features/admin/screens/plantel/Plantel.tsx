@@ -1,5 +1,6 @@
 import { CATEGORIA_TODAS } from '@/lib/domain/alumnos';
 
+import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { BuscadorAlumnos } from '../alumnos/BuscadorAlumnos';
 import { ChipsCategoria } from '../alumnos/ChipsCategoria';
 import { SinResultados } from '../alumnos/SinResultados';
@@ -16,6 +17,9 @@ interface Props {
 export function Plantel({ cats, onOpenFicha }: Readonly<Props>) {
   const p = usePlantel(cats);
 
+  if (p.estado !== 'listo') {
+    return <EstadoCarga estado={p.estado} onReintentar={p.recargar} />;
+  }
   if (p.rosterVacio) return <PlantelVacio />;
 
   return (

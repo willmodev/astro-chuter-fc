@@ -81,8 +81,11 @@ export async function listarPlantel(
   cats: readonly string[],
 ): Promise<AlumnoPlantel[]> {
   const rows = await listarAlumnos();
+  const hermanos = conteoHermanos(rows);
   const permitidas = new Set(cats);
-  return rows.map(aPlantel).filter((a) => permitidas.has(a.cat));
+  return rows
+    .map((r) => aPlantel(r, hermanos.get(normaliza(r.acudiente)) ?? 1))
+    .filter((a) => permitidas.has(a.cat));
 }
 
 export async function alumnoAdminPorId(

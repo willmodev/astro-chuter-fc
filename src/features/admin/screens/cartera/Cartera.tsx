@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { carteraVencida, estaEnMora, recaudoAnio } from '@/lib/domain/cartera';
 
+import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useAlumnos } from '../../hooks/useAlumnos';
 import { useVistaCartera } from '../../hooks/useVistaCartera';
 import { CabeceraTotales } from './CabeceraTotales';
@@ -19,12 +20,16 @@ interface Props {
 }
 
 export function Cartera({ onCobrarMes }: Readonly<Props>) {
-  const { alumnos } = useAlumnos();
+  const { alumnos, estado, recargar } = useAlumnos();
   const [vista, setVista] = useVistaCartera();
   const [segmento, setSegmento] = useState<SegmentoCartera>('todos');
 
   const enMora = useMemo(() => alumnos.filter(estaEnMora), [alumnos]);
   const visibles = segmento === 'mora' ? enMora : alumnos;
+
+  if (estado !== 'listo') {
+    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+  }
 
   return (
     <div style={{ display: 'grid', gap: 14, padding: '14px 16px 24px' }}>

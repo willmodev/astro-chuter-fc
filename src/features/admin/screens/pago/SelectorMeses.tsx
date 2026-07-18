@@ -1,7 +1,6 @@
-import { esMesCobrable } from '@/lib/domain/cartera';
+import { esMesCobrable, MESES_VISIBLES as MONTHS } from '@/lib/domain/cartera';
 
 import { Icon } from '../../chrome/Icon';
-import { MONTHS } from '../../data/mock';
 import type { Alumno, EstadoMes } from '../../data/types';
 
 // Tira FEB–DIC reutilizando el vocabulario visual de `PagosDelAnio` (Ficha),

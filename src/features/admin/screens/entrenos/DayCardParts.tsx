@@ -3,7 +3,7 @@ import { asistenciaDe, type DiaEntreno } from '@/lib/domain/entrenos';
 import { Icon } from '../../chrome/Icon';
 import { AsistPill } from '../../ui/AsistPill';
 import { Badge } from '../../ui/Badge';
-import type { Alumno, Sesion } from '../../data/types';
+import type { AlumnoPlantel, Sesion } from '../../data/types';
 
 // Piezas presentacionales de la DayCard (spec 10-C/D). Se separan del archivo
 // principal para mantener cada uno bajo 200 líneas.
@@ -81,7 +81,7 @@ export function RegistroLabel({
   sesion,
   roster,
   tieneLista,
-}: Readonly<{ sesion: Sesion; roster: readonly Alumno[]; tieneLista: boolean }>) {
+}: Readonly<{ sesion: Sesion; roster: readonly AlumnoPlantel[]; tieneLista: boolean }>) {
   const conPlan = sesion.parteCentralNota.trim() !== '' || sesion.parteCentralImg !== null;
   return (
     <>

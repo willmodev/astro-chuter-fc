@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useAlumno } from '../../hooks/useAlumno';
 import { AcudienteTab } from './AcudienteTab';
 import { AlumnoNoEncontrado } from './AlumnoNoEncontrado';
@@ -29,11 +30,13 @@ export function Ficha({
   readOnly = false,
   onEditar,
   onRegistrarPago,
-  onRegistrarUniforme,
 }: Readonly<Props>) {
-  const alumno = useAlumno(alumnoId);
+  const { alumno, estado, recargar } = useAlumno(alumnoId);
   const [tab, setTab] = useState<TabFicha>(readOnly ? 'uniforme' : 'pagos');
 
+  if (estado !== 'listo') {
+    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+  }
   if (!alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
   }
@@ -56,13 +59,7 @@ export function Ficha({
       {tab === 'pagos' && !readOnly && (
         <PagosDelAnio alumno={alumno} onCobrarMes={(mes) => onRegistrarPago?.(mes)} />
       )}
-      {tab === 'uniforme' && (
-        <UniformeTab
-          alumno={alumno}
-          readOnly={readOnly}
-          onRegistrarEntrega={onRegistrarUniforme}
-        />
-      )}
+      {tab === 'uniforme' && <UniformeTab />}
       {tab === 'acudiente' && <AcudienteTab alumno={alumno} />}
     </div>
   );

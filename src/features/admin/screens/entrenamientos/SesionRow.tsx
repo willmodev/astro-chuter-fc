@@ -6,13 +6,13 @@ import { Icon } from '../../chrome/Icon';
 import { AsistPill } from '../../ui/AsistPill';
 import { Badge } from '../../ui/Badge';
 import { VisorImagen } from '../../ui/VisorImagen';
-import type { Alumno, Sesion } from '../../data/types';
+import type { AlumnoPlantel, Sesion } from '../../data/types';
 
 // Fila de una sesión registrada (vista admin, solo lectura): día, thumbnail
 // de la parte central, nota y pastilla de asistencia. Sin acciones.
 interface Props {
   sesion: Sesion;
-  roster: readonly Alumno[];
+  roster: readonly AlumnoPlantel[];
 }
 
 export function SesionRow({ sesion, roster }: Readonly<Props>) {

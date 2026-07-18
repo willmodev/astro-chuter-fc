@@ -4,10 +4,10 @@ import { subDeAnio } from '@/lib/domain/categoria';
 import {
   carteraVencida,
   estaEnMora,
-  MESES,
+  indiceMesVivo,
   MESES_VISIBLES,
+  MESES_VISIBLES_LARGOS,
   metaMes,
-  NOMBRE_MES,
   pctAlDia,
   recaudoAnio,
   recaudoMes,
@@ -30,12 +30,6 @@ export interface DashboardStats {
   meses: string[];
   mesesLong: string[];
   mesVivo: number;
-}
-
-// Índice del mes en curso dentro de la tira visible (acotado a [0, len−1]).
-function mesVivoDe(hoy: Date): number {
-  const idx = MESES_VISIBLES.indexOf(MESES[hoy.getMonth()]);
-  return Math.min(Math.max(idx, 0), MESES_VISIBLES.length - 1);
 }
 
 function computeStats(alumnos: Alumno[], mesVivo: number): Stats {
@@ -71,7 +65,7 @@ function cumplesDe(rows: AlumnoRow[], hoy: Date): Cumple[] {
 
 export async function statsDashboard(hoy: Date): Promise<DashboardStats> {
   const { alumnos, rows } = await construirAlumnos(hoy);
-  const mesVivo = mesVivoDe(hoy);
+  const mesVivo = indiceMesVivo(hoy);
   const morosos = alumnos
     .filter(estaEnMora)
     .sort((a, b) => saldoPendiente(b) - saldoPendiente(a))
@@ -89,7 +83,7 @@ export async function statsDashboard(hoy: Date): Promise<DashboardStats> {
     monthly,
     cumples: cumplesDe(rows, hoy),
     meses: [...MESES_VISIBLES],
-    mesesLong: MESES_VISIBLES.map((m) => NOMBRE_MES[m]),
+    mesesLong: MESES_VISIBLES_LARGOS,
     mesVivo,
   };
 }

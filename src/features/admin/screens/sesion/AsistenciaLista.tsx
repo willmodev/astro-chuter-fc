@@ -1,10 +1,10 @@
 import { Avatar } from '../../ui/Avatar';
-import type { Alumno } from '../../data/types';
+import type { AlumnoPlantel } from '../../data/types';
 
 // Pasar lista: una fila por alumno del roster con toggles P/A. Presentes =
 // roster − ausentes; el estado vive en el hook de la sesión.
 interface Props {
-  roster: readonly Alumno[];
+  roster: readonly AlumnoPlantel[];
   estaAusente: (alumnoId: number) => boolean;
   onMarcar: (alumnoId: number, presente: boolean) => void;
 }

@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { CATEGORIA_TODAS, filtraAlumnos } from '@/lib/domain/alumnos';
 import { estaEnMora } from '@/lib/domain/cartera';
 
+import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useAlumnos } from '../../hooks/useAlumnos';
 import { BuscadorAlumnos } from './BuscadorAlumnos';
 import { ChipsCategoria } from './ChipsCategoria';
@@ -17,7 +18,7 @@ interface Props {
 }
 
 export function Alumnos({ onOpenFicha }: Readonly<Props>) {
-  const { alumnos } = useAlumnos();
+  const { alumnos, estado, recargar } = useAlumnos();
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<string>(CATEGORIA_TODAS);
 
@@ -26,6 +27,10 @@ export function Alumnos({ onOpenFicha }: Readonly<Props>) {
     [alumnos, query, cat],
   );
   const enMora = useMemo(() => visibles.filter(estaEnMora).length, [visibles]);
+
+  if (estado !== 'listo') {
+    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+  }
 
   return (
     <div style={{ display: 'grid', gap: 12, padding: '14px 16px 0' }}>

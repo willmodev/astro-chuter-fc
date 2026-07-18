@@ -12,6 +12,7 @@ export interface Alumno {
   name: string;
   cat: string; // "SUB 10"
   anio: number; // año de nacimiento
+  fechaNacimiento: string | null; // 'YYYY-MM-DD'; null en migrados (el form la completa)
   doc: string;
   acu: string; // acudiente
   phone: string; // "301 521 6830"
@@ -40,6 +41,7 @@ export interface AlumnoPlantel {
   phone: string;
   dir: string;
   desde: string;
+  hermanos: number; // conteo de hermanos: no es dato de dinero
 }
 
 export interface Training {

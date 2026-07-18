@@ -1,15 +1,17 @@
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useMemo, useState } from 'react';
 
 import { CATEGORIA_TODAS, filtraAlumnos } from '@/lib/domain/alumnos';
 import { rosterDe } from '@/lib/domain/entrenos';
 
-import { getAlumnos, subscribe } from '../../data/store';
-import type { Alumno } from '../../data/types';
+import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
+import type { AlumnoPlantel } from '../../data/types';
+import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 
-// Plantel del entrenador: SOLO los alumnos de sus categorías, con búsqueda
-// (nombre/acudiente, sin acentos) y filtro por cat — mismo dominio que Alumnos.
+// Plantel del entrenador: SOLO los alumnos de sus categorías (payload sin
+// dinero), con búsqueda (nombre/acudiente, sin acentos) y filtro por cat —
+// mismo dominio que Alumnos.
 export interface PlantelData {
-  visibles: Alumno[];
+  visibles: AlumnoPlantel[];
   total: number;
   query: string;
   setQuery: (q: string) => void;
@@ -17,10 +19,12 @@ export interface PlantelData {
   setCat: (c: string) => void;
   opcionesCat: string[];
   rosterVacio: boolean;
+  estado: EstadoCargaValor;
+  recargar: () => Promise<void>;
 }
 
 export function usePlantel(cats: readonly string[]): PlantelData {
-  const alumnos = useSyncExternalStore(subscribe, getAlumnos);
+  const { alumnos, estado, recargar } = useAlumnosPlantel();
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<string>(CATEGORIA_TODAS);
 
@@ -46,5 +50,7 @@ export function usePlantel(cats: readonly string[]): PlantelData {
     setCat,
     opcionesCat: [CATEGORIA_TODAS, ...cats],
     rosterVacio: roster.length === 0,
+    estado,
+    recargar,
   };
 }

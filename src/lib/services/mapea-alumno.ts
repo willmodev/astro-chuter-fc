@@ -51,6 +51,7 @@ export function aAlumno(
     name: row.nombre,
     cat,
     anio: row.anioNacimiento,
+    fechaNacimiento: row.fechaNacimiento,
     doc: row.documento,
     acu: row.acudiente,
     phone: row.celular,
@@ -69,7 +70,7 @@ export function aAlumno(
 }
 
 // Vista del entrenador: identidad + contacto, sin un solo campo de dinero.
-export function aPlantel(row: AlumnoRow): AlumnoPlantel {
+export function aPlantel(row: AlumnoRow, hermanos: number): AlumnoPlantel {
   return {
     id: row.id,
     name: row.nombre,
@@ -80,5 +81,6 @@ export function aPlantel(row: AlumnoRow): AlumnoPlantel {
     phone: row.celular,
     dir: row.direccion,
     desde: desdeDe(row.fechaInicio),
+    hermanos,
   };
 }

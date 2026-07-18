@@ -1,10 +1,8 @@
-import { useSyncExternalStore } from 'react';
-
 import { rosterDe } from '@/lib/domain/entrenos';
 import { LOCATION } from '@/lib/site';
 
 import { Icon, type IconName } from '../../chrome/Icon';
-import { getAlumnos, subscribe } from '../../data/store';
+import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
 import { useLogout } from './useLogout';
@@ -17,7 +15,7 @@ interface Props {
 }
 
 export function MasEntrenador({ userName, cats }: Readonly<Props>) {
-  const alumnos = useSyncExternalStore(subscribe, getAlumnos);
+  const { alumnos } = useAlumnosPlantel();
   const { saliendo, cerrarSesion } = useLogout();
   const roster = rosterDe(cats, alumnos);
 

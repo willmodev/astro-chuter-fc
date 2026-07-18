@@ -1,9 +1,15 @@
-import { useMemo, useState } from 'react';
+import { actions } from 'astro:actions';
+import { useEffect, useMemo, useState } from 'react';
 
-import { esMesCobrable, totalPago } from '@/lib/domain/cartera';
+import {
+  esMesCobrable,
+  MESES_VISIBLES,
+  totalPago,
+  type MetodoPago,
+} from '@/lib/domain/cartera';
 
+import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
-import { registrarPago, type MetodoPago } from '../../data/store';
 import type { EstadoMes } from '../../data/types';
 import { useAlumno } from '../../hooks/useAlumno';
 import { AlumnoNoEncontrado } from '../ficha/AlumnoNoEncontrado';
@@ -32,18 +38,26 @@ function preseleccion(states: EstadoMes[], mesTocado: number | undefined): numbe
 }
 
 export function Pago({ alumnoId, mes, onVolver }: Readonly<Props>) {
-  const alumno = useAlumno(alumnoId);
-  const [seleccionados, setSeleccionados] = useState<number[]>(() =>
-    alumno ? preseleccion(alumno.states, mes) : [],
-  );
+  const { alumno, estado, recargar } = useAlumno(alumnoId);
+  const [seleccionados, setSeleccionados] = useState<number[]>([]);
   const [metodo, setMetodo] = useState<MetodoPago>('efectivo');
   const [exito, setExito] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // La preselección se aplica cuando el alumno termina de cargar (async).
+  useEffect(() => {
+    if (alumno) setSeleccionados(preseleccion(alumno.states, mes));
+  }, [alumno, mes]);
 
   const total = useMemo(
     () => totalPago(alumno?.cuota ?? 0, seleccionados.length),
     [alumno?.cuota, seleccionados.length],
   );
 
+  if (estado !== 'listo') {
+    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+  }
   if (!alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
   }
@@ -54,8 +68,20 @@ export function Pago({ alumnoId, mes, onVolver }: Readonly<Props>) {
     setSeleccionados((prev) => (prev.includes(i) ? prev.filter((m) => m !== i) : [...prev, i]));
   };
 
-  const confirmar = (): void => {
-    registrarPago(alumno.id, seleccionados, metodo);
+  const confirmar = async (): Promise<void> => {
+    setEnviando(true);
+    setErrorMsg(null);
+    const { error } = await actions.pagos.registrar({
+      alumnoId: alumno.id,
+      anio: new Date().getFullYear(),
+      meses: seleccionados.map((i) => MESES_VISIBLES[i]),
+      metodo,
+    });
+    setEnviando(false);
+    if (error) {
+      setErrorMsg(error.message);
+      return;
+    }
     setExito(true);
   };
 
@@ -102,10 +128,15 @@ export function Pago({ alumnoId, mes, onVolver }: Readonly<Props>) {
         <>
           <SelectorMeses alumno={alumno} seleccionados={seleccionados} onToggle={toggleMes} />
           <SelectorMetodo metodo={metodo} onChange={setMetodo} />
+          {errorMsg && (
+            <p style={{ margin: 0, fontSize: 13, color: 'var(--error)', fontWeight: 600 }}>
+              {errorMsg}
+            </p>
+          )}
           <ResumenPago
             total={total}
-            deshabilitado={seleccionados.length === 0}
-            onConfirmar={confirmar}
+            deshabilitado={seleccionados.length === 0 || enviando}
+            onConfirmar={() => void confirmar()}
           />
         </>
       ) : (

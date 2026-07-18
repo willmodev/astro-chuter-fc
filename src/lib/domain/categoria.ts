@@ -22,6 +22,13 @@ export const ANIO_TEMPORADA = 2026;
 const SUB_MIN = 4;
 const SUB_MAX = 16;
 
+// Catálogo fijo de categorías del admin (chips de filtro). Deriva del rango
+// [SUB_MIN, SUB_MAX] en pasos de 2, para no repetir la lista a mano.
+export const SUBS: string[] = Array.from(
+  { length: (SUB_MAX - SUB_MIN) / 2 + 1 },
+  (_, i) => `SUB ${SUB_MIN + i * 2}`,
+);
+
 /**
  * Categoría "SUB N" del alumno: (añoTemporada − año) redondeado al par superior,
  * acotado a [4, 16]. Fuera de ese rango no hay categoría → `null`.

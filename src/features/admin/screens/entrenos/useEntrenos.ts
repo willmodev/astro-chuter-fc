@@ -3,15 +3,15 @@ import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { rosterDe, type DiaEntreno, type Semana } from '@/lib/domain/entrenos';
 import { pendientesDe } from '@/lib/domain/sesion';
 
+import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 import { semanas } from '../../data/mock';
-import { getAlumnos, subscribe as subscribeAlumnos } from '../../data/store';
 import {
   getPlanes,
   getSesiones,
   guardarPlanSemana,
   subscribe,
 } from '../../data/store-entrenos';
-import type { Alumno, PlanSemana, Sesion } from '../../data/types';
+import type { AlumnoPlantel, PlanSemana, Sesion } from '../../data/types';
 
 // Estado de la home de Entrenos: semana seleccionada (local, sin ruta propia),
 // plan y sesiones del entrenador en esa semana, roster de sus categorías.
@@ -22,7 +22,7 @@ export interface EntrenosData {
   plan: PlanSemana | null;
   sesionDeDia: (day: DiaEntreno) => Sesion | null;
   pendientes: { sinPlanear: number; sinLista: number };
-  roster: Alumno[];
+  roster: AlumnoPlantel[];
   guardarPlan: (tema: string, objetivos: string) => void;
 }
 
@@ -33,7 +33,7 @@ export function useEntrenos(
 ): EntrenosData {
   const sesiones = useSyncExternalStore(subscribe, getSesiones);
   const planes = useSyncExternalStore(subscribe, getPlanes);
-  const alumnos = useSyncExternalStore(subscribeAlumnos, getAlumnos);
+  const { alumnos } = useAlumnosPlantel();
   const actual = semanas.find((w) => w.current) ?? semanas[0];
   const [weekId, setWeekId] = useState(actual.id);
   const [hoy] = useState(() => new Date()); // único punto donde se inyecta "hoy"

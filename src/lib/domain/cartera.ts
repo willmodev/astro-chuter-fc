@@ -4,6 +4,8 @@
 
 export type EstadoMes = 'paid' | 'due' | 'pending' | 'na';
 
+export type MetodoPago = 'efectivo' | 'transferencia';
+
 // ─── Modelo por año calendario (spec 11) ───
 // La BD guarda solo pagos reales; el estado de cada mes se DERIVA aquí.
 
@@ -36,6 +38,16 @@ export const MESES_VISIBLES: Mes[] = MESES.slice(0, idxMes(MES_FIN_COBRO) + 1);
 
 // `states` siempre tiene esta longitud (una entrada por mes visible).
 export const MESES_TEMPORADA = MESES_VISIBLES.length;
+
+// Nombres largos alineados a la tira visible (para títulos/tooltips en la UI).
+export const MESES_VISIBLES_LARGOS: string[] = MESES_VISIBLES.map((m) => NOMBRE_MES[m]);
+
+// Índice del mes en curso dentro de la tira visible (acotado a [0, len−1]).
+// Fuente única: la usa el dashboard (servidor) y la cartera/pago (cliente).
+export function indiceMesVivo(hoy: Date): number {
+  const idx = MESES_VISIBLES.indexOf(MESES[hoy.getMonth()]);
+  return Math.min(Math.max(idx, 0), MESES_VISIBLES.length - 1);
+}
 
 /**
  * Estado DERIVADO de un mes (ya no se almacena):
@@ -122,18 +134,4 @@ export function pctAlDia(alumnos: readonly AlumnoCartera[]): number {
 /** Total a cobrar en Registrar pago: cuota × cantidad de meses marcados. */
 export function totalPago(cuota: number, nMeses: number): number {
   return cuota * nMeses;
-}
-
-/**
- * States de un alumno recién inscrito: meses previos al ingreso `na`, del mes
- * de ingreso (`mesVivo`) en adelante `pending`. Nunca `due` → no nace en mora.
- * `mesVivo` se acota a [0, MESES_TEMPORADA − 1].
- * NOTA (spec 11): solo lo usa el store mock; muere con él en el Bloque D, cuando
- * el service derive `states` con `estadoDelMes`.
- */
-export function statesIniciales(mesVivo: number): EstadoMes[] {
-  const inicio = Math.min(Math.max(mesVivo, 0), MESES_TEMPORADA - 1);
-  return Array.from({ length: MESES_TEMPORADA }, (_, i) =>
-    i < inicio ? 'na' : 'pending',
-  );
 }

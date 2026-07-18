@@ -12,7 +12,7 @@ import {
   VaciaBody,
   ZONA_RESET,
 } from './DayCardParts';
-import type { Alumno, Sesion } from '../../data/types';
+import type { AlumnoPlantel, Sesion } from '../../data/types';
 
 // Card de un día de entrenamiento. 4 estados derivados de la sesión:
 // vacía / planeada sin lista / lista sin planeación / completa. La card se
@@ -21,7 +21,7 @@ import type { Alumno, Sesion } from '../../data/types';
 interface Props {
   day: DiaEntreno;
   sesion: Sesion | null;
-  roster: readonly Alumno[];
+  roster: readonly AlumnoPlantel[];
   onOpen: () => void;
 }
 

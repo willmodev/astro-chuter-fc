@@ -1,5 +1,6 @@
+import type { MetodoPago } from '@/lib/domain/cartera';
+
 import { Icon, type IconName } from '../../chrome/Icon';
-import type { MetodoPago } from '../../data/store';
 
 interface Props {
   metodo: MetodoPago;

@@ -1,8 +1,8 @@
+import { MESES_VISIBLES_LARGOS as MONTHS_LONG } from '@/lib/domain/cartera';
 import { fmt } from '@/lib/format';
 import { waTo } from '@/lib/whatsapp';
 
 import { Icon } from '../../chrome/Icon';
-import { MONTHS_LONG } from '../../data/mock';
 import type { Alumno } from '../../data/types';
 
 // Pantalla de éxito tras `registrarPago`: recibo por WhatsApp al acudiente
