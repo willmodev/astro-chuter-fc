@@ -27,7 +27,15 @@ export function Entrenos({
 }: Readonly<Props>) {
   const data = useEntrenos(entrenadorId, entrenadorNombre, cats);
   const [sheetAbierto, setSheetAbierto] = useState(false);
-  const { semana, porRegistrar } = data;
+  const { semana, pendientes } = data;
+
+  // "N sin planear · M sin lista": cada contador solo suma si es > 0.
+  const resumenPendientes = [
+    pendientes.sinPlanear > 0 && `${pendientes.sinPlanear} sin planear`,
+    pendientes.sinLista > 0 && `${pendientes.sinLista} sin lista`,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <div style={{ display: 'grid', gap: 12, padding: '14px 16px 0' }}>
@@ -45,9 +53,9 @@ export function Entrenos({
         <span className="eyebrow">
           Semana {semana.n} · {semana.sub}
         </span>
-        {semana.current && porRegistrar > 0 && (
+        {semana.current && resumenPendientes !== '' && (
           <Badge tone="due" dot>
-            {porRegistrar} por registrar
+            {resumenPendientes}
           </Badge>
         )}
       </div>

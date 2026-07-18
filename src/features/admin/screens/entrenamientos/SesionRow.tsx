@@ -2,6 +2,7 @@ import { asistenciaDe } from '@/lib/domain/entrenos';
 
 import { Icon } from '../../chrome/Icon';
 import { AsistPill } from '../../ui/AsistPill';
+import { Badge } from '../../ui/Badge';
 import type { Alumno, Sesion } from '../../data/types';
 
 // Fila de una sesión registrada (vista admin, solo lectura): día, thumbnail
@@ -86,7 +87,13 @@ export function SesionRow({ sesion, roster }: Readonly<Props>) {
           {sesion.parteCentralNota || 'Parte central'}
         </span>
         <span style={{ display: 'block', marginTop: 6 }}>
-          <AsistPill asistencia={asistenciaDe(sesion.ausentes ?? [], roster)} />
+          {sesion.ausentes === null ? (
+            <Badge tone="pending" dot>
+              Sin lista
+            </Badge>
+          ) : (
+            <AsistPill asistencia={asistenciaDe(sesion.ausentes, roster)} />
+          )}
         </span>
       </span>
     </div>

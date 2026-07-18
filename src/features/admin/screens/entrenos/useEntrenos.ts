@@ -1,9 +1,7 @@
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 
 import {
-  DIAS_ENTRENO,
-  listaPasada,
-  planeada,
+  pendientesDe,
   rosterDe,
   type DiaEntreno,
   type Semana,
@@ -27,7 +25,7 @@ export interface EntrenosData {
   setWeekId: (id: string) => void;
   plan: PlanSemana | null;
   sesionDeDia: (day: DiaEntreno) => Sesion | null;
-  porRegistrar: number;
+  pendientes: { sinPlanear: number; sinLista: number };
   roster: Alumno[];
   guardarPlan: (tema: string, objetivos: string) => void;
 }
@@ -41,6 +39,7 @@ export function useEntrenos(
   const planes = useSyncExternalStore(subscribe, getPlanes);
   const alumnos = useSyncExternalStore(subscribeAlumnos, getAlumnos);
   const [weekId, setWeekId] = useState(semanas[0].id);
+  const [hoy] = useState(() => new Date()); // único punto donde se inyecta "hoy"
 
   const semana = semanas.find((w) => w.id === weekId) ?? semanas[0];
   const roster = useMemo(() => rosterDe(cats, alumnos), [cats, alumnos]);
@@ -63,10 +62,7 @@ export function useEntrenos(
     [mias],
   );
 
-  const porRegistrar = DIAS_ENTRENO.filter((d) => {
-    const s = sesionDeDia(d);
-    return !planeada(s) || !listaPasada(s);
-  }).length;
+  const pendientes = pendientesDe(semana, mias, hoy);
 
   const guardarPlan = useCallback(
     (tema: string, objetivos: string) => {
@@ -87,7 +83,7 @@ export function useEntrenos(
     setWeekId,
     plan,
     sesionDeDia,
-    porRegistrar,
+    pendientes,
     roster,
     guardarPlan,
   };
