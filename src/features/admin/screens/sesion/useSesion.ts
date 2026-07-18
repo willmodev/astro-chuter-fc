@@ -2,6 +2,8 @@ import { useMemo, useState, useSyncExternalStore } from 'react';
 
 import {
   asistenciaDe,
+  listaPasada,
+  puedePasarLista,
   rosterDe,
   type DiaEntreno,
   type ResumenAsistencia,
@@ -11,8 +13,8 @@ import {
 import { semanas } from '../../data/mock';
 import { getAlumnos, subscribe as subscribeAlumnos } from '../../data/store';
 import {
-  guardarAsistencia,
-  guardarPlaneacion,
+  guardarAsistencia as persistirAsistencia,
+  guardarPlaneacion as persistirPlaneacion,
   sesionDe,
 } from '../../data/store-entrenos';
 import type { Alumno } from '../../data/types';
@@ -25,21 +27,24 @@ export interface ParamsSesion {
   day: DiaEntreno;
 }
 
-// Borrador local de la sesión del día (imagen, nota, ausentes) inicializado
-// desde el store si ya se registró; guardar hace el upsert idempotente. La
-// misma pantalla registra y corrige historial (spec 09).
+// Borrador local de la sesión del día. Planeación (imagen + nota) y asistencia
+// (ausentes) son dos registros independientes con su propio guardado. La lista
+// solo existe cuando se guarda: el borrador arranca "todos presentes" en la UI
+// pero no se persiste hasta pulsar "Guardar asistencia".
 export interface SesionData {
   semana: Semana | null; // null = weekId inexistente (redirigir a entrenos)
-  existente: boolean;
   img: string | null;
   nota: string;
   setNota: (v: string) => void;
   elegirImagen: (file: File) => void;
+  guardarPlaneacion: () => void;
   roster: Alumno[];
   estaAusente: (alumnoId: number) => boolean;
   marcar: (alumnoId: number, presente: boolean) => void;
   asistencia: ResumenAsistencia;
-  guardar: () => void;
+  puedeLista: boolean; // el día ya llegó → se puede pasar/corregir lista
+  listaExistente: boolean; // la lista ya se pasó antes
+  guardarAsistencia: () => void;
 }
 
 export function useSesion(params: ParamsSesion): SesionData {
@@ -49,6 +54,7 @@ export function useSesion(params: ParamsSesion): SesionData {
   const semana = semanas.find((w) => w.id === weekId) ?? null;
   // Snapshot al montar: el borrador es local y se persiste solo al guardar.
   const [inicial] = useState(() => sesionDe(entrenadorId, weekId, day));
+  const [hoy] = useState(() => new Date()); // único punto donde se inyecta "hoy"
   const [img, setImg] = useState<string | null>(inicial?.parteCentralImg ?? null);
   const [nota, setNota] = useState(inicial?.parteCentralNota ?? '');
   const [ausentes, setAusentes] = useState<number[]>(inicial?.ausentes ?? []);
@@ -75,23 +81,27 @@ export function useSesion(params: ParamsSesion): SesionData {
     setImg(URL.createObjectURL(file));
   };
 
-  const guardar = (): void => {
-    const ref = { entrenadorId, entrenadorNombre, weekId, day };
-    guardarPlaneacion({ ...ref, parteCentralImg: img, parteCentralNota: nota });
-    guardarAsistencia({ ...ref, ausentes });
+  const ref = { entrenadorId, entrenadorNombre, weekId, day };
+  const guardarPlaneacion = (): void => {
+    persistirPlaneacion({ ...ref, parteCentralImg: img, parteCentralNota: nota });
+  };
+  const guardarAsistencia = (): void => {
+    persistirAsistencia({ ...ref, ausentes });
   };
 
   return {
     semana,
-    existente: inicial !== null,
     img,
     nota,
     setNota,
     elegirImagen,
+    guardarPlaneacion,
     roster,
     estaAusente,
     marcar,
     asistencia: asistenciaDe(ausentes, roster),
-    guardar,
+    puedeLista: semana !== null && puedePasarLista(semana, day, hoy),
+    listaExistente: listaPasada(inicial),
+    guardarAsistencia,
   };
 }
