@@ -1,16 +1,15 @@
-// Seed del histórico real del club desde `CHUTER FC 2026.xlsx` (hoja CATEGORIAS).
-// Los pagos se leen del COLOR de relleno de las celdas de mes (verde=pagado),
-// no de texto. Idempotente por documento. Se corre con tsx (resuelve el alias @/).
-//
+// Seed del histórico real desde `CHUTER FC 2026.xlsx` (hoja CATEGORIAS). Pagos y
+// kits de uniforme se leen del COLOR de relleno de las celdas, no de texto.
+// Idempotente por documento. Corre con tsx (resuelve el alias @/).
 //   npm run db:seed          → DRY RUN: parsea, reporta anomalías, NO escribe.
 //   npm run db:seed -- --yes → COMMIT: escribe en la BD de DATABASE_URL.
-//
-// Anomalías (año fuera de rango, documento vacío/duplicado, categoría Excel ≠
-// calculada, relleno de color desconocido) se reportan con nº de fila y se
-// omiten SIN abortar — se corrigen en el Excel y se re-ejecuta.
+// Anomalías (año/documento/categoría inválidos, color desconocido) se reportan
+// con nº de fila y se omiten SIN abortar — se corrigen en el Excel y se re-corre.
 import { loadEnvFile } from 'node:process';
 
 import ExcelJS from 'exceljs';
+
+import { insertarUniformes, kitsDeFila, resumenUniformes } from './seed-uniformes.mjs';
 
 try {
   loadEnvFile();
@@ -31,11 +30,13 @@ const MES_COL = {
 
 // Import dinámico: recién aquí client.ts/domain leen el entorno ya cargado.
 const { db } = await import('@/lib/db/client');
-const { alumnos, pagos } = await import('@/lib/db/schema');
+const { alumnos, pagos, uniformes } = await import('@/lib/db/schema');
 const { subDeAnio } = await import('@/lib/domain/categoria');
+const { normaliza } = await import('@/lib/domain/alumnos');
+const { precioUniforme } = await import('@/lib/domain/precios');
 
-// Relleno de celda → estado del pago. `theme9`=verde=pagado; `theme0`/sin
-// relleno=no pagado; cualquier otro color=desconocido (se reporta, no se adivina).
+// Relleno de celda de mes → estado del pago. theme9=verde=pagado; theme0/sin
+// relleno=no pagado; otro color=desconocido (se reporta, no se adivina).
 function estadoCelda(cell) {
   const f = cell.fill;
   if (!f || f.type !== 'pattern' || f.pattern === 'none') return 'vacio';
@@ -107,18 +108,27 @@ function parseFilas(ws, anomalias) {
       direccion: texto(ws.getCell(`K${r}`)),
       fechaInicio,
       mesesPagados,
+      kits: kitsDeFila(ws, r, nombre, anomalias),
     });
   }
   return filas;
+}
+// Cuántos alumnos comparte cada acudiente normalizado (para el precio por kit, R9).
+function conteoHermanos(filas) {
+  const cnt = new Map();
+  for (const f of filas) {
+    const k = normaliza(f.acudiente);
+    cnt.set(k, (cnt.get(k) ?? 0) + 1);
+  }
+  return cnt;
 }
 
 async function escribir(filas) {
   const existentes = new Set(
     (await db.select({ documento: alumnos.documento }).from(alumnos)).map((a) => a.documento),
   );
-  let creados = 0;
-  let actualizados = 0;
-  let pagosInsertados = 0;
+  const hermanos = conteoHermanos(filas);
+  let creados = 0, actualizados = 0, pagosInsertados = 0, kitsInsertados = 0;
   for (const f of filas) {
     if (existentes.has(f.documento)) actualizados++;
     else creados++;
@@ -149,10 +159,11 @@ async function escribir(filas) {
         .returning({ id: pagos.id });
       pagosInsertados += ins.length;
     }
+    const precio = precioUniforme((hermanos.get(normaliza(f.acudiente)) ?? 1) > 1);
+    kitsInsertados += await insertarUniformes(db, uniformes, row.id, f.kits, precio);
   }
-  return { creados, actualizados, pagosInsertados };
+  return { creados, actualizados, pagosInsertados, kitsInsertados };
 }
-
 function resumenPagos(filas) {
   const cnt = {};
   for (const f of filas) for (const m of f.mesesPagados) cnt[m] = (cnt[m] ?? 0) + 1;
@@ -168,13 +179,12 @@ if (!ws) {
   console.error('✗ No se encontró la hoja CATEGORIAS.');
   process.exit(1);
 }
-
 const anomalias = [];
 const filas = parseFilas(ws, anomalias);
-
 console.log(`\nBD: ${host}`);
 console.log(`Modo: ${COMMIT ? 'COMMIT (escribe)' : 'DRY RUN (no escribe; usá -- --yes para aplicar)'}`);
 console.log(`\nAlumnos a cargar: ${filas.length}   ·   pagos: ${resumenPagos(filas)}`);
+console.log(`Kits (uniformes): ${resumenUniformes(filas)}`);
 if (anomalias.length > 0) {
   console.log(`\n⚠ Anomalías (${anomalias.length}) — se omiten y se corrigen en el Excel:`);
   for (const a of anomalias) console.log(`   · ${a}`);
@@ -185,6 +195,6 @@ if (!COMMIT) {
   process.exit(0);
 }
 
-const { creados, actualizados, pagosInsertados } = await escribir(filas);
-console.log(`\n✓ Seed aplicado: creados=${creados} actualizados=${actualizados} pagos nuevos=${pagosInsertados}\n`);
+const { creados, actualizados, pagosInsertados, kitsInsertados } = await escribir(filas);
+console.log(`\n✓ Seed aplicado: creados=${creados} actualizados=${actualizados} pagos nuevos=${pagosInsertados} kits nuevos=${kitsInsertados}\n`);
 process.exit(0);
