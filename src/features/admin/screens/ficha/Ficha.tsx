@@ -30,6 +30,7 @@ export function Ficha({
   readOnly = false,
   onEditar,
   onRegistrarPago,
+  onRegistrarUniforme,
 }: Readonly<Props>) {
   const { alumno, estado, recargar } = useAlumno(alumnoId);
   const [tab, setTab] = useState<TabFicha>(readOnly ? 'uniforme' : 'pagos');
@@ -59,7 +60,9 @@ export function Ficha({
       {tab === 'pagos' && !readOnly && (
         <PagosDelAnio alumno={alumno} onCobrarMes={(mes) => onRegistrarPago?.(mes)} />
       )}
-      {tab === 'uniforme' && <UniformeTab />}
+      {tab === 'uniforme' && (
+        <UniformeTab alumno={alumno} onGestionar={() => onRegistrarUniforme?.()} />
+      )}
       {tab === 'acudiente' && <AcudienteTab alumno={alumno} />}
     </div>
   );

@@ -1,14 +1,15 @@
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
-import { AvisoMigracion } from '../../chrome/AvisoMigracion';
 import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
+import { useUniformesEntrenador } from '../../hooks/useUniformesEntrenador';
 import { Avatar } from '../../ui/Avatar';
 import { AcudienteTab } from '../ficha/AcudienteTab';
 import { AlumnoNoEncontrado } from '../ficha/AlumnoNoEncontrado';
+import { UniformePlantel } from './UniformePlantel';
 
-// Ficha del entrenador (solo lectura): identidad + acudiente, SIN un solo dato
-// de dinero (se sirve de `alumnos.listar` filtrada → AlumnoPlantel). El tab de
-// uniforme muestra el aviso de migración (spec 11).
+// Ficha del entrenador (solo lectura): identidad + acudiente + entrega del
+// uniforme (SIN dinero: los montos son de admin). Se sirve de `alumnos.listar` y
+// `uniformes.listar` filtradas por rol (spec 12).
 interface Props {
   alumnoId: number;
   onVolver: () => void;
@@ -16,6 +17,7 @@ interface Props {
 
 export function FichaPlantel({ alumnoId, onVolver }: Readonly<Props>) {
   const { alumnos, estado, recargar } = useAlumnosPlantel();
+  const uniformes = useUniformesEntrenador();
 
   if (estado !== 'listo') {
     return <EstadoCarga estado={estado} onReintentar={recargar} />;
@@ -24,6 +26,7 @@ export function FichaPlantel({ alumnoId, onVolver }: Readonly<Props>) {
   if (!alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
   }
+  const kits = uniformes.alumnos.find((a) => a.alumnoId === alumnoId)?.kits ?? [];
 
   return (
     <div style={{ display: 'grid', gap: 14, padding: '14px 16px 0' }}>
@@ -61,10 +64,9 @@ export function FichaPlantel({ alumnoId, onVolver }: Readonly<Props>) {
 
       <AcudienteTab alumno={alumno} />
 
-      <AvisoMigracion
-        titulo="Uniformes en migración"
-        detalle="La gestión de uniformes se está migrando a los datos reales del club. Estará disponible muy pronto."
-      />
+      {uniformes.estado === 'listo' && kits.length > 0 && (
+        <UniformePlantel kits={kits} />
+      )}
     </div>
   );
 }
