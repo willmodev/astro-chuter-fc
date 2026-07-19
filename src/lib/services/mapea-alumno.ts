@@ -4,10 +4,16 @@
 import { estadoDelMes, MESES, MESES_VISIBLES } from '@/lib/domain/cartera';
 import type { EstadoMes, Mes } from '@/lib/domain/cartera';
 import { subDeAnio } from '@/lib/domain/categoria';
-import { CUOTA_MENSUAL } from '@/lib/domain/precios';
+import { CUOTA_MENSUAL, precioUniforme } from '@/lib/domain/precios';
+import { estadoKit, KITS, saldoKit } from '@/lib/domain/uniformes';
 
 import type { AlumnoRow } from '@/lib/db/repos/alumnos';
-import type { Alumno, AlumnoPlantel } from '@/features/admin/data/types';
+import type { UniformeRow } from '@/lib/db/repos/uniformes';
+import type {
+  Alumno,
+  AlumnoPlantel,
+  KitUniforme,
+} from '@/features/admin/data/types';
 
 // 'YYYY-MM-DD' → Date en zona local (sin corrimiento de zona horaria).
 export function parseFechaLocal(iso: string): Date {
@@ -37,19 +43,47 @@ function statesDe(
   );
 }
 
-// Alumno completo del admin (con dinero: cuota + estados derivados).
-export function aAlumno(
-  row: AlumnoRow,
-  pagados: ReadonlySet<Mes>,
-  hermanos: number,
-  anio: number,
-  hoy: Date,
-): Alumno {
-  const cat = catDe(row);
+// Los dos kits del alumno con estado y saldo derivados en dominio (spec 12).
+// Kit sin fila en BD → valores por defecto (sin iniciar).
+function construyeKits(
+  rows: readonly UniformeRow[],
+  esHermano: boolean,
+): KitUniforme[] {
+  const precio = precioUniforme(esHermano);
+  return KITS.map((kit) => {
+    const row = rows.find((r) => r.kit === kit);
+    const entregado = row?.entregado ?? false;
+    const abonadoCop = row?.abonadoCop ?? 0;
+    return {
+      kit,
+      entregado,
+      numero: row?.numero ?? null,
+      talla: row?.talla ?? '',
+      abonadoCop,
+      precio,
+      estado: estadoKit(entregado, abonadoCop, precio),
+      saldo: saldoKit(abonadoCop, precio),
+    };
+  });
+}
+
+// Datos para armar un `Alumno` (objeto para no pasar de 4 params, regla del repo).
+export interface DatosMapeoAlumno {
+  row: AlumnoRow;
+  pagados: ReadonlySet<Mes>;
+  hermanos: number;
+  kits: readonly UniformeRow[];
+  anio: number;
+  hoy: Date;
+}
+
+// Alumno completo del admin (con dinero: cuota + estados + kits derivados).
+export function aAlumno(d: DatosMapeoAlumno): Alumno {
+  const { row, pagados, hermanos, kits, anio, hoy } = d;
   return {
     id: row.id,
     name: row.nombre,
-    cat,
+    cat: catDe(row),
     anio: row.anioNacimiento,
     fechaNacimiento: row.fechaNacimiento,
     doc: row.documento,
@@ -59,12 +93,7 @@ export function aAlumno(
     desde: desdeDe(row.fechaInicio),
     cuota: CUOTA_MENSUAL,
     hermanos,
-    // Uniforme: placeholder hasta el spec 12 (la UI muestra aviso de migración).
-    uniforme: 'pendiente',
-    uniformePago: 'pendiente',
-    numero: null,
-    tipoKit: null,
-    talla: cat.replace('SUB ', ''),
+    kits: construyeKits(kits, hermanos > 1),
     states: statesDe(row, pagados, anio, hoy),
   };
 }

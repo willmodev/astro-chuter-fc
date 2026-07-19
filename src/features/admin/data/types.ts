@@ -4,8 +4,45 @@
 import type { EstadoMes } from '@/lib/domain/cartera';
 import type { Cumple } from '@/lib/domain/cumples';
 import type { DiaEntreno, Semana } from '@/lib/domain/entrenos';
+import type { EstadoKit, TipoKit } from '@/lib/domain/uniformes';
 
-export type { EstadoMes, DiaEntreno, Semana, Cumple };
+export type { EstadoMes, DiaEntreno, Semana, Cumple, EstadoKit, TipoKit };
+
+// Un kit del alumno con dinero (admin): estado y saldo derivados en el service.
+export interface KitUniforme {
+  kit: TipoKit;
+  entregado: boolean;
+  numero: number | null;
+  talla: string;
+  abonadoCop: number;
+  precio: number; // precio del kit (según hermanos, R9)
+  estado: EstadoKit;
+  saldo: number;
+}
+
+// Vista del entrenador: SOLO la entrega del kit, sin un solo dato de dinero.
+export interface KitEntrega {
+  kit: TipoKit;
+  entregado: boolean;
+  numero: number | null;
+  talla: string;
+}
+
+// Fila de la pantalla Uniformes (admin): identidad + los dos kits con dinero.
+export interface UniformeAlumno {
+  alumnoId: number;
+  nombre: string;
+  cat: string;
+  kits: KitUniforme[];
+}
+
+// Fila de la pantalla Uniformes para el entrenador: identidad + solo entrega.
+export interface UniformeAlumnoEntrenador {
+  alumnoId: number;
+  nombre: string;
+  cat: string;
+  kits: KitEntrega[];
+}
 
 export interface Alumno {
   id: number;
@@ -20,11 +57,7 @@ export interface Alumno {
   desde: string; // "Feb 2024"
   cuota: number; // COP
   hermanos: number;
-  uniforme: 'entregado' | 'pendiente';
-  uniformePago: 'pagado' | 'pendiente';
-  numero: number | null;
-  tipoKit: 'AZUL' | 'DORADO' | null;
-  talla: string;
+  kits: KitUniforme[]; // los dos kits (AZUL/ORO) con estado y saldo derivados
   states: EstadoMes[]; // una entrada por mes visible (ENE..MES_FIN_COBRO)
 }
 

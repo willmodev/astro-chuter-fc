@@ -1,24 +1,14 @@
-import { ActionError, defineAction } from 'astro:actions';
+import { defineAction } from 'astro:actions';
 import { z } from 'astro/zod';
 
+import { comoAccion } from '@/actions/_errores';
 import { requireAdmin, requireUser } from '@/actions/_guard';
-import { AlumnoReglaError } from '@/lib/domain/alumnos';
 import {
   crearAlumno,
   editarAlumno,
   listarAlumnosAdmin,
   listarPlantel,
 } from '@/lib/services/alumnos';
-
-// Traduce un error de regla de negocio a un error de transporte legible.
-function comoAccion<T>(fn: () => Promise<T>): Promise<T> {
-  return fn().catch((e: unknown) => {
-    if (e instanceof AlumnoReglaError) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: e.message });
-    }
-    throw e;
-  });
-}
 
 const datosSchema = z.object({
   nombre: z.string().trim().min(2).max(80),
