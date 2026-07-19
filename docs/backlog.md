@@ -99,7 +99,7 @@ Como dueño del club quiero solo cuentas autorizadas (Camilo, Ebed) sin registro
 
 ## EPIC 2 — Gestión de alumnos
 
-> **Persistencia real (spec 11, 2026-07-18).** Las HUs de alumnos, cartera y dashboard que estaban sobre el store mock (specs 03–10) ahora corren contra Neon + Drizzle + Actions. La UI no cambió de estructura; se marcan ☑ las afectadas con nota. Uniformes reales quedan para el spec 12 (aviso de migración mientras tanto).
+> **Persistencia real (spec 11, 2026-07-18; uniformes en spec 12, 2026-07-19).** Las HUs de alumnos, cartera y dashboard que estaban sobre el store mock (specs 03–10) ahora corren contra Neon + Drizzle + Actions. La UI no cambió de estructura; se marcan ☑ las afectadas con nota. Los uniformes reales (dos kits AZUL/ORO con abonos) se implementaron en el spec 12.
 
 ### HU-2.1 · Listar y buscar alumnos — `Must` · Pantalla: Alumnos · ☑ (spec 11)
 Como administrador quiero ver y buscar alumnos por nombre o acudiente para encontrarlos rápido.
@@ -120,7 +120,7 @@ Como administrador quiero ver el detalle de un alumno (pagos, uniforme, acudient
 - **Aceptación:**
   - Dado un alumno, cuando abro su ficha, entonces veo cabecera con nombre, categoría y estado, y acciones "Registrar pago" y "WhatsApp".
   - Pestaña **Pagos del año:** lista de meses **ENE–NOV** (`MESES_VISIBLES`) con estado por mes; tocar un mes cobrable abre Registrar pago en ese mes.
-  - Pestaña **Uniforme:** aviso "migración de uniformes en camino" (spec 11); modelo por kit + entrega en el spec 12.
+  - Pestaña **Uniforme:** los dos kits (AZUL/ORO) con estado, número/talla y saldo, más CTA a la gestión (spec 12).
   - Pestaña **Acudiente:** acudiente, celular, dirección, documento, año nac., ingreso, hermanos.
 
 ### HU-2.4 · Inscribir alumno — `Must` · Pantalla: Form · ☑ (spec 11)
@@ -220,23 +220,23 @@ Como administrador quiero ver el entrenamiento de hoy para tenerlo presente.
 
 ## EPIC 5 — Uniformes
 
-> **Replanteado por el spec 11 (2026-07-18).** La inspección del Excel reveló un modelo distinto al asumido: **dos kits por alumno** (AZUL/ORO, $100.000 c/u), **4 estados por kit** (verde=pagado+entregado · rojo=entregado sin pagar · azul=pagado sin entregar · blanco=nada) y **abonos parciales**. Se implementa completo en el **spec 12** (modelo por kit + seed AZUL/ORO + realineación de UI). Mientras tanto, la pantalla Uniformes y el tab Uniforme de la ficha muestran un **aviso "migración de uniformes en camino"** para no mezclar mock con datos reales.
+> **Implementado por el spec 12 (2026-07-19).** La inspección del Excel reveló un modelo distinto al asumido: **dos kits por alumno** (AZUL/ORO, $100.000 c/u), **4 estados por kit** (verde=pagado+entregado · rojo=entregado sin pagar · azul=pagado sin entregar · blanco=nada) y **abonos parciales** (pago tri-estado derivado). El spec 12 lo implementa completo: tabla `uniformes` por `(alumnoId, kit)`, seed AZUL/ORO por color, y realineación de UI (pantalla Uniformes con tabs Estado/Numeración por kit, gestión por kit con entrega + abono, ficha con los dos kits). El **aviso "migración de uniformes en camino"** del spec 11 quedó **retirado**.
 
-### HU-5.1 · Control por kit — `Must` · Pantalla: Uniformes · ☐ (→ spec 12)
-Como administrador quiero ver los uniformes entregados por kit (azul/dorado) para llevar el control.
-- **Aceptación:** Toggle de kit; contadores Entregados/Pendientes; listado del kit seleccionado ordenado por número con nombre, categoría y talla.
+### HU-5.1 · Control por kit — `Must` · Pantalla: Uniformes · ☑ (spec 12)
+Como administrador quiero ver los uniformes entregados por kit (azul/oro) para llevar el control.
+- **Aceptación:** Toggle de kit (AZUL/ORO); contadores Entregados/Por entregar; listado del kit ordenado por número con nombre, categoría y talla. Además, tab **Estado** con matriz 2×2 (entrega × pago) sobre los 2N kits y filtro por estado.
 
-### HU-5.2 · Detección de números repetidos — `Must` · Pantalla: Uniformes · ☐
+### HU-5.2 · Detección de números repetidos — `Must` · Pantalla: Uniformes · ☑ (spec 12)
 Como administrador quiero que el sistema avise si un número está repetido en un kit para evitar duplicados (R6).
-- **Aceptación:** Dado dos alumnos con el mismo número en el mismo kit, cuando veo el kit, entonces aparece una alerta indicando el/los número(s) repetido(s).
+- **Aceptación:** Dado dos alumnos con el mismo número en el mismo kit, cuando veo el kit, entonces aparece una alerta indicando el/los número(s) repetido(s); y al capturar la entrega, el número repetido **advierte sin bloquear**.
 
-### HU-5.3 · Registrar entrega de uniforme — `Should` · Pantalla: Uniformes/Ficha · ☐
+### HU-5.3 · Registrar entrega de uniforme — `Should` · Pantalla: Uniformes/Ficha · ☑ (spec 12)
 Como administrador quiero registrar la entrega (kit, número, talla) para actualizar el inventario del alumno.
-- **Aceptación:** Dado un alumno pendiente, cuando asigno kit + número + talla, entonces queda "entregado"; si el número ya existe en ese kit, se advierte antes de confirmar.
+- **Aceptación:** Dado un kit sin entregar, cuando asigno número + talla (kit implícito por la tarjeta), entonces queda "entregado"; si el número ya existe en ese kit, se advierte antes de confirmar. Anular entrega conserva talla y abono. Además: **registrar pago/abono** por kit (input de monto, muestra precio y saldo; acota a [0, precio]).
 
-### HU-5.4 · Pendientes de entrega — `Should` · Pantalla: Uniformes · ☐
+### HU-5.4 · Pendientes de entrega — `Should` · Pantalla: Uniformes · ☑ (spec 12)
 Como administrador quiero ver quién no tiene uniforme para gestionar entregas.
-- **Aceptación:** Sección "Por entregar" lista alumnos sin uniforme con acción "Asignar".
+- **Aceptación:** El tab **Estado** cubre los pendientes: la celda "Sin iniciar"/"Por entregar" filtra la lista de kits sin entregar, cada uno con acción para abrir su gestión (reemplaza la sección "Por entregar" del prototipo).
 
 ---
 
@@ -306,13 +306,13 @@ Como administrador quiero ajustar los rangos de año por categoría para mantene
 
 ## EPIC 8 — Datos reales / migración
 
-### HU-8.1 · Importar datos desde el Excel — `Must` · ☑ (spec 11, parcial)
+### HU-8.1 · Importar datos desde el Excel — `Must` · ☑ (specs 11 + 12)
 Como dueño del club quiero migrar los datos del Excel actual para arrancar con información real.
 - **Aceptación:**
-  - Dado `CHUTER FC 2026.xlsx` (raíz, local), cuando ejecuto `npm run db:seed`, entonces se crean **alumnos y pagos** (pagos desde el **color verde** de MAR–NOV) a partir de la hoja `CATEGORIAS`.
-  - El seed es **idempotente** (clave: documento del alumno): re-ejecutar no duplica.
-  - El mapeo reusa las reglas de dominio (misma categoría que la app).
-- **Hecho (spec 11):** 77 alumnos + pagos por color; anomalías reportadas y omitidas; conteos por mes cuadran con los fills. **Pendiente (spec 12):** uniformes (kits AZUL/ORO); entrenamientos (spec 13).
+  - Dado `CHUTER FC 2026.xlsx` (raíz, local), cuando ejecuto `npm run db:seed`, entonces se crean **alumnos, pagos y uniformes** (pagos desde el **color verde** de MAR–NOV; kits AZUL/ORO desde el color de las cols. U/V) a partir de la hoja `CATEGORIAS`.
+  - El seed es **idempotente** (claves: documento del alumno; `(documento, kit)` para uniformes): re-ejecutar no duplica.
+  - El mapeo reusa las reglas de dominio (misma categoría y precio que la app).
+- **Hecho (spec 11):** alumnos + pagos por color; anomalías reportadas y omitidas; conteos por mes cuadran con los fills. **Hecho (spec 12):** 100 kits AZUL/ORO por color (verde/rojo/azul), idempotente, conteos por estado y kit cuadran con los fills. **Pendiente:** entrenamientos (spec 13).
 
 ### HU-8.2 · Exportar cartera — `Could` · ☐
 Como administrador quiero exportar la cartera a Excel/CSV para respaldos y contabilidad.

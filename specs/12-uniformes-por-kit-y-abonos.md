@@ -1,6 +1,6 @@
 # SPEC 12 — Uniformes reales: dos kits por alumno con abonos
 
-> **Estado:** Aprobado · **Depende de:** SPEC 08 (modelo de 4 estados y pantallas Estado/Numeración, que este spec generaliza a dos kits), SPEC 11 (persistencia: Neon + Drizzle + Actions + seed por color, patrón que este spec extiende) · **Fecha:** 2026-07-19
+> **Estado:** Implementado · **Depende de:** SPEC 08 (modelo de 4 estados y pantallas Estado/Numeración, que este spec generaliza a dos kits), SPEC 11 (persistencia: Neon + Drizzle + Actions + seed por color, patrón que este spec extiende) · **Fecha:** 2026-07-19
 > **Objetivo:** Sustituir el modelo mock de "un uniforme por alumno" por el modelo real del club — **dos kits por alumno (AZUL y ORO), $100.000 c/u**, cada kit con **cuatro estados** (entrega × pago) y **abonos parciales** — persistido en Neon, sembrado desde el color de las celdas AZUL/ORO del Excel, y con las pantallas de uniformes realineadas (quitando el aviso de "migración en camino" del spec 11).
 
 ---
@@ -165,33 +165,33 @@ _Verifica:_ flujo completo en `npm run dev` contra Neon: entregar el kit AZUL de
 
 ### Modelo y persistencia
 
-- [ ] Cada alumno tiene **dos kits** (AZUL y ORO); registrar entrega o pago de un kit **sobrevive a recargar** y a cerrar/abrir sesión (vive en Neon).
-- [ ] El estado de cada kit se **deriva** (entrega × pago) y el pago es tri-estado (sin pagar / abonado / pagado) según `abonadoCop` vs precio; nunca se almacena el estado.
-- [ ] `registrarPago` acota el abono a `[0, precio]`; abonar el precio completo deja el kit `pagado`.
-- [ ] No se puede duplicar un registro `(alumnoId, kit)` (constraint único).
-- [ ] El seed carga los kits AZUL/ORO desde el color de las celdas; re-ejecutarlo no duplica; los conteos por estado y kit cuadran con los fills; colores desconocidos se reportan y omiten sin abortar.
+- [x] Cada alumno tiene **dos kits** (AZUL y ORO); registrar entrega o pago de un kit **sobrevive a recargar** y a cerrar/abrir sesión (vive en Neon).
+- [x] El estado de cada kit se **deriva** (entrega × pago) y el pago es tri-estado (sin pagar / abonado / pagado) según `abonadoCop` vs precio; nunca se almacena el estado.
+- [x] `registrarPago` acota el abono a `[0, precio]`; abonar el precio completo deja el kit `pagado`.
+- [x] No se puede duplicar un registro `(alumnoId, kit)` (constraint único).
+- [x] El seed carga los kits AZUL/ORO desde el color de las celdas; re-ejecutarlo no duplica; los conteos por estado y kit cuadran con los fills; colores desconocidos se reportan y omiten sin abortar.
 
 ### UI
 
-- [ ] La pantalla Uniformes y el tab Uniforme de la ficha **ya no muestran el aviso de migración**; muestran datos reales por kit.
-- [ ] El tab Uniforme de la ficha muestra los dos kits con estado, número/talla (si entregado) y abono/saldo.
-- [ ] La pantalla de gestión permite registrar/anular entrega y registrar pago/abono **por kit**; un número repetido en el kit **advierte sin bloquear**; se muestra el precio y el saldo del kit.
-- [ ] La pantalla Uniformes tiene **Estado** (contadores por kit sobre 2N kits, orden por prioridad de acción, filtro por estado con empty state) y **Numeración** (por kit AZUL/ORO, alerta de duplicados, orden por número).
-- [ ] Hay estado de carga y de error en cada pantalla migrada.
+- [x] La pantalla Uniformes y el tab Uniforme de la ficha **ya no muestran el aviso de migración**; muestran datos reales por kit.
+- [x] El tab Uniforme de la ficha muestra los dos kits con estado, número/talla (si entregado) y abono/saldo.
+- [x] La pantalla de gestión permite registrar/anular entrega y registrar pago/abono **por kit**; un número repetido en el kit **advierte sin bloquear**; se muestra el precio y el saldo del kit.
+- [x] La pantalla Uniformes tiene **Estado** (contadores por kit sobre 2N kits, orden por prioridad de acción, filtro por estado con empty state) y **Numeración** (por kit AZUL/ORO, alerta de duplicados, orden por número).
+- [x] Hay estado de carga y de error en cada pantalla migrada.
 
 ### Seguridad por rol
 
-- [ ] `uniformes.listar` para un entrenador no incluye `abonadoCop`, saldo ni estado de pago (solo la entrega), verificable en el payload de red.
-- [ ] Un entrenador no puede invocar `uniformes.registrarPago` ni `registrarEntrega/anularEntrega`.
-- [ ] Toda Action niega sin sesión (`UNAUTHORIZED`).
+- [x] `uniformes.listar` para un entrenador no incluye `abonadoCop`, saldo ni estado de pago (solo la entrega), verificable en el payload de red.
+- [x] Un entrenador no puede invocar `uniformes.registrarPago` ni `registrarEntrega/anularEntrega`.
+- [x] Toda Action niega sin sesión (`UNAUTHORIZED`).
 
 ### Calidad y no-regresión
 
-- [ ] `TipoKit` es `'AZUL' | 'ORO'` en todo el código; no queda ninguna referencia a `'DORADO'`.
-- [ ] Ningún archivo > 200 líneas; cero `any`; `tsc --noEmit` + `build` en verde; `exceljs` solo como devDependency.
-- [ ] Marketing prerenderizado intacto; `/admin/**` noindex y fuera del sitemap.
-- [ ] De 320px a desktop: cero scroll horizontal en la pantalla Uniformes (ambos tabs), la ficha y la pantalla de gestión.
-- [ ] Docs actualizadas: `excel-data-dictionary.md`, `ARCHITECTURE.md` §4, `backlog.md`.
+- [x] `TipoKit` es `'AZUL' | 'ORO'` en todo el código; no queda ninguna referencia a `'DORADO'`.
+- [x] Ningún archivo > 200 líneas; cero `any`; `tsc --noEmit` + `build` en verde; `exceljs` solo como devDependency.
+- [x] Marketing prerenderizado intacto; `/admin/**` noindex y fuera del sitemap.
+- [x] De 320px a desktop: cero scroll horizontal en la pantalla Uniformes (ambos tabs), la ficha y la pantalla de gestión.
+- [x] Docs actualizadas: `excel-data-dictionary.md`, `ARCHITECTURE.md` §4, `backlog.md`.
 
 ---
 

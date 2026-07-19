@@ -92,17 +92,18 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
 
 ## 4. Capa de datos (Drizzle + Neon, mapeo al Excel)
 
-> **Actualizado por el spec 11 (2026-07-18).** El modelo real corrige lo que esta sección proponía antes: los pagos son **filas solo de meses realmente pagados** (`due/pending/na` se **derivan** en dominio, no se almacenan); **no hay tablas `categorias` ni `tarifas`** (la categoría se calcula de la fecha de nacimiento, R1; la cuota es constante, R2); el acudiente va **denormalizado** en `alumnos`. Uniformes reales se modelan en el **spec 12** (dos kits AZUL/ORO con abonos), no aquí.
+> **Actualizado por el spec 12 (2026-07-19).** El modelo real corrige lo que esta sección proponía antes: los pagos son **filas solo de meses realmente pagados** (`due/pending/na` se **derivan** en dominio, no se almacenan); **no hay tablas `categorias` ni `tarifas`** (la categoría se calcula de la fecha de nacimiento, R1; la cuota es constante, R2); el acudiente va **denormalizado** en `alumnos`. Los **uniformes reales** ya se modelan aquí (spec 12): dos kits AZUL/ORO por alumno con abonos parciales.
 
-Un archivo por agregado en `src/lib/db/schema/`, re-export desde `schema/index.ts`. Cada uno < 200 líneas. Tablas vigentes tras el spec 11:
+Un archivo por agregado en `src/lib/db/schema/`, re-export desde `schema/index.ts`. Cada uno < 200 líneas. Tablas vigentes tras el spec 12:
 
 | Archivo schema | Tablas | Origen Excel |
 |---|---|---|
 | `alumnos.ts` | `alumnos` (nombre, documento, anioNacimiento, fechaNacimiento null, acudiente/celular/direccion denormalizados, fechaInicio, activo) | hoja `CATEGORIAS` |
 | `pagos.ts` | `pagos` (alumnoId, anio, mes enum, montoCop, metodo null, pagadoEn null, registradoPor) — **fila solo al pagar** | color verde de celdas MAR–NOV |
+| `uniformes.ts` | `uniformes` (alumnoId, kit enum AZUL/ORO, entregado, numero null, talla, abonadoCop, registradoPor) — **fila por alumno-kit**, único `(alumnoId, kit)` | color de celdas AZUL=U / ORO=V |
 | `auth.ts` | `user, session, account, verification` | Better Auth |
 
-Pendientes en sus propios specs: `uniformes` (spec 12, por kit + abonos), `entrenamientos`/`sesiones` (spec 13, con Vercel Blob).
+Pendientes en sus propios specs: `entrenamientos`/`sesiones` (spec 13, con Vercel Blob).
 
 ```ts
 // src/lib/db/schema/pagos.ts (corazón de la cartera) — fila SOLO cuando se paga
@@ -121,8 +122,28 @@ export const pagos = pgTable('pagos', {
 
 - El enum trae los 12 meses aunque hoy solo se cobre hasta NOV: la ventana de cobro vive en dominio (`MES_FIN_COBRO`), cambiarla no toca la BD.
 - `due/pending/na` **no existen como columna**: los deriva `estadoDelMes` en `lib/domain/cartera.ts` a partir de los pagos reales + `fechaInicio` del alumno + `ARRANQUE_CLUB` (MAR 2026) + mes vivo.
+
+```ts
+// src/lib/db/schema/uniformes.ts (spec 12) — una fila por alumno-kit
+export const kitEnum = pgEnum('kit', ['AZUL', 'ORO']);
+export const uniformes = pgTable('uniformes', {
+  id: serial('id').primaryKey(),
+  alumnoId: integer('alumno_id').notNull().references(() => alumnos.id, { onDelete: 'cascade' }),
+  kit: kitEnum('kit').notNull(),
+  entregado: boolean('entregado').notNull().default(false),
+  numero: integer('numero'),                        // null hasta entregar
+  talla: text('talla').notNull().default(''),
+  abonadoCop: integer('abonado_cop').notNull().default(0), // 0..precio del kit
+  registradoPor: text('registrado_por').references(() => user.id), // null en seed
+  creadoEn: timestamp('creado_en').notNull().defaultNow(),
+  actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
+}, (t) => [unique().on(t.alumnoId, t.kit)]);         // un registro por alumno-kit
+```
+
+- **Estado del kit derivado (no columna):** `estadoKit(entregado, abonadoCop, precio)` en `lib/domain/uniformes.ts` cruza entrega × pago; el pago es **tri-estado** (`ejePago`: sin pagar / abonado / pagado según `abonadoCop` vs precio). La unicidad de `numero` por kit es **advertencia de dominio** (`numerosDuplicados`/`numeroOcupado`), no constraint de BD (el club repite a propósito, R6).
+- **Filtro por rol:** `uniformes.listar` devuelve los dos kits con dinero al admin, y **solo la entrega** (sin `abonadoCop`/saldo/estado de pago) al entrenador — verificado en el payload de red.
 - `drizzle.config.ts` en raíz; migraciones en `drizzle/`.
-- **Seed:** `scripts/seed-from-excel.mjs` (con `exceljs`, **devDependency**) lee el Excel **local**, marca pago por **color de relleno** de la celda (verde = pagado), upsert idempotente por documento, reusando `lib/domain`. `xlsx` no sirve: no lee estilos de celda y los estilos **son** los datos.
+- **Seed:** `scripts/seed-from-excel.mjs` + `scripts/seed-uniformes.mjs` (con `exceljs`, **devDependency**) leen el Excel **local**, marcan pago y kits por **color de relleno** de la celda (verde = pagado/entregado), upsert idempotente por documento y por `(documento, kit)`, reusando `lib/domain`. `xlsx` no sirve: no lee estilos de celda y los estilos **son** los datos.
 
 ---
 
