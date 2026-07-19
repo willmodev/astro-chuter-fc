@@ -3,6 +3,12 @@ import { enviarContacto } from '@/actions/contacto';
 import { stats } from '@/actions/dashboard';
 import { registrar as registrarPago } from '@/actions/pagos';
 import {
+  anularEntregaKit,
+  listar as listarUniformes,
+  registrarEntregaKit,
+  registrarPagoKit,
+} from '@/actions/uniformes';
+import {
   crear,
   listar,
   resetPassword,
@@ -24,6 +30,12 @@ export const server = {
   },
   pagos: {
     registrar: registrarPago,
+  },
+  uniformes: {
+    listar: listarUniformes,
+    registrarEntrega: registrarEntregaKit,
+    anularEntrega: anularEntregaKit,
+    registrarPago: registrarPagoKit,
   },
   dashboard: {
     stats,

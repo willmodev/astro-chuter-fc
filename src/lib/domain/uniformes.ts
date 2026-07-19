@@ -77,6 +77,20 @@ export const ORDEN_ESTADO_UNIFORME: readonly EstadoKit[] = [
   'completo',
 ];
 
+/** Cuenta cuántos kits hay en cada estado (universo 2N de la pantalla Estado). */
+export function contarEstados(
+  estados: readonly EstadoKit[],
+): Record<EstadoKit, number> {
+  const base: Record<EstadoKit, number> = {
+    completo: 0,
+    porEntregar: 0,
+    porCobrar: 0,
+    sinIniciar: 0,
+  };
+  for (const e of estados) base[e] += 1;
+  return base;
+}
+
 // Subconjunto estructural que necesita la regla de numeración. Un registro de
 // kit (capa de datos) lo cumple, sin que el dominio dependa de las features.
 interface RegistroKit {
