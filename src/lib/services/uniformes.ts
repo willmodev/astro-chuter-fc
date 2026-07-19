@@ -1,86 +1,39 @@
-// Orquestación de uniformes: arma la vista por alumno (dos kits + estado + saldo
-// derivados en dominio) y persiste entregas/abonos. Filtro por rol en servidor:
-// el entrenador ve la entrega, nunca montos ni estado de pago (spec 12).
+// Orquestación de uniformes: reshapea los kits que ya derivó `construirAlumnos`
+// (fuente única en mapea-alumno) y persiste entregas/abonos. Filtro por rol en
+// servidor: el entrenador ve la entrega, nunca montos ni estado de pago (spec 12).
 import {
   fijarAbono,
-  todosUniformes,
   uniformesDeAlumno,
   upsertEntrega,
 } from '@/lib/db/repos/uniformes';
-import type { UniformeRow } from '@/lib/db/repos/uniformes';
 import { AlumnoReglaError } from '@/lib/domain/alumnos';
 import { precioUniforme } from '@/lib/domain/precios';
-import { estadoKit, KITS, saldoKit } from '@/lib/domain/uniformes';
 import type { TipoKit } from '@/lib/domain/uniformes';
 
-import type { Alumno } from '@/features/admin/data/types';
+import type { Alumno, KitUniforme } from '@/features/admin/data/types';
 import type {
   KitEntrega,
-  KitUniforme,
   UniformeAlumno,
   UniformeAlumnoEntrenador,
 } from '@/features/admin/data/types';
 
 import { construirAlumnos } from './alumnos';
 
-// alumnoId → sus filas de uniforme (0..2).
-function indice(rows: UniformeRow[]): Map<number, UniformeRow[]> {
-  const idx = new Map<number, UniformeRow[]>();
-  for (const r of rows) {
-    const arr = idx.get(r.alumnoId) ?? [];
-    arr.push(r);
-    idx.set(r.alumnoId, arr);
-  }
-  return idx;
-}
-
-// Los dos kits del alumno con dinero: usa la fila real o un kit vacío por defecto.
-function kitsDe(rows: UniformeRow[], esHermano: boolean): KitUniforme[] {
-  const precio = precioUniforme(esHermano);
-  return KITS.map((kit) => {
-    const row = rows.find((r) => r.kit === kit);
-    const entregado = row?.entregado ?? false;
-    const abonadoCop = row?.abonadoCop ?? 0;
-    return {
-      kit,
-      entregado,
-      numero: row?.numero ?? null,
-      talla: row?.talla ?? '',
-      abonadoCop,
-      precio,
-      estado: estadoKit(entregado, abonadoCop, precio),
-      saldo: saldoKit(abonadoCop, precio),
-    };
-  });
-}
-
-// Los dos kits sin dinero (entrenador): solo la entrega.
-function kitsEntregaDe(rows: UniformeRow[]): KitEntrega[] {
-  return KITS.map((kit) => {
-    const row = rows.find((r) => r.kit === kit);
-    return {
-      kit,
-      entregado: row?.entregado ?? false,
-      numero: row?.numero ?? null,
-      talla: row?.talla ?? '',
-    };
-  });
+// Kit con dinero → solo entrega (payload del entrenador, sin un peso).
+function aEntrega({ kit, entregado, numero, talla }: KitUniforme): KitEntrega {
+  return { kit, entregado, numero, talla };
 }
 
 // Admin: los dos kits con dinero por cada alumno.
 export async function listarUniformesAdmin(
   hoy: Date,
 ): Promise<UniformeAlumno[]> {
-  const [{ alumnos }, rows] = await Promise.all([
-    construirAlumnos(hoy),
-    todosUniformes(),
-  ]);
-  const idx = indice(rows);
+  const { alumnos } = await construirAlumnos(hoy);
   return alumnos.map((a) => ({
     alumnoId: a.id,
     nombre: a.name,
     cat: a.cat,
-    kits: kitsDe(idx.get(a.id) ?? [], a.hermanos > 1),
+    kits: a.kits,
   }));
 }
 
@@ -89,11 +42,7 @@ export async function listarUniformesEntrenador(
   hoy: Date,
   cats: readonly string[],
 ): Promise<UniformeAlumnoEntrenador[]> {
-  const [{ alumnos }, rows] = await Promise.all([
-    construirAlumnos(hoy),
-    todosUniformes(),
-  ]);
-  const idx = indice(rows);
+  const { alumnos } = await construirAlumnos(hoy);
   const permitidas = new Set(cats);
   return alumnos
     .filter((a) => permitidas.has(a.cat))
@@ -101,7 +50,7 @@ export async function listarUniformesEntrenador(
       alumnoId: a.id,
       nombre: a.name,
       cat: a.cat,
-      kits: kitsEntregaDe(idx.get(a.id) ?? []),
+      kits: a.kits.map(aEntrega),
     }));
 }
 

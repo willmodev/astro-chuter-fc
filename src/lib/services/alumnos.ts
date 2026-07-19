@@ -10,6 +10,8 @@ import {
 import type { AlumnoRow, DatosEditablesAlumno } from '@/lib/db/repos/alumnos';
 import { pagosPorAnio } from '@/lib/db/repos/pagos';
 import type { PagoRow } from '@/lib/db/repos/pagos';
+import { todosUniformes } from '@/lib/db/repos/uniformes';
+import type { UniformeRow } from '@/lib/db/repos/uniformes';
 import { AlumnoReglaError, normaliza } from '@/lib/domain/alumnos';
 import type { Mes } from '@/lib/domain/cartera';
 import { subDeFecha } from '@/lib/domain/categoria';
@@ -40,6 +42,17 @@ function indicePagos(pagos: PagoRow[]): Map<number, Set<Mes>> {
   return idx;
 }
 
+// Índice alumnoId → sus filas de uniforme (0..2 kits).
+function indiceKits(rows: UniformeRow[]): Map<number, UniformeRow[]> {
+  const idx = new Map<number, UniformeRow[]>();
+  for (const r of rows) {
+    const arr = idx.get(r.alumnoId) ?? [];
+    arr.push(r);
+    idx.set(r.alumnoId, arr);
+  }
+  return idx;
+}
+
 // Cuántos alumnos comparte cada acudiente normalizado (para `hermanos`).
 function conteoHermanos(rows: AlumnoRow[]): Map<string, number> {
   const conteo = new Map<string, number>();
@@ -56,17 +69,23 @@ export async function construirAlumnos(
   hoy: Date,
 ): Promise<{ alumnos: Alumno[]; rows: AlumnoRow[] }> {
   const anio = hoy.getFullYear();
-  const [rows, pagos] = await Promise.all([listarAlumnos(), pagosPorAnio(anio)]);
+  const [rows, pagos, unis] = await Promise.all([
+    listarAlumnos(),
+    pagosPorAnio(anio),
+    todosUniformes(),
+  ]);
   const idx = indicePagos(pagos);
+  const idxKits = indiceKits(unis);
   const hermanos = conteoHermanos(rows);
   const alumnos = rows.map((r) =>
-    aAlumno(
-      r,
-      idx.get(r.id) ?? VACIO,
-      hermanos.get(normaliza(r.acudiente)) ?? 1,
+    aAlumno({
+      row: r,
+      pagados: idx.get(r.id) ?? VACIO,
+      hermanos: hermanos.get(normaliza(r.acudiente)) ?? 1,
+      kits: idxKits.get(r.id) ?? [],
       anio,
       hoy,
-    ),
+    }),
   );
   return { alumnos, rows };
 }

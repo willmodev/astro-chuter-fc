@@ -57,11 +57,7 @@ export interface Alumno {
   desde: string; // "Feb 2024"
   cuota: number; // COP
   hermanos: number;
-  uniforme: 'entregado' | 'pendiente';
-  uniformePago: 'pagado' | 'pendiente';
-  numero: number | null;
-  tipoKit: 'AZUL' | 'DORADO' | null;
-  talla: string;
+  kits: KitUniforme[]; // los dos kits (AZUL/ORO) con estado y saldo derivados
   states: EstadoMes[]; // una entrada por mes visible (ENE..MES_FIN_COBRO)
 }
 
