@@ -104,6 +104,24 @@ export function generarSemanas(hoy: Date): Semana[] {
   });
 }
 
+// ─── Identidad persistible de la semana (clave natural por fecha) ───
+
+/** 'YYYY-MM-DD' del lunes de la semana, en componentes locales (sin zona/UTC). */
+export function semanaInicioISO(semana: Semana): string {
+  const d = semana.inicio;
+  const mes = String(d.getMonth() + 1).padStart(2, '0');
+  const dia = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mes}-${dia}`;
+}
+
+/** Semana de la ventana cuyo `weekId` (`w-25`) coincide; `null` si no está. */
+export function semanaPorWeekId(
+  semanas: readonly Semana[],
+  weekId: string,
+): Semana | null {
+  return semanas.find((s) => s.id === weekId) ?? null;
+}
+
 // ─── Fechas y gate de la lista ───
 // (los estados derivados de la sesión viven en `./sesion`)
 
