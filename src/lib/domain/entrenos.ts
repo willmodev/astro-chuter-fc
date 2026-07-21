@@ -13,6 +13,12 @@ export function esDiaEntreno(valor: string): valor is DiaEntreno {
   return (DIAS_ENTRENO as readonly string[]).includes(valor);
 }
 
+/** El día de entreno que cae hoy (Lun/Mié/Vie), o `null` los demás días. */
+export function diaDeFecha(fecha: Date): DiaEntreno | null {
+  const porDia: Record<number, DiaEntreno> = { 1: 'Lunes', 3: 'Miércoles', 5: 'Viernes' };
+  return porDia[fecha.getDay()] ?? null;
+}
+
 // Fases fijas de toda sesión: se muestran como información, no se digitan.
 // Lo único que planea el entrenador es la parte central (imagen de TactalPad).
 export const FASE_ACTIVACION = {
