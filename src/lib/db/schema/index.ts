@@ -3,3 +3,4 @@ export * from './auth';
 export * from './alumnos';
 export * from './pagos';
 export * from './uniformes';
+export * from './entrenos';
