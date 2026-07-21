@@ -1,23 +1,23 @@
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { actions } from 'astro:actions';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   asistenciaDe,
   puedePasarLista,
   rosterDe,
+  semanaInicioISO,
   type DiaEntreno,
   type ResumenAsistencia,
   type Semana,
 } from '@/lib/domain/entrenos';
-import { listaPasada } from '@/lib/domain/sesion';
 
+import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
+import { comprimeImagen } from '../../lib/comprime-imagen';
+import { combinaEstado } from '../../hooks/combinaEstado';
 import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 import { semanas } from '../../data/mock';
-import {
-  guardarAsistencia as persistirAsistencia,
-  guardarPlaneacion as persistirPlaneacion,
-  sesionDe,
-} from '../../data/store-entrenos';
 import type { AlumnoPlantel } from '../../data/types';
+import { cargaSesionDia, construyeForm } from './carga-sesion';
 
 export interface ParamsSesion {
   entrenadorId: string;
@@ -27,81 +27,129 @@ export interface ParamsSesion {
   day: DiaEntreno;
 }
 
-// Borrador local de la sesión del día. Planeación (imagen + nota) y asistencia
-// (ausentes) son dos registros independientes con su propio guardado. La lista
-// solo existe cuando se guarda: el borrador arranca "todos presentes" en la UI
-// pero no se persiste hasta pulsar "Guardar asistencia".
+// Borrador local de la sesión: planeación (imagen + nota) y asistencia son dos
+// registros independientes con su propio guardado (Action → navega/refetch). El
+// preview local vive hasta que la Action confirma.
 export interface SesionData {
-  semana: Semana | null; // null = weekId inexistente (redirigir a entrenos)
+  semana: Semana | null;
+  estado: EstadoCargaValor;
   img: string | null;
   nota: string;
   setNota: (v: string) => void;
   elegirImagen: (file: File) => void;
-  guardarPlaneacion: () => void;
+  errorImagen: string | null;
+  guardarPlaneacion: () => Promise<boolean>;
+  guardando: boolean;
   roster: AlumnoPlantel[];
   estaAusente: (alumnoId: number) => boolean;
   marcar: (alumnoId: number, presente: boolean) => void;
   asistencia: ResumenAsistencia;
-  puedeLista: boolean; // el día ya llegó → se puede pasar/corregir lista
-  listaExistente: boolean; // la lista ya se pasó antes
-  guardarAsistencia: () => void;
+  puedeLista: boolean;
+  listaExistente: boolean;
+  guardarAsistencia: () => Promise<boolean>;
 }
 
 export function useSesion(params: ParamsSesion): SesionData {
-  const { entrenadorId, entrenadorNombre, weekId, day } = params;
-  const { alumnos } = useAlumnosPlantel();
-
+  const { weekId, day } = params;
+  const plantel = useAlumnosPlantel();
   const semana = semanas.find((w) => w.id === weekId) ?? null;
-  // Snapshot al montar: el borrador es local y se persiste solo al guardar.
-  const [inicial] = useState(() => sesionDe(entrenadorId, weekId, day));
-  const [hoy] = useState(() => new Date()); // único punto donde se inyecta "hoy"
-  const [img, setImg] = useState<string | null>(inicial?.parteCentralImg ?? null);
-  const [nota, setNota] = useState(inicial?.parteCentralNota ?? '');
-  const [ausentes, setAusentes] = useState<number[]>(inicial?.ausentes ?? []);
+  const semanaInicio = semana ? semanaInicioISO(semana) : null;
+  const [hoy] = useState(() => new Date());
+
+  const [estado, setEstado] = useState<EstadoCargaValor>('cargando');
+  const [img, setImg] = useState<string | null>(null);
+  const [nota, setNota] = useState('');
+  const [ausentes, setAusentes] = useState<number[]>([]);
+  const [listaExistente, setListaExistente] = useState(false);
+  const [archivo, setArchivo] = useState<Blob | null>(null);
+  const [errorImagen, setErrorImagen] = useState<string | null>(null);
+  const [guardando, setGuardando] = useState(false);
+
+  useEffect(() => {
+    if (!semanaInicio) return;
+    let vivo = true;
+    setEstado('cargando');
+    void cargaSesionDia(semanaInicio, day).then((snap) => {
+      if (!vivo) return;
+      if (!snap) return setEstado('error');
+      setImg(snap.img);
+      setNota(snap.nota);
+      setAusentes(snap.ausentes);
+      setListaExistente(snap.listaExistente);
+      setEstado('listo');
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [semanaInicio, day]);
 
   const roster = useMemo(
     () =>
-      rosterDe(params.cats, alumnos).sort((a, b) =>
+      rosterDe(params.cats, plantel.alumnos).sort((a, b) =>
         a.name.localeCompare(b.name, 'es'),
       ),
-    [alumnos, params.cats],
+    [plantel.alumnos, params.cats],
   );
 
-  const estaAusente = (alumnoId: number): boolean => ausentes.includes(alumnoId);
+  const elegirImagen = useCallback(async (file: File) => {
+    setErrorImagen(null);
+    try {
+      const blob = await comprimeImagen(file);
+      setArchivo(blob);
+      setImg((prev) => {
+        if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return URL.createObjectURL(blob);
+      });
+    } catch (e) {
+      setErrorImagen(e instanceof Error ? e.message : 'No se pudo procesar la imagen.');
+    }
+  }, []);
 
-  const marcar = (alumnoId: number, presente: boolean): void => {
-    setAusentes((prev) => {
-      if (presente) return prev.filter((id) => id !== alumnoId);
-      return prev.includes(alumnoId) ? prev : [...prev, alumnoId];
+  const guardarPlaneacion = useCallback(async (): Promise<boolean> => {
+    if (!semanaInicio) return false;
+    setGuardando(true);
+    const { error } = await actions.entrenos.guardarPlaneacion(
+      construyeForm(semanaInicio, day, nota, archivo),
+    );
+    setGuardando(false);
+    if (error) {
+      setErrorImagen(error.message);
+      return false;
+    }
+    return true;
+  }, [semanaInicio, day, nota, archivo]);
+
+  const guardarAsistencia = useCallback(async (): Promise<boolean> => {
+    if (!semanaInicio) return false;
+    setGuardando(true);
+    const { error } = await actions.entrenos.guardarAsistencia({
+      semanaInicio,
+      dia: day,
+      ausentes,
     });
-  };
-
-  // Object URL local (mock): se pierde al recargar, igual que todo el store.
-  const elegirImagen = (file: File): void => {
-    setImg(URL.createObjectURL(file));
-  };
-
-  const ref = { entrenadorId, entrenadorNombre, weekId, day };
-  const guardarPlaneacion = (): void => {
-    persistirPlaneacion({ ...ref, parteCentralImg: img, parteCentralNota: nota });
-  };
-  const guardarAsistencia = (): void => {
-    persistirAsistencia({ ...ref, ausentes });
-  };
+    setGuardando(false);
+    return !error;
+  }, [semanaInicio, day, ausentes]);
 
   return {
     semana,
+    estado: combinaEstado(estado, plantel.estado),
     img,
     nota,
     setNota,
     elegirImagen,
+    errorImagen,
     guardarPlaneacion,
+    guardando,
     roster,
-    estaAusente,
-    marcar,
+    estaAusente: (id) => ausentes.includes(id),
+    marcar: (id, presente) =>
+      setAusentes((prev) =>
+        presente ? prev.filter((x) => x !== id) : [...new Set([...prev, id])],
+      ),
     asistencia: asistenciaDe(ausentes, roster),
     puedeLista: semana !== null && puedePasarLista(semana, day, hoy),
-    listaExistente: listaPasada(inicial),
+    listaExistente,
     guardarAsistencia,
   };
 }

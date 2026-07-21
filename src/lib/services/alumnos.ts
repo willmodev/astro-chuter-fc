@@ -95,16 +95,19 @@ export async function listarAlumnosAdmin(hoy: Date): Promise<Alumno[]> {
   return alumnos;
 }
 
+// Todos los alumnos en contrato sin dinero (roster completo). Base de plantel.
+export async function listarPlantelCompleto(): Promise<AlumnoPlantel[]> {
+  const rows = await listarAlumnos();
+  const hermanos = conteoHermanos(rows);
+  return rows.map((r) => aPlantel(r, hermanos.get(normaliza(r.acudiente)) ?? 1));
+}
+
 // Entrenador: solo alumnos de sus categorías, contrato sin dinero.
 export async function listarPlantel(
   cats: readonly string[],
 ): Promise<AlumnoPlantel[]> {
-  const rows = await listarAlumnos();
-  const hermanos = conteoHermanos(rows);
   const permitidas = new Set(cats);
-  return rows
-    .map((r) => aPlantel(r, hermanos.get(normaliza(r.acudiente)) ?? 1))
-    .filter((a) => permitidas.has(a.cat));
+  return (await listarPlantelCompleto()).filter((a) => permitidas.has(a.cat));
 }
 
 export async function alumnoAdminPorId(

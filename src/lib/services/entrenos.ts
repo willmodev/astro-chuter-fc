@@ -12,8 +12,11 @@ import {
   type SesionRow,
 } from '@/lib/db/repos/entrenos';
 import { listarUsuarios } from '@/lib/db/repos/usuarios';
-import { DIAS_ENTRENO, type DiaEntreno } from '@/lib/domain/entrenos';
+import { DIAS_ENTRENO, rosterDe, type DiaEntreno } from '@/lib/domain/entrenos';
 
+import type { AlumnoPlantel } from '@/features/admin/data/types';
+
+import { listarPlantelCompleto } from './alumnos';
 import { borrarBlob, subirImagen } from './blob-entrenos';
 
 // Lo registrado por un entrenador en una semana, agrupado (solo lectura admin).
@@ -23,6 +26,7 @@ export interface GrupoEntrenador {
   cats: string[];
   plan: PlanRow | null;
   sesiones: SesionRow[];
+  roster: AlumnoPlantel[];
 }
 
 function ordenarPorDia(rows: SesionRow[]): SesionRow[] {
@@ -47,10 +51,11 @@ export async function vistaEntrenador(
 export async function vistaAdmin(
   semanaInicio: string,
 ): Promise<GrupoEntrenador[]> {
-  const [planes, sesiones, usuarios] = await Promise.all([
+  const [planes, sesiones, usuarios, plantel] = await Promise.all([
     planesEnSemana(semanaInicio),
     sesionesEnSemana(semanaInicio),
     listarUsuarios(),
+    listarPlantelCompleto(),
   ]);
   const ids = [
     ...new Set([...planes, ...sesiones].map((x) => x.entrenadorId)),
@@ -58,12 +63,14 @@ export async function vistaAdmin(
   return ids
     .map((id) => {
       const u = usuarios.find((x) => x.id === id);
+      const cats = u?.cats ?? [];
       return {
         entrenadorId: id,
         entrenadorNombre: u?.name ?? 'Entrenador',
-        cats: u?.cats ?? [],
+        cats,
         plan: planes.find((p) => p.entrenadorId === id) ?? null,
         sesiones: ordenarPorDia(sesiones.filter((s) => s.entrenadorId === id)),
+        roster: rosterDe(cats, plantel),
       };
     })
     .sort((a, b) => a.entrenadorNombre.localeCompare(b.entrenadorNombre, 'es'));

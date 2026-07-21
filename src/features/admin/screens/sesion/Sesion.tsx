@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { FASE_ACTIVACION, FASE_VUELTA_CALMA } from '@/lib/domain/entrenos';
 
+import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
 import { AsistenciaBloque } from './AsistenciaBloque';
 import { BotonGuardar } from './BotonGuardar';
@@ -27,13 +28,11 @@ export function Sesion({ onVolver, onGuardado, ...params }: Readonly<Props>) {
   }, [s.semana, onVolver]);
   if (s.semana === null) return null;
 
-  const guardarPlaneacion = (): void => {
-    s.guardarPlaneacion();
-    onGuardado();
+  const guardarPlaneacion = async (): Promise<void> => {
+    if (await s.guardarPlaneacion()) onGuardado();
   };
-  const guardarAsistencia = (): void => {
-    s.guardarAsistencia();
-    onGuardado();
+  const guardarAsistencia = async (): Promise<void> => {
+    if (await s.guardarAsistencia()) onGuardado();
   };
 
   return (
@@ -68,28 +67,42 @@ export function Sesion({ onVolver, onGuardado, ...params }: Readonly<Props>) {
         </div>
       </div>
 
-      <FaseFijaCard icono="flame" fase={FASE_ACTIVACION} />
-      <ParteCentral
-        img={s.img}
-        nota={s.nota}
-        setNota={s.setNota}
-        onElegirImagen={s.elegirImagen}
-      />
-      <FaseFijaCard icono="wind" fase={FASE_VUELTA_CALMA} />
-      <BotonGuardar label="Guardar planeación" onClick={guardarPlaneacion} />
+      {s.estado !== 'listo' ? (
+        <EstadoCarga estado={s.estado} onReintentar={onVolver} />
+      ) : (
+        <>
+          <FaseFijaCard icono="flame" fase={FASE_ACTIVACION} />
+          <ParteCentral
+            img={s.img}
+            nota={s.nota}
+            setNota={s.setNota}
+            onElegirImagen={s.elegirImagen}
+          />
+          {s.errorImagen !== null && (
+            <p style={{ margin: '-4px 2px 0', fontSize: 12.5, color: 'var(--error)' }}>
+              {s.errorImagen}
+            </p>
+          )}
+          <FaseFijaCard icono="wind" fase={FASE_VUELTA_CALMA} />
+          <BotonGuardar
+            label={s.guardando ? 'Guardando…' : 'Guardar planeación'}
+            onClick={guardarPlaneacion}
+          />
 
-      <div style={{ height: 1, background: 'var(--border-subtle)', margin: '6px 0' }} />
+          <div style={{ height: 1, background: 'var(--border-subtle)', margin: '6px 0' }} />
 
-      <AsistenciaBloque
-        puedeLista={s.puedeLista}
-        listaExistente={s.listaExistente}
-        asistencia={s.asistencia}
-        roster={s.roster}
-        estaAusente={s.estaAusente}
-        onMarcar={s.marcar}
-        onGuardar={guardarAsistencia}
-      />
-      <div style={{ height: 8 }} />
+          <AsistenciaBloque
+            puedeLista={s.puedeLista}
+            listaExistente={s.listaExistente}
+            asistencia={s.asistencia}
+            roster={s.roster}
+            estaAusente={s.estaAusente}
+            onMarcar={s.marcar}
+            onGuardar={guardarAsistencia}
+          />
+          <div style={{ height: 8 }} />
+        </>
+      )}
     </div>
   );
 }
