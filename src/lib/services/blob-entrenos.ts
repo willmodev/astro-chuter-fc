@@ -5,6 +5,11 @@ import { del, put } from '@vercel/blob';
 
 import type { DiaEntreno } from '@/lib/domain/entrenos';
 
+// El token se pasa explícito: en el dev de Astro/Vite las vars sin prefijo
+// PUBLIC_ viven en import.meta.env, no en process.env (que es lo que lee el SDK).
+const BLOB_TOKEN =
+  import.meta.env?.BLOB_READ_WRITE_TOKEN ?? process.env.BLOB_READ_WRITE_TOKEN;
+
 // Extensión real según el tipo del blob (Safari viejo exporta JPEG, no WebP).
 function extensionDe(tipo: string): string {
   return tipo === 'image/jpeg' ? 'jpg' : 'webp';
@@ -24,6 +29,7 @@ export async function subirImagen(
     access: 'public',
     addRandomSuffix: true,
     contentType: imagen.type,
+    token: BLOB_TOKEN,
   });
   return url;
 }
@@ -32,7 +38,7 @@ export async function subirImagen(
 // sesión (huérfano ocasional tolerable; se loguea).
 export async function borrarBlob(url: string): Promise<void> {
   try {
-    await del(url);
+    await del(url, { token: BLOB_TOKEN });
   } catch (e) {
     console.error('No se pudo borrar el blob anterior:', url, e);
   }
