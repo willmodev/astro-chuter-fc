@@ -65,7 +65,11 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
       >
         {ruta.vista === 'dashboard' &&
           (data ? (
-            <Dashboard data={data} onNav={navegarTab} />
+            <Dashboard
+              data={data}
+              onNav={navegarTab}
+              onOpenEntrenamientos={() => navegar({ vista: 'entrenamientos' })}
+            />
           ) : (
             <EstadoCarga
               estado={estado === 'error' ? 'error' : 'cargando'}

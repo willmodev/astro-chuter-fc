@@ -1,3 +1,4 @@
+import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
 import { WeekChips } from '../../ui/WeekChips';
 import { VenueCard } from '../entrenos/VenueCard';
@@ -49,7 +50,9 @@ export function Entrenamientos({ onBack }: Readonly<Props>) {
       </span>
       <WeekChips semanas={data.semanas} value={semana.id} onChange={data.setWeekId} />
 
-      {grupos.length === 0 ? (
+      {data.estado !== 'listo' ? (
+        <EstadoCarga estado={data.estado} onReintentar={data.recargar} />
+      ) : grupos.length === 0 ? (
         <p
           style={{
             margin: 0,

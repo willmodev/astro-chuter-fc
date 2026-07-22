@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { DIAS_ENTRENO, type DiaEntreno } from '@/lib/domain/entrenos';
 
+import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Badge } from '../../ui/Badge';
 import { WeekChips } from '../../ui/WeekChips';
 import { DayCard } from './DayCard';
@@ -62,17 +63,23 @@ export function Entrenos({
 
       <WeekChips semanas={data.semanas} value={semana.id} onChange={data.setWeekId} />
 
-      <PlanCard plan={data.plan} onEditar={() => setSheetAbierto(true)} />
+      {data.estado !== 'listo' ? (
+        <EstadoCarga estado={data.estado} onReintentar={data.recargar} />
+      ) : (
+        <>
+          <PlanCard plan={data.plan} onEditar={() => setSheetAbierto(true)} />
 
-      {DIAS_ENTRENO.map((day) => (
-        <DayCard
-          key={day}
-          day={day}
-          sesion={data.sesionDeDia(day)}
-          roster={data.roster}
-          onOpen={() => onOpenSesion(semana.id, day)}
-        />
-      ))}
+          {DIAS_ENTRENO.map((day) => (
+            <DayCard
+              key={day}
+              day={day}
+              sesion={data.sesionDeDia(day)}
+              roster={data.roster}
+              onOpen={() => onOpenSesion(semana.id, day)}
+            />
+          ))}
+        </>
+      )}
 
       {sheetAbierto && (
         <PlanSheet

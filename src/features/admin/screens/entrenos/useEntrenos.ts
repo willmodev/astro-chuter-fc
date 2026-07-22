@@ -1,20 +1,23 @@
-import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
+import { actions } from 'astro:actions';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { rosterDe, type DiaEntreno, type Semana } from '@/lib/domain/entrenos';
+import {
+  rosterDe,
+  semanaInicioISO,
+  type DiaEntreno,
+  type Semana,
+} from '@/lib/domain/entrenos';
 import { pendientesDe } from '@/lib/domain/sesion';
 
+import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 import { semanas } from '../../data/mock';
-import {
-  getPlanes,
-  getSesiones,
-  guardarPlanSemana,
-  subscribe,
-} from '../../data/store-entrenos';
+import { aPlan, aSesiones } from '../../data/mapea-entrenos';
 import type { AlumnoPlantel, PlanSemana, Sesion } from '../../data/types';
+import { combinaEstado } from '../../hooks/combinaEstado';
 
-// Estado de la home de Entrenos: semana seleccionada (local, sin ruta propia),
-// plan y sesiones del entrenador en esa semana, roster de sus categorías.
+// Home del entrenador: semana seleccionada (local), su plan y sesiones desde
+// Neon (Action), roster de sus categorías. Mutación pesimista (Action → refetch).
 export interface EntrenosData {
   semanas: readonly Semana[];
   semana: Semana;
@@ -23,7 +26,9 @@ export interface EntrenosData {
   sesionDeDia: (day: DiaEntreno) => Sesion | null;
   pendientes: { sinPlanear: number; sinLista: number };
   roster: AlumnoPlantel[];
-  guardarPlan: (tema: string, objetivos: string) => void;
+  guardarPlan: (tema: string, objetivos: string) => Promise<void>;
+  estado: EstadoCargaValor;
+  recargar: () => Promise<void>;
 }
 
 export function useEntrenos(
@@ -31,47 +36,46 @@ export function useEntrenos(
   entrenadorNombre: string,
   cats: readonly string[],
 ): EntrenosData {
-  const sesiones = useSyncExternalStore(subscribe, getSesiones);
-  const planes = useSyncExternalStore(subscribe, getPlanes);
-  const { alumnos } = useAlumnosPlantel();
+  const plantel = useAlumnosPlantel();
   const actual = semanas.find((w) => w.current) ?? semanas[0];
   const [weekId, setWeekId] = useState(actual.id);
-  const [hoy] = useState(() => new Date()); // único punto donde se inyecta "hoy"
+  const [hoy] = useState(() => new Date());
+  const [plan, setPlan] = useState<PlanSemana | null>(null);
+  const [sesiones, setSesiones] = useState<Sesion[]>([]);
+  const [estado, setEstado] = useState<EstadoCargaValor>('cargando');
 
   const semana = semanas.find((w) => w.id === weekId) ?? actual;
-  const roster = useMemo(() => rosterDe(cats, alumnos), [cats, alumnos]);
+  const semanaInicio = semanaInicioISO(semana);
+  const roster = useMemo(() => rosterDe(cats, plantel.alumnos), [cats, plantel.alumnos]);
 
-  const mias = useMemo(
-    () =>
-      sesiones.filter(
-        (s) => s.entrenadorId === entrenadorId && s.weekId === semana.id,
-      ),
-    [sesiones, entrenadorId, semana.id],
-  );
+  const recargar = useCallback(async () => {
+    setEstado('cargando');
+    const ctx = { entrenadorId, entrenadorNombre, weekId: semana.id };
+    const { data, error } = await actions.entrenos.listar({ semanaInicio });
+    if (error || data?.rol !== 'entrenador') {
+      setEstado('error');
+      return;
+    }
+    setPlan(aPlan(data.plan, ctx));
+    setSesiones(aSesiones(data.sesiones, ctx));
+    setEstado('listo');
+  }, [entrenadorId, entrenadorNombre, semana.id, semanaInicio]);
 
-  const plan =
-    planes.find(
-      (p) => p.entrenadorId === entrenadorId && p.weekId === semana.id,
-    ) ?? null;
+  useEffect(() => {
+    void recargar();
+  }, [recargar]);
 
   const sesionDeDia = useCallback(
-    (day: DiaEntreno) => mias.find((s) => s.day === day) ?? null,
-    [mias],
+    (day: DiaEntreno) => sesiones.find((s) => s.day === day) ?? null,
+    [sesiones],
   );
 
-  const pendientes = pendientesDe(semana, mias, hoy);
-
   const guardarPlan = useCallback(
-    (tema: string, objetivos: string) => {
-      guardarPlanSemana({
-        entrenadorId,
-        entrenadorNombre,
-        weekId: semana.id,
-        tema,
-        objetivos,
-      });
+    async (tema: string, objetivos: string) => {
+      await actions.entrenos.guardarPlan({ semanaInicio, tema, objetivos });
+      await recargar();
     },
-    [entrenadorId, entrenadorNombre, semana.id],
+    [semanaInicio, recargar],
   );
 
   return {
@@ -80,8 +84,12 @@ export function useEntrenos(
     setWeekId,
     plan,
     sesionDeDia,
-    pendientes,
+    pendientes: pendientesDe(semana, sesiones, hoy),
     roster,
     guardarPlan,
+    estado: combinaEstado(estado, plantel.estado),
+    recargar: async () => {
+      await Promise.all([recargar(), plantel.recargar()]);
+    },
   };
 }

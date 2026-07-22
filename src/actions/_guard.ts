@@ -25,3 +25,15 @@ export function requireAdmin(locals: App.Locals): AuthUser {
   }
   return user;
 }
+
+// Exige rol entrenador. El admin es solo lectura en entrenos (diseño spec 09).
+export function requireEntrenador(locals: App.Locals): AuthUser {
+  const user = requireUser(locals);
+  if (user.role !== 'entrenador') {
+    throw new ActionError({
+      code: 'FORBIDDEN',
+      message: 'Solo el entrenador puede registrar sus entrenamientos.',
+    });
+  }
+  return user;
+}

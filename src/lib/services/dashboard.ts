@@ -20,6 +20,7 @@ import type { AlumnoRow } from '@/lib/db/repos/alumnos';
 import type { Alumno, Stats } from '@/features/admin/data/types';
 
 import { construirAlumnos } from './alumnos';
+import { entrenoDeHoy, type EntrenoDeHoy } from './entreno-de-hoy';
 import { parseFechaLocal } from './mapea-alumno';
 
 export interface DashboardStats {
@@ -30,6 +31,7 @@ export interface DashboardStats {
   meses: string[];
   mesesLong: string[];
   mesVivo: number;
+  entrenoDeHoy: EntrenoDeHoy | null; // null los días sin entreno
 }
 
 function computeStats(alumnos: Alumno[], mesVivo: number): Stats {
@@ -64,7 +66,10 @@ function cumplesDe(rows: AlumnoRow[], hoy: Date): Cumple[] {
 }
 
 export async function statsDashboard(hoy: Date): Promise<DashboardStats> {
-  const { alumnos, rows } = await construirAlumnos(hoy);
+  const [{ alumnos, rows }, entreno] = await Promise.all([
+    construirAlumnos(hoy),
+    entrenoDeHoy(hoy),
+  ]);
   const mesVivo = indiceMesVivo(hoy);
   const morosos = alumnos
     .filter(estaEnMora)
@@ -85,5 +90,6 @@ export async function statsDashboard(hoy: Date): Promise<DashboardStats> {
     meses: [...MESES_VISIBLES],
     mesesLong: MESES_VISIBLES_LARGOS,
     mesVivo,
+    entrenoDeHoy: entreno,
   };
 }

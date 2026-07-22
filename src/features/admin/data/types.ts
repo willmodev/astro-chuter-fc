@@ -86,10 +86,11 @@ export interface Training {
 }
 
 // Cabecera del Excel de planeación: tema + objetivos por semana y entrenador.
+// Shape de UI derivado de las filas persistidas (Actions); el id se deriva.
 export interface PlanSemana {
   id: string; // `${entrenadorId}-${weekId}`
   entrenadorId: string; // user.id de Better Auth
-  entrenadorNombre: string; // denormalizado (mock); en BD será FK
+  entrenadorNombre: string; // nombre del entrenador (viene del user real)
   weekId: string;
   tema: string;
   objetivos: string;
@@ -99,10 +100,10 @@ export interface PlanSemana {
 export interface Sesion {
   id: string; // `${entrenadorId}-${weekId}-${day}`
   entrenadorId: string;
-  entrenadorNombre: string; // denormalizado (mock); en BD será FK
+  entrenadorNombre: string;
   weekId: string;
   day: DiaEntreno;
-  parteCentralImg: string | null; // object URL local (mock); URL de Blob al persistir
+  parteCentralImg: string | null; // URL de Vercel Blob (preview local blob: hasta confirmar)
   parteCentralNota: string; // texto corto opcional de respaldo
   ausentes: number[] | null; // null = lista NO pasada; [] = pasada, todos presentes
 }

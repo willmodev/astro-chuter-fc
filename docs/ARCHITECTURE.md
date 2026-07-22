@@ -94,16 +94,15 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
 
 > **Actualizado por el spec 12 (2026-07-19).** El modelo real corrige lo que esta sección proponía antes: los pagos son **filas solo de meses realmente pagados** (`due/pending/na` se **derivan** en dominio, no se almacenan); **no hay tablas `categorias` ni `tarifas`** (la categoría se calcula de la fecha de nacimiento, R1; la cuota es constante, R2); el acudiente va **denormalizado** en `alumnos`. Los **uniformes reales** ya se modelan aquí (spec 12): dos kits AZUL/ORO por alumno con abonos parciales.
 
-Un archivo por agregado en `src/lib/db/schema/`, re-export desde `schema/index.ts`. Cada uno < 200 líneas. Tablas vigentes tras el spec 12:
+Un archivo por agregado en `src/lib/db/schema/`, re-export desde `schema/index.ts`. Cada uno < 200 líneas. Tablas vigentes tras el spec 13:
 
 | Archivo schema | Tablas | Origen Excel |
 |---|---|---|
 | `alumnos.ts` | `alumnos` (nombre, documento, anioNacimiento, fechaNacimiento null, acudiente/celular/direccion denormalizados, fechaInicio, activo) | hoja `CATEGORIAS` |
 | `pagos.ts` | `pagos` (alumnoId, anio, mes enum, montoCop, metodo null, pagadoEn null, registradoPor) — **fila solo al pagar** | color verde de celdas MAR–NOV |
 | `uniformes.ts` | `uniformes` (alumnoId, kit enum AZUL/ORO, entregado, numero null, talla, abonadoCop, registradoPor) — **fila por alumno-kit**, único `(alumnoId, kit)` | color de celdas AZUL=U / ORO=V |
+| `entrenos.ts` | `planes_semana` (entrenadorId FK user, semanaInicio date, tema, objetivos), único `(entrenadorId, semanaInicio)` · `sesiones` (entrenadorId, semanaInicio, dia enum, parteCentralUrl null, parteCentralNota, ausentes int[] null), único `(entrenadorId, semanaInicio, dia)` | — (arranca vacío, sin seed) |
 | `auth.ts` | `user, session, account, verification` | Better Auth |
-
-Pendientes en sus propios specs: `entrenamientos`/`sesiones` (spec 13, con Vercel Blob).
 
 ```ts
 // src/lib/db/schema/pagos.ts (corazón de la cartera) — fila SOLO cuando se paga
@@ -142,6 +141,27 @@ export const uniformes = pgTable('uniformes', {
 
 - **Estado del kit derivado (no columna):** `estadoKit(entregado, abonadoCop, precio)` en `lib/domain/uniformes.ts` cruza entrega × pago; el pago es **tri-estado** (`ejePago`: sin pagar / abonado / pagado según `abonadoCop` vs precio). La unicidad de `numero` por kit es **advertencia de dominio** (`numerosDuplicados`/`numeroOcupado`), no constraint de BD (el club repite a propósito, R6).
 - **Filtro por rol:** `uniformes.listar` devuelve los dos kits con dinero al admin, y **solo la entrega** (sin `abonadoCop`/saldo/estado de pago) al entrenador — verificado en el payload de red.
+
+```ts
+// src/lib/db/schema/entrenos.ts (spec 13) — planes/sesiones por semana
+export const diaEnum = pgEnum('dia_entreno', ['Lunes', 'Miércoles', 'Viernes']);
+export const sesiones = pgTable('sesiones', {
+  id: serial('id').primaryKey(),
+  entrenadorId: text('entrenador_id').notNull().references(() => user.id), // sin cascade: el historial se conserva
+  semanaInicio: date('semana_inicio').notNull(),      // lunes de la semana (clave natural)
+  dia: diaEnum('dia').notNull(),
+  parteCentralUrl: text('parte_central_url'),          // URL de Vercel Blob; null = sin imagen
+  parteCentralNota: text('parte_central_nota').notNull().default(''),
+  ausentes: integer('ausentes').array(),               // null = lista NO pasada; [] = todos presentes
+  creadoEn: timestamp('creado_en').notNull().defaultNow(),
+  actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
+}, (t) => [unique().on(t.entrenadorId, t.semanaInicio, t.dia)]);
+```
+
+- **Identidad de semana = fecha del lunes** (`semanaInicio: date`), no el número ISO (colisiona entre años). El `weekId` de la URL se traduce en el service (`semanaInicioISO`/`semanaPorWeekId`); las fechas viajan como string `YYYY-MM-DD` sin zona horaria.
+- **Slots derivados:** una fila de plan/sesión existe solo si el entrenador registró algo. Planeación y asistencia son **dos escritores del mismo slot** que tocan **solo sus columnas** (url/nota vs `ausentes`), garantizado por SQL — no se pisan (`ausentes: null` = lista sin pasar; `[]` = todos presentes).
+- **Filtro por rol:** `entrenos.listar` devuelve al entrenador **su** plan/sesiones y al admin **todos** los entrenadores (solo lectura). Las escrituras son **solo del entrenador y solo lo suyo**: `entrenadorId` sale de la sesión, nunca del payload; el admin recibe `FORBIDDEN`. La ventana editable = la ventana de semanas de la UI (actual + 3 pasadas + 1 futura), validada en servidor.
+- **Vercel Blob** (`@vercel/blob`, server-only): la imagen de la parte central se **comprime en cliente** (canvas nativo → WebP ~0.8, máx 1280px) y viaja por **FormData** a la Action, que la sube a Blob (`access: 'public'`, ruta `entrenos/{entrenadorId}/{semanaInicio}-{dia}.{ext}` con `addRandomSuffix`) y guarda la URL en Neon; al reemplazar, borra el blob anterior (`del()`, best-effort). Token `BLOB_READ_WRITE_TOKEN` (server-only). Blobs `public`: URLs no-adivinables, solo llegan a usuarios logueados (contenido no sensible).
 - `drizzle.config.ts` en raíz; migraciones en `drizzle/`.
 - **Seed:** `scripts/seed-from-excel.mjs` + `scripts/seed-uniformes.mjs` (con `exceljs`, **devDependency**) leen el Excel **local**, marcan pago y kits por **color de relleno** de la celda (verde = pagado/entregado), upsert idempotente por documento y por `(documento, kit)`, reusando `lib/domain`. `xlsx` no sirve: no lee estilos de celda y los estilos **son** los datos.
 
@@ -214,7 +234,7 @@ src/
 ├─ pages/api/auth/[...all].ts           # handler Better Auth
 ├─ layouts/AdminLayout.astro            # head admin: noindex, scope .admin-app
 ├─ middleware.ts                        # gate auth /admin/**
-├─ actions/{index,_guard,alumnos,pagos,uniformes,entrenamientos,dashboard}.ts
+├─ actions/{index,_guard,_errores,alumnos,pagos,uniformes,entrenos,dashboard,usuarios,contacto}.ts
 ├─ lib/
 │  ├─ db/{client.ts, schema/*, repos/*}
 │  ├─ domain/*                          # reglas puras
@@ -239,6 +259,7 @@ src/
 DATABASE_URL=postgres://...neon...      # cadena pooled de Neon
 BETTER_AUTH_SECRET=...                   # secreto largo aleatorio
 BETTER_AUTH_URL=https://chuterfc.vercel.app
+BLOB_READ_WRITE_TOKEN=vercel_blob_rw_... # Vercel Blob (imagen de la parte central de entrenos)
 ```
 
 Se documentan en `.env.example`. Se provisionan en Vercel (integración Neon).

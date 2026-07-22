@@ -13,6 +13,12 @@ export function esDiaEntreno(valor: string): valor is DiaEntreno {
   return (DIAS_ENTRENO as readonly string[]).includes(valor);
 }
 
+/** El día de entreno que cae hoy (Lun/Mié/Vie), o `null` los demás días. */
+export function diaDeFecha(fecha: Date): DiaEntreno | null {
+  const porDia: Record<number, DiaEntreno> = { 1: 'Lunes', 3: 'Miércoles', 5: 'Viernes' };
+  return porDia[fecha.getDay()] ?? null;
+}
+
 // Fases fijas de toda sesión: se muestran como información, no se digitan.
 // Lo único que planea el entrenador es la parte central (imagen de TactalPad).
 export const FASE_ACTIVACION = {
@@ -102,6 +108,24 @@ export function generarSemanas(hoy: Date): Semana[] {
       inicio: new Date(lunes),
     };
   });
+}
+
+// ─── Identidad persistible de la semana (clave natural por fecha) ───
+
+/** 'YYYY-MM-DD' del lunes de la semana, en componentes locales (sin zona/UTC). */
+export function semanaInicioISO(semana: Semana): string {
+  const d = semana.inicio;
+  const mes = String(d.getMonth() + 1).padStart(2, '0');
+  const dia = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mes}-${dia}`;
+}
+
+/** Semana de la ventana cuyo `weekId` (`w-25`) coincide; `null` si no está. */
+export function semanaPorWeekId(
+  semanas: readonly Semana[],
+  weekId: string,
+): Semana | null {
+  return semanas.find((s) => s.id === weekId) ?? null;
 }
 
 // ─── Fechas y gate de la lista ───

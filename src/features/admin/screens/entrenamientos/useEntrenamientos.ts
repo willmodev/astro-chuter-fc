@@ -1,14 +1,15 @@
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { actions } from 'astro:actions';
+import { useCallback, useEffect, useState } from 'react';
 
-import { DIAS_ENTRENO, rosterDe, type Semana } from '@/lib/domain/entrenos';
+import { semanaInicioISO, type Semana } from '@/lib/domain/entrenos';
 
-import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
-import { entrenadoresMock, semanas } from '../../data/mock';
-import { getPlanes, getSesiones, subscribe } from '../../data/store-entrenos';
+import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
+import { semanas } from '../../data/mock';
+import { aPlan, aSesiones } from '../../data/mapea-entrenos';
 import type { AlumnoPlantel, PlanSemana, Sesion } from '../../data/types';
 
 // Lo registrado en una semana, agrupado por entrenador (solo lectura del
-// admin). El roster sale de las cats mock; en BD real vendrá de user.cats.
+// admin). Nombre, cats y roster salen del servidor (user real + alumnos reales).
 export interface GrupoEntrenador {
   id: string;
   nombre: string;
@@ -23,60 +24,49 @@ export interface EntrenamientosData {
   semana: Semana;
   setWeekId: (id: string) => void;
   grupos: GrupoEntrenador[];
-}
-
-function grupoDe(
-  id: string,
-  planes: PlanSemana[],
-  sesiones: Sesion[],
-  alumnos: AlumnoPlantel[],
-): GrupoEntrenador {
-  const meta = entrenadoresMock.find((e) => e.id === id);
-  const nombre =
-    meta?.nombre ??
-    planes[0]?.entrenadorNombre ??
-    sesiones[0]?.entrenadorNombre ??
-    'Entrenador';
-  const cats = meta?.cats ?? [];
-  const porDia = [...sesiones].sort(
-    (a, b) => DIAS_ENTRENO.indexOf(a.day) - DIAS_ENTRENO.indexOf(b.day),
-  );
-  return {
-    id,
-    nombre,
-    cats,
-    plan: planes[0] ?? null,
-    sesiones: porDia,
-    roster: rosterDe(cats, alumnos),
-  };
+  estado: EstadoCargaValor;
+  recargar: () => Promise<void>;
 }
 
 export function useEntrenamientos(): EntrenamientosData {
-  const todasSesiones = useSyncExternalStore(subscribe, getSesiones);
-  const todosPlanes = useSyncExternalStore(subscribe, getPlanes);
-  const { alumnos } = useAlumnosPlantel();
   const actual = semanas.find((w) => w.current) ?? semanas[0];
   const [weekId, setWeekId] = useState(actual.id);
+  const [grupos, setGrupos] = useState<GrupoEntrenador[]>([]);
+  const [estado, setEstado] = useState<EstadoCargaValor>('cargando');
 
   const semana = semanas.find((w) => w.id === weekId) ?? actual;
+  const semanaInicio = semanaInicioISO(semana);
 
-  const grupos = useMemo(() => {
-    const planes = todosPlanes.filter((p) => p.weekId === semana.id);
-    const sesiones = todasSesiones.filter((s) => s.weekId === semana.id);
-    const ids = [
-      ...new Set([...planes, ...sesiones].map((x) => x.entrenadorId)),
-    ];
-    return ids
-      .map((id) =>
-        grupoDe(
-          id,
-          planes.filter((p) => p.entrenadorId === id),
-          sesiones.filter((s) => s.entrenadorId === id),
-          alumnos,
-        ),
-      )
-      .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
-  }, [todosPlanes, todasSesiones, alumnos, semana.id]);
+  const recargar = useCallback(async () => {
+    setEstado('cargando');
+    const { data, error } = await actions.entrenos.listar({ semanaInicio });
+    if (error || data?.rol !== 'admin') {
+      setEstado('error');
+      return;
+    }
+    setGrupos(
+      data.grupos.map((g) => {
+        const ctx = {
+          entrenadorId: g.entrenadorId,
+          entrenadorNombre: g.entrenadorNombre,
+          weekId: semana.id,
+        };
+        return {
+          id: g.entrenadorId,
+          nombre: g.entrenadorNombre,
+          cats: g.cats,
+          plan: aPlan(g.plan, ctx),
+          sesiones: aSesiones(g.sesiones, ctx),
+          roster: g.roster,
+        };
+      }),
+    );
+    setEstado('listo');
+  }, [semanaInicio, semana.id]);
 
-  return { semanas, semana, setWeekId, grupos };
+  useEffect(() => {
+    void recargar();
+  }, [recargar]);
+
+  return { semanas, semana, setWeekId, grupos, estado, recargar };
 }
