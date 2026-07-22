@@ -437,6 +437,7 @@ CONTACT_EMAIL_TO=                 # bandeja del club, ej. olimak8@hotmail.com
 DATABASE_URL=                      # Neon Postgres (cadena pooled)
 BETTER_AUTH_SECRET=                # secreto largo aleatorio
 BETTER_AUTH_URL=https://chuterfc.com
+BLOB_READ_WRITE_TOKEN=             # Vercel Blob (imagen de la parte central de entrenos, spec 13)
 ```
 
 Valores públicos reales (en `.env` / Vercel): `PUBLIC_WHATSAPP_NUMBER=573008725964`,

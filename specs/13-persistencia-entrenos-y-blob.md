@@ -1,6 +1,6 @@
 # SPEC 13 — Persistencia de entrenamientos + Vercel Blob
 
-> **Estado:** Aprobado · **Depende de:** SPEC 09 (modelo de entrenos: plan semanal, sesiones con imagen de TactalPad, asistencia — este spec lo persiste), SPEC 11 (patrón de persistencia: Neon + Drizzle + Actions + hooks pesimistas + filtro por rol en servidor), SPEC 12 (patrón extendido a un segundo agregado) · **Fecha:** 2026-07-19
+> **Estado:** Implementado · **Depende de:** SPEC 09 (modelo de entrenos: plan semanal, sesiones con imagen de TactalPad, asistencia — este spec lo persiste), SPEC 11 (patrón de persistencia: Neon + Drizzle + Actions + hooks pesimistas + filtro por rol en servidor), SPEC 12 (patrón extendido a un segundo agregado) · **Fecha:** 2026-07-19
 > **Objetivo:** Persistir planes semanales, sesiones y asistencia en Neon con la imagen de la parte central en Vercel Blob (comprimida a WebP en cliente), migrando los hooks de entrenos del store mock a Actions sin cambiar la UI, y devolviendo la card EntrenoDeHoy al dashboard.
 
 ---
@@ -152,44 +152,44 @@ _Verifica:_ en un día de entreno la card lista a cada entrenador con su estado 
 
 ### Persistencia y datos
 
-- [ ] Registrar el plan semanal, la planeación del día (imagen + nota) o la asistencia **sobrevive a recargar la página** y a cerrar/abrir sesión (vive en Neon).
-- [ ] Los slots se derivan: no existen filas de planes/sesiones que nadie registró; `guardarPlan`/`guardarPlaneacion`/`guardarAsistencia` son idempotentes (guardar dos veces no duplica — constraints únicos por `(entrenadorId, semanaInicio[, dia])`).
-- [ ] Guardar la planeación no pisa la asistencia y viceversa (misma semántica del mock: `ausentes: null` = lista sin pasar, `[]` = todos presentes).
-- [ ] La identidad de semana es la **fecha del lunes**: la semana 25 de 2026 y la de 2027 no colisionan.
-- [ ] Los entrenos arrancan vacíos: no hay seed ni datos de ejemplo en producción.
+- [x] Registrar el plan semanal, la planeación del día (imagen + nota) o la asistencia **sobrevive a recargar la página** y a cerrar/abrir sesión (vive en Neon).
+- [x] Los slots se derivan: no existen filas de planes/sesiones que nadie registró; `guardarPlan`/`guardarPlaneacion`/`guardarAsistencia` son idempotentes (guardar dos veces no duplica — constraints únicos por `(entrenadorId, semanaInicio[, dia])`).
+- [x] Guardar la planeación no pisa la asistencia y viceversa (misma semántica del mock: `ausentes: null` = lista sin pasar, `[]` = todos presentes).
+- [x] La identidad de semana es la **fecha del lunes**: la semana 25 de 2026 y la de 2027 no colisionan.
+- [x] Los entrenos arrancan vacíos: no hay seed ni datos de ejemplo en producción.
 
 ### Imagen y Blob
 
-- [ ] La imagen de la parte central se comprime en cliente (WebP, máx ~1280px) y se sube a Vercel Blob vía Action; la URL persistida carga el thumbnail tras recargar.
-- [ ] Reemplazar la imagen de una sesión **borra el blob anterior** (verificable en el dashboard de Blob); si el borrado falla, la operación no se rompe.
-- [ ] Un archivo no-imagen o gigante se rechaza con error claro (validado en cliente y en servidor).
-- [ ] `BLOB_READ_WRITE_TOKEN` es server-only: no aparece en ningún bundle del cliente.
+- [x] La imagen de la parte central se comprime en cliente (WebP, máx ~1280px) y se sube a Vercel Blob vía Action; la URL persistida carga el thumbnail tras recargar.
+- [x] Reemplazar la imagen de una sesión **borra el blob anterior** (verificable en el dashboard de Blob); si el borrado falla, la operación no se rompe.
+- [x] Un archivo no-imagen o gigante se rechaza con error claro (validado en cliente y en servidor).
+- [x] `BLOB_READ_WRITE_TOKEN` es server-only: no aparece en ningún bundle del cliente.
 
 ### Seguridad por rol
 
-- [ ] Toda Action niega sin sesión (`UNAUTHORIZED`).
-- [ ] Un entrenador solo escribe **sus** planes/sesiones: el `entrenadorId` sale de la sesión y un payload manipulado no puede escribir sobre otro entrenador.
-- [ ] El admin recibe `FORBIDDEN` en toda escritura de entrenos (solo lectura, por diseño).
-- [ ] Una escritura con `semanaInicio` fuera de la ventana (actual + 3 pasadas + 1 futura) o que no sea lunes se rechaza en servidor.
+- [x] Toda Action niega sin sesión (`UNAUTHORIZED`).
+- [x] Un entrenador solo escribe **sus** planes/sesiones: el `entrenadorId` sale de la sesión y un payload manipulado no puede escribir sobre otro entrenador.
+- [x] El admin recibe `FORBIDDEN` en toda escritura de entrenos (solo lectura, por diseño).
+- [x] Una escritura con `semanaInicio` fuera de la ventana (actual + 3 pasadas + 1 futura) o que no sea lunes se rechaza en servidor.
 
 ### UI y no-regresión
 
-- [ ] Entrenos, Sesión, Plantel y Entrenamientos funcionan contra la BD con la misma estructura visual; hay estado de carga y de error en cada pantalla migrada.
-- [ ] Corregir una semana pasada (imagen, nota, asistencia) funciona dentro de la ventana visible.
-- [ ] La vista del admin muestra por entrenador plan y sesiones reales, sin ningún control de edición.
-- [ ] `store-entrenos.ts` y el mock de planes/sesiones no existen más en el bundle.
+- [x] Entrenos, Sesión, Plantel y Entrenamientos funcionan contra la BD con la misma estructura visual; hay estado de carga y de error en cada pantalla migrada.
+- [x] Corregir una semana pasada (imagen, nota, asistencia) funciona dentro de la ventana visible.
+- [x] La vista del admin muestra por entrenador plan y sesiones reales, sin ningún control de edición.
+- [x] `store-entrenos.ts` y el mock de planes/sesiones no existen más en el bundle.
 
 ### Dashboard
 
-- [ ] En un día Lun/Mié/Vie, la card EntrenoDeHoy lista cada entrenador con su estado real del día (thumbnail + asistencia, o "sin registrar") y enlaza a Entrenamientos.
-- [ ] En un día sin entreno, la card no se renderiza.
+- [x] En un día Lun/Mié/Vie, la card EntrenoDeHoy lista cada entrenador con su estado real del día (thumbnail + asistencia, o "sin registrar") y enlaza a Entrenamientos.
+- [x] En un día sin entreno, la card no se renderiza.
 
 ### Calidad y no-regresión
 
-- [ ] Ningún archivo > 200 líneas; cero `any`; `tsc --noEmit` + `build` en verde; `@vercel/blob` solo en código de servidor.
-- [ ] Marketing prerenderizado intacto; `/admin/**` noindex y fuera del sitemap.
-- [ ] De 320px a desktop: cero scroll horizontal en las pantallas tocadas.
-- [ ] Docs actualizadas: `backlog.md`, `ARCHITECTURE.md` §4, `CLAUDE.md` (+ `.env.example`).
+- [x] Ningún archivo > 200 líneas; cero `any`; `tsc --noEmit` + `build` en verde; `@vercel/blob` solo en código de servidor.
+- [x] Marketing prerenderizado intacto; `/admin/**` noindex y fuera del sitemap.
+- [x] De 320px a desktop: cero scroll horizontal en las pantallas tocadas.
+- [x] Docs actualizadas: `backlog.md`, `ARCHITECTURE.md` §4, `CLAUDE.md` (+ `.env.example`).
 
 ---
 

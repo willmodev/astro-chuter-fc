@@ -211,10 +211,10 @@ Como administrador quiero ver cumpleaños próximos para felicitar a los niños.
 - **Aceptación:** Carrusel horizontal con nombre, categoría y fecha de los próximos cumpleaños.
 - **Nota (spec 11):** sube de `Could` a **`Must` por pedido explícito del cliente**. Muestra solo alumnos con fecha de nacimiento completa, ordenados por proximidad (incluye el cruce de año, vía `proximosCumples`). Los 77 migrados aparecen al completar su fecha en el form.
 
-### HU-4.6 · Entrenamiento del día — `Should` · Pantalla: Dashboard · ☐
+### HU-4.6 · Entrenamiento del día — `Should` · Pantalla: Dashboard · ☑ (spec 13)
 Como administrador quiero ver el entrenamiento de hoy para tenerlo presente.
-- **Aceptación:** Tarjeta(s) con el foco de la sesión del día, categoría y horario; enlace "Planificar".
-- **Nota (spec 11):** la card **EntrenoDeHoy sale del dashboard** al migrar a datos reales (mezclaba mock de entrenos con alumnos reales). Se recablea con la persistencia de entrenos (spec 13).
+- **Aceptación:** En un día Lun/Mié/Vie, la card **EntrenoDeHoy** lista **una fila por entrenador** con su estado de registro del día (thumbnail + asistencia, o "sin registrar") y enlaza a Entrenamientos; los demás días la card **no aparece**.
+- **Nota (spec 13):** vuelve al dashboard sobre datos reales (`entrenoDeHoy` en `dashboard.stats`); responde "¿cómo va el registro de hoy?", no "el próximo entreno".
 
 ---
 
@@ -278,9 +278,10 @@ Como entrenador quiero ver solo los alumnos de mis categorías, con buscador y f
 Como entrenador quiero abrir la ficha de un alumno sin ver su situación de pagos para respetar la privacidad de las familias.
 - **Aceptación:** Dado la ficha en modo readOnly, entonces no hay tab Pagos, ni mora/cuota, ni estado de pago del uniforme, ni botones de escritura; sí se ven datos del alumno, la entrega del uniforme y el acudiente.
 
-### HU-6.10 · Persistencia de entrenamientos — `Must` · ☐
+### HU-6.10 · Persistencia de entrenamientos — `Must` · ☑ (spec 13)
 Como club queremos que planes, sesiones y asistencia sobrevivan a la recarga para que el registro sea real.
 - **Aceptación:** BD (Neon) + Actions + subida de la imagen a **Vercel Blob** (compresión cliente a WebP); al recargar, todo lo registrado persiste. *(Spec de persistencia, fuera del 09.)*
+- **Implementado (spec 13):** tablas `planes_semana` y `sesiones` (clave natural por `semanaInicio`); Actions `entrenos.{listar, guardarPlan, guardarPlaneacion, guardarAsistencia}` con gate por rol (entrenador escribe solo lo suyo, admin solo lee); imagen comprimida a WebP en cliente y subida a Blob por FormData (borra el anterior al reemplazar). Los 3 hooks migraron del mock a Actions; `store-entrenos.ts` eliminado.
 
 ---
 
@@ -312,7 +313,8 @@ Como dueño del club quiero migrar los datos del Excel actual para arrancar con 
   - Dado `CHUTER FC 2026.xlsx` (raíz, local), cuando ejecuto `npm run db:seed`, entonces se crean **alumnos, pagos y uniformes** (pagos desde el **color verde** de MAR–NOV; kits AZUL/ORO desde el color de las cols. U/V) a partir de la hoja `CATEGORIAS`.
   - El seed es **idempotente** (claves: documento del alumno; `(documento, kit)` para uniformes): re-ejecutar no duplica.
   - El mapeo reusa las reglas de dominio (misma categoría y precio que la app).
-- **Hecho (spec 11):** alumnos + pagos por color; anomalías reportadas y omitidas; conteos por mes cuadran con los fills. **Hecho (spec 12):** 100 kits AZUL/ORO por color (verde/rojo/azul), idempotente, conteos por estado y kit cuadran con los fills. **Pendiente:** entrenamientos (spec 13).
+- **Hecho (spec 11):** alumnos + pagos por color; anomalías reportadas y omitidas; conteos por mes cuadran con los fills. **Hecho (spec 12):** 100 kits AZUL/ORO por color (verde/rojo/azul), idempotente, conteos por estado y kit cuadran con los fills.
+- **Nota (spec 13):** los **entrenamientos NO se siembran** — arrancan vacíos desde el deploy. El Excel de planeación no tiene estructura de datos aprovechable (imágenes/formato libre); el valor del registro está hacia adelante.
 
 ### HU-8.2 · Exportar cartera — `Could` · ☐
 Como administrador quiero exportar la cartera a Excel/CSV para respaldos y contabilidad.
