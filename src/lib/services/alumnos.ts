@@ -4,6 +4,8 @@
 import {
   actualizarAlumno,
   alumnoPorDocumento,
+  alumnoPorId,
+  cambiarActivoAlumno as cambiarActivoEnRepo,
   insertarAlumno,
   listarAlumnos,
 } from '@/lib/db/repos/alumnos';
@@ -65,12 +67,14 @@ function conteoHermanos(rows: AlumnoRow[]): Map<string, number> {
 
 // Arma los alumnos del admin (estados derivados). Reusado por el dashboard;
 // devuelve también las filas crudas para derivar cumpleaños (con fecha).
+// Por defecto solo activos: los retirados solo entran si se piden (spec 14).
 export async function construirAlumnos(
   hoy: Date,
+  incluirRetirados = false,
 ): Promise<{ alumnos: Alumno[]; rows: AlumnoRow[] }> {
   const anio = hoy.getFullYear();
   const [rows, pagos, unis] = await Promise.all([
-    listarAlumnos(),
+    listarAlumnos({ incluirRetirados }),
     pagosPorAnio(anio),
     todosUniformes(),
   ]);
@@ -90,12 +94,27 @@ export async function construirAlumnos(
   return { alumnos, rows };
 }
 
-export async function listarAlumnosAdmin(hoy: Date): Promise<Alumno[]> {
-  const { alumnos } = await construirAlumnos(hoy);
+export async function listarAlumnosAdmin(
+  hoy: Date,
+  incluirRetirados = false,
+): Promise<Alumno[]> {
+  const { alumnos } = await construirAlumnos(hoy, incluirRetirados);
   return alumnos;
 }
 
-// Todos los alumnos en contrato sin dinero (roster completo). Base de plantel.
+// Retirar / reactivar (solo admin, spec 14). No borra nada: el historial de
+// pagos y uniformes queda intacto y el cambio es reversible.
+export async function cambiarActivoAlumno(
+  id: number,
+  activo: boolean,
+): Promise<void> {
+  const alumno = await alumnoPorId(id);
+  if (!alumno) throw new AlumnoReglaError('El alumno ya no existe.');
+  await cambiarActivoEnRepo(id, activo);
+}
+
+// Roster en contrato sin dinero (base de plantel y asistencia). Nunca incluye
+// retirados: un alumno retirado ya no entrena (spec 14).
 export async function listarPlantelCompleto(): Promise<AlumnoPlantel[]> {
   const rows = await listarAlumnos();
   const hermanos = conteoHermanos(rows);
@@ -110,11 +129,12 @@ export async function listarPlantel(
   return (await listarPlantelCompleto()).filter((a) => permitidas.has(a.cat));
 }
 
+// Ficha: incluye retirados — su historial sigue consultable (spec 14).
 export async function alumnoAdminPorId(
   id: number,
   hoy: Date,
 ): Promise<Alumno | undefined> {
-  const { alumnos } = await construirAlumnos(hoy);
+  const { alumnos } = await construirAlumnos(hoy, true);
   return alumnos.find((a) => a.id === id);
 }
 

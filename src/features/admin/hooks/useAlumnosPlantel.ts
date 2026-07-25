@@ -19,7 +19,7 @@ export function useAlumnosPlantel(): AlumnosPlantelData {
 
   const recargar = useCallback(async () => {
     setEstado('cargando');
-    const { data, error } = await actions.alumnos.listar();
+    const { data, error } = await actions.alumnos.listar({});
     if (error || !data || data.rol !== 'entrenador') {
       setEstado('error');
       return;

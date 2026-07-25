@@ -1,21 +1,20 @@
 import { estadoAlumno } from '@/lib/domain/alumnos';
 import { mesesEnMora } from '@/lib/domain/cartera';
-import { waTo } from '@/lib/whatsapp';
 
 import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
 import type { Alumno } from '../../data/types';
 
-// Cabecera de la Ficha: volver, identidad (avatar, nombre, categoría),
-// estado y acciones "Registrar pago" + WhatsApp. En modo readOnly
-// (entrenador, spec 09) solo identidad: sin mora, sin editar, sin acciones.
+// Cabecera de la Ficha: volver, identidad (avatar, nombre, categoría) y
+// estado. Un retirado se marca como tal en vez de mostrar mora (spec 14).
+// En modo readOnly (entrenador, spec 09) solo identidad: sin mora, sin editar.
+// Las acciones viven en `FichaAcciones`.
 interface Props {
   alumno: Alumno;
   onVolver: () => void;
   readOnly?: boolean;
   onEditar?: () => void;
-  onRegistrarPago?: () => void;
 }
 
 export function FichaHeader({
@@ -23,9 +22,9 @@ export function FichaHeader({
   onVolver,
   readOnly = false,
   onEditar,
-  onRegistrarPago,
 }: Readonly<Props>) {
-  const enMora = !readOnly && estadoAlumno(alumno) === 'mora';
+  const retirado = !alumno.activo;
+  const enMora = !readOnly && !retirado && estadoAlumno(alumno) === 'mora';
   const meses = mesesEnMora(alumno);
 
   return (
@@ -67,14 +66,7 @@ export function FichaHeader({
             {alumno.cat}
           </span>
         </div>
-        {!readOnly &&
-          (enMora ? (
-            <Badge tone="due">
-              {meses} {meses === 1 ? 'mes' : 'meses'}
-            </Badge>
-          ) : (
-            <Badge tone="paid">Al día</Badge>
-          ))}
+        {!readOnly && <BadgeEstado retirado={retirado} meses={enMora ? meses : 0} />}
         {!readOnly && (
         <button
           type="button"
@@ -98,53 +90,20 @@ export function FichaHeader({
         </button>
         )}
       </div>
-
-      {!readOnly && (
-      <div style={{ display: 'flex', gap: 10 }}>
-        <button
-          type="button"
-          onClick={onRegistrarPago}
-          style={{
-            flex: 1,
-            height: 44,
-            borderRadius: 'var(--radius-md)',
-            border: 'none',
-            background: 'var(--brand-navy)',
-            color: '#fff',
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: 'pointer',
-          }}
-        >
-          Registrar pago
-        </button>
-        <a
-          href={waTo(
-            alumno.phone,
-            `Hola ${alumno.acu}, te escribimos de Chuter FC sobre ${alumno.name}.`,
-          )}
-          target="_blank"
-          rel="noreferrer"
-          style={{
-            flex: 1,
-            height: 44,
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--border-subtle)',
-            background: 'color-mix(in srgb, var(--whatsapp) 14%, white)',
-            color: 'var(--whatsapp)',
-            fontSize: 14,
-            fontWeight: 700,
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-          }}
-        >
-          <Icon name="message-circle" size={18} /> WhatsApp
-        </a>
-      </div>
-      )}
     </div>
+  );
+}
+
+// Estado del alumno: retirado manda sobre la mora; `meses` en 0 = al día.
+function BadgeEstado({
+  retirado,
+  meses,
+}: Readonly<{ retirado: boolean; meses: number }>) {
+  if (retirado) return <Badge tone="neutral">Retirado</Badge>;
+  if (meses === 0) return <Badge tone="paid">Al día</Badge>;
+  return (
+    <Badge tone="due">
+      {meses} {meses === 1 ? 'mes' : 'meses'}
+    </Badge>
   );
 }

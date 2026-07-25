@@ -1,4 +1,9 @@
-import { crear as crearAlumno, editar, listar as listarAlumnos } from '@/actions/alumnos';
+import {
+  cambiarActivo as cambiarActivoAlumno,
+  crear as crearAlumno,
+  editar,
+  listar as listarAlumnos,
+} from '@/actions/alumnos';
 import { enviarContacto } from '@/actions/contacto';
 import { stats } from '@/actions/dashboard';
 import {
@@ -33,6 +38,7 @@ export const server = {
     listar: listarAlumnos,
     crear: crearAlumno,
     editar,
+    cambiarActivo: cambiarActivoAlumno,
   },
   pagos: {
     registrar: registrarPago,

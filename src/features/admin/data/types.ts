@@ -59,6 +59,7 @@ export interface Alumno {
   hermanos: number;
   kits: KitUniforme[]; // los dos kits (AZUL/ORO) con estado y saldo derivados
   states: EstadoMes[]; // una entrada por mes visible (ENE..MES_FIN_COBRO)
+  activo: boolean; // false = retirado (fuera de activos y cartera, spec 14)
 }
 
 // Vista del entrenador: identidad + contacto SIN datos de dinero (cuota,

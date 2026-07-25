@@ -47,8 +47,19 @@ const COLUMNAS = {
   activo: alumnos.activo,
 };
 
-export async function listarAlumnos(): Promise<AlumnoRow[]> {
-  return db.select(COLUMNAS).from(alumnos).orderBy(asc(alumnos.nombre));
+export interface OpcionesListado {
+  incluirRetirados?: boolean; // retirado = activo:false (spec 14)
+}
+
+export async function listarAlumnos(
+  opts: OpcionesListado = {},
+): Promise<AlumnoRow[]> {
+  const filtro = opts.incluirRetirados ? undefined : eq(alumnos.activo, true);
+  return db
+    .select(COLUMNAS)
+    .from(alumnos)
+    .where(filtro)
+    .orderBy(asc(alumnos.nombre));
 }
 
 export async function alumnoPorId(id: number): Promise<AlumnoRow | undefined> {
@@ -84,4 +95,12 @@ export async function actualizarAlumno(
   datos: DatosEditablesAlumno,
 ): Promise<void> {
   await db.update(alumnos).set(datos).where(eq(alumnos.id, id));
+}
+
+// Retiro/reactivación: escribe la sola columna `activo`, sin tocar nada más.
+export async function cambiarActivoAlumno(
+  id: number,
+  activo: boolean,
+): Promise<void> {
+  await db.update(alumnos).set({ activo }).where(eq(alumnos.id, id));
 }
