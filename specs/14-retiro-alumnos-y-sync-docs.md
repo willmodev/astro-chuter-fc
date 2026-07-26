@@ -1,6 +1,6 @@
 # SPEC 14 — Retiro y reactivación de alumnos + sincronización de fuentes de verdad
 
-> **Estado:** Aprobado · **Depende de:** SPEC 05 (pantallas Alumnos + Ficha, donde viven la acción y el chip), SPEC 11 (persistencia de alumnos/cartera/dashboard y la columna `activo` que hoy nadie filtra), SPEC 04 (patrón de activar/desactivar reversible de Equipo, que se replica) · **Fecha:** 2026-07-22
+> **Estado:** Implementado · **Depende de:** SPEC 05 (pantallas Alumnos + Ficha, donde viven la acción y el chip), SPEC 11 (persistencia de alumnos/cartera/dashboard y la columna `activo` que hoy nadie filtra), SPEC 04 (patrón de activar/desactivar reversible de Equipo, que se replica) · **Fecha:** 2026-07-22
 > **Objetivo:** Retirar y reactivar alumnos reutilizando la columna `activo` existente (sin migración) para que un retirado salga de activos, cartera y plantel conservando su historial de pagos, y de paso dejar sincronizadas las fuentes de verdad del repo (backlog al día, `NEXT-STEPS.md` eliminado).
 
 ---
@@ -112,41 +112,41 @@ _Verifica:_ ninguna HU ya hecha queda marcada ☐; `NEXT-STEPS.md` no existe; ni
 
 ### Retiro y reactivación
 
-- [ ] Retirar un alumno pone `activo=false` y **sobrevive a recargar** (vive en Neon); reactivar lo revierte a `activo=true`.
-- [ ] Retirar pide **confirmación** ("¿Retirar a X?") antes de aplicar; reactivar no la pide.
-- [ ] Ningún dato se borra: el historial de pagos y uniformes del retirado se conserva intacto y sigue consultable en su ficha.
-- [ ] El retiro es **reversible** cuantas veces se quiera (toggle), sin efectos secundarios acumulados.
+- [x] Retirar un alumno pone `activo=false` y **sobrevive a recargar** (vive en Neon); reactivar lo revierte a `activo=true`.
+- [x] Retirar pide **confirmación** ("¿Retirar a X?") antes de aplicar; reactivar no la pide.
+- [x] Ningún dato se borra: el historial de pagos y uniformes del retirado se conserva intacto y sigue consultable en su ficha.
+- [x] El retiro es **reversible** cuantas veces se quiera (toggle), sin efectos secundarios acumulados.
 
 ### Efecto en cartera y dashboard
 
-- [ ] Un alumno retirado **no cuenta** en "alumnos activos", ni en % al día, ni en la lista de morosos, ni en la cartera vencida.
-- [ ] Un alumno retirado **no genera mora nueva**: sus meses pendientes dejan de sumar a la cartera vencida.
-- [ ] Los pagos ya registrados por un retirado **siguen sumando** al "recaudado del año".
-- [ ] Reactivar al alumno lo devuelve a los conteos de activos y cartera de forma coherente.
+- [x] Un alumno retirado **no cuenta** en "alumnos activos", ni en % al día, ni en la lista de morosos, ni en la cartera vencida.
+- [x] Un alumno retirado **no genera mora nueva**: sus meses pendientes dejan de sumar a la cartera vencida.
+- [x] Los pagos ya registrados por un retirado **siguen sumando** al "recaudado del año".
+- [x] Reactivar al alumno lo devuelve a los conteos de activos y cartera de forma coherente.
 
 ### UI — Ficha y Lista
 
-- [ ] La ficha de un retirado muestra el estado **"Retirado"** y su acción principal pasa a **Reactivar**.
-- [ ] Mientras el alumno esté retirado, **"Registrar pago" está deshabilitado** en su ficha.
-- [ ] En la lista de Alumnos, por defecto **no aparecen** los retirados; el chip **"Mostrar retirados"** los trae marcados con badge **"Retirado"**.
-- [ ] El contador "N alumnos / N en mora" cuenta **solo activos**, con o sin el chip activo.
+- [x] La ficha de un retirado muestra el estado **"Retirado"** y su acción principal pasa a **Reactivar**.
+- [x] Mientras el alumno esté retirado, **"Registrar pago" está deshabilitado** en su ficha.
+- [x] En la lista de Alumnos, por defecto **no aparecen** los retirados; el chip **"Mostrar retirados"** los trae marcados con badge **"Retirado"**.
+- [x] El contador "N alumnos / N en mora" cuenta **solo activos**, con o sin el chip activo.
 
 ### Seguridad por rol
 
-- [ ] `alumnos.cambiarActivo` niega sin sesión (`UNAUTHORIZED`) y a un entrenador (`FORBIDDEN`): solo el admin retira/reactiva.
-- [ ] El **plantel del entrenador no muestra** alumnos retirados y el entrenador **no ve** el chip "Mostrar retirados".
+- [x] `alumnos.cambiarActivo` niega sin sesión (`UNAUTHORIZED`) y a un entrenador (`FORBIDDEN`): solo el admin retira/reactiva.
+- [x] El **plantel del entrenador no muestra** alumnos retirados y el entrenador **no ve** el chip "Mostrar retirados".
 
 ### Sincronización de fuentes de verdad
 
-- [ ] `docs/backlog.md` refleja el estado real: **ninguna HU ya implementada queda marcada ☐**, y cada ☑ apunta al spec que la cerró; **HU-2.6 queda ☑**.
-- [ ] `docs/NEXT-STEPS.md` **ya no existe** en el repo.
-- [ ] `docs/ARCHITECTURE.md` documenta que los retirados quedan fuera de activos/cartera; ninguna fuente contradice a otra.
+- [x] `docs/backlog.md` refleja el estado real: **ninguna HU ya implementada queda marcada ☐**, y cada ☑ apunta al spec que la cerró; **HU-2.6 queda ☑**.
+- [x] `docs/NEXT-STEPS.md` **ya no existe** en el repo.
+- [x] `docs/ARCHITECTURE.md` documenta que los retirados quedan fuera de activos/cartera; ninguna fuente contradice a otra.
 
 ### Calidad y no-regresión
 
-- [ ] Ningún archivo > 200 líneas; cero `any`; `tsc --noEmit` + `build` en verde.
-- [ ] Marketing prerenderizado intacto; `/admin/**` noindex y fuera del sitemap.
-- [ ] De 320px a desktop: cero scroll horizontal en Alumnos, Ficha, Cartera y Dashboard.
+- [x] Ningún archivo > 200 líneas; cero `any`; `tsc --noEmit` + `build` en verde.
+- [x] Marketing prerenderizado intacto; `/admin/**` noindex y fuera del sitemap.
+- [x] De 320px a desktop: cero scroll horizontal en Alumnos, Ficha, Cartera y Dashboard.
 
 ---
 

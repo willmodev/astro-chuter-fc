@@ -5,7 +5,7 @@
 > Stack: Astro + React (island) · Neon Postgres · Drizzle ORM · Better Auth · Astro Actions · Vercel.
 > Datos reales: `CHUTER FC 2026.xlsx` (local, **no versionado** por PII de menores). Esquema y reglas en `docs/excel-data-dictionary.md`.
 >
-> **Reconciliado con el código el 2026-07-24 (spec 14).** Cada ☑ cita el spec que la cerró. Lo único realmente pendiente: **HU-0.2** (ESLint/Prettier), **HU-7.1** (identidad del club en Más), **HU-7.2** (solo el toggle de montos), **HU-7.3**, **HU-7.4** y **HU-8.2**. HU-3.3 y HU-3.6 son `Won't` (obsoletas, no se harán) y HU-6.1/HU-6.2 quedaron obsoletas por el spec 09. Fuentes: **backlog** = qué falta · **specs/** = por qué se hizo así · **`docs/ARCHITECTURE.md`** = cómo está hecho hoy.
+> **Reconciliado con el código el 2026-07-24 (spec 14).** Cada ☑ cita el spec que la cerró. Lo único realmente pendiente: **HU-0.2** (ESLint/Prettier), **HU-7.1** (identidad del club en Más), **HU-7.2** (solo el toggle de montos), **HU-7.3**, **HU-7.4** y **HU-8.2**. HU-3.3 y HU-3.6 son `Won't` (obsoletas, no se harán) y HU-6.1/HU-6.2 quedaron obsoletas por el spec 09. Aparte de las HU, hay deuda técnica menor anotada en **Deuda técnica / observaciones abiertas** (final del archivo). Fuentes: **backlog** = qué falta · **specs/** = por qué se hizo así · **`docs/ARCHITECTURE.md`** = cómo está hecho hoy.
 
 ## Roles
 
@@ -346,6 +346,22 @@ Como dueño del club quiero migrar los datos del Excel actual para arrancar con 
 ### HU-8.2 · Exportar cartera — `Could` · ☐
 Como administrador quiero exportar la cartera a Excel/CSV para respaldos y contabilidad.
 - **Aceptación:** Dado la cartera, cuando pulso "Exportar", entonces descargo un archivo con alumnos × meses y totales.
+
+---
+
+## Deuda técnica / observaciones abiertas
+
+> Detalles menores detectados durante la verificación de un spec, que no justificaban abrir un spec propio ni frenar el cierre. Cada uno cita dónde salió. No son HU: no tienen rol ni beneficio de negocio.
+
+### DT-1 · `robots.txt` apunta el sitemap al dominio viejo — `Should` · ☐
+`public/robots.txt` declara `Sitemap: https://chuterfc.vercel.app/sitemap-index.xml`, pero el sitemap generado publica las URLs bajo `https://chuterfc.com/`. Los buscadores reciben dos dominios distintos para el mismo sitio.
+- **Aceptación:** el `Sitemap:` de `robots.txt` usa el dominio propio (`chuterfc.com`), consistente con `PUBLIC_SITE_URL` y con los `<loc>` del sitemap.
+- **Origen:** verificación del spec 14 (bloque F). Preexistente, no lo introdujo ese spec.
+
+### DT-2 · El Dashboard no refresca tras retirar/reactivar — `Could` · ☐
+Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboard conserva los KPIs cargados al montar: tras retirar a un alumno y volver a Inicio sigue mostrando el conteo y la cartera vencida anteriores hasta recargar la página.
+- **Aceptación:** al volver al Dashboard después de un cambio que afecta activos/cartera, los KPIs reflejan el estado actual sin recargar.
+- **Origen:** verificación del spec 14 (bloque F). Es el comportamiento que el spec 14 especificó (solo pidió refetch en lista y ficha); queda anotado por si molesta en uso real.
 
 ---
 
