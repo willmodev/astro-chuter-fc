@@ -95,6 +95,7 @@ export function aAlumno(d: DatosMapeoAlumno): Alumno {
     hermanos,
     kits: construyeKits(kits, hermanos > 1),
     states: statesDe(row, pagados, anio, hoy),
+    activo: row.activo,
   };
 }
 

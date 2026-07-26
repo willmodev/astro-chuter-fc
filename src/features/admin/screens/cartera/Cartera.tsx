@@ -15,17 +15,19 @@ import { ToggleVista } from './ToggleVista';
 // Pantalla Cartera (HU-3.1..3.4): cabecera con totales + toggle
 // Tarjetas/Matriz (persistido en localStorage) + segmento Todos/En mora.
 // Solo orquesta; totales y filtro viven en `lib/domain`.
+// Cobra solo a los activos, pero el recaudo del año suma también lo que ya
+// pagó un retirado: ese dinero entró (spec 14).
 interface Props {
   onCobrarMes: (alumnoId: number, mesIndex: number) => void;
 }
 
 export function Cartera({ onCobrarMes }: Readonly<Props>) {
-  const { alumnos, estado, recargar } = useAlumnos();
+  const { alumnos, activos, estado, recargar } = useAlumnos(true);
   const [vista, setVista] = useVistaCartera();
   const [segmento, setSegmento] = useState<SegmentoCartera>('todos');
 
-  const enMora = useMemo(() => alumnos.filter(estaEnMora), [alumnos]);
-  const visibles = segmento === 'mora' ? enMora : alumnos;
+  const enMora = useMemo(() => activos.filter(estaEnMora), [activos]);
+  const visibles = segmento === 'mora' ? enMora : activos;
 
   if (estado !== 'listo') {
     return <EstadoCarga estado={estado} onReintentar={recargar} />;
@@ -35,13 +37,13 @@ export function Cartera({ onCobrarMes }: Readonly<Props>) {
     <div style={{ display: 'grid', gap: 14, padding: '14px 16px 24px' }}>
       <CabeceraTotales
         recaudoAnio={recaudoAnio(alumnos)}
-        carteraVencida={carteraVencida(alumnos)}
+        carteraVencida={carteraVencida(activos)}
       />
       <ToggleVista vista={vista} onChange={setVista} />
       <SegmentoFiltro
         segmento={segmento}
         onChange={setSegmento}
-        total={alumnos.length}
+        total={activos.length}
         enMora={enMora.length}
       />
 

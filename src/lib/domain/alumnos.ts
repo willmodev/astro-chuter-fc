@@ -48,6 +48,16 @@ export function filtraAlumnos<T extends AlumnoBuscable>(
   });
 }
 
+/**
+ * Solo los alumnos vigentes. Fuente única del filtro por retiro (spec 14):
+ * conteos, mora y cartera vencida se calculan siempre sobre esta lista.
+ */
+export function soloActivos<T extends { activo: boolean }>(
+  alumnos: readonly T[],
+): T[] {
+  return alumnos.filter((a) => a.activo);
+}
+
 // Estado binario: un mes se cobra o no se cobra, sin "abono/parcial".
 export type EstadoAlumno = 'alDia' | 'mora';
 

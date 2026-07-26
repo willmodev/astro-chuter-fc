@@ -25,6 +25,12 @@ export async function registrarPagos(
 ): Promise<number> {
   const alumno = await alumnoPorId(input.alumnoId);
   if (!alumno) throw new AlumnoReglaError('El alumno ya no existe.');
+  // Un retirado sale de la cartera: no se le cobra (spec 14).
+  if (!alumno.activo) {
+    throw new AlumnoReglaError(
+      'El alumno está retirado. Reactivalo para registrar pagos.',
+    );
+  }
 
   const hoy = new Date();
   const fechaInicio = parseFechaLocal(alumno.fechaInicio);

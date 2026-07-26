@@ -56,7 +56,9 @@ function aInput(v: FormValores) {
 }
 
 export function useAlumnoForm({ modo, alumnoId, onGuardado }: Args) {
-  const { alumnos, estado, recargar } = useAlumnos();
+  // Con retirados: el documento único y los acudientes se validan contra el
+  // padrón completo, no solo contra los activos (spec 14).
+  const { alumnos, estado, recargar } = useAlumnos(true);
   const actual =
     modo === 'editar' ? alumnos.find((a) => a.id === alumnoId) : undefined;
   const [valores, setValores] = useState<FormValores>(VACIO);

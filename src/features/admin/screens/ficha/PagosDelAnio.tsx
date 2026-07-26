@@ -8,10 +8,12 @@ import type { Alumno, EstadoMes } from '../../data/types';
 
 // Tab Pagos: los 11 meses de la temporada (FEB–DIC) con su estado binario.
 // Un mes cobrable (debe o pendiente) es tocable → navega a Registrar pago
-// con ese mes preseleccionado.
+// con ese mes preseleccionado. A un retirado se le consulta el historial pero
+// no se le cobra: `cobrosHabilitados` en false apaga los meses (spec 14).
 interface Props {
   alumno: Alumno;
   onCobrarMes: (mesIndex: number) => void;
+  cobrosHabilitados?: boolean;
 }
 
 const ESTILO_MES: Record<EstadoMes, { bg: string; fg: string; label: string }> = {
@@ -25,7 +27,11 @@ const ESTILO_MES: Record<EstadoMes, { bg: string; fg: string; label: string }> =
   na: { bg: 'var(--cell-na-bg)', fg: 'var(--cell-na-fg)', label: '—' },
 };
 
-export function PagosDelAnio({ alumno, onCobrarMes }: Readonly<Props>) {
+export function PagosDelAnio({
+  alumno,
+  onCobrarMes,
+  cobrosHabilitados = true,
+}: Readonly<Props>) {
   return (
     <div
       style={{
@@ -37,7 +43,7 @@ export function PagosDelAnio({ alumno, onCobrarMes }: Readonly<Props>) {
       {MONTHS.map((mes, i) => {
         const estado = alumno.states[i] ?? 'na';
         const s = ESTILO_MES[estado];
-        const cobrable = esMesCobrable(estado);
+        const cobrable = cobrosHabilitados && esMesCobrable(estado);
         const celda = (
           <>
             <span style={{ fontSize: 12.5, fontWeight: 800 }}>{mes}</span>

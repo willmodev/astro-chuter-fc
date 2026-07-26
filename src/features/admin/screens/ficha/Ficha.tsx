@@ -4,7 +4,9 @@ import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useAlumno } from '../../hooks/useAlumno';
 import { AcudienteTab } from './AcudienteTab';
 import { AlumnoNoEncontrado } from './AlumnoNoEncontrado';
+import { FichaAcciones } from './FichaAcciones';
 import { FichaHeader } from './FichaHeader';
+import { HojaRetiro } from './HojaRetiro';
 import { PagosDelAnio } from './PagosDelAnio';
 import { TabsFicha, type TabFicha } from './TabsFicha';
 import { UniformeTab } from './UniformeTab';
@@ -32,8 +34,22 @@ export function Ficha({
   onRegistrarPago,
   onRegistrarUniforme,
 }: Readonly<Props>) {
-  const { alumno, estado, recargar } = useAlumno(alumnoId);
+  const { alumno, estado, recargar, cambiarActivo } = useAlumno(alumnoId);
   const [tab, setTab] = useState<TabFicha>(readOnly ? 'uniforme' : 'pagos');
+  const [confirmando, setConfirmando] = useState(false);
+  const [ocupado, setOcupado] = useState(false);
+
+  // Retirar pide confirmación; reactivar se aplica de una (spec 14).
+  async function alCambiarActivo(): Promise<void> {
+    if (!alumno) return;
+    if (alumno.activo) {
+      setConfirmando(true);
+      return;
+    }
+    setOcupado(true);
+    await cambiarActivo(true);
+    setOcupado(false);
+  }
 
   if (estado !== 'listo') {
     return <EstadoCarga estado={estado} onReintentar={recargar} />;
@@ -49,8 +65,15 @@ export function Ficha({
         onVolver={onVolver}
         readOnly={readOnly}
         onEditar={onEditar}
-        onRegistrarPago={() => onRegistrarPago?.()}
       />
+      {!readOnly && (
+        <FichaAcciones
+          alumno={alumno}
+          ocupado={ocupado}
+          onRegistrarPago={() => onRegistrarPago?.()}
+          onCambiarActivo={() => void alCambiarActivo()}
+        />
+      )}
       <TabsFicha
         tab={tab}
         onTab={setTab}
@@ -58,12 +81,24 @@ export function Ficha({
       />
 
       {tab === 'pagos' && !readOnly && (
-        <PagosDelAnio alumno={alumno} onCobrarMes={(mes) => onRegistrarPago?.(mes)} />
+        <PagosDelAnio
+          alumno={alumno}
+          onCobrarMes={(mes) => onRegistrarPago?.(mes)}
+          cobrosHabilitados={alumno.activo}
+        />
       )}
       {tab === 'uniforme' && (
         <UniformeTab alumno={alumno} onGestionar={() => onRegistrarUniforme?.()} />
       )}
       {tab === 'acudiente' && <AcudienteTab alumno={alumno} />}
+
+      {confirmando && (
+        <HojaRetiro
+          nombre={alumno.name}
+          onConfirmar={() => cambiarActivo(false)}
+          onClose={() => setConfirmando(false)}
+        />
+      )}
     </div>
   );
 }

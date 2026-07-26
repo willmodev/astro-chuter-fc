@@ -1,5 +1,6 @@
 // Orquestación del dashboard: KPIs, morosos, recaudo mensual y próximos
 // cumpleaños, todo derivado en servidor desde los pagos reales.
+import { soloActivos } from '@/lib/domain/alumnos';
 import { subDeAnio } from '@/lib/domain/categoria';
 import {
   carteraVencida,
@@ -34,19 +35,25 @@ export interface DashboardStats {
   entrenoDeHoy: EntrenoDeHoy | null; // null los días sin entreno
 }
 
-function computeStats(alumnos: Alumno[], mesVivo: number): Stats {
-  const active = alumnos.length;
-  const enMora = alumnos.filter(estaEnMora).length;
-  const recMes = recaudoMes(alumnos, mesVivo);
-  const meta = metaMes(alumnos, mesVivo);
+// Población y deuda se miden sobre `activos`; el dinero recaudado sobre
+// `todos`, porque el pago de un retirado entró igual (spec 14).
+function computeStats(
+  activos: Alumno[],
+  todos: Alumno[],
+  mesVivo: number,
+): Stats {
+  const active = activos.length;
+  const enMora = activos.filter(estaEnMora).length;
+  const recMes = recaudoMes(todos, mesVivo);
+  const meta = metaMes(activos, mesVivo);
   return {
     active,
     upToDate: active - enMora,
     morosos: enMora,
-    pctUpToDate: Math.round(pctAlDia(alumnos)),
-    recaudo: recaudoAnio(alumnos),
+    pctUpToDate: Math.round(pctAlDia(activos)),
+    recaudo: recaudoAnio(todos),
     recaudoMes: recMes,
-    carteraVencida: carteraVencida(alumnos),
+    carteraVencida: carteraVencida(activos),
     metaMes: meta,
     pctMeta: meta === 0 ? 0 : Math.round((recMes / meta) * 100),
   };
@@ -65,13 +72,15 @@ function cumplesDe(rows: AlumnoRow[], hoy: Date): Cumple[] {
   );
 }
 
+// Trae también a los retirados (para el recaudo) y separa a los activos aquí.
 export async function statsDashboard(hoy: Date): Promise<DashboardStats> {
   const [{ alumnos, rows }, entreno] = await Promise.all([
-    construirAlumnos(hoy),
+    construirAlumnos(hoy, true),
     entrenoDeHoy(hoy),
   ]);
+  const activos = soloActivos(alumnos);
   const mesVivo = indiceMesVivo(hoy);
-  const morosos = alumnos
+  const morosos = activos
     .filter(estaEnMora)
     .sort((a, b) => saldoPendiente(b) - saldoPendiente(a))
     .slice(0, 4);
@@ -83,10 +92,10 @@ export async function statsDashboard(hoy: Date): Promise<DashboardStats> {
     ),
   }));
   return {
-    stats: computeStats(alumnos, mesVivo),
+    stats: computeStats(activos, alumnos, mesVivo),
     morosos,
     monthly,
-    cumples: cumplesDe(rows, hoy),
+    cumples: cumplesDe(soloActivos(rows), hoy),
     meses: [...MESES_VISIBLES],
     mesesLong: MESES_VISIBLES_LARGOS,
     mesVivo,

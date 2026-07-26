@@ -8,13 +8,15 @@ import type { Alumno } from '../../data/types';
 
 // Fila tocable de la lista: avatar (aro dorado si mora), nombre,
 // categoría + acudiente y estado. Toda la fila navega a la Ficha.
+// Un retirado se marca como tal y no muestra mora (spec 14).
 interface Props {
   alumno: Alumno;
   onOpen: () => void;
 }
 
 export function FilaAlumno({ alumno, onOpen }: Readonly<Props>) {
-  const enMora = estadoAlumno(alumno) === 'mora';
+  const retirado = !alumno.activo;
+  const enMora = !retirado && estadoAlumno(alumno) === 'mora';
   const meses = mesesEnMora(alumno);
 
   return (
@@ -61,16 +63,24 @@ export function FilaAlumno({ alumno, onOpen }: Readonly<Props>) {
           {alumno.cat} · {alumno.acu}
         </span>
       </span>
-      {enMora ? (
-        <Badge tone="due">
-          {meses} {meses === 1 ? 'mes' : 'meses'}
-        </Badge>
-      ) : (
-        <Badge tone="paid">Al día</Badge>
-      )}
+      <BadgeFila retirado={retirado} meses={enMora ? meses : 0} />
       <span style={{ display: 'flex', color: 'var(--text-muted)', flexShrink: 0 }}>
         <Icon name="chevron-right" size={18} />
       </span>
     </button>
+  );
+}
+
+// Retirado manda sobre la mora; `meses` en 0 = al día.
+function BadgeFila({
+  retirado,
+  meses,
+}: Readonly<{ retirado: boolean; meses: number }>) {
+  if (retirado) return <Badge tone="neutral">Retirado</Badge>;
+  if (meses === 0) return <Badge tone="paid">Al día</Badge>;
+  return (
+    <Badge tone="due">
+      {meses} {meses === 1 ? 'mes' : 'meses'}
+    </Badge>
   );
 }
