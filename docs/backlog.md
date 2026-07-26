@@ -353,10 +353,11 @@ Como administrador quiero exportar la cartera a Excel/CSV para respaldos y conta
 
 > Detalles menores detectados durante la verificación de un spec, que no justificaban abrir un spec propio ni frenar el cierre. Cada uno cita dónde salió. No son HU: no tienen rol ni beneficio de negocio.
 
-### DT-1 · `robots.txt` apunta el sitemap al dominio viejo — `Should` · ☐
-`public/robots.txt` declara `Sitemap: https://chuterfc.vercel.app/sitemap-index.xml`, pero el sitemap generado publica las URLs bajo `https://chuterfc.com/`. Los buscadores reciben dos dominios distintos para el mismo sitio.
-- **Aceptación:** el `Sitemap:` de `robots.txt` usa el dominio propio (`chuterfc.com`), consistente con `PUBLIC_SITE_URL` y con los `<loc>` del sitemap.
+### DT-1 · `robots.txt` apunta el sitemap al dominio viejo — `Should` · ☑ RESUELTO (2026-07-25)
+`public/robots.txt` declaraba `Sitemap: https://chuterfc.vercel.app/sitemap-index.xml`, pero el sitemap generado publica las URLs bajo `https://chuterfc.com/`. Los buscadores recibían dos dominios distintos para el mismo sitio.
+- [x] **Aceptación:** el `Sitemap:` de `robots.txt` usa el dominio propio (`chuterfc.com`), consistente con `PUBLIC_SITE_URL` y con los `<loc>` del sitemap.
 - **Origen:** verificación del spec 14 (bloque F). Preexistente, no lo introdujo ese spec.
+- **Resolución:** corregido en `public/robots.txt`. `astro.config.mjs` ya tenía `site: 'https://chuterfc.com'`, así que el sitemap no requirió cambios (verificado en producción: `<loc>https://chuterfc.com/sitemap-0.xml</loc>`). De paso se limpiaron las referencias al dominio viejo en `README.md`, `docs/ARCHITECTURE.md` y `.claude/pendientes.md`.
 
 ### DT-2 · El Dashboard no refresca tras retirar/reactivar — `Could` · ☐
 Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboard conserva los KPIs cargados al montar: tras retirar a un alumno y volver a Inicio sigue mostrando el conteo y la cartera vencida anteriores hasta recargar la página.

@@ -23,7 +23,7 @@ El sitio de marketing es y seguirá siendo **estático/prerenderizado** (Lightho
 import vercel from '@astrojs/vercel';
 // ...
 export default defineConfig({
-  site: 'https://chuterfc.vercel.app',
+  site: 'https://chuterfc.com',
   adapter: vercel(),
   vite: { plugins: [tailwindcss()] },
   integrations: [
@@ -259,7 +259,7 @@ src/
 ```
 DATABASE_URL=postgres://...neon...      # cadena pooled de Neon
 BETTER_AUTH_SECRET=...                   # secreto largo aleatorio
-BETTER_AUTH_URL=https://chuterfc.vercel.app
+BETTER_AUTH_URL=https://chuterfc.com
 BLOB_READ_WRITE_TOKEN=vercel_blob_rw_... # Vercel Blob (imagen de la parte central de entrenos)
 ```
 

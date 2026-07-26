@@ -1,18 +1,19 @@
 # Chuter FC — Sitio Web Institucional
 
-Sitio web del **Club Deportivo Chuter F.C.**, escuela de fútbol para niños y niñas en Los Algarrobillos, avalada por INDER. Demo gratuito de 1 mes para el cliente.
+Sitio web del **Club Deportivo Chuter F.C.**, escuela de fútbol para niños y niñas en Los Algarrobillos, avalada por INDER. En producción en [chuterfc.com](https://chuterfc.com).
 
 ---
 
 ## Stack
 
-- **Framework:** Astro 6 (static output)
+- **Framework:** Astro 6 (estático por defecto; solo `/admin/**`, `/api/**` y Actions on-demand)
 - **Estilos:** Tailwind CSS v4 (utility-first, self-hosted)
 - **Tipografía:** Bebas Neue (display) + Inter Variable (body) — self-hosted vía `@fontsource`
 - **Componentes UI:** shadcn/ui radix-nova (solo en islands React)
 - **Iconos:** SVG inline (Lucide paths) para componentes Astro; `lucide-react` en islands
-- **Forms:** Web3Forms (no backend propio)
-- **Hosting:** Vercel
+- **Forms:** Astro Action (`enviarContacto`) + Resend (correo branded desde el dominio propio)
+- **Módulo admin:** Neon (Postgres) + Drizzle ORM + Better Auth — ver `docs/ARCHITECTURE.md`
+- **Hosting:** Vercel (adapter `@astrojs/vercel`)
 - **Imágenes:** Astro Image + sharp (WebP responsive)
 
 ---
@@ -32,14 +33,25 @@ npm run preview   # Preview del build en local
 Copiar `.env.example` a `.env` y completar:
 
 ```
-PUBLIC_WEB3FORMS_KEY=       # Requerido para que el formulario de contacto envíe
-PUBLIC_GOOGLE_MAPS_EMBED_URL=  # URL embed del mapa (opcional — muestra placeholder si está vacío)
-PUBLIC_WHATSAPP_NUMBER=573015216830
+# Públicas (accesibles desde el cliente)
+PUBLIC_WHATSAPP_NUMBER=573008725964
+PUBLIC_CONTACT_EMAIL=olimak8@hotmail.com
 PUBLIC_INSTAGRAM_URL=https://instagram.com/1chuter
-PUBLIC_SITE_URL=https://chuterfc.vercel.app
+PUBLIC_SITE_URL=https://chuterfc.com
+
+# Server-only — NUNCA con prefijo PUBLIC_
+RESEND_API_KEY=            # correo del formulario
+CONTACT_EMAIL_FROM=        # remitente del dominio verificado
+CONTACT_EMAIL_TO=          # bandeja del club
+DATABASE_URL=              # Neon Postgres (cadena pooled)
+BETTER_AUTH_SECRET=        # secreto largo aleatorio
+BETTER_AUTH_URL=https://chuterfc.com
+BLOB_READ_WRITE_TOKEN=     # Vercel Blob
 ```
 
-En Vercel: Settings → Environment Variables.
+Los nombres completos (incluido el seed del admin) están en `.env.example`, que se versiona
+solo con **valores vacíos**. Los valores reales van en `.env` (gitignored) y en Vercel:
+Settings → Environment Variables.
 
 ---
 
@@ -81,7 +93,7 @@ src/
 | `#galeria` | Galería | 7 imágenes con lightbox (←/→/Esc) |
 | `#testimonios` | Testimonios | Placeholder hasta recibir testimonios reales |
 | `#ubicacion` | Dónde entrenamos | Cancha de la Provincia — mapa pendiente |
-| `#contacto` | Contacto | WhatsApp directo + formulario Web3Forms |
+| `#contacto` | Contacto | WhatsApp directo + formulario (Astro Action + Resend) |
 | — | Footer | Redes + INDER + programas |
 
 ---
