@@ -1,10 +1,11 @@
 import { parseFechaNacimiento } from '@/lib/domain/alumnos';
-import { subDeFecha } from '@/lib/domain/categoria';
+import { categoriaDeFecha } from '@/lib/domain/categoria';
 
 import { Badge } from '../../ui/Badge';
 
-// Categoría automática (R1): al elegir la fecha muestra el badge SUB 4–16, o un
-// aviso si la fecha está fuera de rango. Nada si la fecha aún está incompleta.
+// Categoría automática (R1): al elegir la fecha muestra el badge "SUB 8 ·
+// Benjamín" según la edad cumplida, o un aviso si la fecha está fuera de rango.
+// Nada si la fecha aún está incompleta.
 interface Props {
   fechaNacimiento: string;
 }
@@ -12,7 +13,7 @@ interface Props {
 export function BadgeCategoria({ fechaNacimiento }: Readonly<Props>) {
   const fecha = parseFechaNacimiento(fechaNacimiento);
   if (fecha === null) return null;
-  const cat = subDeFecha(fecha);
+  const cat = categoriaDeFecha(fecha, new Date());
   if (cat === null) {
     return (
       <span style={{ fontSize: 12.5, color: 'var(--error)', fontWeight: 600 }}>
@@ -26,7 +27,7 @@ export function BadgeCategoria({ fechaNacimiento }: Readonly<Props>) {
         Categoría
       </span>
       <Badge tone="navy" subtle={false}>
-        {cat}
+        {cat.etiqueta} · {cat.nombre}
       </Badge>
     </span>
   );

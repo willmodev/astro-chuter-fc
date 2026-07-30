@@ -1,52 +1,120 @@
-export interface CategoriaSugerida {
-  label: string;
-  years: number[];
+// Catálogo único de categorías y regla de asignación (spec 15). Fuente de verdad
+// para el admin y la landing: no hay otra lista de categorías en el proyecto.
+// La categoría se calcula por EDAD CUMPLIDA — cambia el día del cumpleaños, no
+// al cambiar de temporada. No hay año de temporada hardcodeado en ninguna parte.
+
+export const CATEGORIAS = [
+  { sub: 4, nombre: 'Baby' },
+  { sub: 6, nombre: 'Pony' },
+  { sub: 8, nombre: 'Benjamín' },
+  { sub: 10, nombre: 'Preinfantil' },
+  { sub: 12, nombre: 'Infantil' },
+  { sub: 14, nombre: 'Prejuvenil' },
+  { sub: 16, nombre: 'Juvenil' },
+] as const;
+
+export interface Categoria {
+  sub: number; // 4 … 16
+  nombre: string; // 'Benjamín'
+  etiqueta: string; // 'SUB 8' — formato ya persistido en user.cats
+  edades: string; // '7 a 8 años'
 }
 
-export const CATEGORIAS_POR_ANIO: CategoriaSugerida[] = [
-  { label: 'Pony (nacidos 2019-2022)', years: [2019, 2020, 2021, 2022] },
-  { label: 'Preinfantil (nacidos 2017-2018)', years: [2017, 2018] },
-  { label: 'Infantil (nacidos 2015-2016)', years: [2015, 2016] },
-  { label: 'Prejuvenil (nacidos 2012-2014)', years: [2012, 2013, 2014] },
+export interface AlumnoParaCategoria {
+  fechaNacimiento: Date | null;
+  anioNacimiento: number;
+}
+
+const SUB_MIN = Math.min(...CATEGORIAS.map((c) => c.sub));
+const SUB_MAX = Math.max(...CATEGORIAS.map((c) => c.sub));
+
+export const etiquetaDeSub = (sub: number): string => `SUB ${sub}`;
+
+// "SUB 8" cubre a los de 7 y 8. En SUB 4 caen además los más chicos, por el
+// clamp inferior (un niño de 3 es, literalmente, sub 4).
+const edadesDeSub = (sub: number): string => `${sub - 1} a ${sub} años`;
+
+function aCategoria(sub: number, nombre: string): Categoria {
+  return {
+    sub,
+    nombre,
+    etiqueta: etiquetaDeSub(sub),
+    edades: edadesDeSub(sub),
+  };
+}
+
+/** Las 7 categorías en orden SUB 4 → SUB 16. */
+export function listarCategorias(): Categoria[] {
+  return CATEGORIAS.map((c) => aCategoria(c.sub, c.nombre));
+}
+
+/** Etiquetas del catálogo (`['SUB 4', … 'SUB 16']`), para validar y filtrar. */
+// Tupla no vacía: CATEGORIAS lo es por construcción (lo necesita `z.enum`).
+export const ETIQUETAS = CATEGORIAS.map((c) => etiquetaDeSub(c.sub)) as [
+  string,
+  ...string[],
 ];
 
-export function sugerirCategoria(anioNacimiento: number): CategoriaSugerida | null {
-  return CATEGORIAS_POR_ANIO.find((c) => c.years.includes(anioNacimiento)) ?? null;
+/** Categoría por su etiqueta persistida (`'SUB 8'`). Fuera del catálogo → null. */
+export function categoriaDeEtiqueta(etiqueta: string): Categoria | null {
+  const found = CATEGORIAS.find((c) => etiquetaDeSub(c.sub) === etiqueta);
+  return found ? aCategoria(found.sub, found.nombre) : null;
 }
 
-// --- Categoría automática del admin (R1) ---
-// Distinta de `sugerirCategoria` (sitio público): el admin agrupa por "SUB N"
-// según el año de la temporada. En BD real, ANIO_TEMPORADA vendrá de la config
-// de temporada; aquí es constante (mock-first, como el mes vivo de la mock).
-export const ANIO_TEMPORADA = 2026;
-const SUB_MIN = 4;
-const SUB_MAX = 16;
-
-// Catálogo fijo de categorías del admin (chips de filtro). Deriva del rango
-// [SUB_MIN, SUB_MAX] en pasos de 2, para no repetir la lista a mano.
-export const SUBS: string[] = Array.from(
-  { length: (SUB_MAX - SUB_MIN) / 2 + 1 },
-  (_, i) => `SUB ${SUB_MIN + i * 2}`,
-);
+/**
+ * Años completos a `hoy`, con mes y día (no `getFullYear()` a secas) y en zona
+ * local, para que un cumpleaños del 1-ene no corra de año (riesgo TZ, spec 11).
+ */
+export function edadCumplida(fechaNacimiento: Date, hoy: Date): number {
+  let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+  const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+  if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+    edad--;
+  }
+  return edad;
+}
 
 /**
- * Categoría "SUB N" del alumno: (añoTemporada − año) redondeado al par superior,
- * acotado a [4, 16]. Fuera de ese rango no hay categoría → `null`.
- * Ej.: nacido 2018 → 2026−2018=8 → "SUB 8".
+ * Regla del cliente: `sub = ceil(edad / 2) × 2`, con clamp inferior a SUB 4 y
+ * sin categoría por encima de SUB 16. Un niño de 7 es SUB 8; el día que cumple
+ * 9 pasa a SUB 10.
  */
-export function subDeAnio(anio: number): string | null {
+export function categoriaDeEdad(edad: number): Categoria | null {
+  if (!Number.isFinite(edad) || edad < 0) return null;
+  const sub = Math.max(SUB_MIN, Math.ceil(edad / 2) * 2);
+  if (sub > SUB_MAX) return null;
+  return categoriaDeEtiqueta(etiquetaDeSub(sub));
+}
+
+/** Categoría exacta a partir de la fecha de nacimiento completa. */
+export function categoriaDeFecha(fecha: Date, hoy: Date): Categoria | null {
+  if (Number.isNaN(fecha.getTime())) return null;
+  return categoriaDeEdad(edadCumplida(fecha, hoy));
+}
+
+/**
+ * Fallback mientras falta `fecha_nacimiento`: equivale a suponer que nació el
+ * 1 de enero, sin escribir un dato falso en la base.
+ */
+export function categoriaDeAnio(anio: number, hoy: Date): Categoria | null {
   if (!Number.isInteger(anio)) return null;
-  const diff = ANIO_TEMPORADA - anio;
-  const par = Math.ceil(diff / 2) * 2;
-  if (par < SUB_MIN || par > SUB_MAX) return null;
-  return `SUB ${par}`;
+  return categoriaDeEdad(hoy.getFullYear() - anio);
 }
 
-/**
- * Categoría "SUB N" a partir de la fecha de nacimiento (spec 11): delega en
- * `subDeAnio` sobre el año. La fecha debe venir parseada en zona local para que
- * un cumpleaños del 1-ene no corra de año (ver riesgo TZ del spec).
- */
-export function subDeFecha(fechaNacimiento: Date): string | null {
-  return subDeAnio(fechaNacimiento.getFullYear());
+/** Usa la fecha si existe; si no, cae al año de nacimiento. */
+export function categoriaDeAlumno(
+  alumno: AlumnoParaCategoria,
+  hoy: Date,
+): Categoria | null {
+  return alumno.fechaNacimiento !== null
+    ? categoriaDeFecha(alumno.fechaNacimiento, hoy)
+    : categoriaDeAnio(alumno.anioNacimiento, hoy);
+}
+
+/** Rango de fechas de nacimiento admitidas hoy (para `min`/`max` del form). */
+export function rangoFechasAdmitidas(hoy: Date): { min: Date; max: Date } {
+  return {
+    min: new Date(hoy.getFullYear() - (SUB_MAX + 1), hoy.getMonth(), hoy.getDate() + 1),
+    max: hoy,
+  };
 }

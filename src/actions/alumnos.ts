@@ -38,7 +38,7 @@ export const listar = defineAction({
     }
     return {
       rol: 'entrenador' as const,
-      alumnos: await listarPlantel(user.cats ?? []),
+      alumnos: await listarPlantel(user.cats ?? [], hoy),
     };
   },
 });
@@ -47,7 +47,7 @@ export const crear = defineAction({
   input: datosSchema,
   handler: async (input, { locals }) => {
     requireAdmin(locals);
-    const id = await comoAccion(() => crearAlumno(input));
+    const id = await comoAccion(() => crearAlumno(input, new Date()));
     return { id };
   },
 });
@@ -57,7 +57,7 @@ export const editar = defineAction({
   handler: async (input, { locals }) => {
     requireAdmin(locals);
     const { id, ...datos } = input;
-    await comoAccion(() => editarAlumno(id, datos));
+    await comoAccion(() => editarAlumno(id, datos, new Date()));
     return { ok: true };
   },
 });

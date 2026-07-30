@@ -1,7 +1,6 @@
 // Orquestación del dashboard: KPIs, morosos, recaudo mensual y próximos
 // cumpleaños, todo derivado en servidor desde los pagos reales.
 import { soloActivos } from '@/lib/domain/alumnos';
-import { subDeAnio } from '@/lib/domain/categoria';
 import {
   carteraVencida,
   estaEnMora,
@@ -22,7 +21,7 @@ import type { Alumno, Stats } from '@/features/admin/data/types';
 
 import { construirAlumnos } from './alumnos';
 import { entrenoDeHoy, type EntrenoDeHoy } from './entreno-de-hoy';
-import { parseFechaLocal } from './mapea-alumno';
+import { catDe, parseFechaLocal } from './mapea-alumno';
 
 export interface DashboardStats {
   stats: Stats;
@@ -63,7 +62,7 @@ function cumplesDe(rows: AlumnoRow[], hoy: Date): Cumple[] {
   return proximosCumples(
     rows.map((r) => ({
       name: r.nombre,
-      cat: subDeAnio(r.anioNacimiento) ?? '—',
+      cat: catDe(r, hoy),
       fechaNacimiento: r.fechaNacimiento
         ? parseFechaLocal(r.fechaNacimiento)
         : null,

@@ -1,7 +1,7 @@
 ﻿// Reglas puras de la lista de alumnos — capa de dominio, sin UI ni datos.
 // Búsqueda y filtro corren en cliente sobre la lista completa (~100 alumnos);
 // Cartera reutilizará estas mismas funciones.
-import { subDeFecha } from './categoria';
+import { categoriaDeFecha } from './categoria';
 import { mesesEnMora, type EstadoMes } from './cartera';
 
 // Subconjunto estructural que necesita el filtro. `Alumno` (capa de datos)
@@ -58,6 +58,16 @@ export function soloActivos<T extends { activo: boolean }>(
   return alumnos.filter((a) => a.activo);
 }
 
+/**
+ * Alumnos a los que les falta la fecha de nacimiento (spec 15): su categoría se
+ * está calculando por año hasta que el club complete el dato.
+ */
+export function sinFechaNacimiento<T extends { fechaNacimiento: string | null }>(
+  alumnos: readonly T[],
+): T[] {
+  return alumnos.filter((a) => a.fechaNacimiento === null);
+}
+
 // Estado binario: un mes se cobra o no se cobra, sin "abono/parcial".
 export type EstadoAlumno = 'alDia' | 'mora';
 
@@ -96,6 +106,12 @@ export function parseFechaNacimiento(iso: string): Date | null {
   return real ? fecha : null;
 }
 
+/** Date local → 'YYYY-MM-DD' (sin corrimiento de zona horaria). */
+export function formatearFechaISO(fecha: Date): string {
+  const p = (x: number): string => String(x).padStart(2, '0');
+  return `${fecha.getFullYear()}-${p(fecha.getMonth() + 1)}-${p(fecha.getDate())}`;
+}
+
 interface AlumnoDocumento {
   id: number;
   doc: string;
@@ -111,12 +127,13 @@ function docDuplicado(
 
 /**
  * Valida el form de alumno: requeridos, documento ≥8 dígitos y único (excluye
- * `idActual` al editar), celular de 10 dígitos, año dentro de los rangos SUB.
- * Devuelve un error por campo; objeto vacío = válido.
+ * `idActual` al editar), celular de 10 dígitos y fecha de nacimiento que caiga
+ * en alguna categoría a `hoy`. Devuelve un error por campo; vacío = válido.
  */
 export function validarAlumno(
   datos: DatosAlumnoInput,
   alumnos: readonly AlumnoDocumento[],
+  hoy: Date,
   idActual?: number,
 ): ErroresAlumno {
   const errores: ErroresAlumno = {};
@@ -135,7 +152,7 @@ export function validarAlumno(
   const fecha = parseFechaNacimiento(datos.fechaNacimiento);
   if (fecha === null)
     errores.fechaNacimiento = 'La fecha de nacimiento es obligatoria.';
-  else if (subDeFecha(fecha) === null)
+  else if (categoriaDeFecha(fecha, hoy) === null)
     errores.fechaNacimiento = 'La fecha no corresponde a ninguna categoría (SUB 4–16).';
 
   return errores;

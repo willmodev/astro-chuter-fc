@@ -3,7 +3,7 @@
 // ninguno de los dos archivos pase de 200 líneas.
 import { estadoDelMes, MESES, MESES_VISIBLES } from '@/lib/domain/cartera';
 import type { EstadoMes, Mes } from '@/lib/domain/cartera';
-import { subDeAnio } from '@/lib/domain/categoria';
+import { categoriaDeAlumno } from '@/lib/domain/categoria';
 import { CUOTA_MENSUAL, precioUniforme } from '@/lib/domain/precios';
 import { estadoKit, KITS, saldoKit } from '@/lib/domain/uniformes';
 
@@ -29,7 +29,18 @@ function desdeDe(fechaInicio: string): string {
   return `${cap(MESES[f.getMonth()])} ${f.getFullYear()}`;
 }
 
-const catDe = (row: AlumnoRow): string => subDeAnio(row.anioNacimiento) ?? '—';
+// Categoría vigente (spec 15): por fecha de nacimiento si la hay, si no por año.
+// Fuente única para la lista, la ficha, el plantel y los cumpleaños.
+export function catDe(row: AlumnoRow, hoy: Date): string {
+  const fechaNacimiento = row.fechaNacimiento
+    ? parseFechaLocal(row.fechaNacimiento)
+    : null;
+  const cat = categoriaDeAlumno(
+    { fechaNacimiento, anioNacimiento: row.anioNacimiento },
+    hoy,
+  );
+  return cat?.etiqueta ?? '—';
+}
 
 function statesDe(
   row: AlumnoRow,
@@ -83,7 +94,7 @@ export function aAlumno(d: DatosMapeoAlumno): Alumno {
   return {
     id: row.id,
     name: row.nombre,
-    cat: catDe(row),
+    cat: catDe(row, hoy),
     anio: row.anioNacimiento,
     fechaNacimiento: row.fechaNacimiento,
     doc: row.documento,
@@ -100,11 +111,15 @@ export function aAlumno(d: DatosMapeoAlumno): Alumno {
 }
 
 // Vista del entrenador: identidad + contacto, sin un solo campo de dinero.
-export function aPlantel(row: AlumnoRow, hermanos: number): AlumnoPlantel {
+export function aPlantel(
+  row: AlumnoRow,
+  hermanos: number,
+  hoy: Date,
+): AlumnoPlantel {
   return {
     id: row.id,
     name: row.nombre,
-    cat: catDe(row),
+    cat: catDe(row, hoy),
     anio: row.anioNacimiento,
     doc: row.documento,
     acu: row.acudiente,
