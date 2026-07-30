@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import {
   CATEGORIA_TODAS,
   filtraAlumnos,
+  sinFechaNacimiento,
   soloActivos,
 } from '@/lib/domain/alumnos';
 import { estaEnMora } from '@/lib/domain/cartera';
@@ -36,6 +37,7 @@ export function Alumnos({ onOpenFicha }: Readonly<Props>) {
   );
   const activos = useMemo(() => soloActivos(visibles), [visibles]);
   const enMora = useMemo(() => activos.filter(estaEnMora).length, [activos]);
+  const sinFecha = useMemo(() => sinFechaNacimiento(activos).length, [activos]);
 
   if (estado !== 'listo') {
     return <EstadoCarga estado={estado} onReintentar={recargar} />;
@@ -53,7 +55,11 @@ export function Alumnos({ onOpenFicha }: Readonly<Props>) {
           gap: 10,
         }}
       >
-        <ResumenAlumnos total={activos.length} enMora={enMora} />
+        <ResumenAlumnos
+          total={activos.length}
+          enMora={enMora}
+          sinFecha={sinFecha}
+        />
         <ChipRetirados activo={retirados} onChange={setRetirados} />
       </div>
 

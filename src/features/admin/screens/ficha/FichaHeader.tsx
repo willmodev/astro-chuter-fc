@@ -5,6 +5,7 @@ import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
 import type { Alumno } from '../../data/types';
+import { BadgeFaltaFecha } from './BadgeFaltaFecha';
 
 // Cabecera de la Ficha: volver, identidad (avatar, nombre, categoría) y
 // estado. Un retirado se marca como tal en vez de mostrar mora (spec 14).
@@ -90,6 +91,7 @@ export function FichaHeader({
         </button>
         )}
       </div>
+      {alumno.fechaNacimiento === null && <BadgeFaltaFecha />}
     </div>
   );
 }
