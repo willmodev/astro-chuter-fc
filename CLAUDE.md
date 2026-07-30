@@ -43,16 +43,25 @@ Sitio web institucional para el **Club Deportivo Chuter F.C.**, una escuela de f
 - **Hora:** 4:30 PM a 6:00 PM
 - *(Confirmar si hay diferencias por categoría)*
 
-### Categorías por año de nacimiento
+### Categorías por edad (catálogo único, spec 15)
 
-> Importante: el sitio mostrará SIEMPRE las categorías por año de nacimiento (no por edad fija), porque las edades cambian cada año y el contenido se desactualizaría.
+> Importante: la categoría se calcula por **edad cumplida** — cambia el día del cumpleaños, no al cambiar de temporada. Fórmula: `sub = ceil(edad / 2) × 2`, con clamp inferior a SUB 4 y sin categoría por encima de SUB 16.
+>
+> Por eso el sitio publica **edades, no años de nacimiento**: bajo esta regla `Benjamín = 7 a 8 años` es cierto para siempre, mientras que "nacidos 2018-2019" deja de serlo cada enero y además es inexacto todo el año. (Esto **invierte** la regla anterior, que existía porque la categoría se calculaba por año calendario.)
+>
+> **Fuente única:** `src/lib/domain/categoria.ts`. La landing y el admin leen de ahí; no se escribe ninguna lista de categorías en otro lado.
 
-| Categoría | Nacidos en | Edad aprox. | Entrenador |
+| SUB | Categoría | Edad | Entrenador |
 |---|---|---|---|
-| **Pony** | 2019 - 2022 | 4-7 años | Jorge Carrillo |
-| **Preinfantil** | 2017 - 2018 | 8-9 años | Camilo Andrade |
-| **Infantil** | 2015 - 2016 | 10-11 años | Óscar Cárdenas |
-| **Prejuvenil** | 2012 - 2014 | 12-14 años | Cristian Maestre |
+| SUB 4 | **Baby** | 3 a 4 años | *(sin asignar)* |
+| SUB 6 | **Pony** | 5 a 6 años | Jorge Carrillo |
+| SUB 8 | **Benjamín** | 7 a 8 años | *(sin asignar)* |
+| SUB 10 | **Preinfantil** | 9 a 10 años | Camilo Andrade |
+| SUB 12 | **Infantil** | 11 a 12 años | Óscar Cárdenas |
+| SUB 14 | **Prejuvenil** | 13 a 14 años | Cristian Maestre |
+| SUB 16 | **Juvenil** | 15 a 16 años | *(sin asignar)* |
+
+Una categoría pertenece a **un solo entrenador activo** a la vez; desactivar a un entrenador libera las suyas.
 
 ### Promoción actual
 - **Inscripción gratis** (destacar en hero como hook principal)
@@ -109,96 +118,26 @@ src/
 
 ## Content Collections — Schemas obligatorios
 
-Crear `src/content/config.ts` con los siguientes schemas Zod:
+Los schemas viven en `src/content.config.ts` (loader `glob`).
 
-### Programas (categorías)
+### Programas (categorías) — 7 archivos en `src/content/programas/`
+
 ```ts
-const programasCollection = defineCollection({
-  type: 'content',
-  schema: z.object({
-    nombre: z.string(),               // "Baby", "Pony", "Benjamín", etc.
-    nacidos: z.string(),              // "2020 - 2021"
-    edadAprox: z.string(),            // "5-6 años aprox."
-    horario: z.string(),              // "Lunes, miércoles y viernes - 4:30 a 6:00 PM"
-    icono: z.string(),                // nombre de icono Lucide
-    descripcion: z.string(),
-    color: z.enum(['navy', 'blue', 'gold']).default('navy'),
-    orden: z.number(),
-  }),
-});
+schema: z.object({
+  sub: z.number(),                  // 4 | 6 | 8 | 10 | 12 | 14 | 16
+  horario: z.string(),
+  icono: z.string(),                // nombre de icono Lucide
+  entrenador: z.string().optional(),// sin dato → la tarjeta omite la línea
+  descripcion: z.string(),
+  color: z.enum(['navy', 'blue', 'gold']).default('navy'),
+  orden: z.number(),
+})
 ```
 
-### Crear los 5 archivos de programas con esta data exacta:
-
-**`src/content/programas/baby.md`**
-```markdown
----
-nombre: "Baby"
-nacidos: "2020 - 2021"
-edadAprox: "5-6 años aprox."
-horario: "Lunes, miércoles y viernes — 4:30 a 6:00 PM"
-icono: "Baby"
-descripcion: "Primeros pasos en el fútbol con énfasis en juego, coordinación y diversión."
-color: "gold"
-orden: 1
----
-```
-
-**`src/content/programas/pony.md`**
-```markdown
----
-nombre: "Pony"
-nacidos: "2018 - 2019"
-edadAprox: "7-8 años aprox."
-horario: "Lunes, miércoles y viernes — 4:30 a 6:00 PM"
-icono: "Footprints"
-descripcion: "Desarrollo de habilidades técnicas básicas, control del balón y trabajo en equipo."
-color: "blue"
-orden: 2
----
-```
-
-**`src/content/programas/benjamin.md`**
-```markdown
----
-nombre: "Benjamín"
-nacidos: "2016 - 2017"
-edadAprox: "9-10 años aprox."
-horario: "Lunes, miércoles y viernes — 4:30 a 6:00 PM"
-icono: "Target"
-descripcion: "Fundamentos técnicos avanzados, posiciones de juego y disciplina deportiva."
-color: "navy"
-orden: 3
----
-```
-
-**`src/content/programas/pre-infantil.md`**
-```markdown
----
-nombre: "Pre-infantil"
-nacidos: "2014 - 2015"
-edadAprox: "11-12 años aprox."
-horario: "Lunes, miércoles y viernes — 4:30 a 6:00 PM"
-icono: "Trophy"
-descripcion: "Tácticas de equipo, preparación física y participación en torneos locales."
-color: "blue"
-orden: 4
----
-```
-
-**`src/content/programas/infantil.md`**
-```markdown
----
-nombre: "Infantil"
-nacidos: "2012 - 2013"
-edadAprox: "13-14 años aprox."
-horario: "Lunes, miércoles y viernes — 4:30 a 6:00 PM"
-icono: "Medal"
-descripcion: "Alto rendimiento, competencia formal y preparación para etapas siguientes."
-color: "navy"
-orden: 5
----
-```
+> El markdown **no** lleva `nombre`, `nacidos` ni `edadAprox`: el nombre y la edad
+> publicada salen del catálogo de `lib/domain/categoria.ts` a partir de `sub`.
+> `src/lib/programas.ts` (`listarProgramas()`) es la única puerta de entrada:
+> resuelve el catálogo, ordena y falla el build si un `sub` no existe.
 
 ### Formadores
 ```ts
@@ -381,7 +320,8 @@ Centralizar la lógica en `src/lib/whatsapp.ts` con una función helper.
 ❌ Agregar dependencias sin preguntar
 ❌ Hacer cambios masivos sin plan previo aprobado por mí
 ❌ Asumir información del cliente — para datos faltantes usar `<!-- TODO: pedir a Camilo -->`
-❌ **Mostrar edades fijas** en lugar de "nacidos en {año}-{año}" (las categorías son por año de nacimiento)
+❌ **Escribir rangos de años a mano** ("nacidos 2018-2019") en el sitio o en el markdown: la categoría es por **edad cumplida** y la edad publicada sale del catálogo (spec 15 invirtió la regla anterior)
+❌ Crear una segunda lista de categorías fuera de `src/lib/domain/categoria.ts`
 ❌ Replicar el typo "INFALTIL" del flyer original — el sitio debe decir "Infantil" bien escrito (esto justamente le muestra valor al cliente)
 
 ---
@@ -404,6 +344,10 @@ Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar
 - [x] Costos confirmados (cliente, 2026-07-10): mensualidad **$50.000 COP/jugador sin descuento por hermanos**; uniforme **$100.000 COP** ($80.000 c/u si son hermanos); inscripción gratis. El descuento de hermanos es del **uniforme**, no de la mensualidad.
 - [ ] Dirección exacta de la Cancha Los Algarrobillos + link de Google Maps embed
 - [ ] Confirmar si el horario es uniforme para todas las categorías o varía
+- [ ] **Entrenador de Baby (SUB 4), Benjamín (SUB 8) y Juvenil (SUB 16)** — hoy hay 4 entrenadores para 7 categorías; las tarjetas omiten la línea
+- [ ] **Fechas de nacimiento pendientes** — tras el seed del 2026-07-30 la base tiene **96 alumnos activos y 20 sin fecha**: 8 del Excel que traen solo el año + 12 que ya no figuran en la hoja. Mientras falten, su categoría se calcula por año
+- [ ] **13 alumnos activos que ya no están en el Excel** — confirmar con Camilo si se retiraron (lista en `docs/excel-data-dictionary.md`)
+- [ ] **3 filas del Excel que el seed omite** — `GERONIMO ESCORCIA` (año `2106`), `ABRAHAM PEREZ` (sin nacimiento), `JUAN PABLO MAESTRE` (sin documento)
 - [ ] Testimonios reales (nombre del padre/madre + texto + foto opcional)
 - [ ] Logros del club (torneos, posiciones, años)
 - [ ] Bios completas de Camilo Andrade y Ebed Shaday Calderón

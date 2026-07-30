@@ -1,11 +1,9 @@
 ---
-nombre: "Pony"
-nacidos: "2019 - 2022"
-edadAprox: "4-7 años aprox."
+sub: 6
 horario: "Lunes, miércoles y viernes — 4:30 a 6:00 PM"
 icono: "Footprints"
 entrenador: "Jorge Carrillo"
-descripcion: "Primeros pasos en el fútbol con énfasis en el juego, la coordinación, la motricidad y la diversión."
+descripcion: "Desarrollo de habilidades técnicas básicas, control del balón, trabajo en equipo y disciplina deportiva."
 color: "gold"
-orden: 1
+orden: 2
 ---

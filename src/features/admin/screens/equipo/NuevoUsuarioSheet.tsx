@@ -1,6 +1,8 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
 
 import { Sheet } from '../../chrome/Sheet';
+import { SelectorCategorias } from './SelectorCategorias';
+import { useCategoriasAsignables } from './useCategoriasAsignables';
 import type { NuevoUsuarioInput } from './types';
 
 interface Props {
@@ -34,19 +36,30 @@ export function NuevoUsuarioSheet({ onClose, onCrear }: Readonly<Props>) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'admin' | 'entrenador'>('entrenador');
-  const [catsText, setCatsText] = useState('');
+  const [cats, setCats] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const { categorias, cargando } = useCategoriasAsignables();
+
+  function alternarCat(etiqueta: string): void {
+    setCats((prev) =>
+      prev.includes(etiqueta)
+        ? prev.filter((c) => c !== etiqueta)
+        : [...prev, etiqueta],
+    );
+  }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     setEnviando(true);
     setError(null);
-    const cats =
-      role === 'entrenador'
-        ? catsText.split(',').map((c) => c.trim()).filter(Boolean)
-        : [];
-    const fallo = await onCrear({ name: name.trim(), email: email.trim(), password, role, cats });
+    const fallo = await onCrear({
+      name: name.trim(),
+      email: email.trim(),
+      password,
+      role,
+      cats: role === 'entrenador' ? cats : [],
+    });
     if (fallo) {
       setError(fallo);
       setEnviando(false);
@@ -87,11 +100,16 @@ export function NuevoUsuarioSheet({ onClose, onCrear }: Readonly<Props>) {
           </select>
         </div>
         {role === 'entrenador' && (
-          <div>
-            <label style={lbl} htmlFor="nu-cats">Categorías (ej. SUB 8, SUB 10)</label>
-            <input id="nu-cats" style={field} value={catsText} placeholder="SUB 8, SUB 10"
-              onChange={(e) => setCatsText(e.target.value)} disabled={enviando} />
-          </div>
+          <fieldset style={{ margin: 0, padding: 0, border: 'none' }}>
+            <legend style={lbl}>Categorías a cargo</legend>
+            <SelectorCategorias
+              categorias={categorias}
+              cargando={cargando}
+              seleccionadas={cats}
+              onToggle={alternarCat}
+              disabled={enviando}
+            />
+          </fieldset>
         )}
         <button type="submit" className="admin-login__submit" disabled={enviando}
           style={{ marginTop: 4 }}>

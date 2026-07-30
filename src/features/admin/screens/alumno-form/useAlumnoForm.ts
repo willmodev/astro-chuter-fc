@@ -80,7 +80,7 @@ export function useAlumnoForm({ modo, alumnoId, onGuardado }: Args) {
   };
 
   const errores: ErroresAlumno = useMemo(
-    () => validarAlumno(aDatos(valores), alumnos, alumnoId),
+    () => validarAlumno(aDatos(valores), alumnos, new Date(), alumnoId),
     [valores, alumnos, alumnoId],
   );
   const sugerencias = useMemo(

@@ -1,5 +1,5 @@
 import { CATEGORIA_TODAS } from '@/lib/domain/alumnos';
-import { SUBS as CATEGORIES } from '@/lib/domain/categoria';
+import { listarCategorias } from '@/lib/domain/categoria';
 
 // Chips de categoría combinables con el buscador. "Todas" restablece.
 // `opciones` permite acotarlas (p. ej. solo las cats del entrenador, spec 09).
@@ -9,7 +9,10 @@ interface Props {
   opciones?: readonly string[];
 }
 
-const OPCIONES = [CATEGORIA_TODAS, ...CATEGORIES];
+const OPCIONES = [
+  CATEGORIA_TODAS,
+  ...listarCategorias().map((c) => c.etiqueta),
+];
 
 export function ChipsCategoria({
   value,

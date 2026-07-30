@@ -1,4 +1,4 @@
-import { asc } from 'drizzle-orm';
+import { and, asc, eq, ne } from 'drizzle-orm';
 
 import { db } from '@/lib/db/client';
 import { user } from '@/lib/db/schema';
@@ -26,4 +26,25 @@ export async function listarUsuarios(): Promise<UsuarioRepo[]> {
     })
     .from(user)
     .orderBy(asc(user.createdAt));
+}
+
+/**
+ * Categorías ya tomadas por entrenadores ACTIVOS (spec 15). Un entrenador
+ * desactivado libera las suyas. `excluirUsuarioId` deja fuera al usuario que se
+ * está editando, para que sus propias categorías no se le bloqueen.
+ */
+export async function categoriasOcupadas(
+  excluirUsuarioId?: string,
+): Promise<string[]> {
+  const filas = await db
+    .select({ cats: user.cats })
+    .from(user)
+    .where(
+      and(
+        eq(user.role, 'entrenador'),
+        eq(user.banned, false),
+        excluirUsuarioId ? ne(user.id, excluirUsuarioId) : undefined,
+      ),
+    );
+  return filas.flatMap((f) => f.cats);
 }

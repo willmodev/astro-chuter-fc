@@ -3,18 +3,25 @@ import { actions } from 'astro:actions';
 
 import { CONTACT } from '@/lib/site';
 import { WA_FAB } from '@/lib/whatsapp';
-import { sugerirCategoria } from '@/lib/domain/categoria';
+import { formatearFechaISO, parseFechaNacimiento } from '@/lib/domain/alumnos';
+import { categoriaDeFecha, rangoFechasAdmitidas } from '@/lib/domain/categoria';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 const inputClass =
   'w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20';
 
+// Límites del campo de fecha: derivados del catálogo, no escritos a mano.
+const HOY = new Date();
+const RANGO = rangoFechasAdmitidas(HOY);
+
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>('idle');
-  const [childYear, setChildYear] = useState('');
-  const suggestedCat = childYear
-    ? (sugerirCategoria(Number(childYear))?.label ?? null)
+  const [childDate, setChildDate] = useState('');
+  const fechaNino = parseFechaNacimiento(childDate);
+  const catSugerida = fechaNino ? categoriaDeFecha(fechaNino, HOY) : null;
+  const suggestedCat = catSugerida
+    ? `${catSugerida.nombre} · ${catSugerida.etiqueta}`
     : null;
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -30,7 +37,7 @@ export default function ContactForm() {
     }
     setStatus('success');
     form.reset();
-    setChildYear('');
+    setChildDate('');
   }
 
   if (status === 'success') {
@@ -98,32 +105,31 @@ export default function ContactForm() {
         </div>
 
         <div className="field-wrap relative flex flex-col gap-1.5">
-          <label htmlFor="cf-year" className="text-sm font-medium text-neutral-700">
-            Año de nacimiento del niño/a <span className="text-error" aria-label="campo requerido">*</span>
+          <label htmlFor="cf-birth" className="text-sm font-medium text-neutral-700">
+            Fecha de nacimiento del niño/a <span className="text-error" aria-label="campo requerido">*</span>
           </label>
           <div className="relative">
             <input
-              id="cf-year"
-              type="number"
-              name="anioNacimiento"
+              id="cf-birth"
+              type="date"
+              name="fechaNacimiento"
               required
-              min={2012}
-              max={2022}
-              placeholder="Ej. 2018"
-              value={childYear}
-              onChange={(e) => setChildYear(e.target.value)}
+              min={formatearFechaISO(RANGO.min)}
+              max={formatearFechaISO(RANGO.max)}
+              value={childDate}
+              onChange={(e) => setChildDate(e.target.value)}
               className={inputClass}
             />
             <span className="field-underline" aria-hidden="true" />
           </div>
           {suggestedCat && (
             <p className="text-xs text-brand-navy" role="status" aria-live="polite">
-              ✓ Categoría sugerida: <strong>{suggestedCat}</strong>
+              ✓ Categoría: <strong>{suggestedCat}</strong>
             </p>
           )}
-          {childYear && !suggestedCat && (
+          {fechaNino && !suggestedCat && (
             <p className="text-xs text-neutral-500" role="status" aria-live="polite">
-              Año fuera de las categorías actuales — consultanos igual.
+              Por ahora las categorías llegan hasta los 16 años — escribinos por WhatsApp.
             </p>
           )}
         </div>

@@ -1,4 +1,5 @@
-import { sugerirCategoria } from '@/lib/domain/categoria';
+import { parseFechaNacimiento } from '@/lib/domain/alumnos';
+import { categoriaDeFecha } from '@/lib/domain/categoria';
 import { enviarCorreo } from '@/lib/emails/resend';
 import {
   renderInscripcion,
@@ -9,7 +10,7 @@ export interface DatosContacto {
   nombreAcudiente: string;
   telefono: string;
   nombreNino: string;
-  anioNacimiento: number;
+  fechaNacimiento: string; // 'YYYY-MM-DD'
   emailAcudiente?: string;
   mensaje?: string;
 }
@@ -21,14 +22,17 @@ const TO = import.meta.env.CONTACT_EMAIL_TO ?? 'olimak8@hotmail.com';
 // Orquesta el envío: calcula la categoría, arma el modelo del correo,
 // genera la plantilla y delega el transporte en Resend.
 export async function procesarInscripcion(datos: DatosContacto): Promise<void> {
-  const categoria = sugerirCategoria(datos.anioNacimiento);
+  const fecha = parseFechaNacimiento(datos.fechaNacimiento);
+  const categoria = fecha ? categoriaDeFecha(fecha, new Date()) : null;
 
   const correo: CorreoInscripcion = {
     nombreAcudiente: datos.nombreAcudiente,
     telefono: datos.telefono,
     nombreNino: datos.nombreNino,
-    anioNacimiento: datos.anioNacimiento,
-    categoriaSugerida: categoria?.label ?? null,
+    fechaNacimiento: datos.fechaNacimiento,
+    categoriaSugerida: categoria
+      ? `${categoria.nombre} (${categoria.etiqueta})`
+      : null,
     emailAcudiente: datos.emailAcudiente || undefined,
     mensaje: datos.mensaje || undefined,
   };

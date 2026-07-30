@@ -59,7 +59,7 @@ export async function entrenoDeHoy(hoy: Date): Promise<EntrenoDeHoy | null> {
   const [sesiones, usuarios, plantel] = await Promise.all([
     sesionesEnSemana(semanaInicio),
     listarUsuarios(),
-    listarPlantelCompleto(),
+    listarPlantelCompleto(hoy),
   ]);
   const filas = usuarios
     .filter((u) => u.role === 'entrenador' && !u.banned)

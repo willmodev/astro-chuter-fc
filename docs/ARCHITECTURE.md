@@ -55,7 +55,18 @@ Services (lib/services)  ── combinan repos + dominio
 
 Regla de oro: **la lógica de negocio vive en `lib/domain` (puro, testeable), nunca en componentes, actions o schema.**
 
-- **`lib/domain/*`** — reglas puras: `categoriaDeAnio`, `precioUniforme` (con descuento de hermanos, R9 — la mensualidad no tiene descuento, R2), `estadoCelda`, `saldoPendiente`, `estaEnMora`, `mesesEnMora`, `recaudoDelMes`, `recaudoAnio`, `carteraVencida`, `progresoVsMeta`, `numerosDuplicados`.
+- **`lib/domain/*`** — reglas puras: `categoriaDeAlumno`, `precioUniforme` (con descuento de hermanos, R9 — la mensualidad no tiene descuento, R2), `estadoCelda`, `saldoPendiente`, `estaEnMora`, `mesesEnMora`, `recaudoDelMes`, `recaudoAnio`, `carteraVencida`, `progresoVsMeta`, `numerosDuplicados`.
+
+### Catálogo único de categorías (spec 15)
+
+`lib/domain/categoria.ts` es la **única** lista de categorías del proyecto — la usan el admin *y* la landing. Contiene las 7 entradas (`SUB 4 … SUB 16` ↔ Baby … Juvenil) y la regla de asignación:
+
+- **Por edad cumplida:** `sub = ceil(edad / 2) × 2`, clamp inferior a SUB 4, sin categoría sobre SUB 16. La categoría cambia **el día del cumpleaños**, no al cambiar de temporada; no hay año de temporada hardcodeado.
+- **Fallback por año** (`categoriaDeAnio`) mientras `alumnos.fecha_nacimiento` sea `null` — equivale a suponer el 1 de enero, sin escribir un dato falso. `categoriaDeAlumno` elige uno u otro y es la puerta que usan services y UI.
+- **La categoría no se persiste**: es una proyección de la edad. No hay tabla `categorias` ni FK desde `alumnos` (7 filas fijas que el cliente no edita).
+- **Landing:** `src/lib/programas.ts` cruza la colección `programas` (solo `sub` + contenido editorial) con el catálogo. El markdown no guarda ni el nombre ni la edad.
+- **Unicidad categoría → entrenador:** una categoría pertenece a **un solo entrenador activo**. `repos/usuarios.categoriasOcupadas()` lee las tomadas y `domain/usuarios.validaDisponibles()` rechaza el choque **en servidor**, dentro de la misma operación de escritura (el selector de la UI es ayuda, no barrera). Desactivar a un entrenador libera sus categorías. Formato persistido en `user.cats`: `"SUB 8"`.
+- **Duplicación conocida y aceptada:** el entrenador aparece en `user.cats` (BD, verdad operativa) *y* en el frontmatter de `src/content/programas/*.md` (landing). La landing es estática y no debe depender de la BD en build; si empiezan a divergir seguido, va en su propio spec.
 - **`lib/db/repos/*`** — un repo por agregado; solo queries Drizzle, devuelven filas tipadas.
 - **`lib/services/*`** — orquestación (p.ej. `cartera.ts` arma la matriz alumnos×meses combinando repos + dominio).
 - **`actions/*`** — RPC tipado con validación Zod; un módulo por agregado; cada handler llama `requireUser` primero.
@@ -98,11 +109,13 @@ Un archivo por agregado en `src/lib/db/schema/`, re-export desde `schema/index.t
 
 | Archivo schema | Tablas | Origen Excel |
 |---|---|---|
-| `alumnos.ts` | `alumnos` (nombre, documento, anioNacimiento, fechaNacimiento null, acudiente/celular/direccion denormalizados, fechaInicio, activo) | hoja `CATEGORIAS` |
+| `alumnos.ts` | `alumnos` (nombre, documento, anioNacimiento, fechaNacimiento **nullable**, acudiente/celular/direccion denormalizados, fechaInicio, activo) | hoja `CATEGORIAS` |
 | `pagos.ts` | `pagos` (alumnoId, anio, mes enum, montoCop, metodo null, pagadoEn null, registradoPor) — **fila solo al pagar** | color verde de celdas MAR–NOV |
 | `uniformes.ts` | `uniformes` (alumnoId, kit enum AZUL/ORO, entregado, numero null, talla, abonadoCop, registradoPor) — **fila por alumno-kit**, único `(alumnoId, kit)` | color de celdas AZUL=U / ORO=V |
 | `entrenos.ts` | `planes_semana` (entrenadorId FK user, semanaInicio date, tema, objetivos), único `(entrenadorId, semanaInicio)` · `sesiones` (entrenadorId, semanaInicio, dia enum, parteCentralUrl null, parteCentralNota, ausentes int[] null), único `(entrenadorId, semanaInicio, dia)` | — (arranca vacío, sin seed) |
-| `auth.ts` | `user, session, account, verification` | Better Auth |
+| `auth.ts` | `user, session, account, verification` (`cats text[]` = categorías del entrenador) | Better Auth |
+
+> **`anioNacimiento` + `fechaNacimiento` conviven a propósito** (spec 15): la fecha es la verdad cuando existe y `anioNacimiento` sostiene el fallback de los alumnos que aún no la tienen, además de servir de validación cruzada contra el Excel. Cuando el club complete el 100 % de las fechas, se hace backfill → `NOT NULL` → se elimina `anio_nacimiento` (spec aparte, con migración).
 
 ```ts
 // src/lib/db/schema/pagos.ts (corazón de la cartera) — fila SOLO cuando se paga
@@ -238,8 +251,9 @@ src/
 ├─ actions/{index,_guard,_errores,alumnos,pagos,uniformes,entrenos,dashboard,usuarios,contacto}.ts
 ├─ lib/
 │  ├─ db/{client.ts, schema/*, repos/*}
-│  ├─ domain/*                          # reglas puras
+│  ├─ domain/*                          # reglas puras (categoria.ts = catálogo único)
 │  ├─ services/*                        # orquestación
+│  ├─ programas.ts                      # colección `programas` × catálogo (landing)
 │  └─ auth/{server,client}.ts
 └─ features/admin/
    ├─ AdminApp.tsx · router.tsx

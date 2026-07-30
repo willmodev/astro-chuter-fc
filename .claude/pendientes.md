@@ -74,7 +74,7 @@ Más las server-only (Resend, Neon, Better Auth, Blob). Ver `.env.example` para 
 ## Notas de implementación
 
 - Todas las imágenes deben ir en `src/assets/images/` (no en `public/`) para que Astro las procese con sharp y genere WebP optimizados — **excepción**: fotos de formadores están en `public/images/formadores/` como webp directo, ya están optimizadas.
-- Las categorías SIEMPRE se muestran por año de nacimiento (`nacidos: "2020 - 2021"`), nunca por edad fija.
+- Las categorías SIEMPRE se muestran por edad (`7 a 8 años`), nunca por rango de años escrito a mano: se calculan por edad cumplida desde el catálogo único de `src/lib/domain/categoria.ts` (spec 15 invirtió la regla anterior).
 - El número de WhatsApp está centralizado en `src/lib/whatsapp.ts` — cambiar solo ahí si cambia el número.
 - El color `#25D366` del WhatsApp NO debe cambiarse (identidad de marca de WhatsApp).
 - shadcn/ui (`src/components/ui/`) no tocar manualmente — usar `npx shadcn add <componente>` si se necesita algo nuevo.
