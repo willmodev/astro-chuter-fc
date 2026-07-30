@@ -1,7 +1,16 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro/zod';
 
+import { parseFechaNacimiento } from '@/lib/domain/alumnos';
+import { categoriaDeFecha } from '@/lib/domain/categoria';
 import { procesarInscripcion } from '@/lib/services/contacto';
+
+// La fecha debe caer en alguna categoría del catálogo: el `min`/`max` del input
+// es UX, la frontera real es esta.
+const fechaEnCategoria = (iso: string): boolean => {
+  const fecha = parseFechaNacimiento(iso);
+  return fecha !== null && categoriaDeFecha(fecha, new Date()) !== null;
+};
 
 export const enviarContacto = defineAction({
   accept: 'form',
@@ -9,7 +18,9 @@ export const enviarContacto = defineAction({
     nombreAcudiente: z.string().min(2),
     telefono: z.string().min(7),
     nombreNino: z.string().min(2),
-    anioNacimiento: z.coerce.number().int().min(2000).max(2025),
+    fechaNacimiento: z
+      .string()
+      .refine(fechaEnCategoria, 'Recibimos niños y niñas de hasta 16 años.'),
     emailAcudiente: z.email().optional().or(z.literal('')),
     mensaje: z.string().max(1000).optional(),
     botcheck: z.string().optional(), // honeypot
@@ -25,7 +36,7 @@ export const enviarContacto = defineAction({
       nombreAcudiente: datos.nombreAcudiente,
       telefono: datos.telefono,
       nombreNino: datos.nombreNino,
-      anioNacimiento: datos.anioNacimiento,
+      fechaNacimiento: datos.fechaNacimiento,
       emailAcudiente: datos.emailAcudiente || undefined,
       mensaje: datos.mensaje,
     });

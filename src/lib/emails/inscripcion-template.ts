@@ -2,7 +2,7 @@ export interface CorreoInscripcion {
   nombreAcudiente: string;
   telefono: string;
   nombreNino: string;
-  anioNacimiento: number;
+  fechaNacimiento: string; // 'YYYY-MM-DD'
   categoriaSugerida: string | null;
   emailAcudiente?: string;
   mensaje?: string;
@@ -29,6 +29,12 @@ function escapar(valor: string): string {
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;');
+}
+
+// 'YYYY-MM-DD' → '10/03/2018' (sin construir Date: cero riesgo de zona horaria).
+function aFechaLegible(iso: string): string {
+  const [anio, mes, dia] = iso.split('-');
+  return anio && mes && dia ? `${dia}/${mes}/${anio}` : iso;
 }
 
 function fila(label: string, valor: string): string {
@@ -79,7 +85,7 @@ export function renderInscripcion(datos: CorreoInscripcion): CorreoRenderizado {
           ${fila('Acudiente', datos.nombreAcudiente)}
           ${fila('Teléfono / WhatsApp', datos.telefono)}
           ${fila('Niño / niña', datos.nombreNino)}
-          ${fila('Año de nacimiento', String(datos.anioNacimiento))}
+          ${fila('Fecha de nacimiento', aFechaLegible(datos.fechaNacimiento))}
           ${datos.emailAcudiente ? fila('Email del acudiente', datos.emailAcudiente) : ''}
         </table>
         ${bloqueCategoria(datos.categoriaSugerida)}
