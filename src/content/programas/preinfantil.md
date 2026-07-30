@@ -1,11 +1,9 @@
 ---
-nombre: "Preinfantil"
-nacidos: "2017 - 2018"
-edadAprox: "8-9 años aprox."
+sub: 10
 horario: "Lunes, miércoles y viernes — 4:30 a 6:00 PM"
 icono: "Target"
 entrenador: "Camilo Andrade"
-descripcion: "Desarrollo de habilidades técnicas básicas, control del balón, trabajo en equipo y disciplina deportiva."
+descripcion: "Fundamentos técnicos avanzados, posiciones de juego, táctica y formación deportiva progresiva."
 color: "blue"
-orden: 2
+orden: 4
 ---

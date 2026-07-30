@@ -1,15 +1,16 @@
 ---
-import { getCollection } from 'astro:content';
 import Logo from '@/components/layout/Logo.astro';
+import { listarProgramas } from '@/lib/programas';
 import { SITE, CONTACT, SCHEDULE, NAV_LINKS } from '@/lib/site';
 import { WA_HERO } from '@/lib/whatsapp';
 
 const currentYear = new Date().getFullYear();
 
 // Derivado de la colección para que siempre refleje las categorías reales.
-const programLinks = (await getCollection('programas'))
-  .sort((a, b) => a.data.orden - b.data.orden)
-  .map((p) => ({ label: `Categoría ${p.data.nombre}`, cat: p.data.nombre }));
+const programLinks = (await listarProgramas()).map((p) => ({
+  label: `Categoría ${p.nombre}`,
+  cat: p.nombre,
+}));
 ---
 
 <footer class="bg-neutral-950 text-white" aria-label="Pie de página">

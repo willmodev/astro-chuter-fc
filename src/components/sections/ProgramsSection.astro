@@ -1,14 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
 import Section from '@/components/layout/Section.astro';
 import Container from '@/components/layout/Container.astro';
 import SectionHeading from '@/components/layout/SectionHeading.astro';
 import ProgramCard from '@/components/sections/ProgramCard.astro';
+import { listarProgramas } from '@/lib/programas';
 import { whatsappURL } from '@/lib/whatsapp';
 
-const programas = (await getCollection('programas')).sort(
-  (a, b) => a.data.orden - b.data.orden,
-);
+const programas = await listarProgramas();
 
 const waConsultaCategoria = whatsappURL(
   'Hola Chuter FC, quiero saber en qué categoría va mi hijo',
@@ -21,9 +19,9 @@ const waConsultaCategoria = whatsappURL(
       <SectionHeading
         align="left"
         numero="01"
-        eyebrow="Categorías por año de nacimiento"
-        title="Cuatro categorías, una misma cancha."
-        subtitle="Cada niño y niña en la categoría que le corresponde según su año de nacimiento, con metodología adaptada a su etapa de desarrollo."
+        eyebrow="Categorías por edad"
+        title="Siete categorías, una misma cancha."
+        subtitle="Cada niño y niña en la categoría que le corresponde según su edad, con metodología adaptada a su etapa de desarrollo."
       />
       <p class="hidden font-serif italic text-sm text-brand-navy/70 md:block md:max-w-xs md:text-right" style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 400;">
         «Nada de improvisar — formamos por edad, con un plan que crece con el chico.»
@@ -33,17 +31,20 @@ const waConsultaCategoria = whatsappURL(
     <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-6">
       {programas.map((programa, index) => (
         <ProgramCard
-          nombre={programa.data.nombre}
-          nacidos={programa.data.nacidos}
-          edadAprox={programa.data.edadAprox}
-          horario={programa.data.horario}
-          descripcion={programa.data.descripcion}
-          entrenador={programa.data.entrenador}
-          icono={programa.data.icono}
-          color={programa.data.color}
+          nombre={programa.nombre}
+          edades={programa.edades}
+          horario={programa.horario}
+          descripcion={programa.descripcion}
+          entrenador={programa.entrenador}
+          icono={programa.icono}
+          color={programa.color}
           numero={String(index + 1).padStart(2, '0')}
           idx={index}
-          class={index < 2 ? 'lg:col-span-3' : 'lg:col-span-3'}
+          class={`lg:col-span-2 ${
+            index === programas.length - 1 && programas.length % 3 === 1
+              ? 'lg:col-start-3'
+              : ''
+          }`}
         />
       ))}
     </div>

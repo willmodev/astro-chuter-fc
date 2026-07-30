@@ -1,16 +1,19 @@
 ---
 import { getCollection } from 'astro:content';
 
+import { listarProgramas } from '@/lib/programas';
+
 const formadores = (await getCollection('formadores')).sort(
   (a, b) => a.data.orden - b.data.orden,
 );
 const directivos = formadores.filter((f) => f.data.etiqueta === 'Dirección');
 const entrenadores = formadores.filter((f) => f.data.etiqueta === 'Entrenador');
 
-// Años de nacimiento por categoría, desde la colección de programas (única fuente).
-const programas = await getCollection('programas');
-const nacidosPorCategoria = new Map(
-  programas.map((p) => [p.data.nombre, p.data.nacidos]),
+// Edad por categoría, desde el catálogo único (spec 15): nunca un rango de años
+// escrito a mano. La clave es el nombre de la categoría, que es el `rol` del
+// formador en su markdown.
+const edadesPorCategoria = new Map(
+  (await listarProgramas()).map((p) => [p.nombre, p.edades]),
 );
 
 function initials(nombre: string): string {
@@ -102,9 +105,9 @@ function initials(nombre: string): string {
               <p class="font-serif text-base italic text-brand-clay" style="font-variation-settings:'opsz' 144,'wght' 500;">
                 Categoría {e.data.rol}
               </p>
-              {nacidosPorCategoria.has(e.data.rol) && (
+              {edadesPorCategoria.get(e.data.rol) && (
                 <p class="mt-1 text-[0.7rem] uppercase tracking-wider text-brand-navy/45">
-                  Nacidos {nacidosPorCategoria.get(e.data.rol)}
+                  {edadesPorCategoria.get(e.data.rol)}
                 </p>
               )}
               {e.data.bio && (

@@ -3,13 +3,14 @@ import { glob } from 'astro/loaders';
 
 const programasCollection = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/programas' }),
+  // `sub` enlaza con el catálogo único (`lib/domain/categoria.ts`): de ahí salen
+  // el nombre y la edad publicados, así que aquí NO se escriben ni el nombre ni
+  // los años a mano. `entrenador` es opcional: sin dato no se muestra la línea.
   schema: z.object({
-    nombre: z.string(),
-    nacidos: z.string(),
-    edadAprox: z.string(),
+    sub: z.number(),
     horario: z.string(),
     icono: z.string(),
-    entrenador: z.string(),
+    entrenador: z.string().optional(),
     descripcion: z.string(),
     color: z.enum(['navy', 'blue', 'gold']).default('navy'),
     orden: z.number(),
