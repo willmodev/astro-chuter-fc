@@ -2,15 +2,19 @@ import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro/zod';
 
 import { requireAdmin } from '@/actions/_guard';
+import { ETIQUETAS } from '@/lib/domain/categoria';
 import { UsuarioReglaError } from '@/lib/domain/usuarios';
 import {
   cambiarActivo,
   crearUsuario,
+  listarCategoriasAsignables,
   listarEquipo,
   resetearPassword,
 } from '@/lib/services/usuarios';
 
 const rolSchema = z.enum(['admin', 'entrenador']);
+// Solo etiquetas del catálogo: "SUB 7" o "SUB 99" ni llegan al servicio.
+const catsSchema = z.array(z.enum(ETIQUETAS)).default([]);
 
 // Traduce un error de regla de negocio a un error de transporte legible.
 function comoAccion<T>(fn: () => Promise<T>): Promise<T> {
@@ -29,13 +33,22 @@ export const listar = defineAction({
   },
 });
 
+// Las 7 categorías con quién las tiene: alimenta el selector del alta.
+export const categoriasAsignables = defineAction({
+  input: z.object({ usuarioId: z.string().min(1).optional() }).optional(),
+  handler: async (input, { locals }) => {
+    requireAdmin(locals);
+    return listarCategoriasAsignables(input?.usuarioId);
+  },
+});
+
 export const crear = defineAction({
   input: z.object({
     name: z.string().min(2).max(80),
     email: z.email(),
     password: z.string().min(8).max(128),
     role: rolSchema,
-    cats: z.array(z.string()).default([]),
+    cats: catsSchema,
   }),
   handler: async (input, { locals, request }) => {
     requireAdmin(locals);

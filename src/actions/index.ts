@@ -20,6 +20,7 @@ import {
   registrarPagoKit,
 } from '@/actions/uniformes';
 import {
+  categoriasAsignables,
   crear,
   listar,
   resetPassword,
@@ -33,6 +34,7 @@ export const server = {
     crear,
     toggleActivo,
     resetPassword,
+    categoriasAsignables,
   },
   alumnos: {
     listar: listarAlumnos,

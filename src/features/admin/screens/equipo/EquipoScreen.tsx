@@ -1,5 +1,7 @@
 import { ArrowLeft, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+
+import { categoriasSinEntrenador } from '@/lib/domain/usuarios';
 
 import { NuevoUsuarioSheet } from './NuevoUsuarioSheet';
 import { ResetPasswordSheet } from './ResetPasswordSheet';
@@ -21,6 +23,10 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
   const [sheet, setSheet] = useState<SheetState>(null);
   const [ocupado, setOcupado] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
+  const sinEntrenador = useMemo(
+    () => categoriasSinEntrenador(usuarios),
+    [usuarios],
+  );
 
   async function alTogglear(u: UsuarioRow): Promise<void> {
     setOcupado(u.id);
@@ -89,6 +95,16 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
       {estado === 'error' && (
         <p style={{ color: 'var(--error-deep)', fontSize: 14 }}>
           No se pudo cargar el equipo.
+        </p>
+      )}
+
+      {estado === 'listo' && sinEntrenador.length > 0 && (
+        <p style={{ margin: 0, fontSize: 12.5, fontWeight: 600, color: '#946200' }}>
+          {sinEntrenador.length}{' '}
+          {sinEntrenador.length === 1
+            ? 'categoría sin entrenador asignado'
+            : 'categorías sin entrenador asignado'}
+          : {sinEntrenador.join(', ')}
         </p>
       )}
 

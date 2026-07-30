@@ -1,12 +1,19 @@
 import { auth } from '@/lib/auth/server';
-import { listarUsuarios, type UsuarioRepo } from '@/lib/db/repos/usuarios';
+import {
+  categoriasOcupadas,
+  listarUsuarios,
+  type UsuarioRepo,
+} from '@/lib/db/repos/usuarios';
+import { listarCategorias } from '@/lib/domain/categoria';
 import {
   normalizaCats,
   puedeDesactivar,
   UsuarioReglaError,
+  validaDisponibles,
   type UsuarioDominio,
 } from '@/lib/domain/usuarios';
 import type {
+  CategoriaAsignable,
   NuevoUsuarioInput,
   UsuarioRow,
 } from '@/features/admin/screens/equipo/types';
@@ -31,11 +38,34 @@ export async function listarEquipo(): Promise<UsuarioRow[]> {
   return usuarios.map(aRow);
 }
 
+/**
+ * Las 7 categorías con quién las tiene hoy: la UI deshabilita las ocupadas.
+ * `usuarioId` (edición) excluye al propio usuario de las ocupadas.
+ */
+export async function listarCategoriasAsignables(
+  usuarioId?: string,
+): Promise<CategoriaAsignable[]> {
+  const usuarios = await listarUsuarios();
+  const dueno = new Map<string, string>();
+  for (const u of usuarios) {
+    if (u.role !== 'entrenador' || u.banned || u.id === usuarioId) continue;
+    for (const cat of u.cats) dueno.set(cat, u.name);
+  }
+  return listarCategorias().map((c) => ({
+    etiqueta: c.etiqueta,
+    nombre: c.nombre,
+    ocupadaPor: dueno.get(c.etiqueta) ?? null,
+  }));
+}
+
 export async function crearUsuario(
   headers: Headers,
   input: NuevoUsuarioInput,
 ): Promise<void> {
   const cats = normalizaCats(input.role, input.cats);
+  // La disponibilidad se lee dentro de la misma operación de escritura: si dos
+  // admins asignan a la vez, el segundo falla con mensaje claro.
+  if (cats.length > 0) validaDisponibles(cats, await categoriasOcupadas());
   await auth.api.createUser({
     headers,
     body: {
