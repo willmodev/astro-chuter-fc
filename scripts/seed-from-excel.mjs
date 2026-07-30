@@ -3,13 +3,14 @@
 // Idempotente por documento. Corre con tsx (resuelve el alias @/).
 //   npm run db:seed          → DRY RUN: parsea, reporta anomalías, NO escribe.
 //   npm run db:seed -- --yes → COMMIT: escribe en la BD de DATABASE_URL.
-// Anomalías (año/documento/categoría inválidos, color desconocido) se reportan
-// con nº de fila y se omiten SIN abortar — se corrigen en el Excel y se re-corre.
+// Anomalías (nacimiento/documento/categoría inválidos, color desconocido) se
+// reportan con nº de fila y se omiten SIN abortar — se corrigen en el Excel y
+// se re-corre. El parseo de filas vive en `seed-filas.mjs`.
 import { loadEnvFile } from 'node:process';
 
 import ExcelJS from 'exceljs';
 
-import { insertarUniformes, kitsDeFila, resumenUniformes } from './seed-uniformes.mjs';
+import { insertarUniformes, resumenUniformes } from './seed-uniformes.mjs';
 
 try {
   loadEnvFile();
@@ -21,98 +22,14 @@ const COMMIT = process.argv.includes('--yes');
 const ARCHIVO = 'CHUTER FC 2026.xlsx';
 const ANIO = 2026;
 const CUOTA = 50000;
-const HEADER_ROW = 4;
-// Columnas de mes en CATEGORIAS: MAR..NOV (el club nació en marzo 2026).
-const MES_COL = {
-  L: 'MAR', M: 'ABR', N: 'MAY', O: 'JUN', P: 'JUL',
-  Q: 'AGO', R: 'SEP', S: 'OCT', T: 'NOV',
-};
 
 // Import dinámico: recién aquí client.ts/domain leen el entorno ya cargado.
 const { db } = await import('@/lib/db/client');
 const { alumnos, pagos, uniformes } = await import('@/lib/db/schema');
-const { subDeAnio } = await import('@/lib/domain/categoria');
 const { normaliza } = await import('@/lib/domain/alumnos');
 const { precioUniforme } = await import('@/lib/domain/precios');
+const { cambiosDeCategoria, MES_COL, parseFilas } = await import('./seed-filas.mjs');
 
-// Relleno de celda de mes → estado del pago. theme9=verde=pagado; theme0/sin
-// relleno=no pagado; otro color=desconocido (se reporta, no se adivina).
-function estadoCelda(cell) {
-  const f = cell.fill;
-  if (!f || f.type !== 'pattern' || f.pattern === 'none') return 'vacio';
-  const t = f.fgColor?.theme;
-  if (t === 9) return 'pagado';
-  if (t === 0) return 'vacio';
-  return 'desconocido';
-}
-
-// Date de Excel (UTC medianoche) → 'YYYY-MM-DD' sin corrimiento de zona.
-function fechaISO(v) {
-  if (!(v instanceof Date)) return null;
-  const p = (n) => String(n).padStart(2, '0');
-  return `${v.getUTCFullYear()}-${p(v.getUTCMonth() + 1)}-${p(v.getUTCDate())}`;
-}
-
-const texto = (cell) => String(cell.value ?? '').trim();
-
-function parseFilas(ws, anomalias) {
-  const filas = [];
-  const vistos = new Map(); // documento → nº de fila
-  for (let r = HEADER_ROW + 1; r <= ws.rowCount; r++) {
-    const nombre = texto(ws.getCell(`C${r}`));
-    if (nombre === '') continue;
-    const anio = ws.getCell(`F${r}`).value;
-    const catCalc = Number.isInteger(anio) ? subDeAnio(anio) : null;
-    const docRaw = ws.getCell(`D${r}`).value;
-    const documento = docRaw == null ? '' : String(docRaw).replace(/\D/g, '');
-    const catExcel = texto(ws.getCell(`E${r}`));
-    const fechaInicio = fechaISO(ws.getCell(`H${r}`).value);
-
-    if (catCalc === null) {
-      anomalias.push(`F${r} ${nombre}: año '${anio}' fuera de rango (SUB 4–16) → omitida`);
-      continue;
-    }
-    if (documento === '') {
-      anomalias.push(`F${r} ${nombre}: documento vacío → omitida`);
-      continue;
-    }
-    if (vistos.has(documento)) {
-      anomalias.push(`F${r} ${nombre}: documento ${documento} duplicado (ya en F${vistos.get(documento)}) → omitida`);
-      continue;
-    }
-    if (catExcel && catExcel !== catCalc) {
-      anomalias.push(`F${r} ${nombre}: categoría Excel '${catExcel}' ≠ calculada '${catCalc}' → omitida`);
-      continue;
-    }
-    if (fechaInicio === null) {
-      anomalias.push(`F${r} ${nombre}: fecha de inicio (INCIO) inválida → omitida`);
-      continue;
-    }
-    vistos.set(documento, r);
-
-    const mesesPagados = [];
-    for (const [col, mes] of Object.entries(MES_COL)) {
-      const est = estadoCelda(ws.getCell(`${col}${r}`));
-      if (est === 'pagado') mesesPagados.push(mes);
-      else if (est === 'desconocido') {
-        anomalias.push(`F${r} ${nombre}: relleno de color desconocido en ${mes} → pago omitido`);
-      }
-    }
-
-    filas.push({
-      nombre,
-      documento,
-      anioNacimiento: anio,
-      acudiente: texto(ws.getCell(`I${r}`)),
-      celular: String(ws.getCell(`J${r}`).value ?? '').replace(/\D/g, ''),
-      direccion: texto(ws.getCell(`K${r}`)),
-      fechaInicio,
-      mesesPagados,
-      kits: kitsDeFila(ws, r, nombre, anomalias),
-    });
-  }
-  return filas;
-}
 // Cuántos alumnos comparte cada acudiente normalizado (para el precio por kit, R9).
 function conteoHermanos(filas) {
   const cnt = new Map();
@@ -132,19 +49,22 @@ async function escribir(filas) {
   for (const f of filas) {
     if (existentes.has(f.documento)) actualizados++;
     else creados++;
+    // La fecha solo se escribe si el Excel la trae: nunca se pisa con null lo
+    // que un admin pudo completar a mano.
+    const fecha = f.fechaNacimiento === null ? {} : { fechaNacimiento: f.fechaNacimiento };
     const [row] = await db
       .insert(alumnos)
       .values({
         nombre: f.nombre, documento: f.documento, anioNacimiento: f.anioNacimiento,
-        fechaNacimiento: null, acudiente: f.acudiente, celular: f.celular,
+        fechaNacimiento: f.fechaNacimiento, acudiente: f.acudiente, celular: f.celular,
         direccion: f.direccion, fechaInicio: f.fechaInicio, activo: true,
       })
       .onConflictDoUpdate({
         target: alumnos.documento,
-        // NO toca fechaNacimiento (la puede haber completado un admin) ni activo.
         set: {
           nombre: f.nombre, anioNacimiento: f.anioNacimiento, acudiente: f.acudiente,
           celular: f.celular, direccion: f.direccion, fechaInicio: f.fechaInicio,
+          ...fecha,
         },
       })
       .returning({ id: alumnos.id });
@@ -164,6 +84,7 @@ async function escribir(filas) {
   }
   return { creados, actualizados, pagosInsertados, kitsInsertados };
 }
+
 function resumenPagos(filas) {
   const cnt = {};
   for (const f of filas) for (const m of f.mesesPagados) cnt[m] = (cnt[m] ?? 0) + 1;
@@ -181,10 +102,23 @@ if (!ws) {
 }
 const anomalias = [];
 const filas = parseFilas(ws, anomalias);
+const sinFecha = filas.filter((f) => f.fechaNacimiento === null);
+const cambios = cambiosDeCategoria(filas);
+
 console.log(`\nBD: ${host}`);
 console.log(`Modo: ${COMMIT ? 'COMMIT (escribe)' : 'DRY RUN (no escribe; usá -- --yes para aplicar)'}`);
 console.log(`\nAlumnos a cargar: ${filas.length}   ·   pagos: ${resumenPagos(filas)}`);
 console.log(`Kits (uniformes): ${resumenUniformes(filas)}`);
+console.log(`Sin fecha de nacimiento (categoría por año): ${sinFecha.length}`);
+for (const f of sinFecha) console.log(`   · F${f.fila} ${f.nombre} (${f.anioNacimiento})`);
+
+if (cambios.length > 0) {
+  console.log(`\n⚠ Cambian de categoría al aplicar la fecha real (${cambios.length}) — CONFIRMAR CON EL CLIENTE:`);
+  for (const f of cambios) {
+    console.log(`   · F${f.fila} ${f.nombre} (${f.fechaNacimiento}): ${f.catAnio} → ${f.catFecha}`);
+  }
+}
+
 if (anomalias.length > 0) {
   console.log(`\n⚠ Anomalías (${anomalias.length}) — se omiten y se corrigen en el Excel:`);
   for (const a of anomalias) console.log(`   · ${a}`);
