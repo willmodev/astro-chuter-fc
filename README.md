@@ -109,7 +109,7 @@ Ver `.claude/pendientes.md` para la lista completa de datos que faltan confirmar
 - **Paleta:** `#1B3A6B` navy (primary) + `#F5C842` gold (acento) — tokens en `global.css`
 - **Tipografía:** Bebas Neue solo en H1/H2 y números grandes; Inter en todo el cuerpo
 - **WhatsApp:** color exacto `#25D366` — no modificar
-- **Categorías:** siempre "nacidos XXXX-XXXX", nunca edades fijas (se desactualizarían)
+- **Categorías:** siempre por edad ("7 a 8 años"), nunca rangos de años escritos a mano — la categoría se calcula por edad cumplida y el catálogo único vive en `src/lib/domain/categoria.ts` (spec 15)
 - **Islands React:** `client:idle` (MobileMenu), `client:visible` (Galería, Form) — no bloquean LCP
 - **Imágenes:** van en `src/assets/` (no `public/`) para procesarse con Astro Image
 

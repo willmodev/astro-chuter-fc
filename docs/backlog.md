@@ -137,7 +137,7 @@ Como administrador quiero ver el detalle de un alumno (pagos, uniforme, acudient
 ### HU-2.4 · Inscribir alumno — `Must` · Pantalla: Form · ☑ (spec 11)
 Como administrador quiero inscribir un alumno calculando su categoría y tarifa automáticamente para evitar errores y agilizar.
 - **Aceptación:**
-  - Dada la **fecha de nacimiento** (requerida, sin campo año — spec 11), cuando la ingreso, entonces la **categoría se calcula automáticamente** (R1, vía `subDeFecha`) y se muestra como badge.
+  - Dada la **fecha de nacimiento** (requerida, sin campo año — spec 11), cuando la ingreso, entonces la **categoría se calcula automáticamente** (R1, vía `categoriaDeFecha`) y se muestra como badge `SUB 8 · Benjamín` (spec 15).
   - Dado que el acudiente ya tiene otro hijo inscrito, cuando ingreso su nombre, entonces se detecta el **hermano** (R4) y se muestra aviso del **descuento de uniforme** (R9); la mensualidad no cambia (R2).
   - Documento requerido y único; con < 8 dígitos muestra error.
   - Campos requeridos: nombre, documento, año nac., acudiente, celular. Al guardar se crea el alumno (y el acudiente si es nuevo).
@@ -326,9 +326,22 @@ Como administrador quiero configurar la vista de cartera (tarjetas/matriz) y mos
 Como administrador quiero configurar la cuota mensual y el precio/descuento del uniforme (R2/R9) para reflejar cambios de precio.
 - **Aceptación:** Dado la configuración, cuando actualizo la cuota o los precios del uniforme, entonces los nuevos cálculos usan esos valores (sin alterar pagos ya registrados).
 
-### HU-7.4 · Gestionar categorías — `Could` · ☐
+### HU-7.4 · Gestionar categorías — `Won't` (spec 15) · ☒
 Como administrador quiero ajustar los rangos de año por categoría para mantener el sistema vigente cada temporada.
-- **Aceptación:** Dado las categorías, cuando edito los rangos de año, entonces el cálculo automático de categoría (R1) usa los nuevos rangos.
+- **Cerrada sin implementar:** con la regla por **edad cumplida** (R1 reescrita, spec 15) ya no hay rangos de año que mantener — el catálogo de 7 categorías es fijo y la categoría se recalcula sola cada cumpleaños. Si algún día el club edita el catálogo, vuelve como spec propio (hoy serían 7 filas que nadie toca).
+
+### HU-7.5 · Asignar categorías a un entrenador — `Must` · Pantalla: Equipo · ☑ (spec 15)
+Como administrador quiero elegir las categorías de un entrenador de una lista para no depender de que las escriba bien ni pisar el grupo de otro.
+- **Aceptación:**
+  - Dado el alta de entrenador, cuando elijo categorías, entonces veo las 7 del catálogo como opciones (`SUB 8 · Benjamín`) y **no hay campo de texto libre**.
+  - Dada una categoría que ya tiene otro entrenador activo, entonces aparece **deshabilitada** e indica quién la tiene.
+  - Dado un envío directo a la Action con una categoría inexistente u ocupada, entonces **falla en servidor** con mensaje claro.
+  - Dado un `admin`, entonces no se muestra el selector y se guarda `cats = []`.
+  - La pantalla Equipo avisa cuántas categorías quedaron **sin entrenador asignado**.
+
+### HU-7.6 · Ver a quién le falta la fecha de nacimiento — `Should` · Pantalla: Alumnos/Ficha · ☑ (spec 15)
+Como administrador quiero saber a qué alumnos les falta la fecha de nacimiento para completarlas y que su categoría deje de estimarse.
+- **Aceptación:** la lista muestra `N sin fecha de nacimiento` junto a los otros contadores; la ficha de un alumno sin fecha muestra el badge "Falta fecha de nacimiento — categoría calculada por año". Al cargar la fecha real, la categoría se recalcula sola. **Ningún alumno tiene una fecha inventada en la base.**
 
 ---
 
@@ -368,7 +381,8 @@ Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboar
 
 ## Reglas de negocio (referencia)
 
-- **R1 — Categoría automática por año de nacimiento.** Mapeo temporada 2026: `2022-2023→SUB 4 · 2020-2021→SUB 6 · 2018-2019→SUB 8 · 2016-2017→SUB 10 · 2014-2015→SUB 12 · 2012-2013→SUB 14 · 2010-2011→SUB 16`. Fórmula: `(año_temporada − año_nac)` redondeado al par superior, acotado a [4,16]. Nunca se muestran edades fijas. (Implementada en `lib/domain/categoria.ts`.)
+- **R1 — Categoría automática por edad cumplida** _(reescrita en el spec 15, 2026-07-28 — antes era por año de temporada)_. Catálogo único de 7: `SUB 4 Baby (3-4) · SUB 6 Pony (5-6) · SUB 8 Benjamín (7-8) · SUB 10 Preinfantil (9-10) · SUB 12 Infantil (11-12) · SUB 14 Prejuvenil (13-14) · SUB 16 Juvenil (15-16)`. Fórmula: `sub = ceil(edad_cumplida / 2) × 2`, con **clamp inferior a SUB 4** (un niño de 3 es SUB 4) y sin categoría sobre 16. **La categoría cambia el día del cumpleaños.** Mientras falte `fecha_nacimiento`, se usa el año (equivale a nacer el 1-ene) y el admin muestra cuántos alumnos están en esa situación. El sitio público publica **edades**, no rangos de años. (Implementada en `lib/domain/categoria.ts`, fuente única para admin y landing.)
+- **R1.1 — Una categoría, un entrenador activo** _(spec 15)_. Las categorías se asignan eligiendo del catálogo (sin texto libre); las que ya tiene otro entrenador activo aparecen deshabilitadas y el servidor rechaza el choque. Desactivar a un entrenador libera las suyas.
 - **R2 — Mensualidad.** **$50.000** COP/mes por jugador, **sin descuento por hermanos**. _(Corregida por el cliente, 2026-07-10: la versión anterior daba $40.000 a hermanos; ese descuento en realidad aplica al uniforme, ver R9.)_
 - **R4 — Detección de hermano.** Por coincidencia de acudiente entre alumnos.
 - **R5 — Estados de cartera.** `paid` (pagado/verde), `due` (mora/rojo), `pending` (pendiente/gris), `na` (fuera de temporada). _(El estado `partial`/abono quedó `Won't` — decisión de Will en spec 05, 2026-07-05: un mes se cobra o no se cobra.)_
@@ -385,3 +399,6 @@ Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboar
 - Dirección exacta + Google Maps de la Cancha de la Provincia.
 - Confirmar si el horario varía por categoría.
 - Bios y fotos de los formadores.
+- **Entrenador de Baby (SUB 4), Benjamín (SUB 8) y Juvenil (SUB 16)** — 4 entrenadores para 7 categorías (spec 15).
+- **Fechas de nacimiento** — el Excel actualizado (2026-07-30) trae 77 de 87; faltan 8 alumnos con solo el año y 2 filas anómalas. Hasta que lleguen, esos alumnos van por el fallback de año.
+- **Confirmar los 10 alumnos que cambian de SUB** al aplicar las fechas reales (los lista `npm run db:seed` en DRY RUN).

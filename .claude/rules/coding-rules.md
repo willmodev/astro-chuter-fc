@@ -77,9 +77,9 @@ Antes de crear código nuevo: **buscar si ya existe** una utilidad/función/patr
 
 ---
 
-## 5. Tooling para hacer cumplir las reglas (PLAN — aún NO instalado)
+## 5. Tooling para hacer cumplir las reglas (parcialmente instalado)
 
-Estado actual: **no hay** `eslint`, `eslint.config.js`, `.prettierrc` ni `@astrojs/check` en el repo. Esto se agrega en la Fase 0 de implementación (no ahora). Versiones verificadas 2026-06.
+Estado actual (2026-07-30): **ya está** `@astrojs/check` y el script `npm run check` (= `astro check`, typecheck de `.ts`/`.tsx`/`.astro`). **Falta** `eslint`, `eslint.config.js` y `.prettierrc`: mientras no estén, los límites estructurales (200 líneas, complejidad, orden de imports) se revisan a mano. Versiones verificadas 2026-06.
 
 ### Dependencias a instalar (dev)
 ```
@@ -88,7 +88,7 @@ typescript-eslint@^8        # usar la versión que declare soporte para tu ESLin
 eslint-plugin-astro@^1.7    # parser + reglas para .astro (incluye astro-eslint-parser)
 @typescript-eslint/parser   # requerido por eslint-plugin-astro para TS en .astro
 eslint-plugin-import-x      # fork mantenido de eslint-plugin-import para flat config / ESLint 9+
-@astrojs/check              # necesario para `astro check` (typecheck); typescript ya está instalado
+@astrojs/check              # ✅ ya instalado — habilita `npm run check` (typecheck)
 ```
 Prettier ya está instalado (3.8.3) con `prettier-plugin-astro` y `prettier-plugin-tailwindcss`.
 
