@@ -1,11 +1,10 @@
 import { rosterDe } from '@/lib/domain/entrenos';
-import { LOCATION } from '@/lib/site';
 
-import { Icon, type IconName } from '../../chrome/Icon';
 import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
 
+import { TarjetaClub } from './TarjetaClub';
 import { useLogout } from './useLogout';
 
 // Más del entrenador (spec 09): perfil (nombre + cats), sede/horario y
@@ -67,30 +66,7 @@ export function MasEntrenador({ userName, cats }: Readonly<Props>) {
         )}
       </div>
 
-      <span className="eyebrow" style={{ padding: '2px 2px 0' }}>
-        Sede y horario
-      </span>
-      <div
-        style={{
-          background: 'var(--surface-card)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--radius-lg)',
-          overflow: 'hidden',
-          boxShadow: 'var(--shadow-sm)',
-        }}
-      >
-        <InfoRow
-          icon="map-pin"
-          title={LOCATION.venue}
-          sub={`${LOCATION.neighborhood} · INDER`}
-        />
-        <InfoRow
-          icon="clock"
-          title="Lun · Mié · Vie"
-          sub="4:30 – 6:00 PM"
-          borde
-        />
-      </div>
+      <TarjetaClub />
 
       <button
         type="button"
@@ -110,49 +86,6 @@ export function MasEntrenador({ userName, cats }: Readonly<Props>) {
       >
         {saliendo ? 'Cerrando…' : 'Cerrar sesión'}
       </button>
-    </div>
-  );
-}
-
-function InfoRow({
-  icon,
-  title,
-  sub,
-  borde = false,
-}: Readonly<{ icon: IconName; title: string; sub: string; borde?: boolean }>) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 13,
-        padding: '13px 16px',
-        borderTop: borde ? '1px solid var(--border-subtle)' : 'none',
-      }}
-    >
-      <span
-        style={{
-          width: 38,
-          height: 38,
-          borderRadius: 'var(--radius-md)',
-          background: 'var(--info-soft)',
-          color: 'var(--brand-navy)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}
-      >
-        <Icon name={icon} size={19} />
-      </span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-strong)' }}
-        >
-          {title}
-        </div>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{sub}</div>
-      </div>
     </div>
   );
 }

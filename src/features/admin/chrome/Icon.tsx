@@ -1,13 +1,17 @@
 import {
   ArrowLeft,
+  AtSign,
   Banknote,
   Bell,
   CalendarDays,
   Check,
+  ChevronDown,
   ChevronRight,
   CircleCheck,
   CirclePlus,
   Clock,
+  Eye,
+  EyeOff,
   Flame,
   Footprints,
   Gift,
@@ -37,14 +41,20 @@ import {
 // la app usa hoy → tree-shakeable. Crecerá al portar nuevas pantallas.
 const ICONS = {
   'arrow-left': ArrowLeft,
+  // Lucide retiró los iconos de marca (Instagram entre ellos): el handle
+  // del club se representa con la arroba.
+  'at-sign': AtSign,
   banknote: Banknote,
   bell: Bell,
   'calendar-days': CalendarDays,
   check: Check,
+  'chevron-down': ChevronDown,
   'chevron-right': ChevronRight,
   'circle-check': CircleCheck,
   'circle-plus': CirclePlus,
   clock: Clock,
+  eye: Eye,
+  'eye-off': EyeOff,
   flame: Flame,
   footprints: Footprints,
   gift: Gift,
