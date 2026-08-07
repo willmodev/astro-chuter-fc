@@ -23,8 +23,8 @@ export function buildSportsActivityLocationJsonLd() {
     url: SITE.url,
     telephone: CONTACT.phoneE164,
     email: CONTACT.email,
-    image: `${SITE.url}/logo-temp.png`,
-    logo: `${SITE.url}/logo-temp.png`,
+    image: `${SITE.url}/og-default.jpg`,
+    logo: `${SITE.url}/apple-touch-icon.png`,
     sport: 'Soccer',
     address: {
       '@type': 'PostalAddress',
