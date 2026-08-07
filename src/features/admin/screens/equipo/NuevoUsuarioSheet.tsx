@@ -1,4 +1,5 @@
-import { useState, type CSSProperties, type FormEvent } from 'react';
+// SubmitEvent de React (React 19 deprecó FormEvent); no es el SubmitEvent del DOM.
+import { useState, type CSSProperties, type SubmitEvent } from 'react';
 
 import { Sheet } from '../../chrome/Sheet';
 
@@ -51,7 +52,7 @@ export function NuevoUsuarioSheet({ onClose, onCrear }: Readonly<Props>) {
     );
   }
 
-  async function onSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
+  async function onSubmit(e: SubmitEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     setEnviando(true);
     setError(null);
@@ -91,7 +92,9 @@ export function NuevoUsuarioSheet({ onClose, onCrear }: Readonly<Props>) {
             value={name}
             required
             minLength={2}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
             disabled={enviando}
           />
         </div>
@@ -106,7 +109,9 @@ export function NuevoUsuarioSheet({ onClose, onCrear }: Readonly<Props>) {
             value={email}
             required
             autoComplete="off"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
             disabled={enviando}
           />
         </div>
@@ -122,7 +127,9 @@ export function NuevoUsuarioSheet({ onClose, onCrear }: Readonly<Props>) {
             required
             minLength={8}
             autoComplete="off"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
             disabled={enviando}
           />
         </div>
@@ -135,7 +142,9 @@ export function NuevoUsuarioSheet({ onClose, onCrear }: Readonly<Props>) {
             style={field}
             value={role}
             disabled={enviando}
-            onChange={(e) => setRole(e.target.value as 'admin' | 'entrenador')}
+            onChange={(e) => {
+              setRole(e.target.value as 'admin' | 'entrenador');
+            }}
           >
             <option value="entrenador">Entrenador</option>
             <option value="admin">Administrador</option>

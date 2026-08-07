@@ -76,7 +76,9 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
         </strong>
         <button
           type="button"
-          onClick={() => setSheet({ tipo: 'nuevo' })}
+          onClick={() => {
+            setSheet({ tipo: 'nuevo' });
+          }}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -133,17 +135,26 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
             usuario={u}
             ocupado={ocupado === u.id}
             onToggle={() => void alTogglear(u)}
-            onReset={() => setSheet({ tipo: 'reset', usuario: u })}
+            onReset={() => {
+              setSheet({ tipo: 'reset', usuario: u });
+            }}
           />
         ))}
 
       {sheet?.tipo === 'nuevo' && (
-        <NuevoUsuarioSheet onClose={() => setSheet(null)} onCrear={crear} />
+        <NuevoUsuarioSheet
+          onClose={() => {
+            setSheet(null);
+          }}
+          onCrear={crear}
+        />
       )}
       {sheet?.tipo === 'reset' && (
         <ResetPasswordSheet
           nombre={sheet.usuario.name}
-          onClose={() => setSheet(null)}
+          onClose={() => {
+            setSheet(null);
+          }}
           onReset={(password) => resetPassword(sheet.usuario.id, password)}
         />
       )}

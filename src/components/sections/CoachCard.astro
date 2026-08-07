@@ -29,7 +29,7 @@ const igUrl = instagram ? `https://instagram.com/${instagram}` : undefined;
     'coach-flip border-brand-navy/10 bg-brand-cream relative grid grid-cols-1 gap-6 rounded-sm border p-6 shadow-sm md:grid-cols-[200px_1fr] md:gap-8 md:p-8',
   ]}
   data-from={idx % 2 === 0 ? 'left' : 'right'}
-  style={`--idx:${idx}`}
+  style={`--idx:${String(idx)}`}
 >
   <!-- Filigrana número grande -->
   {

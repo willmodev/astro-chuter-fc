@@ -1,3 +1,5 @@
+import { VENTANA_CUMPLES_DIAS } from '@/lib/domain/cumples';
+
 import { Icon } from '../../chrome/Icon';
 
 import type { Cumple } from '../../data/types';
@@ -9,6 +11,22 @@ interface Props {
 }
 
 export function ProximosCumples({ cumple }: Readonly<Props>) {
+  if (cumple.length === 0) {
+    return (
+      <p
+        role="status"
+        style={{
+          margin: 0,
+          padding: '0 16px',
+          fontSize: 13,
+          color: 'var(--text-muted)',
+        }}
+      >
+        Sin cumpleaños en los próximos {VENTANA_CUMPLES_DIAS} días.
+      </p>
+    );
+  }
+
   return (
     <div
       style={{

@@ -52,7 +52,9 @@ export function SelectorCategorias({
               type="checkbox"
               checked={activa}
               disabled={ocupada || disabled}
-              onChange={() => onToggle(c.etiqueta)}
+              onChange={() => {
+                onToggle(c.etiqueta);
+              }}
               style={{
                 width: 17,
                 height: 17,

@@ -1,11 +1,11 @@
 import { rosterDe } from '@/lib/domain/entrenos';
 
 import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
+import { useLogout } from '../../hooks/useLogout';
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
 
 import { TarjetaClub } from './TarjetaClub';
-import { useLogout } from './useLogout';
 
 // Más del entrenador (spec 09): perfil (nombre + cats), sede/horario y
 // cerrar sesión. Variante de MasMenu sin entradas de administración.

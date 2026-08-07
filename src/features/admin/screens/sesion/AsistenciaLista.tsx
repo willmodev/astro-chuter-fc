@@ -56,7 +56,9 @@ export function AsistenciaLista({
           </div>
           <ToggleAsistencia
             ausente={estaAusente(a.id)}
-            onMarcar={(presente) => onMarcar(a.id, presente)}
+            onMarcar={(presente) => {
+              onMarcar(a.id, presente);
+            }}
           />
         </div>
       ))}
@@ -76,7 +78,9 @@ function ToggleAsistencia({
   ) => (
     <button
       type="button"
-      onClick={() => onMarcar(presente)}
+      onClick={() => {
+        onMarcar(presente);
+      }}
       aria-pressed={activo}
       aria-label={presente ? 'Presente' : 'Ausente'}
       style={{

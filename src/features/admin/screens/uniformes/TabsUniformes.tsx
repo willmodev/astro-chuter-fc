@@ -30,7 +30,9 @@ export function TabsUniformes({ tab, onTab }: Readonly<Props>) {
           <button
             key={t.id}
             type="button"
-            onClick={() => onTab(t.id)}
+            onClick={() => {
+              onTab(t.id);
+            }}
             aria-pressed={activa}
             style={{
               height: 36,

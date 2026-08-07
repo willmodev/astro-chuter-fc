@@ -71,7 +71,9 @@ export function PagosDelAnio({
           <button
             key={mes}
             type="button"
-            onClick={() => onCobrarMes(i)}
+            onClick={() => {
+              onCobrarMes(i);
+            }}
             aria-label={`Registrar cobro de ${MONTHS_LONG[i] ?? mes}`}
             style={{ ...estilo, cursor: 'pointer' }}
           >

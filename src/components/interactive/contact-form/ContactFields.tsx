@@ -113,7 +113,9 @@ export function ContactFields({
               min={minFecha}
               max={maxFecha}
               value={childDate}
-              onChange={(e) => onChildDate(e.target.value)}
+              onChange={(e) => {
+                onChildDate(e.target.value);
+              }}
               className={inputClass}
             />
             <span className="field-underline" aria-hidden="true" />

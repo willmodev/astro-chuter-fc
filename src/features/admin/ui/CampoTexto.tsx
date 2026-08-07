@@ -44,7 +44,9 @@ export function CampoTexto({
       <input
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          onChange(e.target.value);
+        }}
         placeholder={placeholder}
         inputMode={inputMode}
         maxLength={maxLength}

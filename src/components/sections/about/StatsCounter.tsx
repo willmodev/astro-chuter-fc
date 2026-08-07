@@ -77,7 +77,7 @@ function StatCell({ stat, idx, progress, reduced }: CellProps) {
     if (valueNum === undefined || reduced) return value;
     const t = Math.min(1, Math.max(0, (v - start) / (end - start)));
     const eased = 1 - Math.pow(1 - t, 3);
-    return `${Math.round(eased * valueNum)}${valueSuffix ?? ''}`;
+    return `${String(Math.round(eased * valueNum))}${valueSuffix ?? ''}`;
   });
 
   const barScale = useTransform(progress, [start, end], [0, 1]);

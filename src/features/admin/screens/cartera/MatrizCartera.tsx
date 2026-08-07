@@ -49,7 +49,9 @@ export function MatrizCartera({ alumnos, onCobrarMes }: Readonly<Props>) {
                     {cobrable ? (
                       <button
                         type="button"
-                        onClick={() => onCobrarMes(a.id, i)}
+                        onClick={() => {
+                          onCobrarMes(a.id, i);
+                        }}
                         aria-label={`Registrar cobro de ${MONTHS[i]} para ${a.name}`}
                         style={{
                           ...estiloCelda,

@@ -75,7 +75,9 @@ export function AlumnoForm({
         errores={form.errores}
         sugerencias={form.sugerencias}
         setCampo={form.setCampo}
-        onElegirAcudiente={(acu) => form.setCampo('acu', acu)}
+        onElegirAcudiente={(acu) => {
+          form.setCampo('acu', acu);
+        }}
       />
 
       {form.hermano && <AvisoHermano />}

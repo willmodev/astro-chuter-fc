@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from 'react';
+// SubmitEvent de React (React 19 deprecó FormEvent); no es el SubmitEvent del DOM.
+import { useState, type SubmitEvent } from 'react';
 
 import { LoginField } from './LoginField';
 import { useLogin } from './useLogin';
@@ -13,7 +14,7 @@ export function LoginScreen({ next }: Readonly<Props>) {
   const { estado, error, ingresar } = useLogin(next);
   const enviando = estado === 'enviando';
 
-  function onSubmit(e: FormEvent<HTMLFormElement>): void {
+  function onSubmit(e: SubmitEvent<HTMLFormElement>): void {
     e.preventDefault();
     void ingresar(email.trim(), password);
   }

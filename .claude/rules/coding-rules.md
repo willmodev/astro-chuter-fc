@@ -20,7 +20,7 @@ Estas convenciones ya están en el repo (`src/lib/site.ts`, `src/components/inte
 - **React:** componentes función con hooks; props tipadas; estados como _union types_ (`type Status = 'idle' | 'submitting' | ...`). **No hay `any` en el código actual** — se mantiene así.
 - **Content collections:** schemas Zod con loader `glob` (`src/content.config.ts`).
 
-> Nota de migración (no hacer ahora): `src/content.config.ts` importa `z` de `astro:content`, que **Astro 6 deprecó** a favor de `astro/zod`. Migrar cuando se toque ese archivo.
+> Migración hecha (spec 17): `src/content.config.ts` importa `z` de **`astro/zod`**. El `z` de `astro:content` que Astro 6 deprecó ya no se usa en el repo — eran 23 de los 186 hallazgos de `strictTypeChecked`, todos del mismo import.
 
 ---
 
@@ -143,9 +143,25 @@ incluido — aplicarlas globalmente cuesta cero. Y la única que mordía
 (`max-lines-per-function`) tenía **33 de sus 37 violaciones dentro del admin**: el scope
 propuesto habría metido en scope justo lo que dolía y dejado afuera lo que ya pasaba.
 
-**Severidad de las reglas type-aware:** se usa `recommendedTypeChecked`, no
-`strictTypeChecked`. Medido el 2026-08-07, `strict` dejaba **563 hallazgos** sobre un umbral
-escrito de ~40. La promoción queda como deuda anotada en `docs/backlog.md`.
+**Severidad de las reglas type-aware:** se usa **`strictTypeChecked`** desde el spec 17
+(DT-5). El spec 16 lo había dejado en `recommendedTypeChecked` citando 563 hallazgos;
+remedido sobre el repo con los `ignores` ya fijados, eran **186**, de los cuales 88 se
+arreglaban con `--fix` y 23 eran un solo import (`z` de `astro:content`). Se saldaron todos.
+
+**Las 5 supresiones que quedan en el repo** son todas `eslint-disable-next-line` de una línea
+con motivo escrito, y todas por la misma causa: **el tipo no refleja el runtime**. Cuatro son
+el patrón `import.meta.env?.X ?? process.env.X` (`db/client.ts`, `auth/server.ts` ×2,
+`services/blob-entrenos.ts`), que es load-bearing porque `scripts/*.mjs` importan esos módulos
+desde Node puro, donde `import.meta.env` no existe — y no se refactoriza a un helper porque
+Vite sustituye `import.meta.env.X` **estáticamente**. La quinta es un `const [row] = await
+db.select()…limit(1)` que TS tipa como no-nulo sin `noUncheckedIndexedAccess`. Activar esa
+opción del compilador eliminaría la quinta de raíz, pero es un cambio global: queda como
+decisión consciente, no como olvido.
+
+> **Regla para código nuevo:** si `strictTypeChecked` marca una condición como innecesaria y
+> la guarda protege un límite real (Action, base, DOM, `localStorage`, env), se arregla **el
+> tipo**, no se borra la defensa. Suprimir la regla es el último recurso y siempre lleva
+> motivo. Cero `any`, cero `@ts-ignore`.
 
 **Fuera del linter (`ignores`):** `src/components/ui/**` (generado por shadcn, "no tocar
 manualmente" según `CLAUDE.md`), más el material no versionado que ESLint barrería porque

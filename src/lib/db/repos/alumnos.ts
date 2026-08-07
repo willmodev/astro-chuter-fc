@@ -62,6 +62,13 @@ export async function listarAlumnos(
     .orderBy(asc(alumnos.nombre));
 }
 
+// Solo la columna `acudiente` de todos los alumnos (activos y retirados): es
+// lo único que necesita el conteo de hermanos de una ficha puntual.
+export async function acudientesDeAlumnos(): Promise<string[]> {
+  const rows = await db.select({ acudiente: alumnos.acudiente }).from(alumnos);
+  return rows.map((r) => r.acudiente);
+}
+
 export async function alumnoPorId(id: number): Promise<AlumnoRow | undefined> {
   const [row] = await db
     .select(COLUMNAS)

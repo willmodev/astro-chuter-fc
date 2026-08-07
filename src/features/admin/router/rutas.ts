@@ -70,7 +70,10 @@ function parseEntrenos(id?: string, sub?: string): RutaAdmin {
 // Conversión pura pathname ↔ RutaAdmin. Parseo defensivo: cualquier ruta
 // desconocida cae al dashboard.
 export function parseRuta(pathname: string): RutaAdmin {
-  const [raiz, vista, id, sub, ...resto] = pathname.split('/').filter(Boolean);
+  // `split` devuelve `string[]`, pero los índices que no existen valen
+  // `undefined` en runtime: se tipa explícito para no perder esa verdad.
+  const partes: (string | undefined)[] = pathname.split('/').filter(Boolean);
+  const [raiz, vista, id, sub, ...resto] = partes;
 
   if (raiz !== 'admin' || resto.length > 0) return { vista: 'dashboard' };
   if (vista === undefined) return { vista: 'dashboard' };
@@ -87,15 +90,15 @@ export function rutaAPath(ruta: RutaAdmin): string {
     case 'dashboard':
       return '/admin';
     case 'ficha':
-      return `/admin/alumnos/${ruta.alumnoId}`;
+      return `/admin/alumnos/${String(ruta.alumnoId)}`;
     case 'alumnoNuevo':
       return '/admin/alumnos/nuevo';
     case 'alumnoEditar':
-      return `/admin/alumnos/${ruta.alumnoId}/editar`;
+      return `/admin/alumnos/${String(ruta.alumnoId)}/editar`;
     case 'pago':
-      return `/admin/alumnos/${ruta.alumnoId}/pago`;
+      return `/admin/alumnos/${String(ruta.alumnoId)}/pago`;
     case 'uniformeEntrega':
-      return `/admin/alumnos/${ruta.alumnoId}/uniforme`;
+      return `/admin/alumnos/${String(ruta.alumnoId)}/uniforme`;
     case 'sesion':
       return `/admin/entrenos/${ruta.weekId}/${normaliza(ruta.day)}`;
     default:

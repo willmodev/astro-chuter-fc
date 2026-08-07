@@ -5,7 +5,7 @@
 > Stack: Astro + React (island) · Neon Postgres · Drizzle ORM · Better Auth · Astro Actions · Vercel.
 > Datos reales: `CHUTER FC 2026.xlsx` (local, **no versionado** por PII de menores). Esquema y reglas en `docs/excel-data-dictionary.md`.
 >
-> **Reconciliado con el código el 2026-08-07 (spec 16).** Cada ☑ cita el spec que la cerró. Lo único realmente pendiente: **HU-7.3** (gestionar tarifas/cuotas) y **HU-8.2** (exportar cartera). HU-3.3 y HU-3.6 son `Won't` (obsoletas, no se harán), HU-7.4 quedó `Won't` por el spec 15 y HU-6.1/HU-6.2 quedaron obsoletas por el spec 09. Aparte de las HU, hay deuda técnica menor anotada en **Deuda técnica / observaciones abiertas** (final del archivo). Fuentes: **backlog** = qué falta · **specs/** = por qué se hizo así · **`docs/ARCHITECTURE.md`** = cómo está hecho hoy.
+> **Reconciliado con el código el 2026-08-07 (specs 16 y 17).** Cada ☑ cita el spec que la cerró. Lo único realmente pendiente: **HU-7.3** (gestionar tarifas/cuotas) y **HU-8.2** (exportar cartera), las dos `Could`. HU-3.3 y HU-3.6 son `Won't` (obsoletas, no se harán), HU-7.4 quedó `Won't` por el spec 15 y HU-6.1/HU-6.2 quedaron obsoletas por el spec 09. **La sección de deuda técnica quedó sin nada abierto**: el spec 17 cerró DT-3, DT-4 y DT-5, y de paso DT-6 y DT-7, que salieron de esa misma verificación. Fuentes: **backlog** = qué falta · **specs/** = por qué se hizo así · **`docs/ARCHITECTURE.md`** = cómo está hecho hoy.
 
 ## Roles
 
@@ -411,6 +411,7 @@ Como administrador quiero configurar la vista de cartera (tarjetas/matriz) y mos
 
 - **Aceptación:** Dado que cambio la preferencia, cuando regreso, entonces se mantiene (persistida en `localStorage`).
 - **Hecho (spec 06):** la vista Tarjetas/Matriz se recuerda en `localStorage` (`useVistaCartera`, R7.2).
+- **Confirmado por el cliente (Will, 2026-08-07):** la exclusión de las pantallas transaccionales es intencional y queda cerrada — en ellas se está cobrando dinero real y ocultar el monto a confirmar induce a error. Era el último criterio abierto del spec 16.
 - **Hecho (spec 16):** toggle de **mostrar/ocultar montos** — interruptor "Mostrar montos" en "Más" (solo admin) y botón de ojo en la cabecera de Cartera, los dos sobre la misma preferencia (`chuter.admin.montosVisibles`, por defecto visible). Enmascara como `$•••` las superficies de **lectura** (Dashboard, Cartera y Ficha) y deja intactas las **transaccionales** (Registrar pago, abono de uniforme, aviso de hermano, recibo de WhatsApp). Es comodidad visual, **no** un control de seguridad: la barrera por rol sigue siendo del servidor y el entrenador no ve el interruptor. Los dos hooks corren sobre `usePreferenciaLocal` (`useSyncExternalStore`), con `useVistaCartera` reescrito encima **sin cambiar su firma**: queda un solo patrón de preferencia local en el repo.
 
 ### HU-7.3 · Gestionar tarifas/cuotas — `Could` · ☐
@@ -418,6 +419,13 @@ Como administrador quiero configurar la vista de cartera (tarjetas/matriz) y mos
 Como administrador quiero configurar la cuota mensual y el precio/descuento del uniforme (R2/R9) para reflejar cambios de precio.
 
 - **Aceptación:** Dado la configuración, cuando actualizo la cuota o los precios del uniforme, entonces los nuevos cálculos usan esos valores (sin alterar pagos ya registrados).
+
+### HU-7.7 · Cerrar sesión desde la barra lateral — `Should` · Pantalla: Chrome del admin · ☑ (spec 17)
+
+Como usuario del back-office en computador quiero cerrar sesión sin entrar a "Más", porque la barra lateral está siempre a la vista y su pie estaba vacío.
+
+- **Aceptación:** Dado el admin en desktop (≥1024px), cuando miro el pie de la barra lateral, entonces veo mi nombre, mi rol y "Cerrar sesión"; al pulsarlo la sesión termina igual que desde "Más".
+- **Hecho (spec 17):** `chrome/SidebarFooter.tsx` anclado por el `flex: 1` del `__nav`. Aplica a **los dos roles**. `useLogout` se movió a `features/admin/hooks/` porque ahora lo consumen tres pantallas: una sola implementación de `signOut`. **"Más" conserva su botón**: el sidebar es `display: none` bajo 1024px y el celular es el dispositivo principal del club, así que quitarlo de ahí dejaría a la app sin salida en móvil. El rojo del botón se aclara con `color-mix` sobre el token `--error` (≈8,2:1 sobre el navy): el `--error-deep` de "Más" solo daba 3,1:1 sobre fondo oscuro.
 
 ### HU-7.4 · Gestionar categorías — `Won't` (spec 15) · ☒
 
@@ -485,7 +493,7 @@ Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboar
 - **Origen:** verificación del spec 14 (bloque F). Es el comportamiento que el spec 14 especificó (solo pidió refetch en lista y ficha); quedó anotado por si molestaba en uso real.
 - **Resolución (spec 16):** era ubicación del hook, no de datos — `useDashboardData()` vive en `AdminHome`, que nunca se desmonta, así que su carga corría una sola vez por sesión. `AdminHome` vuelve a llamar `recargar()` cuando la vista activa pasa a `dashboard`. **Sin parpadeo:** `recargar` no limpia `data`, así que los KPIs previos siguen en pantalla hasta que llegan los nuevos y el spinner solo aparece en la primera carga. Cubre todas las mutaciones (retiro, pago, uniforme, alta), no solo el retiro que originó la deuda. `useDashboardData` **no** se movió dentro de `<Dashboard>`: `AdminHome` usa `data.stats.morosos` para el badge de la campana del header.
 
-### DT-3 · `alumnoAdminPorId` construye toda la lista para devolver un alumno — `Should` · ☐
+### DT-3 · `alumnoAdminPorId` construye toda la lista para devolver un alumno — `Should` · ☑ RESUELTO (spec 17)
 
 `alumnoAdminPorId` (`src/lib/services/alumnos.ts`) llama a `construirAlumnos(hoy, true)` y arma **los 82 alumnos completos para devolver 1**: cada apertura de una Ficha paga el costo íntegro (3 queries full-table + el armado en memoria). El paginado de render del spec 16 **no lo arregla** — es una ventana de UI sobre una lista ya cargada, y esta ruta ni siquiera es una lista.
 
@@ -493,21 +501,41 @@ Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboar
 - **Disparador (paginado en servidor):** **más de 300 alumnos activos** o **más de 200 KB de payload** en `alumnos.listar`. Hoy son 82 activos y ~55 KB (≈10 KB gzip), así que no aplica.
 - **Alcance del futuro spec:** búsqueda en SQL, keyset por `nombre+id`, endpoint aparte de agregados (los contadores y totales hoy se calculan en cliente sobre la lista completa) y el arreglo de esta función. Es un cambio de contrato de datos, por eso no entró en el spec 16.
 - **Origen:** medición del spec 16 (decisión "paginado en cliente, no en servidor").
+- **Corrección del diagnóstico (spec 17):** al verificarlo en vivo apareció que **`alumnoAdminPorId` no la llamaba nadie** — era código muerto, como la ficha de DT-4. El costo real lo pagaba `useAlumno`, que pedía `alumnos.listar({incluirRetirados:true})` (los 97 completos) y hacía el `.find()` **en el cliente**. Por eso el cierre incluyó una **action nueva `alumnos.porId`** (solo admin, incluye retirados) y el cableado de `useAlumno` a ella. Medido: abrir una ficha pasó de **49.822 a 617 bytes**.
+- **Resolución (spec 17):** `alumnoAdminPorId` pasa de 3 queries full-table + el armado de 82 objetos a **4 queries puntuales en un solo `Promise.all`**: `alumnoPorId` (1 fila), `pagosDeAlumno` (≤12), `uniformesDeAlumno` (≤2) y la nueva `acudientesDeAlumnos()` (82 filas × **1 columna**, lo único que necesita el conteo de hermanos). El conteo no se bajó a SQL a propósito: `normaliza()` quita tildes y baja a minúsculas en JS, y ese número decide el descuento de uniforme (R9) — replicarlo en SQL abriría la puerta a que ficha y lista discrepen. En su lugar `conteoHermanos` se re-tipó a `(acudientes: readonly string[])` y la alimentan las dos rutas, así que **hay una sola implementación de la regla**. El paginado en servidor de `alumnos.listar` sigue fuera de alcance: su disparador (>300 activos o >200 KB) no se cumple.
 
-### DT-4 · `Ficha.tsx` con prop `readOnly` no está montado en ningún lado — `Should` · ☐
+### DT-4 · `Ficha.tsx` con prop `readOnly` no está montado en ningún lado — `Should` · ☑ RESUELTO (spec 17)
 
 Existe un `Ficha.tsx` que acepta una prop `readOnly`, pero **ningún call site lo monta**: el entrenador usa `FichaPlantel`. Su `UniformeTab` **sí muestra saldo**, así que si alguien reconecta ese `Ficha` en modo readOnly para el entrenador, le filtra dinero — lo que el spec 09 prohíbe explícitamente (HU-6.9). Es código muerto que contradice una regla de negocio.
 
 - **Aceptación:** o el `Ficha` readOnly se borra, o se le quita todo dato de dinero y se documenta cuál es la ficha del entrenador.
 - **Origen:** riesgo identificado en el spec 16 (fuera de su alcance: no se reconecta ni se borra allí).
+- **Verificado antes de tocar nada (spec 17): el riesgo NO estaba materializado.** El corte por rol ocurre antes del router: `AdminApp.tsx:30` retorna `<EntrenadorApp>` y ahí termina, así que `VistaDetalle` —único call site de `<Ficha>` en todo `src/`— solo se monta para el admin; la ruta `ficha` del entrenador la resuelve `EntrenadorApp` contra `FichaPlantel`. Defensa en profundidad: con rol entrenador el payload de `alumnos.listar` es `AlumnoPlantel[]`, sin montos. Lo único falso era el comentario del gate.
+- **Resolución (spec 17):** se borró la prop `readOnly` y sus cuatro ramas (`Ficha.tsx`, `FichaHeader.tsx`, `TabsFicha.tsx`), junto con `TABS_READONLY`, `seccionesVisibles()` y `tabInicial()`, que sin la prop quedaban vacías. Los tres callbacks (`onEditar`, `onRegistrarPago`, `onRegistrarUniforme`) pasaron de opcionales a **requeridos**: al renderizarse siempre, un call site que los omitiera pintaría botones inertes — ahora lo impide el compilador. Los comentarios de `gate.ts`, `useAlumnosPlantel.ts` y `useUniformesEntrenador.ts` dicen ahora que la ficha del entrenador es `screens/plantel/FichaPlantel.tsx`.
 
-### DT-5 · Promover ESLint de `recommendedTypeChecked` a `strictTypeChecked` — `Could` · ☐
+### DT-5 · Promover ESLint de `recommendedTypeChecked` a `strictTypeChecked` — `Could` · ☑ RESUELTO (spec 17)
 
 El spec 16 instaló ESLint con la regla de corte escrita: si `strictTypeChecked` dejaba más de ~40 hallazgos, se bajaba a `recommendedTypeChecked` y la promoción quedaba como deuda con el número medido.
 
 - **Medido (2026-08-07):** `strictTypeChecked` dejaba **563 hallazgos** contra un umbral escrito de ~40. Se cerró en **`recommendedTypeChecked`**.
 - **Aceptación:** `eslint.config.js` usa `strictTypeChecked` y `npm run lint` sale en verde.
 - **Origen:** Bloque A del spec 16.
+- **Remedido (spec 17, 2026-08-07): 186 hallazgos, no 563.** La cifra del spec 16 no es reproducible sobre el repo actual; la hipótesis es que se midió antes de fijar los `ignores` y antes del autofix de imports. Reparto real: `no-confusing-void-expression` 88 (autofijables), `restrict-template-expressions` 44, `no-deprecated` 28 —de los cuales **23 eran un solo import**, el `z` de `astro:content` que Astro 6 deprecó—, `no-unnecessary-condition` 24 y `restrict-plus-operands` 2.
+- **Resolución (spec 17):** promovido a `strictTypeChecked`. De paso se saldó la migración a `astro/zod` que `.claude/rules/coding-rules.md` §0 arrastraba como pendiente.
+
+### DT-6 · "Próximos cumpleaños" mostraba el año entero — `Should` · ☑ RESUELTO (spec 17)
+
+`proximosCumples` ordenaba por proximidad pero **no cortaba**, así que el Dashboard pintaba una tarjeta por cada alumno activo con fecha: 82, o sea hasta el agosto siguiente. "Próximos" no significaba nada.
+
+- **Origen:** Will, recorriendo el Dashboard con datos reales (2026-08-07). El defecto nació con el spec 11 pero solo se hizo visible con el spec 15, que completó las fechas de nacimiento de los 82.
+- **Resolución:** ventana de **30 días** (`VENTANA_CUMPLES_DIAS`), aplicada en `lib/domain/cumples.ts` y no en el componente — además de ser la capa correcta, el payload de `dashboard.stats` deja de mandar ~82 objetos que nadie iba a pintar. Estado vacío cuando no hay ninguno, con el número derivado de la constante.
+
+### DT-7 · El gráfico "Recaudo por mes" no mostraba valores — `Should` · ☑ RESUELTO (spec 17)
+
+Las barras solo comunicaban altura relativa: era imposible saber cuánto se recaudó en un mes concreto.
+
+- **Origen:** Will, verificación en vivo (2026-08-07).
+- **Resolución:** etiqueta de monto por barra con el primitivo `<Monto corto>`, **no** con `fmtShort` directo, para que el toggle de ocultar montos (HU-7.2) la enmascare junto al resto del Dashboard en vez de dejar la plata expuesta en el gráfico.
 
 ---
 

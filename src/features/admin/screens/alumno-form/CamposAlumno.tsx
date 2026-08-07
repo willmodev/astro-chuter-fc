@@ -29,14 +29,18 @@ export function CamposAlumno({
       <CampoTexto
         label="Nombre completo"
         value={valores.name}
-        onChange={(v) => setCampo('name', v)}
+        onChange={(v) => {
+          setCampo('name', v);
+        }}
         placeholder="Nombre y apellidos"
         error={errores.name}
       />
       <CampoTexto
         label="Documento"
         value={valores.doc}
-        onChange={(v) => setCampo('doc', v)}
+        onChange={(v) => {
+          setCampo('doc', v);
+        }}
         placeholder="Número de documento"
         inputMode="numeric"
         maxLength={12}
@@ -46,7 +50,9 @@ export function CamposAlumno({
         <CampoTexto
           label="Fecha de nacimiento"
           value={valores.fechaNacimiento}
-          onChange={(v) => setCampo('fechaNacimiento', v)}
+          onChange={(v) => {
+            setCampo('fechaNacimiento', v);
+          }}
           type="date"
           error={errores.fechaNacimiento}
         />
@@ -55,14 +61,18 @@ export function CamposAlumno({
       <AutocompleteAcudiente
         value={valores.acu}
         sugerencias={sugerencias}
-        onChange={(v) => setCampo('acu', v)}
+        onChange={(v) => {
+          setCampo('acu', v);
+        }}
         onElegir={onElegirAcudiente}
         error={errores.acu}
       />
       <CampoTexto
         label="Celular"
         value={valores.phone}
-        onChange={(v) => setCampo('phone', v)}
+        onChange={(v) => {
+          setCampo('phone', v);
+        }}
         placeholder="10 dígitos"
         inputMode="tel"
         maxLength={13}
@@ -71,7 +81,9 @@ export function CamposAlumno({
       <CampoTexto
         label="Dirección"
         value={valores.dir}
-        onChange={(v) => setCampo('dir', v)}
+        onChange={(v) => {
+          setCampo('dir', v);
+        }}
         placeholder="Barrio, calle…"
         opcional
       />

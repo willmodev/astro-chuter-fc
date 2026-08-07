@@ -85,7 +85,9 @@ export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
           {img !== null ? (
             <button
               type="button"
-              onClick={() => setVisor(true)}
+              onClick={() => {
+                setVisor(true);
+              }}
               aria-label={`Ampliar la planeación del ${day}`}
               style={{ ...ZONA_RESET, flexShrink: 0, cursor: 'zoom-in' }}
             >
@@ -115,7 +117,12 @@ export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
       )}
 
       {visor && img !== null && (
-        <VisorImagen src={img} onClose={() => setVisor(false)} />
+        <VisorImagen
+          src={img}
+          onClose={() => {
+            setVisor(false);
+          }}
+        />
       )}
     </div>
   );

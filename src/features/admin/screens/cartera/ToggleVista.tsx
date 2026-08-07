@@ -32,7 +32,9 @@ export function ToggleVista({ vista, onChange }: Readonly<Props>) {
           <button
             key={op.id}
             type="button"
-            onClick={() => onChange(op.id)}
+            onClick={() => {
+              onChange(op.id);
+            }}
             aria-pressed={activa}
             style={{
               height: 36,

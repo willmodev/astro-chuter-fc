@@ -49,7 +49,9 @@ export function SesionRow({ sesion, roster }: Readonly<Props>) {
       {img !== null ? (
         <button
           type="button"
-          onClick={() => setVerVisor(true)}
+          onClick={() => {
+            setVerVisor(true);
+          }}
           aria-label={`Ampliar la parte central del ${sesion.day}`}
           style={{
             width: 44,
@@ -118,7 +120,12 @@ export function SesionRow({ sesion, roster }: Readonly<Props>) {
       </span>
 
       {verVisor && img !== null && (
-        <VisorImagen src={img} onClose={() => setVerVisor(false)} />
+        <VisorImagen
+          src={img}
+          onClose={() => {
+            setVerVisor(false);
+          }}
+        />
       )}
     </div>
   );

@@ -51,7 +51,9 @@ export function useAdminRouter(role: Rol): {
       );
     };
     window.addEventListener('popstate', alCambiarHistorial);
-    return () => window.removeEventListener('popstate', alCambiarHistorial);
+    return () => {
+      window.removeEventListener('popstate', alCambiarHistorial);
+    };
   }, [role]);
 
   const navegar = useCallback(

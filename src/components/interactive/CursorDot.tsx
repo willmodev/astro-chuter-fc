@@ -33,7 +33,8 @@ export default function CursorDot() {
     const tick = () => {
       x += (tx - x) * 0.22;
       y += (ty - y) * 0.22;
-      dot.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${active ? 1.9 : 1})`;
+      const escala = active ? 1.9 : 1;
+      dot.style.transform = `translate3d(${String(x)}px, ${String(y)}px, 0) translate(-50%, -50%) scale(${String(escala)})`;
       frame = requestAnimationFrame(tick);
     };
 

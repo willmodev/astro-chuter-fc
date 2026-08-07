@@ -49,7 +49,7 @@ function FilaKit({ kit }: Readonly<{ kit: KitUniforme }>) {
   const meta = ESTADO_UNIFORME_META[kit.estado];
   const pagado = kit.saldo === 0;
   const detalle = kit.entregado
-    ? `Nº ${kit.numero ?? '—'}${kit.talla ? ` · Talla ${kit.talla}` : ''}`
+    ? `Nº ${String(kit.numero ?? '—')}${kit.talla ? ` · Talla ${kit.talla}` : ''}`
     : 'Sin entregar';
 
   return (

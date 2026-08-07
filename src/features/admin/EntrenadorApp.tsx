@@ -68,15 +68,17 @@ export function EntrenadorApp({
       onTab={navegarTab}
       title={meta.title}
       eyebrow={meta.eyebrow}
+      userName={userName}
+      role="entrenador"
     >
       {ruta.vista === 'entrenos' && (
         <Entrenos
           entrenadorId={userId}
           entrenadorNombre={userName}
           cats={cats}
-          onOpenSesion={(weekId, day) =>
-            navegar({ vista: 'sesion', weekId, day })
-          }
+          onOpenSesion={(weekId, day) => {
+            navegar({ vista: 'sesion', weekId, day });
+          }}
         />
       )}
       {ruta.vista === 'sesion' && (
@@ -86,20 +88,28 @@ export function EntrenadorApp({
           cats={cats}
           weekId={ruta.weekId}
           day={ruta.day}
-          onVolver={() => navegar({ vista: 'entrenos' })}
-          onGuardado={() => navegar({ vista: 'entrenos' })}
+          onVolver={() => {
+            navegar({ vista: 'entrenos' });
+          }}
+          onGuardado={() => {
+            navegar({ vista: 'entrenos' });
+          }}
         />
       )}
       {ruta.vista === 'plantel' && (
         <Plantel
           cats={cats}
-          onOpenFicha={(alumnoId) => navegar({ vista: 'ficha', alumnoId })}
+          onOpenFicha={(alumnoId) => {
+            navegar({ vista: 'ficha', alumnoId });
+          }}
         />
       )}
       {ruta.vista === 'ficha' && (
         <FichaPlantel
           alumnoId={ruta.alumnoId}
-          onVolver={() => navegar({ vista: 'plantel' })}
+          onVolver={() => {
+            navegar({ vista: 'plantel' });
+          }}
         />
       )}
       {ruta.vista === 'mas' && (

@@ -12,7 +12,7 @@ function ScrollProgressInner() {
     damping: 30,
     mass: 0.4,
   });
-  const heightPct = useTransform(smooth, (v) => `${v * 100}%`);
+  const heightPct = useTransform(smooth, (v) => `${String(v * 100)}%`);
   const labelPct = useTransform(smooth, (v) =>
     String(Math.round(v * 100)).padStart(2, '0'),
   );

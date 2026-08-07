@@ -76,14 +76,18 @@ export function HojaAbono({ kit, onAbono, onClose }: Readonly<Props>) {
       <CampoTexto
         label="Monto a abonar"
         value={montoTxt}
-        onChange={(v) => setMontoTxt(v.replace(/\D/g, ''))}
+        onChange={(v) => {
+          setMontoTxt(v.replace(/\D/g, ''));
+        }}
         placeholder="Ej. 50000"
         inputMode="numeric"
         maxLength={7}
       />
       <button
         type="button"
-        onClick={() => setMontoTxt(String(kit.saldo))}
+        onClick={() => {
+          setMontoTxt(String(kit.saldo));
+        }}
         style={{
           justifySelf: 'start',
           background: 'none',

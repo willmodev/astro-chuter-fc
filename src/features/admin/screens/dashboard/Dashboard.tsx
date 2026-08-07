@@ -51,7 +51,12 @@ export function Dashboard({
 
       <SectionLabel
         action={
-          <button onClick={() => onNav('cartera')} style={ghostLink}>
+          <button
+            onClick={() => {
+              onNav('cartera');
+            }}
+            style={ghostLink}
+          >
             Ver cartera
           </button>
         }
@@ -60,7 +65,9 @@ export function Dashboard({
       </SectionLabel>
       <CobrosPendientes
         morosos={data.morosos}
-        onOpen={() => onNav('alumnos')}
+        onOpen={() => {
+          onNav('alumnos');
+        }}
       />
 
       <SectionLabel>Próximos cumpleaños</SectionLabel>

@@ -1,4 +1,5 @@
 import { Icon } from './Icon';
+import { SidebarFooter } from './SidebarFooter';
 
 import type { TabDef, TabId } from './tabs';
 
@@ -11,18 +12,41 @@ interface Props {
   active: TabId;
   onTab: (id: TabId) => void;
   onAction?: () => void;
+  userName: string;
+  role: 'admin' | 'entrenador';
 }
 
-export function AdminNav({ tabs, active, onTab, onAction }: Readonly<Props>) {
+type SidebarProps = Omit<Props, 'onAction'>;
+
+export function AdminNav({
+  tabs,
+  active,
+  onTab,
+  onAction,
+  userName,
+  role,
+}: Readonly<Props>) {
   return (
     <>
-      <Sidebar tabs={tabs} active={active} onTab={onTab} />
+      <Sidebar
+        tabs={tabs}
+        active={active}
+        onTab={onTab}
+        userName={userName}
+        role={role}
+      />
       <TabBar tabs={tabs} active={active} onTab={onTab} onAction={onAction} />
     </>
   );
 }
 
-function Sidebar({ tabs, active, onTab }: Readonly<Omit<Props, 'onAction'>>) {
+function Sidebar({
+  tabs,
+  active,
+  onTab,
+  userName,
+  role,
+}: Readonly<SidebarProps>) {
   return (
     <aside className="admin-sidebar bg-pitch-lines">
       <div className="admin-sidebar__brand">
@@ -48,7 +72,9 @@ function Sidebar({ tabs, active, onTab }: Readonly<Omit<Props, 'onAction'>>) {
           return (
             <button
               key={t.id}
-              onClick={() => onTab(t.id)}
+              onClick={() => {
+                onTab(t.id);
+              }}
               className="admin-sidebar__link"
               data-active={on}
             >
@@ -58,17 +84,22 @@ function Sidebar({ tabs, active, onTab }: Readonly<Omit<Props, 'onAction'>>) {
           );
         })}
       </nav>
+      <SidebarFooter userName={userName} role={role} />
     </aside>
   );
 }
 
-function TabBar({ tabs, active, onTab, onAction }: Readonly<Props>) {
+type TabBarProps = Omit<Props, 'userName' | 'role'>;
+
+function TabBar({ tabs, active, onTab, onAction }: Readonly<TabBarProps>) {
   const item = (t: TabDef) => {
     const on = active === t.id;
     return (
       <button
         key={t.id}
-        onClick={() => onTab(t.id)}
+        onClick={() => {
+          onTab(t.id);
+        }}
         className="admin-tabbar__item"
         data-active={on}
       >

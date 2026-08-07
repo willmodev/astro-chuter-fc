@@ -78,7 +78,7 @@ function initials(nombre: string): string {
             <article
               class="coach-flip border-brand-navy/10 relative flex items-center gap-5 rounded-sm border bg-white p-6 shadow-sm md:gap-6 md:p-7"
               data-from={i % 2 === 0 ? 'left' : 'right'}
-              style={`--idx:${i}`}
+              style={`--idx:${String(i)}`}
             >
               <div class="bg-brand-navy-deep bg-pitch-lines text-brand-gold ring-brand-navy/20 relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-sm shadow-md ring-1 md:h-28 md:w-28">
                 <span class="font-display text-4xl leading-none tracking-wide md:text-5xl">
@@ -130,7 +130,7 @@ function initials(nombre: string): string {
             <article
               class="coach-flip border-brand-navy/10 relative flex flex-col items-center gap-4 rounded-sm border bg-white p-6 text-center shadow-sm"
               data-from={i % 2 === 0 ? 'left' : 'right'}
-              style={`--idx:${i}`}
+              style={`--idx:${String(i)}`}
             >
               <span
                 class="font-display text-brand-navy-deep/[0.05] pointer-events-none absolute right-3 -bottom-3 text-[5rem] leading-none select-none"

@@ -66,7 +66,7 @@ export function HeroRecaudo({ stats, mesLong }: Readonly<Props>) {
         >
           <div
             style={{
-              width: `${stats.pctMeta}%`,
+              width: `${String(stats.pctMeta)}%`,
               height: '100%',
               background: 'var(--brand-gold)',
               borderRadius: 999,

@@ -94,7 +94,9 @@ export function Cartera({ onCobrarMes }: Readonly<Props>) {
                 <TarjetaAlumno
                   key={a.id}
                   alumno={a}
-                  onCobrarMes={(mes) => onCobrarMes(a.id, mes)}
+                  onCobrarMes={(mes) => {
+                    onCobrarMes(a.id, mes);
+                  }}
                 />
               ))}
             </div>

@@ -40,7 +40,9 @@ export function CobrosPendientes({ morosos, onOpen }: Readonly<Props>) {
             }}
           >
             <button
-              onClick={() => onOpen(s)}
+              onClick={() => {
+                onOpen(s);
+              }}
               style={{
                 flex: 1,
                 minWidth: 0,

@@ -33,7 +33,10 @@ const variantClass: Record<Variant, string> = {
   'from-right': 'reveal--from-right',
 };
 
-const inlineStyle = [`--idx:${idx}`, range ? `animation-range:${range}` : null]
+const inlineStyle = [
+  `--idx:${String(idx)}`,
+  range ? `animation-range:${range}` : null,
+]
   .filter(Boolean)
   .join('; ');
 ---

@@ -86,7 +86,9 @@ export function SelectorMeses({
             <button
               key={mes}
               type="button"
-              onClick={() => onToggle(i)}
+              onClick={() => {
+                onToggle(i);
+              }}
               aria-pressed={marcado}
               aria-label={`${marcado ? 'Quitar' : 'Marcar'} ${mes}`}
               style={{ ...estilo, cursor: 'pointer' }}

@@ -38,7 +38,9 @@ function GalleryInner({ images }: GalleryLightboxProps) {
       if (e.key === 'ArrowRight') next();
     };
     window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+    return () => {
+      window.removeEventListener('keydown', handler);
+    };
   }, [open, prev, next]);
 
   const openAt = (index: number) => {
@@ -54,8 +56,10 @@ function GalleryInner({ images }: GalleryLightboxProps) {
         {images.map((image, index) => (
           <button
             key={index}
-            onClick={() => openAt(index)}
-            aria-label={`Ver imagen ${index + 1}: ${image.alt}`}
+            onClick={() => {
+              openAt(index);
+            }}
+            aria-label={`Ver imagen ${String(index + 1)}: ${image.alt}`}
             style={{ ['--idx' as never]: index }}
             className={`reveal group focus-visible:outline-brand-gold relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 md:aspect-auto md:h-full ${image.gridClass ?? ''}`}
           >
@@ -64,7 +68,7 @@ function GalleryInner({ images }: GalleryLightboxProps) {
               alt={image.alt}
               loading="lazy"
               decoding="async"
-              style={{ animationDelay: `${index * -1.7}s` }}
+              style={{ animationDelay: `${String(index * -1.7)}s` }}
               className="thumb-ken-burns h-full w-full object-cover transition-[filter] duration-300 group-hover:brightness-110"
             />
             <div className="from-brand-navy-deep/60 pointer-events-none absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

@@ -24,7 +24,7 @@ export function KpisGrid({ stats }: Readonly<Props>) {
         label="Al día"
         value={stats.pctUpToDate}
         unit="%"
-        delta={`${stats.upToDate} de ${stats.active}`}
+        delta={`${String(stats.upToDate)} de ${String(stats.active)}`}
         deltaTone="neutral"
         accent="success"
         icon={<Icon name="circle-check" size={16} />}

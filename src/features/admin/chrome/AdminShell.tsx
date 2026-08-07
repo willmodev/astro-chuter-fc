@@ -19,6 +19,9 @@ interface Props {
   eyebrow?: string;
   right?: ReactNode;
   children: ReactNode;
+  // Sesión activa: la pinta el pie del sidebar en desktop (HU-7.7).
+  userName: string;
+  role: 'admin' | 'entrenador';
 }
 
 export function AdminShell({
@@ -30,10 +33,19 @@ export function AdminShell({
   eyebrow,
   right,
   children,
+  userName,
+  role,
 }: Readonly<Props>) {
   return (
     <div className="admin-shell">
-      <AdminNav tabs={tabs} active={active} onTab={onTab} onAction={onAction} />
+      <AdminNav
+        tabs={tabs}
+        active={active}
+        onTab={onTab}
+        onAction={onAction}
+        userName={userName}
+        role={role}
+      />
       <div className="admin-content">
         <AppHeader title={title} eyebrow={eyebrow} right={right} />
         <main className="admin-main">

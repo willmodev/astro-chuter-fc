@@ -21,7 +21,7 @@ export function useDashboardData(): DashboardData {
   const recargar = useCallback(async () => {
     setEstado('cargando');
     const { data: res, error } = await actions.dashboard.stats();
-    if (error || !res) {
+    if (error) {
       setEstado('error');
       return;
     }

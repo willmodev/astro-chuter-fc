@@ -3,6 +3,7 @@
 // `lib/domain`); sin queries crudas (viven en `lib/db/repos`).
 import {
   actualizarAlumno,
+  acudientesDeAlumnos,
   alumnoPorDocumento,
   alumnoPorId,
   cambiarActivoAlumno as cambiarActivoEnRepo,
@@ -10,9 +11,9 @@ import {
   listarAlumnos,
 } from '@/lib/db/repos/alumnos';
 import type { AlumnoRow, DatosEditablesAlumno } from '@/lib/db/repos/alumnos';
-import { pagosPorAnio } from '@/lib/db/repos/pagos';
+import { pagosDeAlumno, pagosPorAnio } from '@/lib/db/repos/pagos';
 import type { PagoRow } from '@/lib/db/repos/pagos';
-import { todosUniformes } from '@/lib/db/repos/uniformes';
+import { todosUniformes, uniformesDeAlumno } from '@/lib/db/repos/uniformes';
 import type { UniformeRow } from '@/lib/db/repos/uniformes';
 import {
   AlumnoReglaError,
@@ -59,10 +60,11 @@ function indiceKits(rows: UniformeRow[]): Map<number, UniformeRow[]> {
 }
 
 // Cuántos alumnos comparte cada acudiente normalizado (para `hermanos`).
-function conteoHermanos(rows: AlumnoRow[]): Map<string, number> {
+// Recibe los acudientes crudos: la lista y la ficha cuentan igual.
+function conteoHermanos(acudientes: readonly string[]): Map<string, number> {
   const conteo = new Map<string, number>();
-  for (const r of rows) {
-    const key = normaliza(r.acudiente);
+  for (const acudiente of acudientes) {
+    const key = normaliza(acudiente);
     conteo.set(key, (conteo.get(key) ?? 0) + 1);
   }
   return conteo;
@@ -83,7 +85,7 @@ export async function construirAlumnos(
   ]);
   const idx = indicePagos(pagos);
   const idxKits = indiceKits(unis);
-  const hermanos = conteoHermanos(rows);
+  const hermanos = conteoHermanos(rows.map((r) => r.acudiente));
   const alumnos = rows.map((r) =>
     aAlumno({
       row: r,
@@ -123,7 +125,7 @@ export async function listarPlantelCompleto(
   hoy: Date = new Date(),
 ): Promise<AlumnoPlantel[]> {
   const rows = await listarAlumnos();
-  const hermanos = conteoHermanos(rows);
+  const hermanos = conteoHermanos(rows.map((r) => r.acudiente));
   return rows.map((r) =>
     aPlantel(r, hermanos.get(normaliza(r.acudiente)) ?? 1, hoy),
   );
@@ -141,12 +143,28 @@ export async function listarPlantel(
 }
 
 // Ficha: incluye retirados — su historial sigue consultable (spec 14).
+// Consulta puntual (spec 17, DT-3): nunca carga las tres tablas completas.
 export async function alumnoAdminPorId(
   id: number,
   hoy: Date,
 ): Promise<Alumno | undefined> {
-  const { alumnos } = await construirAlumnos(hoy, true);
-  return alumnos.find((a) => a.id === id);
+  const anio = hoy.getFullYear();
+  const [row, pagos, kits, acudientes] = await Promise.all([
+    alumnoPorId(id),
+    pagosDeAlumno(id, anio),
+    uniformesDeAlumno(id),
+    acudientesDeAlumnos(),
+  ]);
+  if (!row) return undefined;
+  const hermanos = conteoHermanos(acudientes);
+  return aAlumno({
+    row,
+    pagados: new Set(pagos.map((p) => p.mes)),
+    hermanos: hermanos.get(normaliza(row.acudiente)) ?? 1,
+    kits,
+    anio,
+    hoy,
+  });
 }
 
 function aEditables(

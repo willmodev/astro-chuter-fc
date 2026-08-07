@@ -1,9 +1,9 @@
+import { useLogout } from '../../hooks/useLogout';
 import { Card } from '../../ui/Card';
 
 import { BotonMenu } from './BotonMenu';
 import { SwitchMontos } from './SwitchMontos';
 import { TarjetaClub } from './TarjetaClub';
-import { useLogout } from './useLogout';
 
 interface Props {
   userName: string;

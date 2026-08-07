@@ -89,17 +89,19 @@ function labelSemana(lunes: Date): string {
   viernes.setDate(viernes.getDate() + 4);
   const mesLun = MESES_CORTOS[lunes.getMonth()];
   const mesVie = MESES_CORTOS[viernes.getMonth()];
+  const dLun = String(lunes.getDate());
+  const dVie = String(viernes.getDate());
   return mesLun === mesVie
-    ? `${lunes.getDate()} – ${viernes.getDate()} ${mesVie}`
-    : `${lunes.getDate()} ${mesLun} – ${viernes.getDate()} ${mesVie}`;
+    ? `${dLun} – ${dVie} ${mesVie}`
+    : `${dLun} ${mesLun} – ${dVie} ${mesVie}`;
 }
 
 function subSemana(offset: number): string {
   if (offset < 0)
-    return offset === -1 ? 'Próxima semana' : `En ${-offset} semanas`;
+    return offset === -1 ? 'Próxima semana' : `En ${String(-offset)} semanas`;
   if (offset === 0) return 'Semana actual';
   if (offset === 1) return 'Semana pasada';
-  return `Hace ${offset} semanas`;
+  return `Hace ${String(offset)} semanas`;
 }
 
 /**
@@ -115,7 +117,7 @@ export function generarSemanas(hoy: Date): Semana[] {
     lunes.setDate(lunes.getDate() - offset * 7);
     const n = numeroSemana(lunes);
     return {
-      id: `w-${n}`,
+      id: `w-${String(n)}`,
       n,
       label: labelSemana(lunes),
       sub: subSemana(offset),
@@ -132,7 +134,7 @@ export function semanaInicioISO(semana: Semana): string {
   const d = semana.inicio;
   const mes = String(d.getMonth() + 1).padStart(2, '0');
   const dia = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${mes}-${dia}`;
+  return `${String(d.getFullYear())}-${mes}-${dia}`;
 }
 
 /** Semana de la ventana cuyo `weekId` (`w-25`) coincide; `null` si no está. */

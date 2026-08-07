@@ -37,7 +37,9 @@ export function PlanSheet({
           <span className="eyebrow">Objetivos</span>
           <textarea
             value={objetivos}
-            onChange={(e) => setObjetivos(e.target.value)}
+            onChange={(e) => {
+              setObjetivos(e.target.value);
+            }}
             rows={4}
             placeholder="Qué se busca lograr esta semana"
             style={{
@@ -59,7 +61,9 @@ export function PlanSheet({
 
         <button
           type="button"
-          onClick={() => onGuardar(tema, objetivos)}
+          onClick={() => {
+            onGuardar(tema, objetivos);
+          }}
           disabled={!valido}
           style={{
             height: 48,

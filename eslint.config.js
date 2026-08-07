@@ -22,10 +22,9 @@ export default tseslint.config(
     ],
   },
   eslint.configs.recommended,
-  // `recommendedTypeChecked` y no `strictTypeChecked`: medido sobre este repo,
-  // strict dejaba 563 hallazgos (umbral del spec 16: ~40). La promoción queda
-  // como deuda anotada en docs/backlog.md.
-  tseslint.configs.recommendedTypeChecked,
+  // `strictTypeChecked` desde el spec 17 (DT-5). Remedido: 186 hallazgos, no
+  // los 563 que citaba el spec 16; se saldaron todos y el preset queda en pie.
+  tseslint.configs.strictTypeChecked,
   astro.configs.recommended,
   {
     languageOptions: {
