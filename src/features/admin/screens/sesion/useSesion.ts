@@ -75,7 +75,10 @@ export function useSesion(params: ParamsSesion): SesionData {
     setEstado('cargando');
     void cargaSesionDia(semanaInicio, day).then((snap) => {
       if (!vivo) return;
-      if (!snap) return setEstado('error');
+      if (!snap) {
+        setEstado('error');
+        return;
+      }
       plan.aplicar(snap);
       asis.aplicar(snap);
       setEstado('listo');

@@ -89,7 +89,7 @@ function HeroHeadlineInner() {
                     key={charIdx}
                     className="hero-char"
                     style={{
-                      animationDelay: `${baseDelay + charIdx * 0.025}s`,
+                      animationDelay: `${String(baseDelay + charIdx * 0.025)}s`,
                     }}
                   >
                     {ch === ' ' ? '\u00A0' : ch}

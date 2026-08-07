@@ -28,7 +28,9 @@ export function SegmentoFiltro({
           <button
             key={op.id}
             type="button"
-            onClick={() => onChange(op.id)}
+            onClick={() => {
+              onChange(op.id);
+            }}
             aria-pressed={activo}
             style={{
               flex: 1,

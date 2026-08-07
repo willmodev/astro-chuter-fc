@@ -82,6 +82,7 @@ export async function sesionActual(
       ),
     )
     .limit(1);
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- sin noUncheckedIndexedAccess TS tipa `row` como no-nulo, pero el select puede devolver 0 filas y `row` ser undefined en runtime
   return row ?? null;
 }
 

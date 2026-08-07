@@ -27,7 +27,7 @@ export function useAlumnos(incluirRetirados = false): AlumnosData {
   const recargar = useCallback(async () => {
     setEstado('cargando');
     const { data, error } = await actions.alumnos.listar({ incluirRetirados });
-    if (error || !data || data.rol !== 'admin') {
+    if (error || data.rol !== 'admin') {
       setEstado('error');
       return;
     }

@@ -56,7 +56,7 @@ export function useEntrenos(
     setEstado('cargando');
     const ctx = { entrenadorId, entrenadorNombre, weekId: semana.id };
     const { data, error } = await actions.entrenos.listar({ semanaInicio });
-    if (error || data?.rol !== 'entrenador') {
+    if (error || data.rol !== 'entrenador') {
       setEstado('error');
       return;
     }

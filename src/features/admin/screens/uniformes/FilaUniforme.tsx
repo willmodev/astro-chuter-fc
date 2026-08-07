@@ -25,7 +25,9 @@ export function FilaUniforme({ fila, duplicado, onAbrir }: Readonly<Props>) {
   return (
     <button
       type="button"
-      onClick={() => onAbrir(fila.alumnoId)}
+      onClick={() => {
+        onAbrir(fila.alumnoId);
+      }}
       style={{
         display: 'flex',
         alignItems: 'center',

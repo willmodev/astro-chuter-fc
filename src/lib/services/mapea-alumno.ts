@@ -25,7 +25,7 @@ const cap = (mes: Mes): string => mes.charAt(0) + mes.slice(1).toLowerCase();
 // "Abr 2026" a partir de la fecha de ingreso.
 function desdeDe(fechaInicio: string): string {
   const f = parseFechaLocal(fechaInicio);
-  return `${cap(MESES[f.getMonth()])} ${f.getFullYear()}`;
+  return `${cap(MESES[f.getMonth()])} ${String(f.getFullYear())}`;
 }
 
 // Categoría vigente (spec 15): por fecha de nacimiento si la hay, si no por año.

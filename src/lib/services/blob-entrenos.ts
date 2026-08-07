@@ -8,6 +8,7 @@ import type { DiaEntreno } from '@/lib/domain/entrenos';
 // El token se pasa explícito: en el dev de Astro/Vite las vars sin prefijo
 // PUBLIC_ viven en import.meta.env, no en process.env (que es lo que lee el SDK).
 const BLOB_TOKEN =
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- los tipos de Astro declaran import.meta.env siempre presente; en Node puro (scripts) es undefined y hay que caer a process.env
   import.meta.env?.BLOB_READ_WRITE_TOKEN ?? process.env.BLOB_READ_WRITE_TOKEN;
 
 // Extensión real según el tipo del blob (Safari viejo exporta JPEG, no WebP).

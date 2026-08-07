@@ -29,7 +29,7 @@ export function aInput(v: FormValores): InputAlumno {
 
 async function crear(input: InputAlumno): Promise<ResultadoGuardado> {
   const { data, error } = await actions.alumnos.crear(input);
-  if (error || !data) return { error: error?.message ?? 'No se pudo guardar.' };
+  if (error) return { error: error.message };
   return { id: data.id };
 }
 

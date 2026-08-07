@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from 'react';
+// SubmitEvent de React (React 19 deprecó FormEvent); no es el SubmitEvent del DOM.
+import { useState, type SubmitEvent } from 'react';
 import { actions } from 'astro:actions';
 
 import { formatearFechaISO, parseFechaNacimiento } from '@/lib/domain/alumnos';
@@ -19,7 +20,7 @@ export function useContactForm() {
     ? `${catSugerida.nombre} · ${catSugerida.etiqueta}`
     : null;
 
-  async function enviar(e: FormEvent<HTMLFormElement>) {
+  async function enviar(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus('submitting');
 

@@ -90,7 +90,9 @@ export function HojaEntrega({
         <CampoTexto
           label="Número"
           value={numeroTxt}
-          onChange={(v) => setNumeroTxt(v.replace(/\D/g, ''))}
+          onChange={(v) => {
+            setNumeroTxt(v.replace(/\D/g, ''));
+          }}
           placeholder="Ej. 10"
           inputMode="numeric"
           maxLength={3}

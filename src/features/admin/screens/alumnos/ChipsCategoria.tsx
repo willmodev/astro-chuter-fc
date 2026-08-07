@@ -29,7 +29,9 @@ export function ChipsCategoria({
             <button
               key={cat}
               type="button"
-              onClick={() => onChange(cat)}
+              onClick={() => {
+                onChange(cat);
+              }}
               aria-pressed={activa}
               style={{
                 flexShrink: 0,

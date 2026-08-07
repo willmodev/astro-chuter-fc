@@ -13,7 +13,9 @@ function escala(w: number, h: number): { width: number; height: number } {
 }
 
 function aBlob(canvas: HTMLCanvasElement, tipo: string): Promise<Blob | null> {
-  return new Promise((resolve) => canvas.toBlob(resolve, tipo, CALIDAD));
+  return new Promise((resolve) => {
+    canvas.toBlob(resolve, tipo, CALIDAD);
+  });
 }
 
 export async function comprimeImagen(file: File): Promise<Blob> {

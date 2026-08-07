@@ -26,7 +26,9 @@ export function BuscadorAlumnos({ value, onChange }: Readonly<Props>) {
       <input
         type="search"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          onChange(e.target.value);
+        }}
         placeholder="Buscar por nombre o acudiente"
         aria-label="Buscar por nombre o acudiente"
         style={{
@@ -45,7 +47,9 @@ export function BuscadorAlumnos({ value, onChange }: Readonly<Props>) {
       {value !== '' && (
         <button
           type="button"
-          onClick={() => onChange('')}
+          onClick={() => {
+            onChange('');
+          }}
           aria-label="Limpiar búsqueda"
           style={{
             position: 'absolute',

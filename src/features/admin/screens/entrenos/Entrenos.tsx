@@ -33,8 +33,8 @@ export function Entrenos({
 
   // "N sin planear · M sin lista": cada contador solo suma si es > 0.
   const resumenPendientes = [
-    pendientes.sinPlanear > 0 && `${pendientes.sinPlanear} sin planear`,
-    pendientes.sinLista > 0 && `${pendientes.sinLista} sin lista`,
+    pendientes.sinPlanear > 0 && `${String(pendientes.sinPlanear)} sin planear`,
+    pendientes.sinLista > 0 && `${String(pendientes.sinLista)} sin lista`,
   ]
     .filter(Boolean)
     .join(' · ');
@@ -75,7 +75,12 @@ export function Entrenos({
         />
       ) : (
         <>
-          <PlanCard plan={data.plan} onEditar={() => setSheetAbierto(true)} />
+          <PlanCard
+            plan={data.plan}
+            onEditar={() => {
+              setSheetAbierto(true);
+            }}
+          />
 
           {DIAS_ENTRENO.map((day) => (
             <DayCard
@@ -83,7 +88,9 @@ export function Entrenos({
               day={day}
               sesion={data.sesionDeDia(day)}
               roster={data.roster}
-              onOpen={() => onOpenSesion(semana.id, day)}
+              onOpen={() => {
+                onOpenSesion(semana.id, day);
+              }}
             />
           ))}
         </>
@@ -97,7 +104,9 @@ export function Entrenos({
             void data.guardarPlan(tema, objetivos);
             setSheetAbierto(false);
           }}
-          onClose={() => setSheetAbierto(false)}
+          onClose={() => {
+            setSheetAbierto(false);
+          }}
         />
       )}
     </div>

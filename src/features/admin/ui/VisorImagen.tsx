@@ -38,10 +38,13 @@ export function VisorImagen({ src, onClose }: Readonly<Props>) {
   useEffect(() => {
     const el = contRef.current;
     if (el === null) return;
-    const onWheelNative = (e: globalThis.WheelEvent): void =>
+    const onWheelNative = (e: globalThis.WheelEvent): void => {
       zpRef.current.onWheel(e as unknown as WheelEvent);
+    };
     el.addEventListener('wheel', onWheelNative, { passive: false });
-    return () => el.removeEventListener('wheel', onWheelNative);
+    return () => {
+      el.removeEventListener('wheel', onWheelNative);
+    };
   }, []);
 
   if (typeof document === 'undefined') return null;
@@ -112,7 +115,7 @@ export function VisorImagen({ src, onClose }: Readonly<Props>) {
             maxWidth: '94vw',
             maxHeight: '92vh',
             objectFit: 'contain',
-            transform: `translate(${zp.tx}px, ${zp.ty}px) scale(${zp.scale})`,
+            transform: `translate(${String(zp.tx)}px, ${String(zp.ty)}px) scale(${String(zp.scale)})`,
             transformOrigin: 'center',
             transition: 'transform .04s linear',
             userSelect: 'none',

@@ -20,7 +20,9 @@ export function WeekChips({ semanas, value, onChange }: Readonly<Props>) {
             <button
               key={w.id}
               type="button"
-              onClick={() => onChange(w.id)}
+              onClick={() => {
+                onChange(w.id);
+              }}
               aria-pressed={activa}
               style={{
                 flexShrink: 0,

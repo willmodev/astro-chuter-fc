@@ -54,7 +54,9 @@ export default function MobileMenu() {
                 <li key={href}>
                   <a
                     href={href}
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      setOpen(false);
+                    }}
                     className="hover:text-brand-navy focus-visible:outline-brand-gold flex items-center px-6 py-3 text-base font-medium text-neutral-700 transition-colors hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2"
                   >
                     {label}
@@ -69,7 +71,9 @@ export default function MobileMenu() {
               href={WA_HERO}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false);
+              }}
               className="bg-brand-gold hover:bg-brand-gold-deep focus-visible:outline-brand-gold flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-semibold text-neutral-900 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <MessageCircle size={16} strokeWidth={1.5} aria-hidden="true" />

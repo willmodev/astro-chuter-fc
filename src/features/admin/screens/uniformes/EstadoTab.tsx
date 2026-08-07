@@ -19,8 +19,9 @@ export function EstadoTab({ filas, onAbrir }: Readonly<Props>) {
 
   const conteos = conteosDe(filas);
   const ordenadas = ordenaPorPrioridad(filas);
-  const alternar = (estado: EstadoKit): void =>
+  const alternar = (estado: EstadoKit): void => {
     setFiltro((prev) => (prev === estado ? null : estado));
+  };
   const filtrada = filtro
     ? ordenadas.filter((f) => f.kit.estado === filtro)
     : ordenadas;
@@ -41,7 +42,7 @@ export function EstadoTab({ filas, onAbrir }: Readonly<Props>) {
         ) : (
           filtrada.map((f) => (
             <FilaEstado
-              key={`${f.alumnoId}-${f.kit.kit}`}
+              key={`${String(f.alumnoId)}-${f.kit.kit}`}
               fila={f}
               onAbrir={onAbrir}
             />

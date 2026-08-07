@@ -30,7 +30,7 @@ export async function cargaSesionDia(
   if (!s) return SIN_SESION;
   return {
     img: s.parteCentralUrl,
-    nota: s.parteCentralNota ?? '',
+    nota: s.parteCentralNota,
     ausentes: s.ausentes ?? [],
     listaExistente: s.ausentes !== null,
   };

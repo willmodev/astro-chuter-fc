@@ -90,13 +90,17 @@ export function KitCard({
         <Boton
           solido={!kit.entregado}
           label={kit.entregado ? 'Editar entrega' : 'Registrar entrega'}
-          onClick={() => setHoja('entrega')}
+          onClick={() => {
+            setHoja('entrega');
+          }}
         />
         <Boton
           solido={!pagado}
           disabled={pagado}
           label={pagado ? 'Pago completo' : 'Registrar abono'}
-          onClick={() => setHoja('abono')}
+          onClick={() => {
+            setHoja('abono');
+          }}
         />
       </div>
 
@@ -106,11 +110,19 @@ export function KitCard({
           numeroOcupadoEn={numeroOcupadoEn}
           onConfirmar={onEntrega}
           onAnular={onAnular}
-          onClose={() => setHoja(null)}
+          onClose={() => {
+            setHoja(null);
+          }}
         />
       )}
       {hoja === 'abono' && (
-        <HojaAbono kit={kit} onAbono={onAbono} onClose={() => setHoja(null)} />
+        <HojaAbono
+          kit={kit}
+          onAbono={onAbono}
+          onClose={() => {
+            setHoja(null);
+          }}
+        />
       )}
     </div>
   );

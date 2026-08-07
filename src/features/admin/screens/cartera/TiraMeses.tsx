@@ -42,7 +42,9 @@ export function TiraMeses({ states, onTocarMes }: Readonly<Props>) {
           <button
             key={mes}
             type="button"
-            onClick={() => onTocarMes(i)}
+            onClick={() => {
+              onTocarMes(i);
+            }}
             title={MONTHS_LONG[i] ?? mes}
             aria-label={`Registrar cobro de ${MONTHS_LONG[i] ?? mes}`}
             style={{ ...estilo, cursor: 'pointer' }}

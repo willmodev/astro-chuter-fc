@@ -6,9 +6,14 @@ import { adminAc, userAc } from 'better-auth/plugins/admin/access';
 import { db } from '@/lib/db/client';
 import * as schema from '@/lib/db/schema';
 
+// El optional chaining es real: los tipos de Astro declaran `import.meta.env`
+// siempre presente, pero scripts/*.mjs cargan este módulo desde Node puro,
+// donde no existe y hay que caer a `process.env`.
 const SECRET =
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ver nota de arriba
   import.meta.env?.BETTER_AUTH_SECRET ?? process.env.BETTER_AUTH_SECRET;
 const BASE_URL =
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ver nota de arriba
   import.meta.env?.BETTER_AUTH_URL ?? process.env.BETTER_AUTH_URL;
 
 const UNA_SEMANA_EN_SEGUNDOS = 60 * 60 * 24 * 7;

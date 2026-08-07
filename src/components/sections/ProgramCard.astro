@@ -68,13 +68,23 @@ const palette: Record<
 const c = palette[color];
 const waLink = waCategory(nombre);
 
-const iconMap = { Baby, Footprints, Goal, Target, Trophy, Medal, Award };
-const Icon = iconMap[icono as keyof typeof iconMap] ?? Trophy;
+// `icono` es un string libre del frontmatter: el mapa se indexa por string y el
+// fallback cubre cualquier nombre que no esté en el catálogo de iconos.
+const iconMap: Record<string, typeof Trophy | undefined> = {
+  Baby,
+  Footprints,
+  Goal,
+  Target,
+  Trophy,
+  Medal,
+  Award,
+};
+const Icon = iconMap[icono] ?? Trophy;
 ---
 
 <div
   class:list={['reveal card-tilt-3d h-full', className]}
-  style={`--idx:${idx}`}
+  style={`--idx:${String(idx)}`}
   data-tilt
 >
   <article

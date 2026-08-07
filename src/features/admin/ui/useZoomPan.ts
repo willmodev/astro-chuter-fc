@@ -53,6 +53,8 @@ export function useZoomPan(): ZoomPan {
     },
     ...creaGestosPuntero(ctx, alternarZoom),
     onWheel,
-    onDoubleClick: (e) => alternarZoom(e.clientX, e.clientY),
+    onDoubleClick: (e) => {
+      alternarZoom(e.clientX, e.clientY);
+    },
   };
 }

@@ -76,7 +76,9 @@ export function LoginField({
           required
           autoComplete={autoComplete}
           disabled={disabled}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            onChange(e.target.value);
+          }}
           style={{
             ...inputStyle,
             paddingRight: esPassword ? 46 : inputStyle.padding,
@@ -85,7 +87,9 @@ export function LoginField({
         {esPassword && (
           <button
             type="button"
-            onClick={() => setVisible((v) => !v)}
+            onClick={() => {
+              setVisible((v) => !v);
+            }}
             disabled={disabled}
             aria-label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             aria-pressed={visible}

@@ -45,7 +45,9 @@ export function ParteCentral({
       {img !== null && (
         <button
           type="button"
-          onClick={() => setVerVisor(true)}
+          onClick={() => {
+            setVerVisor(true);
+          }}
           aria-label="Ampliar la planeación"
           style={{
             padding: 0,
@@ -70,7 +72,12 @@ export function ParteCentral({
       )}
 
       {verVisor && img !== null && (
-        <VisorImagen src={img} onClose={() => setVerVisor(false)} />
+        <VisorImagen
+          src={img}
+          onClose={() => {
+            setVerVisor(false);
+          }}
+        />
       )}
 
       <label

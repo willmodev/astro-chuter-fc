@@ -92,7 +92,12 @@ export function Alumnos({ onOpenFicha }: Readonly<Props>) {
                   borderTop: i ? '1px solid var(--border-subtle)' : 'none',
                 }}
               >
-                <FilaAlumno alumno={a} onOpen={() => onOpenFicha(a.id)} />
+                <FilaAlumno
+                  alumno={a}
+                  onOpen={() => {
+                    onOpenFicha(a.id);
+                  }}
+                />
               </div>
             ))}
           </div>

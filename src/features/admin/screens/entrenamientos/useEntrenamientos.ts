@@ -41,7 +41,7 @@ export function useEntrenamientos(): EntrenamientosData {
   const recargar = useCallback(async () => {
     setEstado('cargando');
     const { data, error } = await actions.entrenos.listar({ semanaInicio });
-    if (error || data?.rol !== 'admin') {
+    if (error || data.rol !== 'admin') {
       setEstado('error');
       return;
     }

@@ -23,7 +23,7 @@ export function useEquipo(): UseEquipo {
   const recargar = useCallback(async () => {
     setEstado('cargando');
     const { data, error } = await actions.usuarios.listar();
-    if (error || !data) {
+    if (error) {
       setEstado('error');
       return;
     }

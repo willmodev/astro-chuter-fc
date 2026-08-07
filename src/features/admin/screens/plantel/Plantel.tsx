@@ -57,7 +57,12 @@ export function Plantel({ cats, onOpenFicha }: Readonly<Props>) {
                 borderTop: i ? '1px solid var(--border-subtle)' : 'none',
               }}
             >
-              <FilaPlantel alumno={a} onOpen={() => onOpenFicha(a.id)} />
+              <FilaPlantel
+                alumno={a}
+                onOpen={() => {
+                  onOpenFicha(a.id);
+                }}
+              />
             </div>
           ))}
         </div>

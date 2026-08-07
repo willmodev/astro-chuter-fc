@@ -45,10 +45,11 @@ export function useAsistenciaSesion(
 
   return {
     estaAusente: (id) => ausentes.includes(id),
-    marcar: (id, presente) =>
+    marcar: (id, presente) => {
       setAusentes((prev) =>
         presente ? prev.filter((x) => x !== id) : [...new Set([...prev, id])],
-      ),
+      );
+    },
     asistencia: asistenciaDe(ausentes, roster),
     listaExistente,
     guardarAsistencia,

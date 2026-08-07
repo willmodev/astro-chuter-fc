@@ -32,7 +32,7 @@ export function buildSportsActivityLocationJsonLd() {
       '@type': 'PostalAddress',
       streetAddress: `${LOCATION.venue}, ${LOCATION.neighborhood}`,
       addressLocality: LOCATION.city,
-      ...(LOCATION.region ? { addressRegion: LOCATION.region } : {}),
+      addressRegion: LOCATION.region,
       addressCountry: LOCATION.country,
     },
     openingHours: SCHEDULE.schemaOpeningHours,

@@ -1,4 +1,5 @@
-import { useState, type CSSProperties, type FormEvent } from 'react';
+// SubmitEvent de React (React 19 deprecó FormEvent); no es el SubmitEvent del DOM.
+import { useState, type CSSProperties, type SubmitEvent } from 'react';
 
 import { Sheet } from '../../chrome/Sheet';
 
@@ -30,7 +31,7 @@ export function ResetPasswordSheet({
   const [error, setError] = useState<string | null>(null);
   const [estado, setEstado] = useState<'idle' | 'enviando' | 'listo'>('idle');
 
-  async function onSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
+  async function onSubmit(e: SubmitEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     setEstado('enviando');
     setError(null);
@@ -90,7 +91,9 @@ export function ResetPasswordSheet({
               required
               minLength={8}
               autoComplete="off"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
               disabled={estado === 'enviando'}
             />
           </div>

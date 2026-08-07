@@ -10,7 +10,9 @@ export function ChipRetirados({ activo, onChange }: Readonly<Props>) {
   return (
     <button
       type="button"
-      onClick={() => onChange(!activo)}
+      onClick={() => {
+        onChange(!activo);
+      }}
       aria-pressed={activo}
       style={{
         flexShrink: 0,

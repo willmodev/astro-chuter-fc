@@ -32,7 +32,7 @@ export function useUniformeAlumno(alumnoId: number): UniformeAlumnoData {
   const recargar = useCallback(async () => {
     setEstado('cargando');
     const { data, error } = await actions.uniformes.listar();
-    if (error || !data || data.rol !== 'admin') {
+    if (error || data.rol !== 'admin') {
       setEstado('error');
       return;
     }

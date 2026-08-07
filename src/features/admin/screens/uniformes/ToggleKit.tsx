@@ -20,7 +20,9 @@ export function ToggleKit({ kit, onChange }: Readonly<Props>) {
           <button
             key={op.valor}
             type="button"
-            onClick={() => onChange(op.valor)}
+            onClick={() => {
+              onChange(op.valor);
+            }}
             aria-pressed={activo}
             style={{
               flex: 1,

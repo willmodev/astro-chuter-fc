@@ -111,7 +111,7 @@ export function parseFechaNacimiento(iso: string): Date | null {
 /** Date local → 'YYYY-MM-DD' (sin corrimiento de zona horaria). */
 export function formatearFechaISO(fecha: Date): string {
   const p = (x: number): string => String(x).padStart(2, '0');
-  return `${fecha.getFullYear()}-${p(fecha.getMonth() + 1)}-${p(fecha.getDate())}`;
+  return `${String(fecha.getFullYear())}-${p(fecha.getMonth() + 1)}-${p(fecha.getDate())}`;
 }
 
 interface AlumnoDocumento {

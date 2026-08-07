@@ -25,9 +25,15 @@ export function AutocompleteAcudiente({
       <span className="eyebrow">Acudiente</span>
       <input
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={() => setFoco(true)}
-        onBlur={() => setFoco(false)}
+        onChange={(e) => {
+          onChange(e.target.value);
+        }}
+        onFocus={() => {
+          setFoco(true);
+        }}
+        onBlur={() => {
+          setFoco(false);
+        }}
         placeholder="Nombre del acudiente"
         aria-invalid={error !== undefined}
         autoComplete="off"

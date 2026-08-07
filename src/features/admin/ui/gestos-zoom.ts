@@ -77,7 +77,9 @@ export function creaGestosPuntero(
   const r = ctx.refs;
 
   const onPointerDown = (e: PointerEvent): void => {
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    // `target` puede no ser un elemento (el tipo del DOM es `EventTarget`).
+    if (e.target instanceof HTMLElement)
+      e.target.setPointerCapture(e.pointerId);
     r.pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (r.pts.size === 2) {
       const [a, b] = [...r.pts.values()];

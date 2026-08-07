@@ -38,7 +38,9 @@ export function MatrizEstado({ conteos, filtro, onFiltrar }: Readonly<Props>) {
               estado={estado}
               conteo={conteos[estado]}
               activa={filtro === estado}
-              onClick={() => onFiltrar(estado)}
+              onClick={() => {
+                onFiltrar(estado);
+              }}
             />
           ))}
         </Fila>

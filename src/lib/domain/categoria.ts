@@ -28,11 +28,12 @@ export interface AlumnoParaCategoria {
 const SUB_MIN = Math.min(...CATEGORIAS.map((c) => c.sub));
 const SUB_MAX = Math.max(...CATEGORIAS.map((c) => c.sub));
 
-export const etiquetaDeSub = (sub: number): string => `SUB ${sub}`;
+export const etiquetaDeSub = (sub: number): string => `SUB ${String(sub)}`;
 
 // "SUB 8" cubre a los de 7 y 8. En SUB 4 caen además los más chicos, por el
 // clamp inferior (un niño de 3 es, literalmente, sub 4).
-const edadesDeSub = (sub: number): string => `${sub - 1} a ${sub} años`;
+const edadesDeSub = (sub: number): string =>
+  `${String(sub - 1)} a ${String(sub)} años`;
 
 function aCategoria(sub: number, nombre: string): Categoria {
   return {
