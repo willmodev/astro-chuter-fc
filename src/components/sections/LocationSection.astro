@@ -5,8 +5,11 @@ import SectionHeading from '@/components/layout/SectionHeading.astro';
 import StylizedMap from '@/components/sections/StylizedMap.astro';
 import { LOCATION, SCHEDULE, CONTACT } from '@/lib/site';
 
-const mapsQuery = encodeURIComponent(LOCATION.venue);
-const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+const mapsQuery = encodeURIComponent(
+  `${LOCATION.venue}, ${LOCATION.city}, ${LOCATION.region}`,
+);
+// Link corto que envió el club: apunta a la cancha exacta, no a una búsqueda.
+const googleMapsUrl = LOCATION.mapsUrl;
 const wazeUrl = `https://www.waze.com/ul?q=${mapsQuery}&navigate=yes`;
 ---
 
@@ -44,8 +47,15 @@ const wazeUrl = `https://www.waze.com/ul?q=${mapsQuery}&navigate=yes`;
             <div>
               <p class="text-sm font-semibold text-neutral-700">Cancha principal</p>
               <p class="text-base text-neutral-600">{LOCATION.venue}</p>
-              <p class="mt-1 text-sm text-neutral-500">También entrenamos en la {LOCATION.secondaryVenue.toLowerCase()}</p>
-              <!-- TODO: pedir a Camilo — dirección exacta y link de Google Maps -->
+              <p class="text-sm text-neutral-500">{LOCATION.city}, {LOCATION.region}</p>
+              <p class="mt-1 text-sm text-neutral-500">
+                También entrenamos en la {LOCATION.secondaryVenue.toLowerCase()} (<a
+                  href={LOCATION.secondaryMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="underline underline-offset-2 hover:text-brand-navy"
+                >ver en el mapa</a>)
+              </p>
             </div>
           </div>
 

@@ -29,10 +29,12 @@ export const CONTACT = {
 export const LOCATION = {
   venue: 'Cancha Los Algarrobillos',
   neighborhood: 'Los Algarrobillos',
+  mapsUrl: 'https://maps.app.goo.gl/yvHRJFxW7WCUhWJQ7',
   secondaryVenue: 'Cancha del 12 de Octubre',
   secondaryVenueShort: '12 de Octubre',
-  city: 'Colombia',
-  region: '',
+  secondaryMapsUrl: 'https://maps.app.goo.gl/24oxxbufXfMzXnwf9',
+  city: 'Valledupar',
+  region: 'Cesar',
   country: 'CO',
 } as const;
 
