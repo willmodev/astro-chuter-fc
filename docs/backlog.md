@@ -5,7 +5,7 @@
 > Stack: Astro + React (island) · Neon Postgres · Drizzle ORM · Better Auth · Astro Actions · Vercel.
 > Datos reales: `CHUTER FC 2026.xlsx` (local, **no versionado** por PII de menores). Esquema y reglas en `docs/excel-data-dictionary.md`.
 >
-> **Reconciliado con el código el 2026-07-24 (spec 14).** Cada ☑ cita el spec que la cerró. Lo único realmente pendiente: **HU-0.2** (ESLint/Prettier), **HU-7.1** (identidad del club en Más), **HU-7.2** (solo el toggle de montos), **HU-7.3**, **HU-7.4** y **HU-8.2**. HU-3.3 y HU-3.6 son `Won't` (obsoletas, no se harán) y HU-6.1/HU-6.2 quedaron obsoletas por el spec 09. Aparte de las HU, hay deuda técnica menor anotada en **Deuda técnica / observaciones abiertas** (final del archivo). Fuentes: **backlog** = qué falta · **specs/** = por qué se hizo así · **`docs/ARCHITECTURE.md`** = cómo está hecho hoy.
+> **Reconciliado con el código el 2026-08-07 (spec 16).** Cada ☑ cita el spec que la cerró. Lo único realmente pendiente: **HU-7.3** (gestionar tarifas/cuotas) y **HU-8.2** (exportar cartera). HU-3.3 y HU-3.6 son `Won't` (obsoletas, no se harán), HU-7.4 quedó `Won't` por el spec 15 y HU-6.1/HU-6.2 quedaron obsoletas por el spec 09. Aparte de las HU, hay deuda técnica menor anotada en **Deuda técnica / observaciones abiertas** (final del archivo). Fuentes: **backlog** = qué falta · **specs/** = por qué se hizo así · **`docs/ARCHITECTURE.md`** = cómo está hecho hoy.
 
 ## Roles
 
@@ -50,12 +50,12 @@ Como equipo técnico quiero habilitar render en servidor solo para `/admin` para
   - `npm run build` sigue listando las páginas de marketing como prerenderizadas.
 - **Hecho:** `adapter: vercel()` en `astro.config.mjs` sin `output: 'server'`; el marketing sigue prerenderizado en cada build.
 
-### HU-0.2 · Enforcement de código limpio — `Must` · ☐
+### HU-0.2 · Enforcement de código limpio — `Must` · ☑ (spec 16)
 
 Como equipo técnico quiero linters y scripts que hagan cumplir las reglas para mantener el código mantenible.
 
 - **Aceptación técnica:** `eslint.config.js` con `max-lines:200`, `complexity:10`, `no-explicit-any:error`, etc.; `.prettierrc`; scripts `lint`, `typecheck`, `check`. Ver `.claude/rules/coding-rules.md`.
-- **Estado real:** único enabler del EPIC 0 pendiente. Hoy las reglas se verifican a mano (`tsc --noEmit` + conteo de líneas por spec); falta instalar ESLint/Prettier y los scripts `lint`/`typecheck`/`check`.
+- **Hecho (spec 16):** `eslint.config.js`, `.prettierrc`, `.prettierignore`, `.gitattributes` (LF) y `.git-blame-ignore-revs` en la raíz; scripts `lint` (`eslint .`), `typecheck` (`astro check`), `format`/`format:check` (Prettier) y `check` (`astro check && eslint .`). **Alcance global** (todo `src/` y `scripts/`), calibrado **por regla y por tipo de archivo**, no scopeado por directorio: `max-lines-per-function` queda **desactivado en `.tsx`/`.astro`** (un componente es un árbol de markup; lo acotan `max-lines: 200` + `complexity: 10`). Fuera del linter: `src/components/ui/**` (generado por shadcn) y el material no versionado. Las 3 funciones `.ts` que pasaban de 60 líneas (`useZoomPan`, `useSesion`, `useAlumnoForm`) quedaron por debajo del límite. La decisión de alcance quedó escrita en `.claude/rules/coding-rules.md` §5 y en `docs/ARCHITECTURE.md` §9. Queda deuda medida: **DT-5** (promoción a `strictTypeChecked`).
 
 ### HU-0.3 · Layout y design system del admin — `Must` · ☑ (spec 03)
 
@@ -141,6 +141,7 @@ Como administrador quiero ver y buscar alumnos por nombre o acudiente para encon
   - Cada fila muestra avatar, nombre, categoría, acudiente y estado (al día / abono / en mora con # de meses).
   - Dado sin resultados, entonces veo un estado vacío "Sin resultados".
   - Un contador muestra "N alumnos" y "N en mora".
+- **Hecho (spec 16) — paginado incremental:** la lista renderiza una **ventana de 15 filas** que crece de a 15 al acercarse al final del scroll (`useListaIncremental` + `SentinelMostrarMas`, con botón real "Mostrar 15 más" operable por teclado). Aplica también a **Cartera** en sus dos vistas (Tarjetas y Matriz, HU-3.1/HU-3.2). Es paginado **de render, no de datos**: `alumnos.listar` sigue devolviendo la lista completa en una llamada, y los contadores y totales se siguen calculando sobre la **lista completa filtrada**, nunca sobre la ventana. Cambiar búsqueda, categoría, "Mostrar retirados" o segmento resetea la ventana; un refetch no. **No abrió HU nueva.** El paginado en servidor queda como deuda con disparador (**DT-3**).
 
 ### HU-2.2 · Filtrar por categoría — `Must` · Pantalla: Alumnos · ☑ (spec 05)
 
@@ -397,20 +398,20 @@ Como club queremos que planes, sesiones y asistencia sobrevivan a la recarga par
 
 ## EPIC 7 — Configuración / Más
 
-### HU-7.1 · Identidad y contacto del club — `Could` · Pantalla: Más · ☐
+### HU-7.1 · Identidad y contacto del club — `Could` · Pantalla: Más · ☑ (spec 16)
 
 Como administrador quiero ver la identidad y contacto del club en el panel para tenerlos a mano.
 
 - **Aceptación:** Tarjeta con logo + nombre; accesos a WhatsApp (300 872 5964 / @1chuter), sede (Cancha Los Algarrobillos, Valledupar · Cesar · INDER) y directores técnicos. **Todo se lee de `src/lib/site.ts`, nunca hardcodeado.** _(Corregido 2026-08-07: esta línea traía el teléfono `301 521 6830` y el nombre "Cancha de la Provincia", ninguno de los dos vigente.)_
-- **Estado real:** pendiente. Hoy "Más" solo muestra la sesión activa y los accesos (Equipo, Uniformes, Entrenamientos) + cerrar sesión.
+- **Hecho (spec 16):** `screens/mas/TarjetaClub.tsx` con logo + nombre legal y filas de WhatsApp (mensaje precargado vía `src/lib/whatsapp.ts`), sede (las dos canchas enlazadas a `LOCATION.mapsUrl` / `LOCATION.secondaryMapsUrl`), horario e Instagram, más los directores técnicos. **Ningún dato escrito a mano:** todo sale de `src/lib/site.ts`. La misma tarjeta la ven admin y entrenador; `InfoRow` se extrajo a `screens/mas/InfoRow.tsx` para no duplicarlo y el horario dejó de estar hardcodeado en `MasEntrenador.tsx`.
 
-### HU-7.2 · Apariencia persistida — `Should` · Pantalla: Cartera/Más · ◐
+### HU-7.2 · Apariencia persistida — `Should` · Pantalla: Cartera/Más · ☑ (spec 06 + spec 16)
 
 Como administrador quiero configurar la vista de cartera (tarjetas/matriz) y mostrar/ocultar montos, y que se recuerde.
 
 - **Aceptación:** Dado que cambio la preferencia, cuando regreso, entonces se mantiene (persistida en `localStorage`).
 - **Hecho (spec 06):** la vista Tarjetas/Matriz se recuerda en `localStorage` (`useVistaCartera`, R7.2).
-- **Pendiente:** el toggle de **mostrar/ocultar montos** no existe todavía.
+- **Hecho (spec 16):** toggle de **mostrar/ocultar montos** — interruptor "Mostrar montos" en "Más" (solo admin) y botón de ojo en la cabecera de Cartera, los dos sobre la misma preferencia (`chuter.admin.montosVisibles`, por defecto visible). Enmascara como `$•••` las superficies de **lectura** (Dashboard, Cartera y Ficha) y deja intactas las **transaccionales** (Registrar pago, abono de uniforme, aviso de hermano, recibo de WhatsApp). Es comodidad visual, **no** un control de seguridad: la barrera por rol sigue siendo del servidor y el entrenador no ve el interruptor. Los dos hooks corren sobre `usePreferenciaLocal` (`useSyncExternalStore`), con `useVistaCartera` reescrito encima **sin cambiar su firma**: queda un solo patrón de preferencia local en el repo.
 
 ### HU-7.3 · Gestionar tarifas/cuotas — `Could` · ☐
 
@@ -476,12 +477,37 @@ Como administrador quiero exportar la cartera a Excel/CSV para respaldos y conta
 - **Origen:** verificación del spec 14 (bloque F). Preexistente, no lo introdujo ese spec.
 - **Resolución:** corregido en `public/robots.txt`. `astro.config.mjs` ya tenía `site: 'https://chuterfc.com'`, así que el sitemap no requirió cambios (verificado en producción: `<loc>https://chuterfc.com/sitemap-0.xml</loc>`). De paso se limpiaron las referencias al dominio viejo en `README.md`, `docs/ARCHITECTURE.md` y `.claude/pendientes.md`.
 
-### DT-2 · El Dashboard no refresca tras retirar/reactivar — `Could` · ☐
+### DT-2 · El Dashboard no refresca tras retirar/reactivar — `Could` · ☑ RESUELTO (spec 16)
 
-Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboard conserva los KPIs cargados al montar: tras retirar a un alumno y volver a Inicio sigue mostrando el conteo y la cartera vencida anteriores hasta recargar la página.
+Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboard conservaba los KPIs cargados al montar: tras retirar a un alumno y volver a Inicio seguía mostrando el conteo y la cartera vencida anteriores hasta recargar la página.
 
-- **Aceptación:** al volver al Dashboard después de un cambio que afecta activos/cartera, los KPIs reflejan el estado actual sin recargar.
-- **Origen:** verificación del spec 14 (bloque F). Es el comportamiento que el spec 14 especificó (solo pidió refetch en lista y ficha); queda anotado por si molesta en uso real.
+- [x] **Aceptación:** al volver al Dashboard después de un cambio que afecta activos/cartera, los KPIs reflejan el estado actual sin recargar.
+- **Origen:** verificación del spec 14 (bloque F). Es el comportamiento que el spec 14 especificó (solo pidió refetch en lista y ficha); quedó anotado por si molestaba en uso real.
+- **Resolución (spec 16):** era ubicación del hook, no de datos — `useDashboardData()` vive en `AdminHome`, que nunca se desmonta, así que su carga corría una sola vez por sesión. `AdminHome` vuelve a llamar `recargar()` cuando la vista activa pasa a `dashboard`. **Sin parpadeo:** `recargar` no limpia `data`, así que los KPIs previos siguen en pantalla hasta que llegan los nuevos y el spinner solo aparece en la primera carga. Cubre todas las mutaciones (retiro, pago, uniforme, alta), no solo el retiro que originó la deuda. `useDashboardData` **no** se movió dentro de `<Dashboard>`: `AdminHome` usa `data.stats.morosos` para el badge de la campana del header.
+
+### DT-3 · `alumnoAdminPorId` construye toda la lista para devolver un alumno — `Should` · ☐
+
+`alumnoAdminPorId` (`src/lib/services/alumnos.ts`) llama a `construirAlumnos(hoy, true)` y arma **los 82 alumnos completos para devolver 1**: cada apertura de una Ficha paga el costo íntegro (3 queries full-table + el armado en memoria). El paginado de render del spec 16 **no lo arregla** — es una ventana de UI sobre una lista ya cargada, y esta ruta ni siquiera es una lista.
+
+- **Aceptación:** abrir una ficha consulta solo los datos de ese alumno, sin construir la lista completa.
+- **Disparador (paginado en servidor):** **más de 300 alumnos activos** o **más de 200 KB de payload** en `alumnos.listar`. Hoy son 82 activos y ~55 KB (≈10 KB gzip), así que no aplica.
+- **Alcance del futuro spec:** búsqueda en SQL, keyset por `nombre+id`, endpoint aparte de agregados (los contadores y totales hoy se calculan en cliente sobre la lista completa) y el arreglo de esta función. Es un cambio de contrato de datos, por eso no entró en el spec 16.
+- **Origen:** medición del spec 16 (decisión "paginado en cliente, no en servidor").
+
+### DT-4 · `Ficha.tsx` con prop `readOnly` no está montado en ningún lado — `Should` · ☐
+
+Existe un `Ficha.tsx` que acepta una prop `readOnly`, pero **ningún call site lo monta**: el entrenador usa `FichaPlantel`. Su `UniformeTab` **sí muestra saldo**, así que si alguien reconecta ese `Ficha` en modo readOnly para el entrenador, le filtra dinero — lo que el spec 09 prohíbe explícitamente (HU-6.9). Es código muerto que contradice una regla de negocio.
+
+- **Aceptación:** o el `Ficha` readOnly se borra, o se le quita todo dato de dinero y se documenta cuál es la ficha del entrenador.
+- **Origen:** riesgo identificado en el spec 16 (fuera de su alcance: no se reconecta ni se borra allí).
+
+### DT-5 · Promover ESLint de `recommendedTypeChecked` a `strictTypeChecked` — `Could` · ☐
+
+El spec 16 instaló ESLint con la regla de corte escrita: si `strictTypeChecked` dejaba más de ~40 hallazgos, se bajaba a `recommendedTypeChecked` y la promoción quedaba como deuda con el número medido.
+
+- **Medido (2026-08-07):** `strictTypeChecked` dejaba **563 hallazgos** contra un umbral escrito de ~40. Se cerró en **`recommendedTypeChecked`**.
+- **Aceptación:** `eslint.config.js` usa `strictTypeChecked` y `npm run lint` sale en verde.
+- **Origen:** Bloque A del spec 16.
 
 ---
 
@@ -493,7 +519,7 @@ Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboar
 - **R4 — Detección de hermano.** Por coincidencia de acudiente entre alumnos.
 - **R5 — Estados de cartera.** `paid` (pagado/verde), `due` (mora/rojo), `pending` (pendiente/gris), `na` (fuera de temporada). _(El estado `partial`/abono quedó `Won't` — decisión de Will en spec 05, 2026-07-05: un mes se cobra o no se cobra.)_
 - **R6 — Número de uniforme único por kit.** Avisar duplicados dentro del mismo kit (azul/dorado/oro).
-- **R7.2 — Preferencias de UI** (vista de cartera, mostrar montos) persistidas localmente.
+- **R7.2 — Preferencias de UI** (vista de cartera, mostrar montos) persistidas localmente en `localStorage`, con clave namespaced `chuter.admin.*` y lectura defensiva contra la lista de valores válidos: `chuter.admin.carteraVista` (`'tarjetas'` | `'matriz'`, por defecto `'tarjetas'`, spec 06) y `chuter.admin.montosVisibles` (`'si'` | `'no'`, por defecto `'si'`, spec 16).
 - **R8 — Formato de dinero COP** (`$45.000`, `$4.82M`, separador de miles con punto).
 - **R9 — Precio del uniforme y descuento de hermanos.** Uniforme **$100.000** COP; **$80.000** cada uno cuando son hermanos (detección por acudiente, R4). _(Aclaración del cliente, 2026-07-10.)_
 - **Marca:** verde WhatsApp `#25D366` reservado solo para cobros/recordatorios; sin emojis en la UI; "Infantil" siempre bien escrito (no replicar el typo del flyer).

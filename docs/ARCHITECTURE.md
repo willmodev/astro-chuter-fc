@@ -331,8 +331,22 @@ Se documentan en `.env.example`. Se provisionan en Vercel (integración Neon).
 
 ## 9. Verificación
 
-- `npm run typecheck` (`astro check`): 0 errores, 0 `any`.
-- `npm run lint`: reglas de `.claude/rules/coding-rules.md` en verde.
+Desde el spec 16 el enforcement es **real**, no aspiracional: en la raíz existen `eslint.config.js`, `.prettierrc`, `.prettierignore`, `.gitattributes` (`* text=auto eol=lf`) y `.git-blame-ignore-revs` (con el commit de la pasada global de Prettier).
+
+| Script                 | Comando                   | Qué hace                                      |
+| ---------------------- | ------------------------- | --------------------------------------------- |
+| `npm run lint`         | `eslint .`                | Reglas de `.claude/rules/coding-rules.md`.    |
+| `npm run typecheck`    | `astro check`             | 0 errores, 0 `any`.                           |
+| `npm run format`       | `prettier --write .`      | Formatea el repo.                             |
+| `npm run format:check` | `prettier --check .`      | Verifica formato, sin escribir.               |
+| `npm run check`        | `astro check && eslint .` | Puerta de calidad: falla si cualquiera falla. |
+
+> `check` **no** incluye `format:check` a propósito: el formato no bloquea la validación de tipos y reglas; se corre a mano con `npm run format`.
+
+**Alcance del linter (decidido con medición, spec 16):** **global** — todo `src/` y `scripts/` —, calibrado **por regla y por tipo de archivo**, no scopeado por directorio. Las dos reglas que definen el contrato del proyecto (`max-lines: 200` y `no-explicit-any`) tienen 0 violaciones en todo el repo, marketing incluido, así que aplicarlas globalmente cuesta cero. `max-lines-per-function: 60` rige en `.ts`/`.mjs` y está **desactivado en `.tsx`/`.astro`**: el cuerpo de un componente es un árbol de markup, no una función imperativa — con un componente por archivo, el tope real ya es `max-lines: 200`, y el guardián de "hace demasiado" es `complexity: 10`. Choca además con la decisión de §6 de conservar los estilos inline del prototipo.
+
+**Fuera del linter:** `src/components/ui/**` (generado por shadcn, `CLAUDE.md` dice no tocarlo manualmente) y el material **no versionado** (`references/`, el bundle del design system, `docs/comercial/`, `.playwright-cli/`) — ESLint no lee `.gitignore`, así que van explícitos en `ignores`.
+
 - `npm run build`: marketing prerenderizado; `/admin` + `/api` como funciones del adapter.
 - `npm run dev`: login → dashboard (Action) → registrar pago (celda cambia + recibo WhatsApp) → número de uniforme repetido (alerta) → logout.
 - Opcional: Playwright MCP contra el dev server.

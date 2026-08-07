@@ -40,13 +40,21 @@ Estas convenciones ya están en el repo (`src/lib/site.ts`, `src/components/inte
 | Regla                                | Valor           | Por qué                                                                    |
 | ------------------------------------ | --------------- | -------------------------------------------------------------------------- |
 | `max-lines`                          | **200** (error) | Ningún archivo crece más allá de su responsabilidad.                       |
-| `max-lines-per-function`             | **60**          | Funciones legibles de un vistazo.                                          |
+| `max-lines-per-function`             | **60**          | Funciones legibles de un vistazo. **Solo `.ts`/`.mjs`** (ver override).    |
 | `complexity`                         | **10**          | Evita ramificación excesiva.                                               |
 | `max-depth`                          | **3**           | Anidamiento plano.                                                         |
 | `max-params`                         | **4**           | Más parámetros → usar un objeto tipado.                                    |
 | `@typescript-eslint/no-explicit-any` | error           | Sin `any`.                                                                 |
 | `import-x/no-duplicates`             | error           | Sin imports duplicados.                                                    |
 | `import-x/order`                     | error           | Orden: externos → `@/` internos → relativos → tipos, con líneas en blanco. |
+
+**Override de `max-lines-per-function` en `.tsx` / `.astro` (spec 16):** desactivado. El
+cuerpo de un componente es un árbol de markup, no una función imperativa, y este repo
+conserva a propósito los estilos inline del prototipo (`ARCHITECTURE.md` §6), lo que infla
+el conteo sin agregar una sola rama de lógica. Con la convención de **un componente por
+archivo**, el tope real del componente ya es el `max-lines: 200` del archivo, y el guardián
+de "esta función hace demasiado" sigue siendo `complexity: 10`, que queda activo en todas
+partes. Medido: 34 de las 37 violaciones eran cuerpos JSX.
 
 Excepción: en `src/lib/db/schema/**` se desactiva `max-lines-per-function` (definiciones de tablas Drizzle).
 
@@ -77,98 +85,79 @@ Antes de crear código nuevo: **buscar si ya existe** una utilidad/función/patr
 
 ---
 
-## 5. Tooling para hacer cumplir las reglas (parcialmente instalado)
+## 5. Tooling para hacer cumplir las reglas (instalado)
 
-Estado actual (2026-07-30): **ya está** `@astrojs/check` y el script `npm run check` (= `astro check`, typecheck de `.ts`/`.tsx`/`.astro`). **Falta** `eslint`, `eslint.config.js` y `.prettierrc`: mientras no estén, los límites estructurales (200 líneas, complejidad, orden de imports) se revisan a mano. Versiones verificadas 2026-06.
+Estado actual (2026-08-07, spec 16): **instalado y en verde**. Los límites de la §2 ya no se
+revisan a mano.
 
-### Dependencias a instalar (dev)
+### Comandos
+
+| Comando                | Qué hace                                              |
+| ---------------------- | ----------------------------------------------------- |
+| `npm run lint`         | `eslint .`                                            |
+| `npm run typecheck`    | `astro check`                                         |
+| `npm run check`        | `astro check && eslint .` — falla si cualquiera falla |
+| `npm run format`       | `prettier --write .`                                  |
+| `npm run format:check` | `prettier --check .`                                  |
+
+`check` **no** incluye `format:check` a propósito: el formato no debe bloquear el mismo
+comando que valida tipos y reglas. Se corre a mano con `npm run format`.
+
+### Dependencias instaladas (dev), versiones verificadas 2026-08-07
 
 ```
-eslint@^10                 # ESLint v10 es la línea actual
-typescript-eslint@^8        # usar la versión que declare soporte para tu ESLint
-eslint-plugin-astro@^1.7    # parser + reglas para .astro (incluye astro-eslint-parser)
-@typescript-eslint/parser   # requerido por eslint-plugin-astro para TS en .astro
-eslint-plugin-import-x      # fork mantenido de eslint-plugin-import para flat config / ESLint 9+
-@astrojs/check              # ✅ ya instalado — habilita `npm run check` (typecheck)
+eslint@10.8.0
+@eslint/js@10.0.1
+typescript-eslint@8.66.0
+eslint-plugin-astro@3.1.0      # incluye astro-eslint-parser
+eslint-plugin-import-x@4.17.1  # fork mantenido de eslint-plugin-import para flat config
+globals                        # entorno Node de scripts/**
+@astrojs/check                 # typecheck
+prettier@3.8.3                 # con prettier-plugin-astro y prettier-plugin-tailwindcss
 ```
 
-Prettier ya está instalado (3.8.3) con `prettier-plugin-astro` y `prettier-plugin-tailwindcss`.
+Archivos de configuración en la raíz: `eslint.config.js`, `.prettierrc`, `.prettierignore`,
+`.gitattributes` (`* text=auto eol=lf`) y `.git-blame-ignore-revs`.
 
-### ESLint flat config (`eslint.config.js`) — esquema propuesto
+### Alcance del linter (decisión tomada — spec 16)
 
-```js
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import astro from 'eslint-plugin-astro';
-import importX from 'eslint-plugin-import-x';
+> Esta sección reemplaza la antigua _"Alcance del linter (decisión pendiente)"_, que proponía
+> scopear las reglas estructurales a `src/features/admin/**`. **Medido contra el código real,
+> la premisa estaba al revés** y la propuesta se descartó.
 
-export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked, // "todo tipado"
-  ...astro.configs.recommended, // configura astro-eslint-parser + TS en .astro
-  {
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-    plugins: { 'import-x': importX },
-    rules: {
-      'max-lines': [
-        'error',
-        { max: 200, skipBlankLines: true, skipComments: true },
-      ],
-      'max-lines-per-function': [
-        'error',
-        { max: 60, skipBlankLines: true, skipComments: true },
-      ],
-      complexity: ['error', 10],
-      'max-depth': ['error', 3],
-      'max-params': ['error', 4],
-      '@typescript-eslint/no-explicit-any': 'error',
-      'import-x/no-duplicates': 'error',
-      'import-x/order': ['error', { 'newlines-between': 'always' }],
-    },
-  },
-  {
-    files: ['src/lib/db/schema/**'],
-    rules: { 'max-lines-per-function': 'off' },
-  },
-);
-```
+**Alcance global** (todo `src/` y `scripts/`), **calibrado por regla y por tipo de archivo, no
+por directorio**:
 
-> Nota: `strictTypeChecked` requiere `parserOptions.projectService`. El type-aware en `.astro` tiene limitaciones conocidas; se aplica sobre todo a `.ts`/`.tsx`. Confirmar la combinación exacta de versiones ESLint/typescript-eslint al instalar.
+| Regla                                               | Alcance                      | Severidad  |
+| --------------------------------------------------- | ---------------------------- | ---------- |
+| `max-lines: 200` (skip blancos + comentarios)       | global                       | `error`    |
+| `@typescript-eslint/no-explicit-any`                | global                       | `error`    |
+| `complexity: 10` · `max-depth: 3` · `max-params: 4` | global                       | `error`    |
+| `import-x/no-duplicates` · `import-x/order`         | global                       | `error`    |
+| `max-lines-per-function: 60`                        | **solo `.ts` / `.mjs`**      | `error`    |
+| `max-lines-per-function`                            | **off en `.tsx` / `.astro`** | — (ver §2) |
 
-### Prettier (`.prettierrc`) — mínimo que coincide con el código actual
+Por qué global y no scopeado: las dos reglas que definen el contrato del proyecto
+(`max-lines: 200` y `no-explicit-any`) tienen **cero violaciones en todo el repo**, marketing
+incluido — aplicarlas globalmente cuesta cero. Y la única que mordía
+(`max-lines-per-function`) tenía **33 de sus 37 violaciones dentro del admin**: el scope
+propuesto habría metido en scope justo lo que dolía y dejado afuera lo que ya pasaba.
 
-```json
-{
-  "singleQuote": true,
-  "plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"]
-}
-```
+**Severidad de las reglas type-aware:** se usa `recommendedTypeChecked`, no
+`strictTypeChecked`. Medido el 2026-08-07, `strict` dejaba **563 hallazgos** sobre un umbral
+escrito de ~40. La promoción queda como deuda anotada en `docs/backlog.md`.
 
-> El resto (`semi: true`, `tabWidth: 2`, `trailingComma: 'all'`, `printWidth: 80`) ya son los **defaults de Prettier 3** y coinciden con el repo; solo se fuerza `singleQuote`.
+**Fuera del linter (`ignores`):** `src/components/ui/**` (generado por shadcn, "no tocar
+manualmente" según `CLAUDE.md`), más el material no versionado que ESLint barrería porque
+no lee `.gitignore`: `references/`, `admin-design-system-*/`, `docs/comercial/` y
+`.playwright-cli/`.
 
-### Scripts (`package.json`)
+### Pre-commit (opcional, aún no instalado)
 
-```json
-"lint": "eslint .",
-"typecheck": "astro check",
-"check": "astro check && eslint .",
-"db:generate": "drizzle-kit generate",
-"db:migrate": "drizzle-kit migrate",
-"db:seed": "node scripts/seed-from-excel.mjs"
-```
-
-### Pre-commit (opcional, recomendado)
-
-`husky` + `lint-staged`: en cada commit corre `eslint --fix` + `prettier --write` + `astro check` sobre los archivos staged. Alineado con la regla de `CLAUDE.md`: commits atómicos, nunca `git add .` masivo.
-
-### Alcance del linter (decisión pendiente)
-
-Las reglas estructurales (`max-lines`, etc.) están pensadas para el **código nuevo del admin**. El sitio de marketing existente podría tener violaciones (p.ej. `ContactForm.tsx`). Al instalar, decidir entre: (a) scopear las reglas estructurales a `src/features/admin/**`, `src/lib/**`, `src/actions/**`, o (b) aplicarlas globalmente y limpiar el marketing de forma incremental.
+`husky` + `lint-staged`. Sigue siendo opcional a propósito: meter un gate en cada commit
+antes de que la config lleve unas semanas rodada convierte cualquier falso positivo en un
+bloqueo. Lo mismo aplica a conectar ESLint al CI o al build de Vercel (hoy el deploy corre
+`astro build`, no `check`).
 
 ---
 

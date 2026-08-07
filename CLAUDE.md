@@ -348,13 +348,31 @@ Centralizar la lógica en `src/lib/whatsapp.ts` con una función helper.
 
 ---
 
+## Scripts de npm
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` · `npm run build` · `npm run preview` | Astro |
+| `npm run lint` | `eslint .` |
+| `npm run typecheck` | `astro check` |
+| `npm run check` | `astro check && eslint .` — **falla si cualquiera falla** |
+| `npm run format` | `prettier --write .` |
+| `npm run format:check` | `prettier --check .` |
+| `npm run db:generate` · `db:migrate` · `db:seed` · `db:seed:admin` | Drizzle y seeds |
+
+`check` no incluye `format:check` a propósito: el formato no bloquea, se corre a mano con
+`npm run format` (spec 16).
+
+---
+
 ## Flujo de trabajo con Claude Code
 
 1. **Antes de codear nada nuevo**, mostrarme un plan en chat.
 2. **Implementar en iteraciones pequeñas**, no todo de una.
 3. **Hacer commit después de cada sección importante** con `/commit`.
 4. **Probar visualmente** con `npm run dev` antes de avanzar.
-5. **Si algo falla**, NO insistir 5 veces con la misma estrategia — pausar y preguntarme.
+5. **Antes de cerrar**, `npm run check` en verde.
+6. **Si algo falla**, NO insistir 5 veces con la misma estrategia — pausar y preguntarme.
 
 ---
 
