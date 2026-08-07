@@ -48,12 +48,18 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@eslint/js": "^10.0.1",
     "drizzle-kit": "^0.31.10",
+    "eslint": "^10.8.0",
+    "eslint-plugin-astro": "^3.1.0",
+    "eslint-plugin-import-x": "^4.17.1",
     "exceljs": "^4.4.0",
+    "globals": "^17.9.0",
     "prettier": "^3.8.3",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "shadcn": "^4.6.0",
-    "tsx": "^4.23.0"
+    "tsx": "^4.23.0",
+    "typescript-eslint": "^8.66.0"
   }
 }
