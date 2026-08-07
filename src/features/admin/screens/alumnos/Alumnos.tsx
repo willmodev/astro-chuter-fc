@@ -10,6 +10,8 @@ import { estaEnMora } from '@/lib/domain/cartera';
 
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useAlumnos } from '../../hooks/useAlumnos';
+import { useListaIncremental } from '../../hooks/useListaIncremental';
+import { SentinelMostrarMas } from '../../ui/SentinelMostrarMas';
 
 import { BuscadorAlumnos } from './BuscadorAlumnos';
 import { ChipRetirados } from './ChipRetirados';
@@ -32,16 +34,22 @@ export function Alumnos({ onOpenFicha }: Readonly<Props>) {
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<string>(CATEGORIA_TODAS);
 
-  const visibles = useMemo(
+  const filtrados = useMemo(
     () => filtraAlumnos(alumnos, { query, cat }),
     [alumnos, query, cat],
   );
-  const activos = useMemo(() => soloActivos(visibles), [visibles]);
+  const activos = useMemo(() => soloActivos(filtrados), [filtrados]);
   const enMora = useMemo(() => activos.filter(estaEnMora).length, [activos]);
   const sinFecha = useMemo(() => sinFechaNacimiento(activos).length, [activos]);
 
+  // Ventana de render: `ResumenAlumnos` sigue contando la lista completa.
+  const { visibles, hayMas, mostrarMas, sentinelRef } = useListaIncremental(
+    filtrados,
+    `${query}|${cat}|${String(retirados)}`,
+  );
+
   if (estado !== 'listo') {
-    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+    return <EstadoCarga estado={estado} onReintentar={() => void recargar()} />;
   }
 
   return (
@@ -64,29 +72,38 @@ export function Alumnos({ onOpenFicha }: Readonly<Props>) {
         <ChipRetirados activo={retirados} onChange={setRetirados} />
       </div>
 
-      {visibles.length === 0 ? (
+      {filtrados.length === 0 ? (
         <SinResultados />
       ) : (
-        <div
-          style={{
-            background: 'var(--surface-card)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-lg)',
-            overflow: 'hidden',
-            boxShadow: 'var(--shadow-sm)',
-          }}
-        >
-          {visibles.map((a, i) => (
-            <div
-              key={a.id}
-              style={{
-                borderTop: i ? '1px solid var(--border-subtle)' : 'none',
-              }}
-            >
-              <FilaAlumno alumno={a} onOpen={() => onOpenFicha(a.id)} />
-            </div>
-          ))}
-        </div>
+        <>
+          <div
+            style={{
+              background: 'var(--surface-card)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-lg)',
+              overflow: 'hidden',
+              boxShadow: 'var(--shadow-sm)',
+            }}
+          >
+            {visibles.map((a, i) => (
+              <div
+                key={a.id}
+                style={{
+                  borderTop: i ? '1px solid var(--border-subtle)' : 'none',
+                }}
+              >
+                <FilaAlumno alumno={a} onOpen={() => onOpenFicha(a.id)} />
+              </div>
+            ))}
+          </div>
+          <SentinelMostrarMas
+            sentinelRef={sentinelRef}
+            hayMas={hayMas}
+            visibles={visibles.length}
+            total={filtrados.length}
+            onMostrarMas={mostrarMas}
+          />
+        </>
       )}
     </div>
   );

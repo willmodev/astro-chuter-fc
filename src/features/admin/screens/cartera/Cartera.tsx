@@ -4,8 +4,11 @@ import { carteraVencida, estaEnMora, recaudoAnio } from '@/lib/domain/cartera';
 
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useAlumnos } from '../../hooks/useAlumnos';
+import { useListaIncremental } from '../../hooks/useListaIncremental';
 import { useVistaCartera } from '../../hooks/useVistaCartera';
+import { SentinelMostrarMas } from '../../ui/SentinelMostrarMas';
 
+import { BotonMontos } from './BotonMontos';
 import { CabeceraTotales } from './CabeceraTotales';
 import { EstadoVacioCartera } from './EstadoVacioCartera';
 import { MatrizCartera } from './MatrizCartera';
@@ -28,10 +31,17 @@ export function Cartera({ onCobrarMes }: Readonly<Props>) {
   const [segmento, setSegmento] = useState<SegmentoCartera>('todos');
 
   const enMora = useMemo(() => activos.filter(estaEnMora), [activos]);
-  const visibles = segmento === 'mora' ? enMora : activos;
+  const filtrados = segmento === 'mora' ? enMora : activos;
+
+  // Ventana de render: los totales y el segmento siguen midiendo la
+  // lista completa, nunca `visibles`.
+  const { visibles, hayMas, mostrarMas, sentinelRef } = useListaIncremental(
+    filtrados,
+    `${segmento}|${vista}`,
+  );
 
   if (estado !== 'listo') {
-    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+    return <EstadoCarga estado={estado} onReintentar={() => void recargar()} />;
   }
 
   return (
@@ -40,7 +50,18 @@ export function Cartera({ onCobrarMes }: Readonly<Props>) {
         recaudoAnio={recaudoAnio(alumnos)}
         carteraVencida={carteraVencida(activos)}
       />
-      <ToggleVista vista={vista} onChange={setVista} />
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+        }}
+      >
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <ToggleVista vista={vista} onChange={setVista} />
+        </div>
+        <BotonMontos />
+      </div>
       <SegmentoFiltro
         segmento={segmento}
         onChange={setSegmento}
@@ -48,20 +69,31 @@ export function Cartera({ onCobrarMes }: Readonly<Props>) {
         enMora={enMora.length}
       />
 
-      {visibles.length === 0 ? (
+      {filtrados.length === 0 ? (
         <EstadoVacioCartera />
-      ) : vista === 'tarjetas' ? (
-        <div style={{ display: 'grid', gap: 10 }}>
-          {visibles.map((a) => (
-            <TarjetaAlumno
-              key={a.id}
-              alumno={a}
-              onCobrarMes={(mes) => onCobrarMes(a.id, mes)}
-            />
-          ))}
-        </div>
       ) : (
-        <MatrizCartera alumnos={visibles} onCobrarMes={onCobrarMes} />
+        <>
+          {vista === 'tarjetas' ? (
+            <div style={{ display: 'grid', gap: 10 }}>
+              {visibles.map((a) => (
+                <TarjetaAlumno
+                  key={a.id}
+                  alumno={a}
+                  onCobrarMes={(mes) => onCobrarMes(a.id, mes)}
+                />
+              ))}
+            </div>
+          ) : (
+            <MatrizCartera alumnos={visibles} onCobrarMes={onCobrarMes} />
+          )}
+          <SentinelMostrarMas
+            sentinelRef={sentinelRef}
+            hayMas={hayMas}
+            visibles={visibles.length}
+            total={filtrados.length}
+            onMostrarMas={mostrarMas}
+          />
+        </>
       )}
     </div>
   );
