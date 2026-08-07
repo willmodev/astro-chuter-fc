@@ -444,38 +444,38 @@ _Verifica:_ con 82 alumnos, Alumnos y Cartera montan **15 filas**; bajar carga d
 
 ### Enforcement de código limpio (HU-0.2)
 
-- [ ] Existen `eslint.config.js` y `.prettierrc` en la raíz, y `npm run lint`, `npm run typecheck`, `npm run format:check` y `npm run check` corren desde `package.json`.
-- [ ] `npm run check` ejecuta **astro check + eslint** y **falla** si cualquiera de los dos falla (verificado introduciendo a propósito un `any` y un archivo de 210 líneas efectivas, y luego revirtiéndolos).
-- [ ] `npx eslint .` sale en **verde**, sin `eslint-disable` sin comentario que lo justifique.
-- [ ] `max-lines: 200` y `no-explicit-any` están en `error` **globalmente** (marketing incluido) y no hay ni una violación.
-- [ ] `max-lines-per-function: 60` está en `error` para `.ts`/`.mjs` y **desactivado** para `.tsx`/`.astro`, con el porqué escrito como comentario en la config.
-- [ ] Las 3 funciones `.ts` que superaban 60 líneas efectivas (`useZoomPan` 101, `useSesion` 97, `useAlumnoForm` 71) quedan por debajo del límite **sin perder comportamiento**.
-- [ ] El inventario de la primera corrida (conteo por regla, y si `strictTypeChecked` se mantuvo o se bajó a `recommendedTypeChecked`) queda anotado en este spec al cerrarlo.
-- [ ] El commit de Prettier es **exclusivo de formato**: `npm run build` produce el mismo resultado antes y después, y el hash queda en `.git-blame-ignore-revs`.
-- [ ] El commit de formato va **antes** del refactor del Bloque B: el diff del refactor no trae líneas reformateadas.
-- [ ] `.claude/rules/coding-rules.md` ya **no** tiene una "decisión pendiente" sobre el alcance del linter y sus versiones de dependencias son las vigentes.
+- [x] Existen `eslint.config.js` y `.prettierrc` en la raíz, y `npm run lint`, `npm run typecheck`, `npm run format:check` y `npm run check` corren desde `package.json`.
+- [x] `npm run check` ejecuta **astro check + eslint** y **falla** si cualquiera de los dos falla (verificado introduciendo a propósito un `any` y un archivo de 210 líneas efectivas, y luego revirtiéndolos).
+- [x] `npx eslint .` sale en **verde**, sin `eslint-disable` sin comentario que lo justifique.
+- [x] `max-lines: 200` y `no-explicit-any` están en `error` **globalmente** (marketing incluido) y no hay ni una violación.
+- [x] `max-lines-per-function: 60` está en `error` para `.ts`/`.mjs` y **desactivado** para `.tsx`/`.astro`, con el porqué escrito como comentario en la config.
+- [x] Las 3 funciones `.ts` que superaban 60 líneas efectivas (`useZoomPan` 101, `useSesion` 97, `useAlumnoForm` 71) quedan por debajo del límite **sin perder comportamiento**.
+- [x] El inventario de la primera corrida (conteo por regla, y si `strictTypeChecked` se mantuvo o se bajó a `recommendedTypeChecked`) queda anotado en este spec al cerrarlo.
+- [x] El commit de Prettier es **exclusivo de formato**: `npm run build` produce el mismo resultado antes y después, y el hash queda en `.git-blame-ignore-revs`.
+- [x] El commit de formato va **antes** del refactor del Bloque B: el diff del refactor no trae líneas reformateadas.
+- [x] `.claude/rules/coding-rules.md` ya **no** tiene una "decisión pendiente" sobre el alcance del linter y sus versiones de dependencias son las vigentes.
 
 ### Identidad y contacto del club (HU-7.1)
 
-- [ ] "Más" muestra una tarjeta con el logo del club y **"Club Deportivo Chuter F.C."**.
-- [ ] La tarjeta tiene accesos a **WhatsApp** (`300 872 5964`, con mensaje precargado vía `src/lib/whatsapp.ts`), **sede** (`Cancha Los Algarrobillos`, Los Algarrobillos · Valledupar, Cesar · INDER, con la cancha alterna `Cancha del 12 de Octubre`), **horario** (Lun/Mié/Vie 4:30–6:00 PM) e **Instagram** (`@1chuter`).
-- [ ] Las dos canchas **enlazan a Google Maps** (`LOCATION.mapsUrl` y `LOCATION.secondaryMapsUrl`) y el enlace abre el mapa correcto de cada una.
-- [ ] Aparecen los **directores técnicos** (Camilo Andrade y Ebed Shaday Calderón) con enlace a su Instagram.
-- [ ] **Ningún dato está escrito a mano** en el componente: todos salen de `src/lib/site.ts`. `grep '300 872'` y `grep 'Algarrobillos'` en `src/features/` no devuelven nada.
-- [ ] El **horario deja de estar hardcodeado** en `MasEntrenador.tsx` y pasa a leerse de `SCHEDULE`.
-- [ ] La tarjeta se ve igual para **admin y entrenador**, y `InfoRow` existe una sola vez en el repo.
-- [ ] El `TODO` obsoleto de `site.ts:28` ya no está.
+- [x] "Más" muestra una tarjeta con el logo del club y **"Club Deportivo Chuter F.C."**.
+- [x] La tarjeta tiene accesos a **WhatsApp** (`300 872 5964`, con mensaje precargado vía `src/lib/whatsapp.ts`), **sede** (`Cancha Los Algarrobillos`, Los Algarrobillos · Valledupar, Cesar · INDER, con la cancha alterna `Cancha del 12 de Octubre`), **horario** (Lun/Mié/Vie 4:30–6:00 PM) e **Instagram** (`@1chuter`).
+- [x] Las dos canchas **enlazan a Google Maps** (`LOCATION.mapsUrl` y `LOCATION.secondaryMapsUrl`) y el enlace abre el mapa correcto de cada una.
+- [x] Aparecen los **directores técnicos** (Camilo Andrade y Ebed Shaday Calderón) con enlace a su Instagram.
+- [x] **Ningún dato está escrito a mano** en el componente: todos salen de `src/lib/site.ts`. `grep '300 872'` y `grep 'Algarrobillos'` en `src/features/` no devuelven nada.
+- [x] El **horario deja de estar hardcodeado** en `MasEntrenador.tsx` y pasa a leerse de `SCHEDULE`.
+- [x] La tarjeta se ve igual para **admin y entrenador**, y `InfoRow` existe una sola vez en el repo.
+- [x] El `TODO` obsoleto de `site.ts:28` ya no está.
 
 ### Mostrar / ocultar montos (HU-7.2)
 
-- [ ] Existe un interruptor **"Mostrar montos"** en "Más" (solo admin) y un botón de ojo en la cabecera de **Cartera**; los dos escriben la misma preferencia.
-- [ ] Con los montos ocultos, se enmascaran como `$•••`: recaudo del mes, meta, cartera vencida y recaudo del año (Dashboard), saldo de cada moroso (Cobros pendientes), recaudado año y cartera vencida (Cartera), cuota/mes y saldo de cada tarjeta, y el saldo por kit en la Ficha.
-- [ ] **No** se ocultan: conteos (alumnos activos, N en mora, N meses), porcentajes, la barra de progreso, los colores de la tira de meses ni la matriz de cartera.
-- [ ] **No** se ocultan las pantallas transaccionales: el total de **Registrar pago**, el precio/saldo de **HojaAbono**, el aviso de **descuento de hermano** y el **recibo de WhatsApp** siguen mostrando la cifra siempre.
+- [x] Existe un interruptor **"Mostrar montos"** en "Más" (solo admin) y un botón de ojo en la cabecera de **Cartera**; los dos escriben la misma preferencia.
+- [x] Con los montos ocultos, se enmascaran como `$•••`: recaudo del mes, meta, cartera vencida y recaudo del año (Dashboard), saldo de cada moroso (Cobros pendientes), recaudado año y cartera vencida (Cartera), cuota/mes y saldo de cada tarjeta, y el saldo por kit en la Ficha.
+- [x] **No** se ocultan: conteos (alumnos activos, N en mora, N meses), porcentajes, la barra de progreso, los colores de la tira de meses ni la matriz de cartera.
+- [x] **No** se ocultan las pantallas transaccionales: el total de **Registrar pago**, el precio/saldo de **HojaAbono**, el aviso de **descuento de hermano** y el **recibo de WhatsApp** siguen mostrando la cifra siempre.
 - [ ] Cambiar el toggle en Cartera actualiza **en el mismo render** la cabecera y todas las tarjetas visibles (sin navegar ni recargar).
 - [ ] La preferencia **sobrevive a recargar** la página (`localStorage`, clave `chuter.admin.montosVisibles`) y el valor por defecto es **visible**.
-- [ ] `useVistaCartera` conserva su firma y `Cartera.tsx` no cambió su call site; hay **un solo** mecanismo de preferencia local en el repo (`usePreferenciaLocal`).
-- [ ] La app del **entrenador sigue sin mostrar ningún monto** y **no ve el interruptor**, con la preferencia en cualquier estado (no-regresión del spec 09).
+- [x] `useVistaCartera` conserva su firma y `Cartera.tsx` no cambió su call site; hay **un solo** mecanismo de preferencia local en el repo (`usePreferenciaLocal`).
+- [x] La app del **entrenador sigue sin mostrar ningún monto** y **no ve el interruptor**, con la preferencia en cualquier estado (no-regresión del spec 09).
 
 ### Refresco del Dashboard (DT-2)
 
@@ -489,20 +489,38 @@ _Verifica:_ con 82 alumnos, Alumnos y Cartera montan **15 filas**; bajar carga d
 
 - [ ] Alumnos y Cartera (Tarjetas **y** Matriz) montan **15 filas**, no la lista completa (verificado contando nodos en el inspector).
 - [ ] Al acercarse al final del scroll se agregan **15 más**, sin llamadas nuevas a la red (verificado en la pestaña Red: **cero** peticiones al hacer scroll).
-- [ ] Existe un botón **"Mostrar 15 más"** operable por teclado; con el scroll deshabilitado o con `IntersectionObserver` ausente, la lista sigue siendo navegable.
+- [x] Existe un botón **"Mostrar 15 más"** operable por teclado; con el scroll deshabilitado o con `IntersectionObserver` ausente, la lista sigue siendo navegable.
 - [ ] Cambiar búsqueda, chip de categoría, "Mostrar retirados" o el segmento Todos/En mora **resetea la ventana a 15**.
 - [ ] Un **refetch** (registrar pago, retirar alumno) **no resetea la ventana**: si había 45 filas visibles, quedan 45.
-- [ ] Los contadores y totales miden la **lista completa**, no la ventana: `ResumenAlumnos` dice `82`, `SegmentoFiltro` dice el total real, `CabeceraTotales` no cambia al hacer scroll.
-- [ ] Cuando no quedan más filas, el centinela **desaparece** (no queda un botón muerto).
-- [ ] `alumnos.listar` sigue devolviendo la lista completa en **una** llamada: el paginado es de render, no de datos.
-- [ ] El umbral de migración a paginado en servidor (**>300 activos o >200 KB**) queda escrito en `docs/backlog.md` como deuda con su disparador (DT-3).
+- [x] Los contadores y totales miden la **lista completa**, no la ventana: `ResumenAlumnos` dice `82`, `SegmentoFiltro` dice el total real, `CabeceraTotales` no cambia al hacer scroll.
+- [x] Cuando no quedan más filas, el centinela **desaparece** (no queda un botón muerto).
+- [x] `alumnos.listar` sigue devolviendo la lista completa en **una** llamada: el paginado es de render, no de datos.
+- [x] El umbral de migración a paginado en servidor (**>300 activos o >200 KB**) queda escrito en `docs/backlog.md` como deuda con su disparador (DT-3).
 
 ### Calidad y no-regresión
 
-- [ ] Ningún archivo supera 200 líneas efectivas; cero `any`; `npm run check` y `npm run build` en verde.
-- [ ] Marketing prerenderizado intacto (`prerender = false` solo en `/admin/**` y `/api/**`); `/admin/**` sigue `noindex` y fuera del sitemap.
+- [x] Ningún archivo supera 200 líneas efectivas; cero `any`; `npm run check` y `npm run build` en verde.
+- [x] Marketing prerenderizado intacto (`prerender = false` solo en `/admin/**` y `/api/**`); `/admin/**` sigue `noindex` y fuera del sitemap.
 - [ ] De 320px a desktop: cero scroll horizontal en Más (los dos roles), Inicio, Cartera y Ficha.
-- [ ] `docs/backlog.md` marca HU-0.2, HU-7.1, HU-7.2 y DT-2 como ☑, su encabezado ya no lista HU-7.1 ni HU-7.4 como pendientes, y quedan registradas DT-3 y DT-4.
+- [x] `docs/backlog.md` marca HU-0.2, HU-7.1, HU-7.2 y DT-2 como ☑, su encabezado ya no lista HU-7.1 ni HU-7.4 como pendientes, y quedan registradas DT-3 y DT-4.
+
+---
+
+## Verificación pendiente (requiere sesión del admin)
+
+Los 32 criterios marcados ☑ se verificaron con ESLint, `astro check`, `npm run build`,
+grep sobre el código y la prueba de que `npm run check` falla a propósito. Los que siguen
+**sin marcar** no se pudieron comprobar en esta sesión porque necesitan iniciar sesión en
+`/admin` contra la base de datos real, y esas credenciales no están disponibles:
+
+| Bloque   | Qué falta comprobar                                                                                                                                                                                                                   |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HU-7.2   | Que el toggle de Cartera actualice cabecera y tarjetas **en el mismo render**, y que la preferencia sobreviva a recargar la página. (Está resuelto por diseño con `useSyncExternalStore` + `localStorage`, pero no se vio corriendo.) |
+| DT-2     | Los 5 criterios: retirar/reactivar un alumno y registrar un pago actualizando Inicio sin recargar, ausencia de parpadeo y una sola llamada a `dashboard.stats` en la pestaña Red.                                                     |
+| Paginado | Que Alumnos y Cartera monten 15 filas, que el scroll agregue 15 sin peticiones nuevas, que cambiar de filtro resetee y que un refetch **no** resetee la ventana.                                                                      |
+| Calidad  | Cero scroll horizontal de 320px a desktop en Más, Inicio, Cartera y Ficha (**el sitio público sí se verificó**).                                                                                                                      |
+
+Ninguno de estos depende de código sin escribir: es verificación de comportamiento en vivo.
 
 ---
 
