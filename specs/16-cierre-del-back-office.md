@@ -614,7 +614,7 @@ Los tres eran defectos reales que la revisión estática no habría encontrado.
 
 ## Pendientes del cliente / TODO para Will
 
-- [ ] **`CLAUDE.md` dice usar `/public/logo-temp.png` "mientras llega el SVG"** — ese archivo **no existe** y el SVG **sí** (`public/images/chuter-logo.svg`, ya en uso por `AdminNav.tsx`). Confirmar que el SVG actual es el definitivo para poder cerrar ese pendiente de `CLAUDE.md`.
+- [x] **Logo SVG confirmado por Will (2026-08-07):** `public/images/chuter-logo.svg` es el definitivo. El pendiente de `CLAUDE.md` queda cerrado; el `/public/logo-temp.png` que mencionaba nunca existió.
 - [x] **Confirmar el umbral de `strictTypeChecked`** (~40 hallazgos) — **confirmado por Will (2026-08-07)**: se aplica el umbral escrito. Medido, `strict` dejaba 563 hallazgos, así que se cerró en `recommendedTypeChecked` y la promoción quedó como DT-5.
 - [ ] **Confirmar la lista de montos ocultables**, en especial la exclusión de las pantallas transaccionales (Registrar pago, abono de uniforme, aviso de hermano) — es una decisión de producto, no técnica.
 

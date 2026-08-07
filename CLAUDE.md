@@ -350,15 +350,15 @@ Centralizar la lógica en `src/lib/whatsapp.ts` con una función helper.
 
 ## Scripts de npm
 
-| Comando | Qué hace |
-|---|---|
-| `npm run dev` · `npm run build` · `npm run preview` | Astro |
-| `npm run lint` | `eslint .` |
-| `npm run typecheck` | `astro check` |
-| `npm run check` | `astro check && eslint .` — **falla si cualquiera falla** |
-| `npm run format` | `prettier --write .` |
-| `npm run format:check` | `prettier --check .` |
-| `npm run db:generate` · `db:migrate` · `db:seed` · `db:seed:admin` | Drizzle y seeds |
+| Comando                                                            | Qué hace                                                  |
+| ------------------------------------------------------------------ | --------------------------------------------------------- |
+| `npm run dev` · `npm run build` · `npm run preview`                | Astro                                                     |
+| `npm run lint`                                                     | `eslint .`                                                |
+| `npm run typecheck`                                                | `astro check`                                             |
+| `npm run check`                                                    | `astro check && eslint .` — **falla si cualquiera falla** |
+| `npm run format`                                                   | `prettier --write .`                                      |
+| `npm run format:check`                                             | `prettier --check .`                                      |
+| `npm run db:generate` · `db:migrate` · `db:seed` · `db:seed:admin` | Drizzle y seeds                                           |
 
 `check` no incluye `format:check` a propósito: el formato no bloquea, se corre a mano con
 `npm run format` (spec 16).
@@ -380,7 +380,7 @@ Centralizar la lógica en `src/lib/whatsapp.ts` con una función helper.
 
 Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar como placeholders:
 
-- [ ] Logo SVG en alta calidad (mientras tanto usar el PNG en `/public/logo-temp.png`)
+- [x] Logo SVG confirmado (Will, 2026-08-07): **`public/images/chuter-logo.svg` es el definitivo**. Ya lo usan `AdminNav` y la tarjeta del club. El `/public/logo-temp.png` que mencionaba este pendiente nunca existió.
 - [x] Costos confirmados (cliente, 2026-07-10): mensualidad **$50.000 COP/jugador sin descuento por hermanos**; uniforme **$100.000 COP** ($80.000 c/u si son hermanos); inscripción gratis. El descuento de hermanos es del **uniforme**, no de la mensualidad.
 - [x] Ubicación confirmada (cliente, 2026-08-07): **Valledupar, Cesar**, con link de Maps propio para cada una de las dos canchas en `LOCATION.mapsUrl` y `LOCATION.secondaryMapsUrl`
 - [x] Costos en el sitio público: **no se publican** (cliente, 2026-08-07). Siguen solo en el admin
