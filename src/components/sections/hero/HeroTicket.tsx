@@ -57,7 +57,7 @@ function TicketInner({ avalLabel = "INDER" }: Props) {
 
                 <dl className="mt-5 grid grid-cols-3 gap-2 border-t border-dashed border-brand-navy/25 pt-4 text-center">
                     <div>
-                        <dt className="text-[0.65rem] uppercase tracking-wider text-brand-navy/60">
+                        <dt className="text-[0.65rem] uppercase tracking-wider text-brand-navy/75">
                             Categorías
                         </dt>
                         <dd className="font-display text-2xl leading-none text-brand-navy-deep">
@@ -65,7 +65,7 @@ function TicketInner({ avalLabel = "INDER" }: Props) {
                         </dd>
                     </div>
                     <div className="border-x border-dashed border-brand-navy/25">
-                        <dt className="text-[0.65rem] uppercase tracking-wider text-brand-navy/60">
+                        <dt className="text-[0.65rem] uppercase tracking-wider text-brand-navy/75">
                             Edades
                         </dt>
                         <dd className="font-display text-2xl leading-none text-brand-navy-deep">
@@ -73,7 +73,7 @@ function TicketInner({ avalLabel = "INDER" }: Props) {
                         </dd>
                     </div>
                     <div>
-                        <dt className="text-[0.65rem] uppercase tracking-wider text-brand-navy/60">
+                        <dt className="text-[0.65rem] uppercase tracking-wider text-brand-navy/75">
                             x Semana
                         </dt>
                         <dd className="font-display text-2xl leading-none text-brand-navy-deep">

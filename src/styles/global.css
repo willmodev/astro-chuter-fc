@@ -14,10 +14,13 @@
     --color-brand-blue: #4A90E2;
     --color-brand-gold: #F5C842;
     --color-brand-gold-deep: #D4A82A;
+    /* Gold legible como TEXTO sobre fondos claros (AA 4.5:1 sobre blanco).
+       El gold de marca solo se usa sobre navy o como fondo. */
+    --color-brand-gold-ink: #8C6D0A;
     --color-brand-cream: #FBF6E4;
     --color-brand-cream-deep: #F2EAC7;
     --color-brand-field: #2D6A3E;
-    --color-brand-clay: #C44B2C;
+    --color-brand-clay: #BE4526;
 
     --color-neutral-950: #0A0F1A;
     --color-neutral-900: #0F1B2D;
