@@ -4,6 +4,7 @@ import { z } from 'astro/zod';
 import { comoAccion } from '@/actions/_errores';
 import { requireAdmin, requireUser } from '@/actions/_guard';
 import {
+  alumnoAdminPorId,
   cambiarActivoAlumno,
   crearAlumno,
   editarAlumno,
@@ -41,6 +42,16 @@ export const listar = defineAction({
       rol: 'entrenador' as const,
       alumnos: await listarPlantel(user.cats ?? [], hoy),
     };
+  },
+});
+
+// Ficha y Pago: un solo alumno, sin traerse la lista entera (spec 17, DT-3).
+// Solo admin: el contrato lleva dinero. Incluye retirados (spec 14).
+export const porId = defineAction({
+  input: z.object({ id: z.number().int().positive() }),
+  handler: async ({ id }, { locals }) => {
+    requireAdmin(locals);
+    return { alumno: await alumnoAdminPorId(id, new Date()) };
   },
 });
 

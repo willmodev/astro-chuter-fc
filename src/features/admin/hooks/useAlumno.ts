@@ -4,10 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 import type { EstadoCargaValor } from '../chrome/EstadoCarga';
 import type { Alumno } from '../data/types';
 
-// Ficha/Pago: un alumno servido por `alumnos.listar` (admin). `alumno` es
-// `undefined` si no existe (la pantalla muestra su propio estado). Refetch tras
-// mutación (pesimista) al re-montar la vista. Pide también los retirados: su
-// ficha sigue consultable y desde ahí se los reactiva (spec 14).
+// Ficha/Pago: un alumno servido por `alumnos.porId` (admin), que consulta solo
+// sus datos (spec 17, DT-3). `alumno` es `undefined` si no existe (la pantalla
+// muestra su propio estado). Refetch tras mutación (pesimista) al re-montar la
+// vista. Incluye retirados: su ficha sigue consultable (spec 14).
 export interface AlumnoData {
   alumno: Alumno | undefined;
   estado: EstadoCargaValor;
@@ -21,14 +21,12 @@ export function useAlumno(id: number): AlumnoData {
 
   const recargar = useCallback(async () => {
     setEstado('cargando');
-    const { data, error } = await actions.alumnos.listar({
-      incluirRetirados: true,
-    });
-    if (error || !data || data.rol !== 'admin') {
+    const { data, error } = await actions.alumnos.porId({ id });
+    if (error) {
       setEstado('error');
       return;
     }
-    setAlumno(data.alumnos.find((a) => a.id === id));
+    setAlumno(data.alumno);
     setEstado('listo');
   }, [id]);
 

@@ -3,6 +3,7 @@ import {
   crear as crearAlumno,
   editar,
   listar as listarAlumnos,
+  porId as alumnoPorId,
 } from '@/actions/alumnos';
 import { enviarContacto } from '@/actions/contacto';
 import { stats } from '@/actions/dashboard';
@@ -38,6 +39,7 @@ export const server = {
   },
   alumnos: {
     listar: listarAlumnos,
+    porId: alumnoPorId,
     crear: crearAlumno,
     editar,
     cambiarActivo: cambiarActivoAlumno,
