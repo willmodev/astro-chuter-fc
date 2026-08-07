@@ -1,6 +1,6 @@
 # SPEC 16 — Cierre del back-office: enforcement de código limpio, identidad del club, montos ocultables, refresco del Dashboard y paginado de listas
 
-> **Estado:** Aprobado · **Depende de:** SPEC 03 (shell del admin y pantalla "Más"), SPEC 04 (sesión y roles que hoy pinta "Más"), SPEC 06 (`useVistaCartera`, el patrón de preferencia persistida que aquí se generaliza), SPEC 09 (app del entrenador, que comparte la pantalla "Más" y **no ve dinero**), SPEC 14 (retiro de alumnos — de ahí sale la DT-2), SPEC 15 (catálogo único, último spec cerrado) · **Fecha:** 2026-08-07
+> **Estado:** Implementado · **Depende de:** SPEC 03 (shell del admin y pantalla "Más"), SPEC 04 (sesión y roles que hoy pinta "Más"), SPEC 06 (`useVistaCartera`, el patrón de preferencia persistida que aquí se generaliza), SPEC 09 (app del entrenador, que comparte la pantalla "Más" y **no ve dinero**), SPEC 14 (retiro de alumnos — de ahí sale la DT-2), SPEC 15 (catálogo único, último spec cerrado) · **Fecha:** 2026-08-07
 > **Objetivo:** Cerrar los **cinco cabos sueltos que le quedan al back-office** en un solo spec, porque ninguno justifica uno propio y todos son de la misma naturaleza (cero migración, cero regla de negocio nueva): instalar el **enforcement automático** de las reglas de código limpio que hoy se verifican a mano, publicar la **identidad y el contacto del club** en la pantalla "Más", agregar el **toggle de mostrar/ocultar montos** que le falta a la apariencia persistida, hacer que el **Dashboard revalide** al volver a Inicio, y **paginar el render** de Alumnos y Cartera de a 15 para que las listas no crezcan sin techo.
 
 ---
@@ -472,26 +472,30 @@ _Verifica:_ con 82 alumnos, Alumnos y Cartera montan **15 filas**; bajar carga d
 - [x] Con los montos ocultos, se enmascaran como `$•••`: recaudo del mes, meta, cartera vencida y recaudo del año (Dashboard), saldo de cada moroso (Cobros pendientes), recaudado año y cartera vencida (Cartera), cuota/mes y saldo de cada tarjeta, y el saldo por kit en la Ficha.
 - [x] **No** se ocultan: conteos (alumnos activos, N en mora, N meses), porcentajes, la barra de progreso, los colores de la tira de meses ni la matriz de cartera.
 - [x] **No** se ocultan las pantallas transaccionales: el total de **Registrar pago**, el precio/saldo de **HojaAbono**, el aviso de **descuento de hermano** y el **recibo de WhatsApp** siguen mostrando la cifra siempre.
-- [ ] Cambiar el toggle en Cartera actualiza **en el mismo render** la cabecera y todas las tarjetas visibles (sin navegar ni recargar).
-- [ ] La preferencia **sobrevive a recargar** la página (`localStorage`, clave `chuter.admin.montosVisibles`) y el valor por defecto es **visible**.
+- [x] Cambiar el toggle en Cartera actualiza **en el mismo render** la cabecera y todas las tarjetas visibles (sin navegar ni recargar).
+- [x] La preferencia **sobrevive a recargar** la página (`localStorage`, clave `chuter.admin.montosVisibles`) y el valor por defecto es **visible**.
 - [x] `useVistaCartera` conserva su firma y `Cartera.tsx` no cambió su call site; hay **un solo** mecanismo de preferencia local en el repo (`usePreferenciaLocal`).
 - [x] La app del **entrenador sigue sin mostrar ningún monto** y **no ve el interruptor**, con la preferencia en cualquier estado (no-regresión del spec 09).
 
 ### Refresco del Dashboard (DT-2)
 
-- [ ] Retirar un alumno desde su ficha y volver a Inicio actualiza **sin recargar la página**: Alumnos activos, % al día, En mora, Cartera vencida y Cobros pendientes.
-- [ ] Reactivarlo revierte los mismos indicadores.
+- [x] Retirar un alumno desde su ficha y volver a Inicio actualiza **sin recargar la página**: Alumnos activos, % al día, En mora, Cartera vencida y Cobros pendientes.
+- [x] Reactivarlo revierte los mismos indicadores.
 - [ ] Registrar un pago y volver a Inicio actualiza recaudo del mes, recaudo del año y la gráfica por mes.
-- [ ] **Sin parpadeo:** al volver a Inicio no aparece el spinner de carga — los KPIs previos siguen en pantalla hasta que llegan los nuevos. El spinner solo se ve en la primera carga de la sesión.
-- [ ] No hay un bucle de peticiones: volver a Inicio dispara **una** llamada a `dashboard.stats`, no una por render (verificado en la pestaña Red).
+      **No ejecutado a propósito:** el único entorno disponible apunta a la base de producción del club y
+      un pago no se puede deshacer desde la UI. El mecanismo es el mismo `useEffect` que sí se verificó con
+      retirar/reactivar (que revierte sin dejar rastro), así que la revalidación está probada; lo que falta
+      es solo esta variante concreta. Queda para cuando haya un entorno de pruebas.
+- [x] **Sin parpadeo:** al volver a Inicio no aparece el spinner de carga — los KPIs previos siguen en pantalla hasta que llegan los nuevos. El spinner solo se ve en la primera carga de la sesión.
+- [x] No hay un bucle de peticiones: volver a Inicio dispara **una** llamada a `dashboard.stats`, no una por render (verificado en la pestaña Red).
 
 ### Paginado incremental
 
-- [ ] Alumnos y Cartera (Tarjetas **y** Matriz) montan **15 filas**, no la lista completa (verificado contando nodos en el inspector).
-- [ ] Al acercarse al final del scroll se agregan **15 más**, sin llamadas nuevas a la red (verificado en la pestaña Red: **cero** peticiones al hacer scroll).
+- [x] Alumnos y Cartera (Tarjetas **y** Matriz) montan **15 filas**, no la lista completa (verificado contando nodos en el inspector).
+- [x] Al acercarse al final del scroll se agregan **15 más**, sin llamadas nuevas a la red (verificado en la pestaña Red: **cero** peticiones al hacer scroll).
 - [x] Existe un botón **"Mostrar 15 más"** operable por teclado; con el scroll deshabilitado o con `IntersectionObserver` ausente, la lista sigue siendo navegable.
-- [ ] Cambiar búsqueda, chip de categoría, "Mostrar retirados" o el segmento Todos/En mora **resetea la ventana a 15**.
-- [ ] Un **refetch** (registrar pago, retirar alumno) **no resetea la ventana**: si había 45 filas visibles, quedan 45.
+- [x] Cambiar búsqueda, chip de categoría, "Mostrar retirados" o el segmento Todos/En mora **resetea la ventana a 15**.
+- [x] Un **refetch** (registrar pago, retirar alumno) **no resetea la ventana**: si había 45 filas visibles, quedan 45.
 - [x] Los contadores y totales miden la **lista completa**, no la ventana: `ResumenAlumnos` dice `82`, `SegmentoFiltro` dice el total real, `CabeceraTotales` no cambia al hacer scroll.
 - [x] Cuando no quedan más filas, el centinela **desaparece** (no queda un botón muerto).
 - [x] `alumnos.listar` sigue devolviendo la lista completa en **una** llamada: el paginado es de render, no de datos.
@@ -501,33 +505,49 @@ _Verifica:_ con 82 alumnos, Alumnos y Cartera montan **15 filas**; bajar carga d
 
 - [x] Ningún archivo supera 200 líneas efectivas; cero `any`; `npm run check` y `npm run build` en verde.
 - [x] Marketing prerenderizado intacto (`prerender = false` solo en `/admin/**` y `/api/**`); `/admin/**` sigue `noindex` y fuera del sitemap.
-- [ ] De 320px a desktop: cero scroll horizontal en Más (los dos roles), Inicio, Cartera y Ficha.
+- [x] De 320px a desktop: cero scroll horizontal en Más (los dos roles), Inicio, Cartera y Ficha.
 - [x] `docs/backlog.md` marca HU-0.2, HU-7.1, HU-7.2 y DT-2 como ☑, su encabezado ya no lista HU-7.1 ni HU-7.4 como pendientes, y quedan registradas DT-3 y DT-4.
 
 ---
 
-## Verificación pendiente (requiere sesión del admin)
+## Verificación en vivo (2026-08-07)
 
-Los 32 criterios marcados ☑ se verificaron con ESLint, `astro check`, `npm run build`,
-grep sobre el código y la prueba de que `npm run check` falla a propósito. Los que siguen
-**sin marcar** no se pudieron comprobar en esta sesión porque necesitan iniciar sesión en
-`/admin` contra la base de datos real, y esas credenciales no están disponibles:
+Se recorrió el admin completo con `playwright-cli --headed` contra el dev server, con
+sesión real. **44 de los 45 criterios quedan cerrados.**
 
-| Bloque   | Qué falta comprobar                                                                                                                                                                                                                   |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HU-7.2   | Que el toggle de Cartera actualice cabecera y tarjetas **en el mismo render**, y que la preferencia sobreviva a recargar la página. (Está resuelto por diseño con `useSyncExternalStore` + `localStorage`, pero no se vio corriendo.) |
-| DT-2     | Los 5 criterios: retirar/reactivar un alumno y registrar un pago actualizando Inicio sin recargar, ausencia de parpadeo y una sola llamada a `dashboard.stats` en la pestaña Red.                                                     |
-| Paginado | Que Alumnos y Cartera monten 15 filas, que el scroll agregue 15 sin peticiones nuevas, que cambiar de filtro resetee y que un refetch **no** resetee la ventana.                                                                      |
-| Calidad  | Cero scroll horizontal de 320px a desktop en las pantallas del **admin** (Más, Inicio, Cartera, Ficha).                                                                                                                               |
+**Sitio público** (390px y 1440px): `scrollWidth > clientWidth` da `false` en ambos anchos;
+hero, mapa SVG, botones de Maps/Waze y los 6 campos del formulario sin cambios tras el
+refactor; la categoría sugerida sigue calculándose bien. Sin errores de consola.
 
-Ninguno de estos depende de código sin escribir: es verificación de comportamiento en vivo.
+**Admin** (320px, 390px y 1440px): paginado (15 al montar, +15 por scroll y por botón, cero
+peticiones de red, reset por filtro, contadores sobre la lista completa, centinela que
+desaparece), toggle de montos (135 máscaras en un mismo render, persistencia tras F5,
+propagación a Inicio y Ficha, conteos y porcentajes intactos) y DT-2 (retirar → 82→81,
+mora 51→50, cartera $3.85M→$3.70M, badge 51→50, sin recargar; reactivar revierte todo; sin
+parpadeo; una sola llamada a `dashboard.stats` por retorno).
 
-**El sitio público sí se verificó** con `playwright-cli --headed` a 390px y 1440px (capturas
-en `.playwright-cli/spec16-*.png`): `scrollWidth > clientWidth` da **`false`** en ambos
-anchos, el eyebrow del hero, el mapa SVG completo, los botones de Maps/Waze y los 6 campos
-del formulario se ven igual que antes, y la categoría sugerida sigue calculándose bien tras
-mover esa derivación al hook nuevo (`2018-03-15` → Benjamín SUB 8). Sin errores de consola
-de la aplicación.
+Único criterio abierto: **registrar un pago**. No se ejecutó a propósito — el único entorno
+disponible apunta a la base de producción del club y un pago no se revierte desde la UI. La
+revalidación que ese criterio comprueba es el mismo `useEffect` ya verificado con
+retirar/reactivar, que sí es reversible.
+
+### Tres defectos encontrados en la verificación y corregidos
+
+1. **`dashboard.stats` se pedía dos veces en la primera carga.** `useDashboardData` tenía su
+   propia carga inicial _además_ del `useEffect` de DT-2. Ahora hay un solo dueño: la
+   pantalla pide cuando entra a `dashboard`.
+2. **A 320px el botón del ojo quedaba fuera de pantalla e inalcanzable** en Cartera vista
+   Tarjetas (`main` medía 407px contra 320 de viewport). La causa no era la cabecera sino el
+   `min-content` del nombre de alumno propagándose por grids de columna `auto`; se corrige
+   con `minmax(0, 1fr)` en el contenedor de la pantalla, el de la lista y el de la tarjeta,
+   más `minWidth: 0` y cifra fluida en `CabeceraTotales`.
+3. **La ventana del paginado se reseteaba a 15 al volver de una ficha**, que es exactamente
+   el flujo que nombra el criterio ("retirar alumno"). `VistaAdmin` desmonta la pantalla, así
+   que el `useState` del tope se perdía. El tope pasó a un `Map` de módulo que sobrevive al
+   desmontaje y solo recuerda el filtro vigente. Verificado: 45 filas siguen siendo 45 tras
+   ir a la ficha, retirar y volver, y cambiar de filtro sigue reseteando a 15.
+
+Los tres eran defectos reales que la revisión estática no habría encontrado.
 
 ---
 
@@ -595,7 +615,7 @@ de la aplicación.
 ## Pendientes del cliente / TODO para Will
 
 - [ ] **`CLAUDE.md` dice usar `/public/logo-temp.png` "mientras llega el SVG"** — ese archivo **no existe** y el SVG **sí** (`public/images/chuter-logo.svg`, ya en uso por `AdminNav.tsx`). Confirmar que el SVG actual es el definitivo para poder cerrar ese pendiente de `CLAUDE.md`.
-- [ ] **Confirmar el umbral de `strictTypeChecked`** (~40 hallazgos) o dejarlo a criterio de quien implemente el Bloque A.
+- [x] **Confirmar el umbral de `strictTypeChecked`** (~40 hallazgos) — **confirmado por Will (2026-08-07)**: se aplica el umbral escrito. Medido, `strict` dejaba 563 hallazgos, así que se cerró en `recommendedTypeChecked` y la promoción quedó como DT-5.
 - [ ] **Confirmar la lista de montos ocultables**, en especial la exclusión de las pantallas transaccionales (Registrar pago, abono de uniforme, aviso de hermano) — es una decisión de producto, no técnica.
 
 ---
