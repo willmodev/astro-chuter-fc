@@ -46,7 +46,10 @@ export function useEntrenos(
 
   const semana = semanas.find((w) => w.id === weekId) ?? actual;
   const semanaInicio = semanaInicioISO(semana);
-  const roster = useMemo(() => rosterDe(cats, plantel.alumnos), [cats, plantel.alumnos]);
+  const roster = useMemo(
+    () => rosterDe(cats, plantel.alumnos),
+    [cats, plantel.alumnos],
+  );
 
   const recargar = useCallback(async () => {
     setEstado('cargando');

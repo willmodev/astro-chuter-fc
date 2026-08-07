@@ -32,12 +32,19 @@ export interface AdminAppProps {
 // La vista activa la decide la URL (useAdminRouter). Las vistas del entrenador
 // (entrenos/sesion/plantel) nunca llegan acá: el gate del router las convierte
 // en 'entrenamientos'. La metadata de vistas vive en `router/vistaMeta`.
-export function AdminApp({ role, userId, userName, cats }: Readonly<AdminAppProps>) {
+export function AdminApp({
+  role,
+  userId,
+  userName,
+  cats,
+}: Readonly<AdminAppProps>) {
   // Gate por rol: cada rol monta su app; el router refuerza vista a vista.
   if (role === 'entrenador') {
     return <EntrenadorApp userId={userId} userName={userName} cats={cats} />;
   }
-  return <AdminHome role={role} userId={userId} userName={userName} cats={cats} />;
+  return (
+    <AdminHome role={role} userId={userId} userName={userName} cats={cats} />
+  );
 }
 
 function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
@@ -49,7 +56,11 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
 
   const right =
     ruta.vista === 'dashboard' && data ? (
-      <IconButton icon="bell" label="Notificaciones" badge={data.stats.morosos} />
+      <IconButton
+        icon="bell"
+        label="Notificaciones"
+        badge={data.stats.morosos}
+      />
     ) : undefined;
 
   return (
@@ -110,14 +121,18 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
         )}
         {ruta.vista === 'cartera' && (
           <Cartera
-            onCobrarMes={(alumnoId, mes) => navegar({ vista: 'pago', alumnoId, mes })}
+            onCobrarMes={(alumnoId, mes) =>
+              navegar({ vista: 'pago', alumnoId, mes })
+            }
           />
         )}
         {ruta.vista === 'pago' && (
           <Pago
             alumnoId={ruta.alumnoId}
             mes={ruta.mes}
-            onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
+            onVolver={() =>
+              navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })
+            }
           />
         )}
         {ruta.vista === 'alumnoNuevo' && (
@@ -131,13 +146,17 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
           <AlumnoForm
             modo="editar"
             alumnoId={ruta.alumnoId}
-            onVolver={() => navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })}
+            onVolver={() =>
+              navegar({ vista: 'ficha', alumnoId: ruta.alumnoId })
+            }
             onGuardado={(alumnoId) => navegar({ vista: 'ficha', alumnoId })}
           />
         )}
         {ruta.vista === 'uniformes' && (
           <Uniformes
-            onEntrega={(alumnoId) => navegar({ vista: 'uniformeEntrega', alumnoId })}
+            onEntrega={(alumnoId) =>
+              navegar({ vista: 'uniformeEntrega', alumnoId })
+            }
           />
         )}
         {ruta.vista === 'uniformeEntrega' && (
@@ -164,4 +183,3 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
     </>
   );
 }
-

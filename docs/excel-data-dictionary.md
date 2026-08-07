@@ -14,81 +14,87 @@
 ## Tablas (mapeo Excel → modelo)
 
 ### `categoria` (catálogo fijo)
-| Campo | Tipo | Origen |
-|---|---|---|
-| id | PK int | hojas SUB 4…SUB 16 |
-| nombre | texto | nombre de la hoja ("SUB 4"…"SUB 16") |
-| anio_desde / anio_hasta | int | rango de año de nacimiento del grupo |
+
+| Campo                   | Tipo   | Origen                               |
+| ----------------------- | ------ | ------------------------------------ |
+| id                      | PK int | hojas SUB 4…SUB 16                   |
+| nombre                  | texto  | nombre de la hoja ("SUB 4"…"SUB 16") |
+| anio_desde / anio_hasta | int    | rango de año de nacimiento del grupo |
 
 ### `acudiente` (un acudiente → varios alumnos)
-| Campo | Origen |
-|---|---|
-| id | — |
-| nombre | `CATEGORIAS` col. NOMBRE ACUDIENTE |
-| celular | `CATEGORIAS` col. CELULAR (10 dígitos) |
-| direccion | `CATEGORIAS` col. DIRECCION (barrio) |
+
+| Campo     | Origen                                 |
+| --------- | -------------------------------------- |
+| id        | —                                      |
+| nombre    | `CATEGORIAS` col. NOMBRE ACUDIENTE     |
+| celular   | `CATEGORIAS` col. CELULAR (10 dígitos) |
+| direccion | `CATEGORIAS` col. DIRECCION (barrio)   |
 
 ### `alumno` (entidad central)
-| Campo | Origen / regla |
-|---|---|
-| id | `CATEGORIAS` col. # (1..81) |
-| nombre | `CATEGORIAS` col. NOMBRE |
-| identificacion | `CATEGORIAS` col. IDENTIFICACION (validar; hay vacías/cortas) |
-| anio_nacimiento | `CATEGORIAS` col. AÑO (determina la categoría) |
-| categoria_id | FK → categoria (se **calcula** del año, R1; no se digita) |
-| acudiente_id | FK → acudiente |
-| cuota_mensual | `CATEGORIAS` col. CUOTA (50.000 / 40.000 — ver nota de migración: la mensualidad real es $50.000 para todos) |
-| fecha_inicio | `CATEGORIAS` col. INCIO (sic) |
-| activo | nuevo (booleano) |
+
+| Campo           | Origen / regla                                                                                               |
+| --------------- | ------------------------------------------------------------------------------------------------------------ |
+| id              | `CATEGORIAS` col. # (1..81)                                                                                  |
+| nombre          | `CATEGORIAS` col. NOMBRE                                                                                     |
+| identificacion  | `CATEGORIAS` col. IDENTIFICACION (validar; hay vacías/cortas)                                                |
+| anio_nacimiento | `CATEGORIAS` col. AÑO (determina la categoría)                                                               |
+| categoria_id    | FK → categoria (se **calcula** del año, R1; no se digita)                                                    |
+| acudiente_id    | FK → acudiente                                                                                               |
+| cuota_mensual   | `CATEGORIAS` col. CUOTA (50.000 / 40.000 — ver nota de migración: la mensualidad real es $50.000 para todos) |
+| fecha_inicio    | `CATEGORIAS` col. INCIO (sic)                                                                                |
+| activo          | nuevo (booleano)                                                                                             |
 
 ### `pago` (fila SOLO cuando se paga — corazón de la cartera)
+
 > Modelo real (spec 11): la tabla `pagos` guarda **una fila por mes efectivamente pagado**. Los estados `due/pending/na` **no se almacenan**: se derivan en dominio (`estadoDelMes`) a partir de los pagos reales + `fechaInicio` del alumno + arranque del club (MAR 2026) + mes vivo.
 
-| Campo | Origen / regla |
-|---|---|
-| alumno_id | FK → alumno |
-| anio | periodo (ej. 2026) |
-| mes | enum ENE…DIC; en el histórico se cobra **MAR–NOV** (`CATEGORIAS` cols. MAR…NOV) |
-| monto_cop | cuota vigente al pagar (el seed fuerza $50.000) |
-| metodo | `efectivo` / `transferencia` / null (null en el seed) |
-| pagado_en | timestamp del registro; null en el seed |
-| registrado_por | FK → user; null en el seed |
+| Campo          | Origen / regla                                                                  |
+| -------------- | ------------------------------------------------------------------------------- |
+| alumno_id      | FK → alumno                                                                     |
+| anio           | periodo (ej. 2026)                                                              |
+| mes            | enum ENE…DIC; en el histórico se cobra **MAR–NOV** (`CATEGORIAS` cols. MAR…NOV) |
+| monto_cop      | cuota vigente al pagar (el seed fuerza $50.000)                                 |
+| metodo         | `efectivo` / `transferencia` / null (null en el seed)                           |
+| pagado_en      | timestamp del registro; null en el seed                                         |
+| registrado_por | FK → user; null en el seed                                                      |
 
 **Origen del pago en el Excel:** el pago se marca con el **color de relleno** de la celda del mes, no con texto. Verde (`theme9`) = pagado → se crea la fila. Blanco / `theme0` / sin relleno = sin pago → no hay fila. Cualquier otro fill se **reporta como anomalía** (fila + mes) en vez de adivinar. Constraint único `(alumno_id, anio, mes)`: un pago por alumno-mes-año.
 
 ### `uniformes` — **implementado en el spec 12**
+
 > La inspección real invalidó el modelo de un solo booleano `entregado`. El real: **dos kits por alumno** (AZUL y ORO, $100.000 c/u) con **4 estados por kit** y **abonos parciales**. Implementado en el spec 12 (tabla `uniformes`, una fila por `(alumno_id, kit)`); el aviso "migración de uniformes en camino" del spec 11 quedó **retirado**.
 
-| Campo | Origen |
-|---|---|
-| alumno_id | FK → alumno |
-| kit | AZUL / ORO (hoja `CATEGORIAS`, cols. **U** = AZUL y **V** = ORO) |
-| entregado | derivado del color (verde/rojo → entregado; azul/blanco → no) |
-| numero | col. N° (único por kit, R6); `null` en el seed (el Excel no lo trae) |
-| talla | `''` en el seed; se captura en la app |
-| abonado_cop | `precio` si el color es pagado, `0` si no; el abono parcial se captura en la app |
-| registrado_por | FK → user; null en el seed |
+| Campo          | Origen                                                                           |
+| -------------- | -------------------------------------------------------------------------------- |
+| alumno_id      | FK → alumno                                                                      |
+| kit            | AZUL / ORO (hoja `CATEGORIAS`, cols. **U** = AZUL y **V** = ORO)                 |
+| entregado      | derivado del color (verde/rojo → entregado; azul/blanco → no)                    |
+| numero         | col. N° (único por kit, R6); `null` en el seed (el Excel no lo trae)             |
+| talla          | `''` en el seed; se captura en la app                                            |
+| abonado_cop    | `precio` si el color es pagado, `0` si no; el abono parcial se captura en la app |
+| registrado_por | FK → user; null en el seed                                                       |
 
 **Origen del kit en el Excel:** igual que los pagos, el estado del kit vive en el **color de relleno** de la celda (cols. AZUL=U / ORO=V de `CATEGORIAS`), mapeado por lista blanca:
 
-| Color | Fill (ExcelJS) | Estado del kit | abono sembrado |
-|---|---|---|---|
-| Verde | `theme 9` (accent6, `70AD47`) | entregado + pagado | `precio` |
-| Rojo | `argb FFFF0000` | entregado + sin pagar | `0` |
-| Azul | `theme 4` (accent1, `4472C4`) | sin entregar + pagado | `precio` |
-| Blanco | `theme 0` / sin fill | sin iniciar | — (no crea fila) |
+| Color  | Fill (ExcelJS)                | Estado del kit        | abono sembrado   |
+| ------ | ----------------------------- | --------------------- | ---------------- |
+| Verde  | `theme 9` (accent6, `70AD47`) | entregado + pagado    | `precio`         |
+| Rojo   | `argb FFFF0000`               | entregado + sin pagar | `0`              |
+| Azul   | `theme 4` (accent1, `4472C4`) | sin entregar + pagado | `precio`         |
+| Blanco | `theme 0` / sin fill          | sin iniciar           | — (no crea fila) |
 
 Cualquier otro fill se **reporta como anomalía** (fila + kit) y se omite, sin abortar. Constraint único `(alumno_id, kit)`: hasta dos filas por alumno. El **estado de pago es tri-estado derivado** (`abonado_cop` vs precio: `0`→sin pagar · parcial→abonado · `≥precio`→pagado); nunca se almacena. Los **abonos parciales no están en el Excel** (decisión pendiente #1 del spec 12): el seed solo siembra estados binarios y los abonos se capturan en la app. <!-- TODO: pedir a Camilo - confirmar si el Excel lleva el monto abonado -->
 
 **Precio por kit (R9):** $100.000 c/u, u $80.000 si el alumno tiene hermanos (misma regla de hermanos por acudiente, aplicada por kit).
 
 ### `sesion_plan` (plantilla por categoría y día)
-| Campo | Origen |
-|---|---|
-| categoria | `PLANIFICACION` encabezado CATEGORIA |
-| dia | LUNES / MIERCOLES / VIERNES |
-| tema / objetivos | `PLANIFICACION` TEMA / OBJETIVOS |
-| fases | ACTIVACION MUSCULAR · PARTE CENTRAL · VUELTA A LA CALMA |
+
+| Campo            | Origen                                                  |
+| ---------------- | ------------------------------------------------------- |
+| categoria        | `PLANIFICACION` encabezado CATEGORIA                    |
+| dia              | LUNES / MIERCOLES / VIERNES                             |
+| tema / objetivos | `PLANIFICACION` TEMA / OBJETIVOS                        |
+| fases            | ACTIVACION MUSCULAR · PARTE CENTRAL · VUELTA A LA CALMA |
 
 ## Reglas de negocio (exactas, del Excel)
 

@@ -13,7 +13,12 @@ interface Props {
   onClose: () => void;
 }
 
-export function PlanSheet({ plan, semanaLabel, onGuardar, onClose }: Readonly<Props>) {
+export function PlanSheet({
+  plan,
+  semanaLabel,
+  onGuardar,
+  onClose,
+}: Readonly<Props>) {
   const [tema, setTema] = useState(plan?.tema ?? '');
   const [objetivos, setObjetivos] = useState(plan?.objetivos ?? '');
   const valido = tema.trim() !== '';

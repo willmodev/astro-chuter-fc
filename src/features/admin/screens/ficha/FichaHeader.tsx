@@ -63,32 +63,40 @@ export function FichaHeader({
           >
             {alumno.name}
           </strong>
-          <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
+          <span
+            style={{
+              fontSize: 12.5,
+              color: 'var(--text-muted)',
+              fontWeight: 600,
+            }}
+          >
             {alumno.cat}
           </span>
         </div>
-        {!readOnly && <BadgeEstado retirado={retirado} meses={enMora ? meses : 0} />}
         {!readOnly && (
-        <button
-          type="button"
-          onClick={onEditar}
-          aria-label="Editar alumno"
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--border-subtle)',
-            background: 'var(--surface-sunken)',
-            color: 'var(--brand-navy)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            flexShrink: 0,
-          }}
-        >
-          <Icon name="pencil" size={17} />
-        </button>
+          <BadgeEstado retirado={retirado} meses={enMora ? meses : 0} />
+        )}
+        {!readOnly && (
+          <button
+            type="button"
+            onClick={onEditar}
+            aria-label="Editar alumno"
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-subtle)',
+              background: 'var(--surface-sunken)',
+              color: 'var(--brand-navy)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            <Icon name="pencil" size={17} />
+          </button>
         )}
       </div>
       {alumno.fechaNacimiento === null && <BadgeFaltaFecha />}

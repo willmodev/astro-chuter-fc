@@ -21,7 +21,14 @@ export function AlumnoNoEncontrado({ onVolver }: Readonly<Props>) {
         <span style={{ color: 'var(--text-muted)' }}>
           <Icon name="triangle-alert" size={30} />
         </span>
-        <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-strong)' }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 16,
+            fontWeight: 700,
+            color: 'var(--text-strong)',
+          }}
+        >
           Alumno no encontrado
         </p>
         <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>

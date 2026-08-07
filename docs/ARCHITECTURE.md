@@ -59,14 +59,14 @@ Regla de oro: **la lógica de negocio vive en `lib/domain` (puro, testeable), nu
 
 ### Catálogo único de categorías (spec 15)
 
-`lib/domain/categoria.ts` es la **única** lista de categorías del proyecto — la usan el admin *y* la landing. Contiene las 7 entradas (`SUB 4 … SUB 16` ↔ Baby … Juvenil) y la regla de asignación:
+`lib/domain/categoria.ts` es la **única** lista de categorías del proyecto — la usan el admin _y_ la landing. Contiene las 7 entradas (`SUB 4 … SUB 16` ↔ Baby … Juvenil) y la regla de asignación:
 
 - **Por edad cumplida:** `sub = ceil(edad / 2) × 2`, clamp inferior a SUB 4, sin categoría sobre SUB 16. La categoría cambia **el día del cumpleaños**, no al cambiar de temporada; no hay año de temporada hardcodeado.
 - **Fallback por año** (`categoriaDeAnio`) mientras `alumnos.fecha_nacimiento` sea `null` — equivale a suponer el 1 de enero, sin escribir un dato falso. `categoriaDeAlumno` elige uno u otro y es la puerta que usan services y UI.
 - **La categoría no se persiste**: es una proyección de la edad. No hay tabla `categorias` ni FK desde `alumnos` (7 filas fijas que el cliente no edita).
 - **Landing:** `src/lib/programas.ts` cruza la colección `programas` (solo `sub` + contenido editorial) con el catálogo. El markdown no guarda ni el nombre ni la edad.
 - **Unicidad categoría → entrenador:** una categoría pertenece a **un solo entrenador activo**. `repos/usuarios.categoriasOcupadas()` lee las tomadas y `domain/usuarios.validaDisponibles()` rechaza el choque **en servidor**, dentro de la misma operación de escritura (el selector de la UI es ayuda, no barrera). Desactivar a un entrenador libera sus categorías. Formato persistido en `user.cats`: `"SUB 8"`.
-- **Duplicación conocida y aceptada:** el entrenador aparece en `user.cats` (BD, verdad operativa) *y* en el frontmatter de `src/content/programas/*.md` (landing). La landing es estática y no debe depender de la BD en build; si empiezan a divergir seguido, va en su propio spec.
+- **Duplicación conocida y aceptada:** el entrenador aparece en `user.cats` (BD, verdad operativa) _y_ en el frontmatter de `src/content/programas/*.md` (landing). La landing es estática y no debe depender de la BD en build; si empiezan a divergir seguido, va en su propio spec.
 - **`lib/db/repos/*`** — un repo por agregado; solo queries Drizzle, devuelven filas tipadas.
 - **`lib/services/*`** — orquestación (p.ej. `cartera.ts` arma la matriz alumnos×meses combinando repos + dominio).
 - **`actions/*`** — RPC tipado con validación Zod; un módulo por agregado; cada handler llama `requireUser` primero.
@@ -85,7 +85,7 @@ Regla de oro: **la lógica de negocio vive en `lib/domain` (puro, testeable), nu
 ```ts
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const { pathname } = ctx.url;
-  if (!pathname.startsWith('/admin')) return next();           // marketing intacto
+  if (!pathname.startsWith('/admin')) return next(); // marketing intacto
   const session = await auth.api.getSession({ headers: ctx.request.headers });
   ctx.locals.session = session ?? null;
   ctx.locals.user = session?.user ?? null;
@@ -107,29 +107,48 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
 
 Un archivo por agregado en `src/lib/db/schema/`, re-export desde `schema/index.ts`. Cada uno < 200 líneas. Tablas vigentes tras el spec 13:
 
-| Archivo schema | Tablas | Origen Excel |
-|---|---|---|
-| `alumnos.ts` | `alumnos` (nombre, documento, anioNacimiento, fechaNacimiento **nullable**, acudiente/celular/direccion denormalizados, fechaInicio, activo) | hoja `CATEGORIAS` |
-| `pagos.ts` | `pagos` (alumnoId, anio, mes enum, montoCop, metodo null, pagadoEn null, registradoPor) — **fila solo al pagar** | color verde de celdas MAR–NOV |
-| `uniformes.ts` | `uniformes` (alumnoId, kit enum AZUL/ORO, entregado, numero null, talla, abonadoCop, registradoPor) — **fila por alumno-kit**, único `(alumnoId, kit)` | color de celdas AZUL=U / ORO=V |
-| `entrenos.ts` | `planes_semana` (entrenadorId FK user, semanaInicio date, tema, objetivos), único `(entrenadorId, semanaInicio)` · `sesiones` (entrenadorId, semanaInicio, dia enum, parteCentralUrl null, parteCentralNota, ausentes int[] null), único `(entrenadorId, semanaInicio, dia)` | — (arranca vacío, sin seed) |
-| `auth.ts` | `user, session, account, verification` (`cats text[]` = categorías del entrenador) | Better Auth |
+| Archivo schema | Tablas                                                                                                                                                                                                                                                                       | Origen Excel                   |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `alumnos.ts`   | `alumnos` (nombre, documento, anioNacimiento, fechaNacimiento **nullable**, acudiente/celular/direccion denormalizados, fechaInicio, activo)                                                                                                                                 | hoja `CATEGORIAS`              |
+| `pagos.ts`     | `pagos` (alumnoId, anio, mes enum, montoCop, metodo null, pagadoEn null, registradoPor) — **fila solo al pagar**                                                                                                                                                             | color verde de celdas MAR–NOV  |
+| `uniformes.ts` | `uniformes` (alumnoId, kit enum AZUL/ORO, entregado, numero null, talla, abonadoCop, registradoPor) — **fila por alumno-kit**, único `(alumnoId, kit)`                                                                                                                       | color de celdas AZUL=U / ORO=V |
+| `entrenos.ts`  | `planes_semana` (entrenadorId FK user, semanaInicio date, tema, objetivos), único `(entrenadorId, semanaInicio)` · `sesiones` (entrenadorId, semanaInicio, dia enum, parteCentralUrl null, parteCentralNota, ausentes int[] null), único `(entrenadorId, semanaInicio, dia)` | — (arranca vacío, sin seed)    |
+| `auth.ts`      | `user, session, account, verification` (`cats text[]` = categorías del entrenador)                                                                                                                                                                                           | Better Auth                    |
 
 > **`anioNacimiento` + `fechaNacimiento` conviven a propósito** (spec 15): la fecha es la verdad cuando existe y `anioNacimiento` sostiene el fallback de los alumnos que aún no la tienen, además de servir de validación cruzada contra el Excel. Cuando el club complete el 100 % de las fechas, se hace backfill → `NOT NULL` → se elimina `anio_nacimiento` (spec aparte, con migración).
 
 ```ts
 // src/lib/db/schema/pagos.ts (corazón de la cartera) — fila SOLO cuando se paga
-export const mesEnum = pgEnum('mes', ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC']);
-export const pagos = pgTable('pagos', {
-  id: serial('id').primaryKey(),
-  alumnoId: integer('alumno_id').notNull().references(() => alumnos.id, { onDelete: 'cascade' }),
-  anio: integer('anio').notNull(),                 // 2026, 2027… (filtro por año)
-  mes: mesEnum('mes').notNull(),
-  montoCop: integer('monto_cop').notNull(),         // cuota vigente al pagar
-  metodo: text('metodo'),                           // 'efectivo' | 'transferencia' | null (seed)
-  pagadoEn: timestamp('pagado_en'),                 // null en pagos del seed
-  registradoPor: text('registrado_por').references(() => user.id), // null en seed
-}, (t) => [unique().on(t.alumnoId, t.anio, t.mes)]); // un pago por alumno-mes-año
+export const mesEnum = pgEnum('mes', [
+  'ENE',
+  'FEB',
+  'MAR',
+  'ABR',
+  'MAY',
+  'JUN',
+  'JUL',
+  'AGO',
+  'SEP',
+  'OCT',
+  'NOV',
+  'DIC',
+]);
+export const pagos = pgTable(
+  'pagos',
+  {
+    id: serial('id').primaryKey(),
+    alumnoId: integer('alumno_id')
+      .notNull()
+      .references(() => alumnos.id, { onDelete: 'cascade' }),
+    anio: integer('anio').notNull(), // 2026, 2027… (filtro por año)
+    mes: mesEnum('mes').notNull(),
+    montoCop: integer('monto_cop').notNull(), // cuota vigente al pagar
+    metodo: text('metodo'), // 'efectivo' | 'transferencia' | null (seed)
+    pagadoEn: timestamp('pagado_en'), // null en pagos del seed
+    registradoPor: text('registrado_por').references(() => user.id), // null en seed
+  },
+  (t) => [unique().on(t.alumnoId, t.anio, t.mes)],
+); // un pago por alumno-mes-año
 ```
 
 - El enum trae los 12 meses aunque hoy solo se cobre hasta NOV: la ventana de cobro vive en dominio (`MES_FIN_COBRO`), cambiarla no toca la BD.
@@ -138,18 +157,24 @@ export const pagos = pgTable('pagos', {
 ```ts
 // src/lib/db/schema/uniformes.ts (spec 12) — una fila por alumno-kit
 export const kitEnum = pgEnum('kit', ['AZUL', 'ORO']);
-export const uniformes = pgTable('uniformes', {
-  id: serial('id').primaryKey(),
-  alumnoId: integer('alumno_id').notNull().references(() => alumnos.id, { onDelete: 'cascade' }),
-  kit: kitEnum('kit').notNull(),
-  entregado: boolean('entregado').notNull().default(false),
-  numero: integer('numero'),                        // null hasta entregar
-  talla: text('talla').notNull().default(''),
-  abonadoCop: integer('abonado_cop').notNull().default(0), // 0..precio del kit
-  registradoPor: text('registrado_por').references(() => user.id), // null en seed
-  creadoEn: timestamp('creado_en').notNull().defaultNow(),
-  actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
-}, (t) => [unique().on(t.alumnoId, t.kit)]);         // un registro por alumno-kit
+export const uniformes = pgTable(
+  'uniformes',
+  {
+    id: serial('id').primaryKey(),
+    alumnoId: integer('alumno_id')
+      .notNull()
+      .references(() => alumnos.id, { onDelete: 'cascade' }),
+    kit: kitEnum('kit').notNull(),
+    entregado: boolean('entregado').notNull().default(false),
+    numero: integer('numero'), // null hasta entregar
+    talla: text('talla').notNull().default(''),
+    abonadoCop: integer('abonado_cop').notNull().default(0), // 0..precio del kit
+    registradoPor: text('registrado_por').references(() => user.id), // null en seed
+    creadoEn: timestamp('creado_en').notNull().defaultNow(),
+    actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.alumnoId, t.kit)],
+); // un registro por alumno-kit
 ```
 
 - **Estado del kit derivado (no columna):** `estadoKit(entregado, abonadoCop, precio)` en `lib/domain/uniformes.ts` cruza entrega × pago; el pago es **tri-estado** (`ejePago`: sin pagar / abonado / pagado según `abonadoCop` vs precio). La unicidad de `numero` por kit es **advertencia de dominio** (`numerosDuplicados`/`numeroOcupado`), no constraint de BD (el club repite a propósito, R6).
@@ -158,17 +183,23 @@ export const uniformes = pgTable('uniformes', {
 ```ts
 // src/lib/db/schema/entrenos.ts (spec 13) — planes/sesiones por semana
 export const diaEnum = pgEnum('dia_entreno', ['Lunes', 'Miércoles', 'Viernes']);
-export const sesiones = pgTable('sesiones', {
-  id: serial('id').primaryKey(),
-  entrenadorId: text('entrenador_id').notNull().references(() => user.id), // sin cascade: el historial se conserva
-  semanaInicio: date('semana_inicio').notNull(),      // lunes de la semana (clave natural)
-  dia: diaEnum('dia').notNull(),
-  parteCentralUrl: text('parte_central_url'),          // URL de Vercel Blob; null = sin imagen
-  parteCentralNota: text('parte_central_nota').notNull().default(''),
-  ausentes: integer('ausentes').array(),               // null = lista NO pasada; [] = todos presentes
-  creadoEn: timestamp('creado_en').notNull().defaultNow(),
-  actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
-}, (t) => [unique().on(t.entrenadorId, t.semanaInicio, t.dia)]);
+export const sesiones = pgTable(
+  'sesiones',
+  {
+    id: serial('id').primaryKey(),
+    entrenadorId: text('entrenador_id')
+      .notNull()
+      .references(() => user.id), // sin cascade: el historial se conserva
+    semanaInicio: date('semana_inicio').notNull(), // lunes de la semana (clave natural)
+    dia: diaEnum('dia').notNull(),
+    parteCentralUrl: text('parte_central_url'), // URL de Vercel Blob; null = sin imagen
+    parteCentralNota: text('parte_central_nota').notNull().default(''),
+    ausentes: integer('ausentes').array(), // null = lista NO pasada; [] = todos presentes
+    creadoEn: timestamp('creado_en').notNull().defaultNow(),
+    actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.entrenadorId, t.semanaInicio, t.dia)],
+);
 ```
 
 - **Identidad de semana = fecha del lunes** (`semanaInicio: date`), no el número ISO (colisiona entre años). El `weekId` de la URL se traduce en el service (`semanaInicioISO`/`semanaPorWeekId`); las fechas viajan como string `YYYY-MM-DD` sin zona horaria.
@@ -193,6 +224,7 @@ import AdminApp from '@/features/admin/AdminApp';
 export const prerender = false;
 const { user } = Astro.locals;
 ---
+
 <AdminLayout>
   <AdminApp client:only="react" userName={user?.name ?? ''} />
 </AdminLayout>
@@ -217,8 +249,24 @@ export const pagos = {
     input: z.object({
       alumnoId: z.number().int().positive(),
       anio: z.number().int(),
-      meses: z.array(z.enum(['FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'])).min(1),
-      metodo: z.enum(['efectivo','transferencia']),
+      meses: z
+        .array(
+          z.enum([
+            'FEB',
+            'MAR',
+            'ABR',
+            'MAY',
+            'JUN',
+            'JUL',
+            'AGO',
+            'SEP',
+            'OCT',
+            'NOV',
+            'DIC',
+          ]),
+        )
+        .min(1),
+      metodo: z.enum(['efectivo', 'transferencia']),
     }),
     handler: async (input, ctx) => {
       requireUser(ctx.locals);

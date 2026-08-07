@@ -42,21 +42,36 @@ export default function ContactForm() {
 
   if (status === 'success') {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-2xl bg-success/10 p-8 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-success/20">
-          <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      <div className="bg-success/10 flex flex-col items-center gap-4 rounded-2xl p-8 text-center">
+        <div className="bg-success/20 flex h-14 w-14 items-center justify-center rounded-full">
+          <svg
+            aria-hidden="true"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#10B981"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
+            />
           </svg>
         </div>
         <div>
-          <p className="text-lg font-semibold text-neutral-800">¡Mensaje enviado!</p>
+          <p className="text-lg font-semibold text-neutral-800">
+            ¡Mensaje enviado!
+          </p>
           <p className="mt-1 text-sm text-neutral-500">
-            Te contactaremos pronto. También podés escribirnos directo por WhatsApp al{' '}
+            Te contactaremos pronto. También podés escribirnos directo por
+            WhatsApp al{' '}
             <a
               href={WA_FAB}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-brand-navy underline-offset-2 hover:underline"
+              className="text-brand-navy font-medium underline-offset-2 hover:underline"
             >
               {CONTACT.phoneDisplay}
             </a>
@@ -69,25 +84,59 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-      <input type="checkbox" name="botcheck" className="hidden" aria-hidden="true" tabIndex={-1} autoComplete="off" />
+      <input
+        type="checkbox"
+        name="botcheck"
+        className="hidden"
+        aria-hidden="true"
+        tabIndex={-1}
+        autoComplete="off"
+      />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="field-wrap relative flex flex-col gap-1.5">
-          <label htmlFor="cf-parent" className="text-sm font-medium text-neutral-700">
-            Tu nombre (papá/mamá) <span className="text-error" aria-label="campo requerido">*</span>
+          <label
+            htmlFor="cf-parent"
+            className="text-sm font-medium text-neutral-700"
+          >
+            Tu nombre (papá/mamá){' '}
+            <span className="text-error" aria-label="campo requerido">
+              *
+            </span>
           </label>
           <div className="relative">
-            <input id="cf-parent" type="text" name="nombreAcudiente" required minLength={2} placeholder="Ej. María González" className={inputClass} />
+            <input
+              id="cf-parent"
+              type="text"
+              name="nombreAcudiente"
+              required
+              minLength={2}
+              placeholder="Ej. María González"
+              className={inputClass}
+            />
             <span className="field-underline" aria-hidden="true" />
           </div>
         </div>
 
         <div className="field-wrap relative flex flex-col gap-1.5">
-          <label htmlFor="cf-phone" className="text-sm font-medium text-neutral-700">
-            Teléfono / WhatsApp <span className="text-error" aria-label="campo requerido">*</span>
+          <label
+            htmlFor="cf-phone"
+            className="text-sm font-medium text-neutral-700"
+          >
+            Teléfono / WhatsApp{' '}
+            <span className="text-error" aria-label="campo requerido">
+              *
+            </span>
           </label>
           <div className="relative">
-            <input id="cf-phone" type="tel" name="telefono" required placeholder="Ej. 300 123 4567" className={inputClass} />
+            <input
+              id="cf-phone"
+              type="tel"
+              name="telefono"
+              required
+              placeholder="Ej. 300 123 4567"
+              className={inputClass}
+            />
             <span className="field-underline" aria-hidden="true" />
           </div>
         </div>
@@ -95,18 +144,38 @@ export default function ContactForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="field-wrap relative flex flex-col gap-1.5">
-          <label htmlFor="cf-child" className="text-sm font-medium text-neutral-700">
-            Nombre del niño / niña <span className="text-error" aria-label="campo requerido">*</span>
+          <label
+            htmlFor="cf-child"
+            className="text-sm font-medium text-neutral-700"
+          >
+            Nombre del niño / niña{' '}
+            <span className="text-error" aria-label="campo requerido">
+              *
+            </span>
           </label>
           <div className="relative">
-            <input id="cf-child" type="text" name="nombreNino" required minLength={2} placeholder="Ej. Juan Camilo" className={inputClass} />
+            <input
+              id="cf-child"
+              type="text"
+              name="nombreNino"
+              required
+              minLength={2}
+              placeholder="Ej. Juan Camilo"
+              className={inputClass}
+            />
             <span className="field-underline" aria-hidden="true" />
           </div>
         </div>
 
         <div className="field-wrap relative flex flex-col gap-1.5">
-          <label htmlFor="cf-birth" className="text-sm font-medium text-neutral-700">
-            Fecha de nacimiento del niño/a <span className="text-error" aria-label="campo requerido">*</span>
+          <label
+            htmlFor="cf-birth"
+            className="text-sm font-medium text-neutral-700"
+          >
+            Fecha de nacimiento del niño/a{' '}
+            <span className="text-error" aria-label="campo requerido">
+              *
+            </span>
           </label>
           <div className="relative">
             <input
@@ -123,40 +192,70 @@ export default function ContactForm() {
             <span className="field-underline" aria-hidden="true" />
           </div>
           {suggestedCat && (
-            <p className="text-xs text-brand-navy" role="status" aria-live="polite">
+            <p
+              className="text-brand-navy text-xs"
+              role="status"
+              aria-live="polite"
+            >
               ✓ Categoría: <strong>{suggestedCat}</strong>
             </p>
           )}
           {fechaNino && !suggestedCat && (
-            <p className="text-xs text-neutral-500" role="status" aria-live="polite">
-              Por ahora las categorías llegan hasta los 16 años — escribinos por WhatsApp.
+            <p
+              className="text-xs text-neutral-500"
+              role="status"
+              aria-live="polite"
+            >
+              Por ahora las categorías llegan hasta los 16 años — escribinos por
+              WhatsApp.
             </p>
           )}
         </div>
       </div>
 
       <div className="field-wrap relative flex flex-col gap-1.5">
-        <label htmlFor="cf-email" className="text-sm font-medium text-neutral-700">
+        <label
+          htmlFor="cf-email"
+          className="text-sm font-medium text-neutral-700"
+        >
           Tu email (opcional)
         </label>
         <div className="relative">
-          <input id="cf-email" type="email" name="emailAcudiente" placeholder="Ej. maria@correo.com" className={inputClass} />
+          <input
+            id="cf-email"
+            type="email"
+            name="emailAcudiente"
+            placeholder="Ej. maria@correo.com"
+            className={inputClass}
+          />
           <span className="field-underline" aria-hidden="true" />
         </div>
       </div>
 
       <div className="field-wrap relative flex flex-col gap-1.5">
-        <label htmlFor="cf-message" className="text-sm font-medium text-neutral-700">
+        <label
+          htmlFor="cf-message"
+          className="text-sm font-medium text-neutral-700"
+        >
           Mensaje / preguntas (opcional)
         </label>
         <div className="relative">
-          <textarea id="cf-message" name="mensaje" rows={3} placeholder="¿Alguna pregunta sobre horarios, costos o el programa?" className={`resize-none ${inputClass}`} />
+          <textarea
+            id="cf-message"
+            name="mensaje"
+            rows={3}
+            placeholder="¿Alguna pregunta sobre horarios, costos o el programa?"
+            className={`resize-none ${inputClass}`}
+          />
           <span className="field-underline" aria-hidden="true" />
         </div>
       </div>
 
       {status === 'error' && (
-        <p className="rounded-lg bg-error/10 px-4 py-2.5 text-sm text-error" role="alert">
+        <p
+          className="bg-error/10 text-error rounded-lg px-4 py-2.5 text-sm"
+          role="alert"
+        >
           Hubo un error al enviar. Intentá de nuevo o escribinos al WhatsApp.
         </p>
       )}
@@ -165,13 +264,29 @@ export default function ContactForm() {
         type="submit"
         disabled={status === 'submitting'}
         aria-busy={status === 'submitting'}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-gold px-6 py-3.5 text-sm font-semibold text-neutral-900 shadow-lg shadow-brand-gold/30 transition-all hover:bg-brand-gold-deep active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2"
+        className="bg-brand-gold shadow-brand-gold/30 hover:bg-brand-gold-deep focus-visible:outline-brand-gold flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-neutral-900 shadow-lg transition-all focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {status === 'submitting' ? (
           <>
-            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            <svg
+              className="h-4 w-4 animate-spin"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
             </svg>
             Enviando...
           </>

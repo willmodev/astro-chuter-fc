@@ -23,7 +23,12 @@ const accion = (color: string): CSSProperties => ({
   cursor: 'pointer',
 });
 
-export function UsuarioCard({ usuario, onToggle, onReset, ocupado }: Readonly<Props>) {
+export function UsuarioCard({
+  usuario,
+  onToggle,
+  onReset,
+  ocupado,
+}: Readonly<Props>) {
   const { name, email, role, activo, cats } = usuario;
 
   return (
@@ -31,7 +36,9 @@ export function UsuarioCard({ usuario, onToggle, onReset, ocupado }: Readonly<Pr
       <div style={{ display: 'grid', gap: 10 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <strong style={{ fontSize: 15, color: 'var(--text-strong)' }}>{name}</strong>
+            <strong style={{ fontSize: 15, color: 'var(--text-strong)' }}>
+              {name}
+            </strong>
             <div
               style={{
                 fontSize: 13,

@@ -90,7 +90,9 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
       )}
 
       {estado === 'cargando' && (
-        <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>Cargando equipo…</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
+          Cargando equipo…
+        </p>
       )}
       {estado === 'error' && (
         <p style={{ color: 'var(--error-deep)', fontSize: 14 }}>
@@ -99,7 +101,14 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
       )}
 
       {estado === 'listo' && sinEntrenador.length > 0 && (
-        <p style={{ margin: 0, fontSize: 12.5, fontWeight: 600, color: '#946200' }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 12.5,
+            fontWeight: 600,
+            color: '#946200',
+          }}
+        >
           {sinEntrenador.length}{' '}
           {sinEntrenador.length === 1
             ? 'categoría sin entrenador asignado'

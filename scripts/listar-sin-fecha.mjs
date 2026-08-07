@@ -25,7 +25,9 @@ const filas = await db
 
 console.log(`\nActivos sin fecha de nacimiento: ${filas.length}\n`);
 for (const f of filas) {
-  console.log(`${String(f.id).padStart(4)}  ${f.nombre.padEnd(34)} doc=${f.documento}  año=${f.anio}`);
+  console.log(
+    `${String(f.id).padStart(4)}  ${f.nombre.padEnd(34)} doc=${f.documento}  año=${f.anio}`,
+  );
 }
 
 const total = await db

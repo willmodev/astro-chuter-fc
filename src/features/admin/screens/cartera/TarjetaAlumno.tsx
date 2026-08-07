@@ -45,11 +45,21 @@ export function TarjetaAlumno({ alumno, onCobrarMes }: Readonly<Props>) {
           >
             {alumno.name}
           </strong>
-          <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
+          <span
+            style={{
+              fontSize: 12,
+              color: 'var(--text-muted)',
+              fontWeight: 600,
+            }}
+          >
             {alumno.cat} · {fmt(alumno.cuota)}/mes
           </span>
         </div>
-        {enMora ? <Badge tone="due">{fmt(saldo)}</Badge> : <Badge tone="paid">Al día</Badge>}
+        {enMora ? (
+          <Badge tone="due">{fmt(saldo)}</Badge>
+        ) : (
+          <Badge tone="paid">Al día</Badge>
+        )}
       </div>
       <TiraMeses states={alumno.states} onTocarMes={onCobrarMes} />
     </div>

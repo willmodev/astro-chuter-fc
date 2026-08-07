@@ -54,7 +54,16 @@ export function KpiCard({
         ...style,
       }}
     >
-      <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 4, background: a }} />
+      <span
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 4,
+          background: a,
+        }}
+      />
       <div
         style={{
           display: 'flex',
@@ -81,7 +90,14 @@ export function KpiCard({
           </span>
         )}
       </div>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 10 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          gap: 6,
+          marginTop: 10,
+        }}
+      >
         <span
           className="tabular"
           style={{
@@ -95,12 +111,25 @@ export function KpiCard({
           {value}
         </span>
         {unit && (
-          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-muted)' }}>{unit}</span>
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: 600,
+              color: 'var(--text-muted)',
+            }}
+          >
+            {unit}
+          </span>
         )}
       </div>
       {delta && (
         <div
-          style={{ marginTop: 8, fontSize: 12, fontWeight: 600, color: DELTA_COLORS[deltaTone] }}
+          style={{
+            marginTop: 8,
+            fontSize: 12,
+            fontWeight: 600,
+            color: DELTA_COLORS[deltaTone],
+          }}
         >
           {delta}
         </div>

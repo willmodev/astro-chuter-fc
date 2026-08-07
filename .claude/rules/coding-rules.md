@@ -37,16 +37,16 @@ Estas convenciones ya están en el repo (`src/lib/site.ts`, `src/components/inte
 
 ## 2. Límites cuantitativos (política del equipo, ESLint los hace cumplir)
 
-| Regla | Valor | Por qué |
-|---|---|---|
-| `max-lines` | **200** (error) | Ningún archivo crece más allá de su responsabilidad. |
-| `max-lines-per-function` | **60** | Funciones legibles de un vistazo. |
-| `complexity` | **10** | Evita ramificación excesiva. |
-| `max-depth` | **3** | Anidamiento plano. |
-| `max-params` | **4** | Más parámetros → usar un objeto tipado. |
-| `@typescript-eslint/no-explicit-any` | error | Sin `any`. |
-| `import-x/no-duplicates` | error | Sin imports duplicados. |
-| `import-x/order` | error | Orden: externos → `@/` internos → relativos → tipos, con líneas en blanco. |
+| Regla                                | Valor           | Por qué                                                                    |
+| ------------------------------------ | --------------- | -------------------------------------------------------------------------- |
+| `max-lines`                          | **200** (error) | Ningún archivo crece más allá de su responsabilidad.                       |
+| `max-lines-per-function`             | **60**          | Funciones legibles de un vistazo.                                          |
+| `complexity`                         | **10**          | Evita ramificación excesiva.                                               |
+| `max-depth`                          | **3**           | Anidamiento plano.                                                         |
+| `max-params`                         | **4**           | Más parámetros → usar un objeto tipado.                                    |
+| `@typescript-eslint/no-explicit-any` | error           | Sin `any`.                                                                 |
+| `import-x/no-duplicates`             | error           | Sin imports duplicados.                                                    |
+| `import-x/order`                     | error           | Orden: externos → `@/` internos → relativos → tipos, con líneas en blanco. |
 
 Excepción: en `src/lib/db/schema/**` se desactiva `max-lines-per-function` (definiciones de tablas Drizzle).
 
@@ -82,6 +82,7 @@ Antes de crear código nuevo: **buscar si ya existe** una utilidad/función/patr
 Estado actual (2026-07-30): **ya está** `@astrojs/check` y el script `npm run check` (= `astro check`, typecheck de `.ts`/`.tsx`/`.astro`). **Falta** `eslint`, `eslint.config.js` y `.prettierrc`: mientras no estén, los límites estructurales (200 líneas, complejidad, orden de imports) se revisan a mano. Versiones verificadas 2026-06.
 
 ### Dependencias a instalar (dev)
+
 ```
 eslint@^10                 # ESLint v10 es la línea actual
 typescript-eslint@^8        # usar la versión que declare soporte para tu ESLint
@@ -90,9 +91,11 @@ eslint-plugin-astro@^1.7    # parser + reglas para .astro (incluye astro-eslint-
 eslint-plugin-import-x      # fork mantenido de eslint-plugin-import para flat config / ESLint 9+
 @astrojs/check              # ✅ ya instalado — habilita `npm run check` (typecheck)
 ```
+
 Prettier ya está instalado (3.8.3) con `prettier-plugin-astro` y `prettier-plugin-tailwindcss`.
 
 ### ESLint flat config (`eslint.config.js`) — esquema propuesto
+
 ```js
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
@@ -101,16 +104,25 @@ import importX from 'eslint-plugin-import-x';
 
 export default tseslint.config(
   eslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,   // "todo tipado"
-  ...astro.configs.recommended,            // configura astro-eslint-parser + TS en .astro
+  ...tseslint.configs.strictTypeChecked, // "todo tipado"
+  ...astro.configs.recommended, // configura astro-eslint-parser + TS en .astro
   {
     languageOptions: {
-      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     plugins: { 'import-x': importX },
     rules: {
-      'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }],
-      'max-lines-per-function': ['error', { max: 60, skipBlankLines: true, skipComments: true }],
+      'max-lines': [
+        'error',
+        { max: 200, skipBlankLines: true, skipComments: true },
+      ],
+      'max-lines-per-function': [
+        'error',
+        { max: 60, skipBlankLines: true, skipComments: true },
+      ],
       complexity: ['error', 10],
       'max-depth': ['error', 3],
       'max-params': ['error', 4],
@@ -119,21 +131,28 @@ export default tseslint.config(
       'import-x/order': ['error', { 'newlines-between': 'always' }],
     },
   },
-  { files: ['src/lib/db/schema/**'], rules: { 'max-lines-per-function': 'off' } },
+  {
+    files: ['src/lib/db/schema/**'],
+    rules: { 'max-lines-per-function': 'off' },
+  },
 );
 ```
+
 > Nota: `strictTypeChecked` requiere `parserOptions.projectService`. El type-aware en `.astro` tiene limitaciones conocidas; se aplica sobre todo a `.ts`/`.tsx`. Confirmar la combinación exacta de versiones ESLint/typescript-eslint al instalar.
 
 ### Prettier (`.prettierrc`) — mínimo que coincide con el código actual
+
 ```json
 {
   "singleQuote": true,
   "plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"]
 }
 ```
+
 > El resto (`semi: true`, `tabWidth: 2`, `trailingComma: 'all'`, `printWidth: 80`) ya son los **defaults de Prettier 3** y coinciden con el repo; solo se fuerza `singleQuote`.
 
 ### Scripts (`package.json`)
+
 ```json
 "lint": "eslint .",
 "typecheck": "astro check",
@@ -144,9 +163,11 @@ export default tseslint.config(
 ```
 
 ### Pre-commit (opcional, recomendado)
+
 `husky` + `lint-staged`: en cada commit corre `eslint --fix` + `prettier --write` + `astro check` sobre los archivos staged. Alineado con la regla de `CLAUDE.md`: commits atómicos, nunca `git add .` masivo.
 
 ### Alcance del linter (decisión pendiente)
+
 Las reglas estructurales (`max-lines`, etc.) están pensadas para el **código nuevo del admin**. El sitio de marketing existente podría tener violaciones (p.ej. `ContactForm.tsx`). Al instalar, decidir entre: (a) scopear las reglas estructurales a `src/features/admin/**`, `src/lib/**`, `src/actions/**`, o (b) aplicarlas globalmente y limpiar el marketing de forma incremental.
 
 ---

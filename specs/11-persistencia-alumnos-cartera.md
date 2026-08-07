@@ -56,13 +56,13 @@ export const alumnos = pgTable('alumnos', {
   id: serial('id').primaryKey(),
   nombre: text('nombre').notNull(),
   documento: text('documento').notNull().unique(), // clave de idempotencia del seed
-  anioNacimiento: integer('anio_nacimiento').notNull(),   // deriva categoría (R1)
-  fechaNacimiento: date('fecha_nacimiento'),              // null en migrados; requerida en el form
+  anioNacimiento: integer('anio_nacimiento').notNull(), // deriva categoría (R1)
+  fechaNacimiento: date('fecha_nacimiento'), // null en migrados; requerida en el form
   // Acudiente denormalizado (decisión 2b)
   acudiente: text('acudiente').notNull(),
   celular: text('celular').notNull(),
   direccion: text('direccion').notNull().default(''),
-  fechaInicio: date('fecha_inicio').notNull(),            // col. INCIO del Excel (año 2026)
+  fechaInicio: date('fecha_inicio').notNull(), // col. INCIO del Excel (año 2026)
   activo: boolean('activo').notNull().default(true),
   creadoEn: timestamp('creado_en').notNull().defaultNow(),
 });
@@ -70,17 +70,36 @@ export const alumnos = pgTable('alumnos', {
 
 ```ts
 // src/lib/db/schema/pagos.ts — fila SOLO cuando se paga (decisión 1a)
-export const mesEnum = pgEnum('mes', ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC']);
-export const pagos = pgTable('pagos', {
-  id: serial('id').primaryKey(),
-  alumnoId: integer('alumno_id').notNull().references(() => alumnos.id, { onDelete: 'cascade' }),
-  anio: integer('anio').notNull(),                        // 2026, 2027… (filtro por año futuro)
-  mes: mesEnum('mes').notNull(),
-  montoCop: integer('monto_cop').notNull(),               // cuota vigente al pagar
-  metodo: text('metodo'),                                 // 'efectivo' | 'transferencia' | null (seed)
-  pagadoEn: timestamp('pagado_en'),                       // null en pagos del seed
-  registradoPor: text('registrado_por').references(() => user.id), // null en seed
-}, (t) => [unique().on(t.alumnoId, t.anio, t.mes)]);      // un pago por alumno-mes-año
+export const mesEnum = pgEnum('mes', [
+  'ENE',
+  'FEB',
+  'MAR',
+  'ABR',
+  'MAY',
+  'JUN',
+  'JUL',
+  'AGO',
+  'SEP',
+  'OCT',
+  'NOV',
+  'DIC',
+]);
+export const pagos = pgTable(
+  'pagos',
+  {
+    id: serial('id').primaryKey(),
+    alumnoId: integer('alumno_id')
+      .notNull()
+      .references(() => alumnos.id, { onDelete: 'cascade' }),
+    anio: integer('anio').notNull(), // 2026, 2027… (filtro por año futuro)
+    mes: mesEnum('mes').notNull(),
+    montoCop: integer('monto_cop').notNull(), // cuota vigente al pagar
+    metodo: text('metodo'), // 'efectivo' | 'transferencia' | null (seed)
+    pagadoEn: timestamp('pagado_en'), // null en pagos del seed
+    registradoPor: text('registrado_por').references(() => user.id), // null en seed
+  },
+  (t) => [unique().on(t.alumnoId, t.anio, t.mes)],
+); // un pago por alumno-mes-año
 ```
 
 Sin tablas `categorias` ni `tarifas` (derivadas en dominio). El enum trae los 12 meses aunque hoy solo se cobre hasta NOV — cambiar la ventana de cobro no toca la BD.
@@ -89,8 +108,8 @@ Sin tablas `categorias` ni `tarifas` (derivadas en dominio). El enum trae los 12
 
 ```ts
 export const ARRANQUE_CLUB = { anio: 2026, mes: 'MAR' } as const; // antes: na para todos
-export const MES_FIN_COBRO: Mes = 'NOV';       // ← única constante a tocar si Camilo dice DIC
-export const MESES_VISIBLES: Mes[];            // ENE..MES_FIN_COBRO (tira de cartera/ficha)
+export const MES_FIN_COBRO: Mes = 'NOV'; // ← única constante a tocar si Camilo dice DIC
+export const MESES_VISIBLES: Mes[]; // ENE..MES_FIN_COBRO (tira de cartera/ficha)
 
 // Estado de un mes DERIVADO (ya no se almacena):
 // na      → mes < ARRANQUE_CLUB, o mes < fechaInicio del alumno, o mes > MES_FIN_COBRO
@@ -98,8 +117,11 @@ export const MESES_VISIBLES: Mes[];            // ENE..MES_FIN_COBRO (tira de ca
 // due     → cobrable y ya venció (mes < mes vivo)
 // pending → cobrable y no vencido (mes ≥ mes vivo)
 export function estadoDelMes(params: {
-  anio: number; mes: Mes; pagado: boolean;
-  fechaInicio: Date; hoy: Date;
+  anio: number;
+  mes: Mes;
+  pagado: boolean;
+  fechaInicio: Date;
+  hoy: Date;
 }): EstadoMes;
 
 export function proximosCumples(alumnos: AlumnoConFecha[], hoy: Date): Cumple[];
@@ -237,17 +259,17 @@ _Verifica:_ flujo completo en `npm run dev` contra Neon: login → dashboard rea
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
+| Riesgo                                                                                                                               | Mitigación                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | La detección del verde depende de cómo Excel codifica el color (`theme9` hoy; Camilo podría pintar con otro tono de verde a futuro). | El seed clasifica por lista blanca de fills conocidos (`theme9` = pagado, `theme0`/sin fill = no pagado) y **reporta como anomalía cualquier fill desconocido** con fila y mes, en vez de adivinar. |
-| El Excel tiene celdas verdes en meses futuros (becado) que el modelo carga como pagos adelantados. | Comportamiento aceptado y deseado: `pagos.registrar` y el seed permiten pagar meses `pending` futuros; el dominio ya los muestra `paid`. |
-| Cambiar `DatosAlumnoInput` (año → fecha) rompe consumidores del dominio en cadena. | Diferido al bloque D: el cambio de tipo y el form (único punto de captura, spec 07) migran juntos, con `tsc` como red. Cada frontera de bloque (A–C) queda verde con el mock vivo. |
-| Migrar 6 pantallas a datos async a la vez introduce estados de carga inconsistentes o parpadeos. | Los hooks conservan el contrato actual (misma forma de retorno + `loading/error` uniformes); patrón único de skeleton/error definido una vez en `chrome/` y reusado. |
-| Latencia de Neon en cada navegación (la isla refetchea por pantalla). | Volumen chico (~80 filas): una query por vista es aceptable; si duele, cache en memoria del hook por sesión de navegación — no se optimiza por adelantado. |
-| El seed corre contra la BD de producción por accidente a mitad de desarrollo. | El seed imprime host de la BD y pide confirmación (`--yes` para saltarla); en dev se usa una rama de Neon (`DATABASE_URL` local distinta, ya soportado por `.env`). |
-| Un documento corregido en el Excel re-crea al alumno en vez de actualizarlo (la idempotencia es por documento). | Riesgo documentado en el reporte del seed: si un documento cambia, el resumen muestra "creados: 1" inesperado; el diccionario de datos lo advierte y la corrección es manual (borrar el duplicado). |
-| `date` de Postgres vs `Date` de JS y zona horaria corren un día los cumpleaños o `fechaInicio`. | Columnas `date` (sin hora) leídas como string `YYYY-MM-DD` y parseadas en dominio sin conversión de zona; criterio de aceptación de cumpleaños lo cubre. |
-| El payload del entrenador filtra dinero en el service pero un refactor futuro lo une al del admin. | Tipos de retorno distintos (`AlumnoAdmin` vs `AlumnoPlantel`) en el contrato de la Action: el compilador impide devolver dinero al entrenador por accidente. |
+| El Excel tiene celdas verdes en meses futuros (becado) que el modelo carga como pagos adelantados.                                   | Comportamiento aceptado y deseado: `pagos.registrar` y el seed permiten pagar meses `pending` futuros; el dominio ya los muestra `paid`.                                                            |
+| Cambiar `DatosAlumnoInput` (año → fecha) rompe consumidores del dominio en cadena.                                                   | Diferido al bloque D: el cambio de tipo y el form (único punto de captura, spec 07) migran juntos, con `tsc` como red. Cada frontera de bloque (A–C) queda verde con el mock vivo.                  |
+| Migrar 6 pantallas a datos async a la vez introduce estados de carga inconsistentes o parpadeos.                                     | Los hooks conservan el contrato actual (misma forma de retorno + `loading/error` uniformes); patrón único de skeleton/error definido una vez en `chrome/` y reusado.                                |
+| Latencia de Neon en cada navegación (la isla refetchea por pantalla).                                                                | Volumen chico (~80 filas): una query por vista es aceptable; si duele, cache en memoria del hook por sesión de navegación — no se optimiza por adelantado.                                          |
+| El seed corre contra la BD de producción por accidente a mitad de desarrollo.                                                        | El seed imprime host de la BD y pide confirmación (`--yes` para saltarla); en dev se usa una rama de Neon (`DATABASE_URL` local distinta, ya soportado por `.env`).                                 |
+| Un documento corregido en el Excel re-crea al alumno en vez de actualizarlo (la idempotencia es por documento).                      | Riesgo documentado en el reporte del seed: si un documento cambia, el resumen muestra "creados: 1" inesperado; el diccionario de datos lo advierte y la corrección es manual (borrar el duplicado). |
+| `date` de Postgres vs `Date` de JS y zona horaria corren un día los cumpleaños o `fechaInicio`.                                      | Columnas `date` (sin hora) leídas como string `YYYY-MM-DD` y parseadas en dominio sin conversión de zona; criterio de aceptación de cumpleaños lo cubre.                                            |
+| El payload del entrenador filtra dinero en el service pero un refactor futuro lo une al del admin.                                   | Tipos de retorno distintos (`AlumnoAdmin` vs `AlumnoPlantel`) en el contrato de la Action: el compilador impide devolver dinero al entrenador por accidente.                                        |
 
 ---
 

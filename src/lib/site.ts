@@ -11,8 +11,7 @@ export const SITE = {
   language: 'es',
 } as const;
 
-const whatsappNumber =
-  import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573008725964';
+const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573008725964';
 const numeroNacional = whatsappNumber.replace(/^57/, '');
 
 export const CONTACT = {

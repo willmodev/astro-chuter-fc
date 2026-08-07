@@ -73,7 +73,10 @@ export default tseslint.config(
     files: ['**/*.tsx', '**/*.astro'],
     rules: { 'max-lines-per-function': 'off' },
   },
-  { files: ['src/lib/db/schema/**'], rules: { 'max-lines-per-function': 'off' } },
+  {
+    files: ['src/lib/db/schema/**'],
+    rules: { 'max-lines-per-function': 'off' },
+  },
   // Scripts de mantenimiento: Node puro, fuera del proyecto TS.
   {
     files: ['scripts/**', '*.mjs', '*.cjs', '*.config.js'],

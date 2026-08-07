@@ -19,7 +19,10 @@ export interface EntrenadorAppProps {
 // reales llegan en los bloques C y D (hoy: stubs).
 type Meta = { title: string; eyebrow: string };
 
-const META_DEFAULT: Meta = { title: 'Entrenos', eyebrow: 'Planificación semanal' };
+const META_DEFAULT: Meta = {
+  title: 'Entrenos',
+  eyebrow: 'Planificación semanal',
+};
 
 const META: Partial<Record<RutaAdmin['vista'], Meta>> = {
   entrenos: META_DEFAULT,
@@ -44,7 +47,11 @@ const RUTA_DE_TAB: Partial<Record<TabId, RutaAdmin>> = {
   mas: { vista: 'mas' },
 };
 
-export function EntrenadorApp({ userId, userName, cats }: Readonly<EntrenadorAppProps>) {
+export function EntrenadorApp({
+  userId,
+  userName,
+  cats,
+}: Readonly<EntrenadorAppProps>) {
   const { ruta, navegar } = useAdminRouter('entrenador');
   const meta = META[ruta.vista] ?? META_DEFAULT;
 
@@ -66,7 +73,9 @@ export function EntrenadorApp({ userId, userName, cats }: Readonly<EntrenadorApp
           entrenadorId={userId}
           entrenadorNombre={userName}
           cats={cats}
-          onOpenSesion={(weekId, day) => navegar({ vista: 'sesion', weekId, day })}
+          onOpenSesion={(weekId, day) =>
+            navegar({ vista: 'sesion', weekId, day })
+          }
         />
       )}
       {ruta.vista === 'sesion' && (
@@ -92,7 +101,9 @@ export function EntrenadorApp({ userId, userName, cats }: Readonly<EntrenadorApp
           onVolver={() => navegar({ vista: 'plantel' })}
         />
       )}
-      {ruta.vista === 'mas' && <MasEntrenador userName={userName} cats={cats} />}
+      {ruta.vista === 'mas' && (
+        <MasEntrenador userName={userName} cats={cats} />
+      )}
     </AdminShell>
   );
 }

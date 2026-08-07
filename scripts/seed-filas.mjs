@@ -8,8 +8,15 @@ import { kitsDeFila } from './seed-uniformes.mjs';
 export const HEADER_ROW = 4;
 // Columnas de mes en CATEGORIAS: MAR..NOV (el club nació en marzo 2026).
 export const MES_COL = {
-  L: 'MAR', M: 'ABR', N: 'MAY', O: 'JUN', P: 'JUL',
-  Q: 'AGO', R: 'SEP', S: 'OCT', T: 'NOV',
+  L: 'MAR',
+  M: 'ABR',
+  N: 'MAY',
+  O: 'JUN',
+  P: 'JUL',
+  Q: 'AGO',
+  R: 'SEP',
+  S: 'OCT',
+  T: 'NOV',
 };
 
 // Relleno de celda de mes → estado del pago. theme9=verde=pagado; theme0/sin
@@ -72,7 +79,9 @@ function parseFila(ws, r, vistos, anomalias) {
   const fechaInicio = fechaISO(ws.getCell(`H${r}`).value);
 
   if (catAnio === null) {
-    anomalias.push(`F${r} ${nombre}: nacimiento '${String(ws.getCell(`F${r}`).value)}' fuera de rango (SUB 4–16) → omitida`);
+    anomalias.push(
+      `F${r} ${nombre}: nacimiento '${String(ws.getCell(`F${r}`).value)}' fuera de rango (SUB 4–16) → omitida`,
+    );
     return null;
   }
   if (documento === '') {
@@ -80,7 +89,9 @@ function parseFila(ws, r, vistos, anomalias) {
     return null;
   }
   if (vistos.has(documento)) {
-    anomalias.push(`F${r} ${nombre}: documento ${documento} duplicado (ya en F${vistos.get(documento)}) → omitida`);
+    anomalias.push(
+      `F${r} ${nombre}: documento ${documento} duplicado (ya en F${vistos.get(documento)}) → omitida`,
+    );
     return null;
   }
   // El cross-check contra la categoría del Excel detecta digitación mala, pero
@@ -89,12 +100,15 @@ function parseFila(ws, r, vistos, anomalias) {
   if (catExcel && catExcel !== catAnio && catExcel !== catFecha) {
     anomalias.push(
       `F${r} ${nombre}: categoría Excel '${catExcel}' ≠ por año '${catAnio}'` +
-        (catFecha ? ` ni por fecha '${catFecha}'` : '') + ' → omitida',
+        (catFecha ? ` ni por fecha '${catFecha}'` : '') +
+        ' → omitida',
     );
     return null;
   }
   if (fechaInicio === null) {
-    anomalias.push(`F${r} ${nombre}: fecha de inicio (INCIO) inválida → omitida`);
+    anomalias.push(
+      `F${r} ${nombre}: fecha de inicio (INCIO) inválida → omitida`,
+    );
     return null;
   }
   vistos.set(documento, r);
@@ -104,7 +118,9 @@ function parseFila(ws, r, vistos, anomalias) {
     const est = estadoCelda(ws.getCell(`${col}${r}`));
     if (est === 'pagado') mesesPagados.push(mes);
     else if (est === 'desconocido') {
-      anomalias.push(`F${r} ${nombre}: relleno de color desconocido en ${mes} → pago omitido`);
+      anomalias.push(
+        `F${r} ${nombre}: relleno de color desconocido en ${mes} → pago omitido`,
+      );
     }
   }
 

@@ -9,13 +9,13 @@
 
 Después del spec 15 el back-office está funcionalmente completo. Lo que queda son cinco cabos sueltos — los cuatro primeros anotados en `docs/backlog.md`, el quinto pedido por Will el 2026-08-07:
 
-| # | Pendiente | Prioridad | Estado hoy |
-| --- | --- | --- | --- |
-| 1 | **HU-0.2** · Enforcement de código limpio | `Must` | ☐ — **el último enabler abierto del EPIC 0** |
-| 2 | **HU-7.1** · Identidad y contacto del club en "Más" | `Could` | ☐ |
-| 3 | **HU-7.2** · Apariencia persistida — falta el toggle de montos | `Should` | ◐ (la vista Tarjetas/Matriz ya persiste) |
-| 4 | **DT-2** · El Dashboard no refresca tras retirar/reactivar | `Could` | ☐ (deuda del spec 14) |
-| 5 | **Paginado incremental** de Alumnos y Cartera | `Should` | ☐ — hoy se renderiza la lista completa (82 filas, ~1.000 celdas en Matriz) |
+| #   | Pendiente                                                      | Prioridad | Estado hoy                                                                 |
+| --- | -------------------------------------------------------------- | --------- | -------------------------------------------------------------------------- |
+| 1   | **HU-0.2** · Enforcement de código limpio                      | `Must`    | ☐ — **el último enabler abierto del EPIC 0**                               |
+| 2   | **HU-7.1** · Identidad y contacto del club en "Más"            | `Could`   | ☐                                                                          |
+| 3   | **HU-7.2** · Apariencia persistida — falta el toggle de montos | `Should`  | ◐ (la vista Tarjetas/Matriz ya persiste)                                   |
+| 4   | **DT-2** · El Dashboard no refresca tras retirar/reactivar     | `Could`   | ☐ (deuda del spec 14)                                                      |
+| 5   | **Paginado incremental** de Alumnos y Cartera                  | `Should`  | ☐ — hoy se renderiza la lista completa (82 filas, ~1.000 celdas en Matriz) |
 
 Se agrupan porque comparten tres cosas: **cero migración**, **cero regla de negocio nueva** y un alcance de UI acotado. Separarlos daría cinco specs de una página cada uno.
 
@@ -23,7 +23,7 @@ Se agrupan porque comparten tres cosas: **cero migración**, **cero regla de neg
 
 `.claude/rules/coding-rules.md` define límites numéricos (200 líneas por archivo, 60 por función, complejidad 10, cero `any`, orden de imports) y dice explícitamente que **hoy no hay tooling que los haga cumplir**: solo existe `npm run check` = `astro check`. Cada spec desde el 11 los ha verificado **contando líneas a mano** en el bloque de cierre. Eso funcionó mientras el repo crecía spec a spec con una sola persona; no es una garantía, es una costumbre.
 
-Y hay una decisión que el propio archivo de reglas dejó abierta (sección *"Alcance del linter (decisión pendiente)"*): si las reglas estructurales se **scopean** a `src/features/admin/**`, `src/lib/**` y `src/actions/**`, o se aplican **globalmente** limpiando el marketing de a poco. Este spec la resuelve con números, no con intuición — ver la sección siguiente.
+Y hay una decisión que el propio archivo de reglas dejó abierta (sección _"Alcance del linter (decisión pendiente)"_): si las reglas estructurales se **scopean** a `src/features/admin/**`, `src/lib/**` y `src/actions/**`, o se aplican **globalmente** limpiando el marketing de a poco. Este spec la resuelve con números, no con intuición — ver la sección siguiente.
 
 ### Las otras cuatro, en una línea cada una
 
@@ -36,20 +36,20 @@ Y hay una decisión que el propio archivo de reglas dejó abierta (sección *"Al
 
 ## Decisión mayor: alcance del linter (resuelta con medición)
 
-`coding-rules.md` supone que *"el sitio de marketing existente podría tener violaciones (p.ej. `ContactForm.tsx`)"* y que las reglas estructurales *"están pensadas para el código nuevo del admin"*. **Medido contra el código real del 2026-08-07, la premisa está al revés.**
+`coding-rules.md` supone que _"el sitio de marketing existente podría tener violaciones (p.ej. `ContactForm.tsx`)"_ y que las reglas estructurales _"están pensadas para el código nuevo del admin"_. **Medido contra el código real del 2026-08-07, la premisa está al revés.**
 
 ### Lo que se midió
 
 Conteo sobre los 244 archivos `.ts` / `.tsx` / `.astro` de `src/`, con el mismo criterio que declara la regla (`skipBlankLines` + `skipComments`):
 
-| Regla | Violaciones hoy | Detalle |
-| --- | --- | --- |
-| `max-lines: 200` | **0** | El archivo más grande es `src/lib/services/alumnos.ts`: **204 crudas / 167 efectivas**. Ninguno más pasa de 190 crudas. |
-| `@typescript-eslint/no-explicit-any` | **0** | La única aparición de la palabra en todo `src/` es un comentario de `lib/db/repos/usuarios.ts:16` que dice *"tipado sin `any`"*. |
-| `max-lines-per-function: 60` | **37** | **33 en `src/features/admin/**` · 4 fuera** (`ContactForm.tsx` 154, `GalleryLightbox.tsx` 138, `HeroHeadline.tsx` 98, `HeroTicket.tsx` 86). |
-| ↳ de esas 37, en `.ts` (lógica pura) | **3** | `ui/useZoomPan.ts` (101), `screens/sesion/useSesion.ts` (97), `screens/alumno-form/useAlumnoForm.ts` (71). |
-| ↳ de esas 37, en `.tsx` (componentes) | **34** | Peores: `AdminApp.tsx` `AdminHome` (121), `EquipoScreen.tsx` (107), `SesionRow.tsx` (104), `VisorImagen.tsx` (103), `HojaAbono.tsx` (101). |
-| `complexity`, `max-depth`, `max-params`, `import-x/order` | **sin medir** | Requieren ESLint corriendo; se inventarían en el Bloque A (ver plan). |
+| Regla                                                     | Violaciones hoy | Detalle                                                                                                                                    |
+| --------------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `max-lines: 200`                                          | **0**           | El archivo más grande es `src/lib/services/alumnos.ts`: **204 crudas / 167 efectivas**. Ninguno más pasa de 190 crudas.                    |
+| `@typescript-eslint/no-explicit-any`                      | **0**           | La única aparición de la palabra en todo `src/` es un comentario de `lib/db/repos/usuarios.ts:16` que dice _"tipado sin `any`"_.           |
+| `max-lines-per-function: 60`                              | **37**          | **33 en `src/features/admin/**` · 4 fuera** (`ContactForm.tsx`154,`GalleryLightbox.tsx`138,`HeroHeadline.tsx`98,`HeroTicket.tsx` 86).      |
+| ↳ de esas 37, en `.ts` (lógica pura)                      | **3**           | `ui/useZoomPan.ts` (101), `screens/sesion/useSesion.ts` (97), `screens/alumno-form/useAlumnoForm.ts` (71).                                 |
+| ↳ de esas 37, en `.tsx` (componentes)                     | **34**          | Peores: `AdminApp.tsx` `AdminHome` (121), `EquipoScreen.tsx` (107), `SesionRow.tsx` (104), `VisorImagen.tsx` (103), `HojaAbono.tsx` (101). |
+| `complexity`, `max-depth`, `max-params`, `import-x/order` | **sin medir**   | Requieren ESLint corriendo; se inventarían en el Bloque A (ver plan).                                                                      |
 
 ### Qué se concluye
 
@@ -61,14 +61,14 @@ Conteo sobre los 244 archivos `.ts` / `.tsx` / `.astro` de `src/`, con el mismo 
 
 **Alcance global** (todo `src/` y `scripts/`), **calibrado por regla y por tipo de archivo**:
 
-| Regla | Alcance | Severidad | Costo hoy |
-| --- | --- | --- | --- |
-| `max-lines: 200` (skip blancos + comentarios) | global | `error` | 0 violaciones |
-| `@typescript-eslint/no-explicit-any` | global | `error` | 0 violaciones |
-| `import-x/no-duplicates` · `import-x/order` | global | `error` | autofixables con `--fix` |
-| `complexity: 10` · `max-depth: 3` · `max-params: 4` | global | `error` | por medir (Bloque A) |
-| `max-lines-per-function: 60` | **solo `.ts` / `.mjs`** | `error` | **3** violaciones → se arreglan en este spec |
-| `max-lines-per-function` | **off en `.tsx` / `.astro`** | — | cubierto por `max-lines: 200` + `complexity: 10` |
+| Regla                                               | Alcance                      | Severidad | Costo hoy                                        |
+| --------------------------------------------------- | ---------------------------- | --------- | ------------------------------------------------ |
+| `max-lines: 200` (skip blancos + comentarios)       | global                       | `error`   | 0 violaciones                                    |
+| `@typescript-eslint/no-explicit-any`                | global                       | `error`   | 0 violaciones                                    |
+| `import-x/no-duplicates` · `import-x/order`         | global                       | `error`   | autofixables con `--fix`                         |
+| `complexity: 10` · `max-depth: 3` · `max-params: 4` | global                       | `error`   | por medir (Bloque A)                             |
+| `max-lines-per-function: 60`                        | **solo `.ts` / `.mjs`**      | `error`   | **3** violaciones → se arreglan en este spec     |
+| `max-lines-per-function`                            | **off en `.tsx` / `.astro`** | —         | cubierto por `max-lines: 200` + `complexity: 10` |
 
 Las 3 violaciones `.ts` **sí se arreglan** (son hooks con lógica real: extraer helpers, no partir markup). Las 34 de JSX **no se tocan**: la regla deja de aplicarles porque nunca fue para ellas.
 
@@ -80,12 +80,12 @@ Las 3 violaciones `.ts` **sí se arreglan** (son hooks con lógica real: extraer
 
 ### Lo que se midió
 
-| Dato | Hoy |
-| --- | --- |
-| Alumnos activos | **82** |
-| Payload de `alumnos.listar` | ~600-700 B por alumno (`states[12]` + `kits[2]`) → **≈55 KB, ~10 KB gzip** |
-| Queries por llamada | **3 full-table** (`listarAlumnos` + `pagosPorAnio` + `todosUniformes`), armadas en memoria en `construirAlumnos` |
-| Render más pesado | Cartera en Matriz: 82 × 12 ≈ **1.000 celdas** de una sola vez |
+| Dato                        | Hoy                                                                                                              |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Alumnos activos             | **82**                                                                                                           |
+| Payload de `alumnos.listar` | ~600-700 B por alumno (`states[12]` + `kits[2]`) → **≈55 KB, ~10 KB gzip**                                       |
+| Queries por llamada         | **3 full-table** (`listarAlumnos` + `pagosPorAnio` + `todosUniformes`), armadas en memoria en `construirAlumnos` |
+| Render más pesado           | Cartera en Matriz: 82 × 12 ≈ **1.000 celdas** de una sola vez                                                    |
 
 ### Qué se concluye
 
@@ -136,10 +136,10 @@ Las 3 violaciones `.ts` **sí se arreglan** (son hooks con lógica real: extraer
 
 Lo único que persiste es una **preferencia de UI local**, en `localStorage`, siguiendo la convención de clave que ya existe (`chuter.admin.*`):
 
-| Clave | Valores | Por defecto | Origen |
-| --- | --- | --- | --- |
-| `chuter.admin.carteraVista` | `'tarjetas'` \| `'matriz'` | `'tarjetas'` | ya existe (spec 06) |
-| `chuter.admin.montosVisibles` | `'si'` \| `'no'` | `'si'` | **nuevo** |
+| Clave                         | Valores                    | Por defecto  | Origen              |
+| ----------------------------- | -------------------------- | ------------ | ------------------- |
+| `chuter.admin.carteraVista`   | `'tarjetas'` \| `'matriz'` | `'tarjetas'` | ya existe (spec 06) |
+| `chuter.admin.montosVisibles` | `'si'` \| `'no'`           | `'si'`       | **nuevo**           |
 
 Contratos nuevos (solo firmas):
 
@@ -187,10 +187,10 @@ useListaIncremental<T>(
 
 **Claves de filtro por pantalla:**
 
-| Pantalla | `clave` |
-| --- | --- |
-| Alumnos | `` `${query}|${cat}|${retirados}` `` |
-| Cartera | `` `${segmento}|${vista}` `` |
+| Pantalla | `clave`         |
+| -------- | --------------- | ------------ | ---------------- |
+| Alumnos  | `` `${query}    | ${cat}       | ${retirados}` `` |
+| Cartera  | `` `${segmento} | ${vista}` `` |
 
 > **Regla invariable del paginado:** los contadores y totales (`total`, `enMora`, `sinFecha`, `recaudoAnio`, `carteraVencida`, el badge del `SegmentoFiltro`) se siguen calculando sobre la **lista completa filtrada**, nunca sobre `visibles`. La ventana es solo de render.
 
@@ -215,40 +215,74 @@ Cada bloque deja `npm run check` y `npm run build` en verde, el marketing preren
 
 ```js
 export default tseslint.config(
-  { ignores: ['dist/', '.astro/', '.vercel/', 'drizzle/', 'src/components/ui/**'] },
+  {
+    ignores: [
+      'dist/',
+      '.astro/',
+      '.vercel/',
+      'drizzle/',
+      'src/components/ui/**',
+    ],
+  },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...astro.configs.recommended,
   {
     languageOptions: {
-      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     plugins: { 'import-x': importX },
     rules: {
-      'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }],
-      'max-lines-per-function': ['error', { max: 60, skipBlankLines: true, skipComments: true }],
+      'max-lines': [
+        'error',
+        { max: 200, skipBlankLines: true, skipComments: true },
+      ],
+      'max-lines-per-function': [
+        'error',
+        { max: 60, skipBlankLines: true, skipComments: true },
+      ],
       complexity: ['error', 10],
       'max-depth': ['error', 3],
       'max-params': ['error', 4],
       '@typescript-eslint/no-explicit-any': 'error',
       'import-x/no-duplicates': 'error',
-      'import-x/order': ['error', {
-        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type'],
-        pathGroups: [{ pattern: '@/**', group: 'internal' }],
-        'newlines-between': 'always',
-      }],
+      'import-x/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+            'type',
+          ],
+          pathGroups: [{ pattern: '@/**', group: 'internal' }],
+          'newlines-between': 'always',
+        },
+      ],
     },
   },
   // El cuerpo de un componente es un árbol de markup, no una función: lo acota
   // `max-lines: 200` (un componente por archivo) + `complexity: 10`.
-  { files: ['**/*.tsx', '**/*.astro'], rules: { 'max-lines-per-function': 'off' } },
-  { files: ['src/lib/db/schema/**'], rules: { 'max-lines-per-function': 'off' } },
+  {
+    files: ['**/*.tsx', '**/*.astro'],
+    rules: { 'max-lines-per-function': 'off' },
+  },
+  {
+    files: ['src/lib/db/schema/**'],
+    rules: { 'max-lines-per-function': 'off' },
+  },
   // Scripts de mantenimiento: Node puro, fuera del proyecto TS.
   { files: ['scripts/**'], extends: [tseslint.configs.disableTypeChecked] },
 );
 ```
 
-3. **`ignores`:** `src/components/ui/**` queda fuera porque es código generado por shadcn y `CLAUDE.md` dice explícitamente *"no tocar manualmente"*.
+3. **`ignores`:** `src/components/ui/**` queda fuera porque es código generado por shadcn y `CLAUDE.md` dice explícitamente _"no tocar manualmente"_.
 4. **Correr `npx eslint .` (sin `--fix`) y anotar el inventario en este spec** (conteo por regla). El grupo `strictTypeChecked` es el riesgo real: sobre un repo que nunca pasó por linter, reglas como `no-floating-promises`, `no-unnecessary-condition` o `restrict-template-expressions` pueden disparar decenas de hallazgos.
    **Regla de corte:** si `strictTypeChecked` deja **más de ~40 hallazgos**, se baja a `recommendedTypeChecked`, se cierra en verde, y la promoción a `strictTypeChecked` queda anotada como deuda con el número medido. Si son menos, se arreglan acá.
 
@@ -274,22 +308,22 @@ de los cuales **3671 (86%)** venían de `references/`, `admin-design-system-*/`,
 Inventario con `recommendedTypeChecked` sobre el scope real: **214 hallazgos**, de los
 cuales **129 son autofixables** (`--fix`, Bloque A′) → **85 reales**:
 
-| Regla | Total | Autofix | Reales | Origen |
-| --- | --- | --- | --- | --- |
-| `import-x/order` | 127 | 126 | 1 | Bloque A′ |
-| `@typescript-eslint/no-unsafe-*` | 40 | 0 | 40 | **Todos** de `import.meta.env`: Astro lo tipa como `any`. Se resuelve tipando `ImportMetaEnv` en `src/env.d.ts` (un cambio, −40). |
-| `@typescript-eslint/no-misused-promises` | 18 | 0 | 18 | `onClick={async …}` en JSX → envolver con `void`. Mecánico. |
-| `complexity` | 9 | 0 | 9 | `parseRuta` 25, `AdminHome` 18, `HojaEntrega` 16, `EquipoScreen`/`Ficha`/`carga-sesion` 12, `DayCard`/`middleware` 11, `parseFila` (script) 21. **El spec no los había medido.** |
-| `@typescript-eslint/no-unused-vars` | 7 | 0 | 7 | Imports muertos (incluido el `RutaAdmin` de `AdminApp.tsx:23`). |
-| `max-lines-per-function` | 5 | 0 | 5 | Las 3 previstas (`useZoomPan` 101, `useSesion` 97, `useAlumnoForm` 71) + 2 en `scripts/` que el spec no midió. |
-| `max-params` | 2 | 0 | 2 | `upsertPlaneacion` (5), `insertarUniformes` (5). |
-| `import-x/no-duplicates` | 2 | 1 | 1 | `services/uniformes.ts`. |
-| `no-unnecessary-type-assertion` | 2 | 2 | 0 | Autofix. |
-| `no-floating-promises` | 1 | 0 | 1 | `Entrenos.tsx:89`. |
-| Error de parseo | 1 | — | 1 | `StylizedMap.astro:129` — limitación del parser de Astro, ver Bloque B. |
-| `max-lines: 200` | **0** | — | **0** | ✅ confirma la medición del spec. |
-| `@typescript-eslint/no-explicit-any` | **0** | — | **0** | ✅ confirma la medición del spec. |
-| `max-depth: 3` | **0** | — | **0** | No medido antes; sale limpio. |
+| Regla                                    | Total | Autofix | Reales | Origen                                                                                                                                                                           |
+| ---------------------------------------- | ----- | ------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `import-x/order`                         | 127   | 126     | 1      | Bloque A′                                                                                                                                                                        |
+| `@typescript-eslint/no-unsafe-*`         | 40    | 0       | 40     | **Todos** de `import.meta.env`: Astro lo tipa como `any`. Se resuelve tipando `ImportMetaEnv` en `src/env.d.ts` (un cambio, −40).                                                |
+| `@typescript-eslint/no-misused-promises` | 18    | 0       | 18     | `onClick={async …}` en JSX → envolver con `void`. Mecánico.                                                                                                                      |
+| `complexity`                             | 9     | 0       | 9      | `parseRuta` 25, `AdminHome` 18, `HojaEntrega` 16, `EquipoScreen`/`Ficha`/`carga-sesion` 12, `DayCard`/`middleware` 11, `parseFila` (script) 21. **El spec no los había medido.** |
+| `@typescript-eslint/no-unused-vars`      | 7     | 0       | 7      | Imports muertos (incluido el `RutaAdmin` de `AdminApp.tsx:23`).                                                                                                                  |
+| `max-lines-per-function`                 | 5     | 0       | 5      | Las 3 previstas (`useZoomPan` 101, `useSesion` 97, `useAlumnoForm` 71) + 2 en `scripts/` que el spec no midió.                                                                   |
+| `max-params`                             | 2     | 0       | 2      | `upsertPlaneacion` (5), `insertarUniformes` (5).                                                                                                                                 |
+| `import-x/no-duplicates`                 | 2     | 1       | 1      | `services/uniformes.ts`.                                                                                                                                                         |
+| `no-unnecessary-type-assertion`          | 2     | 2       | 0      | Autofix.                                                                                                                                                                         |
+| `no-floating-promises`                   | 1     | 0       | 1      | `Entrenos.tsx:89`.                                                                                                                                                               |
+| Error de parseo                          | 1     | —       | 1      | `StylizedMap.astro:129` — limitación del parser de Astro, ver Bloque B.                                                                                                          |
+| `max-lines: 200`                         | **0** | —       | **0**  | ✅ confirma la medición del spec.                                                                                                                                                |
+| `@typescript-eslint/no-explicit-any`     | **0** | —       | **0**  | ✅ confirma la medición del spec.                                                                                                                                                |
+| `max-depth: 3`                           | **0** | —       | **0**  | No medido antes; sale limpio.                                                                                                                                                    |
 
 Las dos reglas que definen el contrato del proyecto (`max-lines: 200` y `no-explicit-any`)
 salieron en **cero violaciones**, tal como el spec predijo. El alcance global se confirma.
@@ -299,7 +333,10 @@ salieron en **cero violaciones**, tal como el spec predijo. El alcance global se
 5. `.prettierrc` mínimo (el resto son defaults de Prettier 3, que ya coinciden con el repo):
 
 ```json
-{ "singleQuote": true, "plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"] }
+{
+  "singleQuote": true,
+  "plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"]
+}
 ```
 
 6. `.gitattributes` con `* text=auto eol=lf`. **Medido:** hoy los archivos están en disco con **CRLF**; con el `endOfLine: 'lf'` por defecto de Prettier, **239 de los 244** archivos cambian, de los cuales **114 son solo finales de línea** y **125 tienen deriva real de formato**. Normalizar a LF es lo correcto para un repo que compila y despliega en Linux (Vercel).
@@ -336,7 +373,7 @@ _Verifica:_ ninguna función `.ts` pasa de 60 efectivas; el zoom del visor, la s
 
 > **`check` no incluye `format:check` a propósito:** el formato no bloquea, se corre a mano con `npm run format`. Queda escrito para que no se vuelva a discutir.
 
-14. `docs/ARCHITECTURE.md` §9: `npm run lint` deja de ser aspiracional. `CLAUDE.md`: agregar los scripts nuevos. `.claude/rules/coding-rules.md`: reemplazar §5 *"Alcance del linter (decisión pendiente)"* por la decisión de este spec, actualizar versiones y agregar el override de `.tsx` a la tabla de §2.
+14. `docs/ARCHITECTURE.md` §9: `npm run lint` deja de ser aspiracional. `CLAUDE.md`: agregar los scripts nuevos. `.claude/rules/coding-rules.md`: reemplazar §5 _"Alcance del linter (decisión pendiente)"_ por la decisión de este spec, actualizar versiones y agregar el override de `.tsx` a la tabla de §2.
 
 _Verifica:_ `npm run check` corre las dos herramientas y falla si cualquiera falla; ninguna doc sigue describiendo el linter como pendiente.
 
@@ -395,7 +432,7 @@ _Verifica:_ con 82 alumnos, Alumnos y Cartera montan **15 filas**; bajar carga d
 31. `docs/backlog.md`:
     - HU-0.2, HU-7.1, HU-7.2 y DT-2 a ☑ con su nota de spec.
     - Actualizar el **encabezado (`backlog.md:8`)**: hoy sigue listando HU-7.1 y HU-7.4 como pendientes, y HU-7.4 ya es `Won't`/☒. Tras este spec, lo único abierto es **HU-7.3** y **HU-8.2**.
-    - El paginado **no** abre HU nueva: se anota como *hecho* bajo **HU-2.1**.
+    - El paginado **no** abre HU nueva: se anota como _hecho_ bajo **HU-2.1**.
     - **DT-3 · `alumnoAdminPorId` construye toda la lista para devolver un alumno** (`services/alumnos.ts:143-149`) — cada apertura de Ficha paga el costo de los 82. Incluye el **disparador del paginado en servidor**: >300 activos o >200 KB de payload.
     - **DT-4 · `Ficha.tsx` con prop `readOnly` no está montado en ningún lado** y su `UniformeTab` muestra saldo; si alguien lo reconecta, filtra dinero al entrenador (contradice el spec 09).
     - Agregar a **R7.2** la clave nueva (`chuter.admin.montosVisibles`).
@@ -479,7 +516,7 @@ _Verifica:_ con 82 alumnos, Alumnos y Cartera montan **15 filas**; bajar carga d
 - **Sí:** **inventariar antes de decidir la severidad de `strictTypeChecked`,** con umbral escrito (~40 hallazgos). _Por qué:_ es el único grupo de reglas cuyo costo no se pudo medir sin instalar ESLint; dejar la decisión "a criterio" garantiza que se resuelva mal bajo presión.
 - **Sí:** **el commit de formato (C) va antes del refactor (B).** _Por qué:_ si el refactor va primero, la pasada de Prettier lo reformatea después y el diff del refactor queda contaminado con ruido de formato. Invertirlos no cuesta nada y deja los dos diffs limpios.
 - **Sí:** **Prettier en un commit exclusivo + `.gitattributes` a LF + `.git-blame-ignore-revs`.** _Por qué:_ son 239 archivos (114 solo por CRLF→LF). Mezclar eso con cambios funcionales haría el diff irrevisable; aislarlo lo vuelve un commit que se aprueba de un vistazo. LF es lo correcto: el proyecto compila y despliega en Linux.
-- **Sí:** **`src/components/ui/**` fuera del linter.** _Por qué:_ es código generado por shadcn y `CLAUDE.md` dice "no tocar manualmente"; lintearlo obligaría a editarlo o a llenarlo de `eslint-disable`.
+- **Sí:** **`src/components/ui/**`fuera del linter.** _Por qué:_ es código generado por shadcn y`CLAUDE.md`dice "no tocar manualmente"; lintearlo obligaría a editarlo o a llenarlo de`eslint-disable`.
 - **No:** **`format:check` dentro de `npm run check`.** _Por qué:_ el formato no debe bloquear el mismo comando que valida tipos y reglas; se corre a mano con `npm run format`. Queda escrito para que no se re-litigue.
 - **No:** **pre-commit hooks (husky + lint-staged) en este spec.** _Por qué:_ `coding-rules.md` ya los marca como opcionales, y meter un gate en cada commit antes de que la config esté rodada convierte cualquier falso positivo en un bloqueo. Follow-up trivial una vez que el linter lleve unas semanas en verde.
 - **No:** **refactorizar los 34 componentes JSX largos.** _Por qué:_ es la consecuencia directa de la decisión de arriba; hacerlo sería trabajo puro de contador sin mejorar el código.
@@ -512,21 +549,21 @@ _Verifica:_ con 82 alumnos, Alumnos y Cartera montan **15 filas**; bajar carga d
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
+| Riesgo                                                                                                                                                                                                                   | Mitigación                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`strictTypeChecked` dispara decenas de hallazgos** sobre un repo que nunca pasó por linter (`no-floating-promises`, `no-unnecessary-condition`, `restrict-template-expressions`) y el bloque A se vuelve interminable. | Bloque A es explícitamente un bloque de **medición**, con umbral escrito (~40): por encima, se baja a `recommendedTypeChecked`, se cierra en verde y la promoción queda como deuda con el número anotado. (Señal favorable: el código ya usa `void recargar()` / `void cerrarSesion()`, como si `no-floating-promises` ya estuviera activo.) |
-| El commit de Prettier toca **239 archivos** y arruina `git blame`. | Commit exclusivo de formato, sin cambios funcionales, registrado en `.git-blame-ignore-revs`; `npm run build` verificado igual antes y después. |
-| **`import-x/order` con el grupo `type`** no clasifica los `import type` como espera la convención del repo ("tipos al final") y `--fix` reordena medio repo mal. | Confirmar el comportamiento del grupo `type` en `eslint-plugin-import-x@4` al instalar, sobre 2-3 archivos, **antes** de correr `--fix` global (Bloque A′). Si no se comporta, se cae al orden por defecto y se quita "tipos al final" de la convención escrita (una de las dos tiene que ceder). |
-| El type-aware de `typescript-eslint` sobre `.astro` tiene limitaciones conocidas y puede fallar o dar falsos positivos. | Ya está anotado en `coding-rules.md` §5. Si molesta, `.astro` se lintea sin type-aware (`disableTypeChecked` en su bloque de `files`): las reglas estructurales que importan (`max-lines`) no necesitan tipos. |
-| El toggle de montos se confunde con un control de **privacidad/seguridad** y alguien asume que un entrenador no puede ver dinero por tenerlo apagado. | Se documenta como preferencia visual y **no se le muestra al entrenador**. La barrera real por rol sigue siendo del servidor (specs 09/12: los payloads del entrenador **no traen** montos) y hay un criterio de aceptación de no-regresión sobre eso. |
-| Al reemplazar `fmt` por `<Monto>` se cuela un monto sin enmascarar en alguna superficie de lectura. | Las superficies están enumeradas una por una en el Bloque F (6 archivos, mapeados contra los 11 que hoy importan `fmt`/`fmtShort`); los 5 restantes son transaccionales y quedan por decisión, no por olvido. |
-| Existe un `Ficha.tsx` con prop `readOnly` que **no está montado en ningún lado** (el entrenador usa `FichaPlantel`), y su `UniformeTab` sí muestra saldo. Si alguien lo reconecta, filtra dinero al entrenador. | Fuera del alcance de este spec, pero se registra como **DT-4** en el backlog (código muerto que contradice el spec 09), con paso propio en el Bloque H. |
-| El `useEffect` de revalidación del dashboard entra en bucle si `recargar` cambia de identidad en cada render. | `recargar` ya está envuelto en `useCallback` con deps vacías (`useDashboardData.ts:21-30`), así que es estable. Hay criterio de aceptación explícito sobre "una sola llamada, verificado en la pestaña Red". |
-| El `IntersectionObserver` no dispara porque el centinela queda dentro de un contenedor con `overflow` y el `root` por defecto no aplica. | **Verificado:** el admin scrollea el documento; `AdminShell` no tiene contenedor con `overflow` (el único es `Sheet.tsx:27`, que es otra superficie). Si en el futuro se agrega uno, el hook recibe un `root` opcional. |
-| La ventana se resetea en cada refetch y el usuario pierde el scroll al registrar un pago. | El hook resetea por `clave` de filtros, no por identidad del array. Hay criterio de aceptación explícito ("si había 45 filas visibles, quedan 45"). |
-| Un contador o total termina midiendo la ventana en vez de la lista completa. | Las cuatro superficies afectadas están enumeradas (`ResumenAlumnos`, `SegmentoFiltro`, `CabeceraTotales`, badge de la campana) y hay criterio de aceptación de que dicen 82 y no cambian al hacer scroll. |
-| El paginado tapa el problema real: `alumnoAdminPorId` sigue construyendo los 82 alumnos para devolver 1, y eso no lo arregla ninguna ventana de render. | Se registra como **DT-3** con su disparador, para que quede visible y no lo entierre el "ya paginamos". |
-| Cambiar la semántica de `npm run check` rompe algún flujo que lo daba por sentado (por ejemplo un deploy). | Hoy `check` no lo corre nadie automáticamente: el build de Vercel ejecuta `astro build`, no `check`. Se verifica que el deploy no lo invoque antes de cambiarlo. |
+| El commit de Prettier toca **239 archivos** y arruina `git blame`.                                                                                                                                                       | Commit exclusivo de formato, sin cambios funcionales, registrado en `.git-blame-ignore-revs`; `npm run build` verificado igual antes y después.                                                                                                                                                                                              |
+| **`import-x/order` con el grupo `type`** no clasifica los `import type` como espera la convención del repo ("tipos al final") y `--fix` reordena medio repo mal.                                                         | Confirmar el comportamiento del grupo `type` en `eslint-plugin-import-x@4` al instalar, sobre 2-3 archivos, **antes** de correr `--fix` global (Bloque A′). Si no se comporta, se cae al orden por defecto y se quita "tipos al final" de la convención escrita (una de las dos tiene que ceder).                                            |
+| El type-aware de `typescript-eslint` sobre `.astro` tiene limitaciones conocidas y puede fallar o dar falsos positivos.                                                                                                  | Ya está anotado en `coding-rules.md` §5. Si molesta, `.astro` se lintea sin type-aware (`disableTypeChecked` en su bloque de `files`): las reglas estructurales que importan (`max-lines`) no necesitan tipos.                                                                                                                               |
+| El toggle de montos se confunde con un control de **privacidad/seguridad** y alguien asume que un entrenador no puede ver dinero por tenerlo apagado.                                                                    | Se documenta como preferencia visual y **no se le muestra al entrenador**. La barrera real por rol sigue siendo del servidor (specs 09/12: los payloads del entrenador **no traen** montos) y hay un criterio de aceptación de no-regresión sobre eso.                                                                                       |
+| Al reemplazar `fmt` por `<Monto>` se cuela un monto sin enmascarar en alguna superficie de lectura.                                                                                                                      | Las superficies están enumeradas una por una en el Bloque F (6 archivos, mapeados contra los 11 que hoy importan `fmt`/`fmtShort`); los 5 restantes son transaccionales y quedan por decisión, no por olvido.                                                                                                                                |
+| Existe un `Ficha.tsx` con prop `readOnly` que **no está montado en ningún lado** (el entrenador usa `FichaPlantel`), y su `UniformeTab` sí muestra saldo. Si alguien lo reconecta, filtra dinero al entrenador.          | Fuera del alcance de este spec, pero se registra como **DT-4** en el backlog (código muerto que contradice el spec 09), con paso propio en el Bloque H.                                                                                                                                                                                      |
+| El `useEffect` de revalidación del dashboard entra en bucle si `recargar` cambia de identidad en cada render.                                                                                                            | `recargar` ya está envuelto en `useCallback` con deps vacías (`useDashboardData.ts:21-30`), así que es estable. Hay criterio de aceptación explícito sobre "una sola llamada, verificado en la pestaña Red".                                                                                                                                 |
+| El `IntersectionObserver` no dispara porque el centinela queda dentro de un contenedor con `overflow` y el `root` por defecto no aplica.                                                                                 | **Verificado:** el admin scrollea el documento; `AdminShell` no tiene contenedor con `overflow` (el único es `Sheet.tsx:27`, que es otra superficie). Si en el futuro se agrega uno, el hook recibe un `root` opcional.                                                                                                                      |
+| La ventana se resetea en cada refetch y el usuario pierde el scroll al registrar un pago.                                                                                                                                | El hook resetea por `clave` de filtros, no por identidad del array. Hay criterio de aceptación explícito ("si había 45 filas visibles, quedan 45").                                                                                                                                                                                          |
+| Un contador o total termina midiendo la ventana en vez de la lista completa.                                                                                                                                             | Las cuatro superficies afectadas están enumeradas (`ResumenAlumnos`, `SegmentoFiltro`, `CabeceraTotales`, badge de la campana) y hay criterio de aceptación de que dicen 82 y no cambian al hacer scroll.                                                                                                                                    |
+| El paginado tapa el problema real: `alumnoAdminPorId` sigue construyendo los 82 alumnos para devolver 1, y eso no lo arregla ninguna ventana de render.                                                                  | Se registra como **DT-3** con su disparador, para que quede visible y no lo entierre el "ya paginamos".                                                                                                                                                                                                                                      |
+| Cambiar la semántica de `npm run check` rompe algún flujo que lo daba por sentado (por ejemplo un deploy).                                                                                                               | Hoy `check` no lo corre nadie automáticamente: el build de Vercel ejecuta `astro build`, no `check`. Se verifica que el deploy no lo invoque antes de cambiarlo.                                                                                                                                                                             |
 
 ---
 

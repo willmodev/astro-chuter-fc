@@ -22,7 +22,9 @@ const COLOR: Record<EstadoMes, string> = {
 export function MatrizCartera({ alumnos, onCobrarMes }: Readonly<Props>) {
   return (
     <div style={contenedor}>
-      <table style={{ borderCollapse: 'collapse', width: '100%', minWidth: 640 }}>
+      <table
+        style={{ borderCollapse: 'collapse', width: '100%', minWidth: 640 }}
+      >
         <thead>
           <tr>
             <th style={cabeceraSticky}>Alumno</th>
@@ -39,7 +41,10 @@ export function MatrizCartera({ alumnos, onCobrarMes }: Readonly<Props>) {
               <td style={nombreSticky}>{a.name}</td>
               {a.states.map((estado, i) => {
                 const cobrable = esMesCobrable(estado);
-                const estiloCelda: CSSProperties = { ...celda, background: COLOR[estado] };
+                const estiloCelda: CSSProperties = {
+                  ...celda,
+                  background: COLOR[estado],
+                };
                 return (
                   <td key={MONTHS[i]} style={{ padding: 3 }}>
                     {cobrable ? (
@@ -47,7 +52,12 @@ export function MatrizCartera({ alumnos, onCobrarMes }: Readonly<Props>) {
                         type="button"
                         onClick={() => onCobrarMes(a.id, i)}
                         aria-label={`Registrar cobro de ${MONTHS[i]} para ${a.name}`}
-                        style={{ ...estiloCelda, cursor: 'pointer', border: 'none', width: '100%' }}
+                        style={{
+                          ...estiloCelda,
+                          cursor: 'pointer',
+                          border: 'none',
+                          width: '100%',
+                        }}
                       />
                     ) : (
                       <div style={estiloCelda} />

@@ -58,7 +58,13 @@ export function Sesion({ onVolver, onGuardado, ...params }: Readonly<Props>) {
           <Icon name="arrow-left" size={19} />
         </button>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <strong style={{ display: 'block', fontSize: 18, color: 'var(--text-strong)' }}>
+          <strong
+            style={{
+              display: 'block',
+              fontSize: 18,
+              color: 'var(--text-strong)',
+            }}
+          >
             {params.day}
           </strong>
           <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -79,7 +85,13 @@ export function Sesion({ onVolver, onGuardado, ...params }: Readonly<Props>) {
             onElegirImagen={s.elegirImagen}
           />
           {s.errorImagen !== null && (
-            <p style={{ margin: '-4px 2px 0', fontSize: 12.5, color: 'var(--error)' }}>
+            <p
+              style={{
+                margin: '-4px 2px 0',
+                fontSize: 12.5,
+                color: 'var(--error)',
+              }}
+            >
               {s.errorImagen}
             </p>
           )}
@@ -89,7 +101,13 @@ export function Sesion({ onVolver, onGuardado, ...params }: Readonly<Props>) {
             onClick={guardarPlaneacion}
           />
 
-          <div style={{ height: 1, background: 'var(--border-subtle)', margin: '6px 0' }} />
+          <div
+            style={{
+              height: 1,
+              background: 'var(--border-subtle)',
+              margin: '6px 0',
+            }}
+          />
 
           <AsistenciaBloque
             puedeLista={s.puedeLista}

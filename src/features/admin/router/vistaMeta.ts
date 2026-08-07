@@ -4,7 +4,10 @@ import type { RutaAdmin } from './types';
 
 // Metadata de cada vista del admin (título/eyebrow del header, tab resaltada y
 // ruta de cada tab). Extraído de AdminApp para mantenerlo bajo 200 líneas.
-export const META: Record<RutaAdmin['vista'], { title: string; eyebrow: string }> = {
+export const META: Record<
+  RutaAdmin['vista'],
+  { title: string; eyebrow: string }
+> = {
   dashboard: { title: 'Dashboard', eyebrow: 'Temporada 2026' },
   alumnos: { title: 'Alumnos', eyebrow: 'Inscripciones' },
   ficha: { title: 'Alumnos', eyebrow: 'Ficha del alumno' },

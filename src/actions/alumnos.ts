@@ -24,16 +24,17 @@ const datosSchema = z.object({
 // El discriminante `rol` deja que el cliente sepa qué forma recibió.
 // `incluirRetirados` es solo del admin: el plantel nunca los trae (spec 14).
 export const listar = defineAction({
-  input: z
-    .object({ incluirRetirados: z.boolean().default(false) })
-    .optional(),
+  input: z.object({ incluirRetirados: z.boolean().default(false) }).optional(),
   handler: async (input, { locals }) => {
     const user = requireUser(locals);
     const hoy = new Date();
     if (user.role === 'admin') {
       return {
         rol: 'admin' as const,
-        alumnos: await listarAlumnosAdmin(hoy, input?.incluirRetirados ?? false),
+        alumnos: await listarAlumnosAdmin(
+          hoy,
+          input?.incluirRetirados ?? false,
+        ),
       };
     }
     return {

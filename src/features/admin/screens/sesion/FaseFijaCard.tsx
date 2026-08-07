@@ -36,11 +36,23 @@ export function FaseFijaCard({ icono, fase }: Readonly<Props>) {
         <Icon name={icono} size={16} />
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-body)' }}>
+        <div
+          style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-body)' }}
+        >
           {fase.titulo}
-          <span style={{ fontWeight: 600, color: 'var(--text-faint)' }}> · fija</span>
+          <span style={{ fontWeight: 600, color: 'var(--text-faint)' }}>
+            {' '}
+            · fija
+          </span>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2, lineHeight: 1.4 }}>
+        <div
+          style={{
+            fontSize: 12,
+            color: 'var(--text-muted)',
+            marginTop: 2,
+            lineHeight: 1.4,
+          }}
+        >
           {fase.pasos.join(' · ')}
         </div>
       </div>

@@ -47,11 +47,22 @@ export function UniformeEntrega({ alumnoId, onVolver }: Readonly<Props>) {
         </button>
         <div style={{ minWidth: 0 }}>
           <strong
-            style={{ display: 'block', fontSize: 16, color: 'var(--text-strong)', lineHeight: 1.2 }}
+            style={{
+              display: 'block',
+              fontSize: 16,
+              color: 'var(--text-strong)',
+              lineHeight: 1.2,
+            }}
           >
             {data.alumno.nombre}
           </strong>
-          <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
+          <span
+            style={{
+              fontSize: 12.5,
+              color: 'var(--text-muted)',
+              fontWeight: 600,
+            }}
+          >
             {data.alumno.cat} · Uniforme
           </span>
         </div>

@@ -30,7 +30,8 @@ const {
 } = Astro.props;
 
 const resolvedTitle = title ? pageTitle(title) : pageTitle();
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, SITE.url).toString();
+const canonicalUrl =
+  canonical ?? new URL(Astro.url.pathname, SITE.url).toString();
 const ogImageUrl = new URL(image, SITE.url).toString();
 const jsonLd = buildSportsActivityLocationJsonLd();
 ---
@@ -46,10 +47,18 @@ const jsonLd = buildSportsActivityLocationJsonLd();
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
 
-    <link rel="preload" as="font" type="font/woff2" href={fontDisplay} crossorigin="anonymous" />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href={fontDisplay}
+      crossorigin="anonymous"
+    />
 
-    {/* Sin favicon.svg: pesa 323 KB (logo vectorizado) y el navegador lo
-        descarga en la carga inicial compitiendo con el LCP. */}
+    {
+      /* Sin favicon.svg: pesa 323 KB (logo vectorizado) y el navegador lo
+        descarga en la carga inicial compitiendo con el LCP. */
+    }
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
@@ -68,16 +77,13 @@ const jsonLd = buildSportsActivityLocationJsonLd();
 
     <meta name="theme-color" content="#1B3A6B" />
 
-    <script
-      type="application/ld+json"
-      set:html={JSON.stringify(jsonLd)}
-    />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body class="bg-background text-foreground">
     <PageBoot />
     <a
       href="#inicio"
-      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-brand-navy focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+      class="focus:bg-brand-navy sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
     >
       Saltar al contenido principal
     </a>
@@ -88,6 +94,8 @@ const jsonLd = buildSportsActivityLocationJsonLd();
     <Footer />
     <WhatsAppFab />
     <ScrollProgress client:idle />
-    <CursorDot client:media="(hover: hover) and (pointer: fine) and (min-width: 1024px)" />
+    <CursorDot
+      client:media="(hover: hover) and (pointer: fine) and (min-width: 1024px)"
+    />
   </body>
 </html>

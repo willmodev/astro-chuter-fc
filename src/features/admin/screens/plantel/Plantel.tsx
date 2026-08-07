@@ -25,7 +25,11 @@ export function Plantel({ cats, onOpenFicha }: Readonly<Props>) {
   return (
     <div style={{ display: 'grid', gap: 12, padding: '14px 16px 0' }}>
       <BuscadorAlumnos value={p.query} onChange={p.setQuery} />
-      <ChipsCategoria value={p.cat} onChange={p.setCat} opciones={p.opcionesCat} />
+      <ChipsCategoria
+        value={p.cat}
+        onChange={p.setCat}
+        opciones={p.opcionesCat}
+      />
       <span className="eyebrow" style={{ padding: '0 2px' }}>
         {p.visibles.length} {p.visibles.length === 1 ? 'alumno' : 'alumnos'}
         {p.cat !== CATEGORIA_TODAS ? ` · ${p.cat}` : ''}
@@ -46,7 +50,9 @@ export function Plantel({ cats, onOpenFicha }: Readonly<Props>) {
           {p.visibles.map((a, i) => (
             <div
               key={a.id}
-              style={{ borderTop: i ? '1px solid var(--border-subtle)' : 'none' }}
+              style={{
+                borderTop: i ? '1px solid var(--border-subtle)' : 'none',
+              }}
             >
               <FilaPlantel alumno={a} onOpen={() => onOpenFicha(a.id)} />
             </div>
@@ -62,10 +68,19 @@ export function Plantel({ cats, onOpenFicha }: Readonly<Props>) {
 function PlantelVacio() {
   return (
     <div style={{ padding: '48px 24px', textAlign: 'center' }}>
-      <strong style={{ display: 'block', fontSize: 15, color: 'var(--text-strong)' }}>
+      <strong
+        style={{ display: 'block', fontSize: 15, color: 'var(--text-strong)' }}
+      >
         Aún no tienes alumnos asignados
       </strong>
-      <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.45 }}>
+      <p
+        style={{
+          margin: '6px 0 0',
+          fontSize: 13,
+          color: 'var(--text-muted)',
+          lineHeight: 1.45,
+        }}
+      >
         Pídele al administrador que revise tus categorías en Equipo.
       </p>
     </div>

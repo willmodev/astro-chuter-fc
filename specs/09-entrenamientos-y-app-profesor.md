@@ -64,18 +64,18 @@ Sin persistencia nueva (sigue mock). Los entrenadores y sus `cats` ya viven en l
 ```ts
 // features/admin/data/types.ts
 export interface Semana {
-  id: string;      // "w-25"
-  n: number;       // número de semana
-  label: string;   // "8 – 12 jun"
-  sub: string;     // "Semana actual" | "Hace 2 semanas"
+  id: string; // "w-25"
+  n: number; // número de semana
+  label: string; // "8 – 12 jun"
+  sub: string; // "Semana actual" | "Hace 2 semanas"
   current: boolean;
 }
 
 // Cabecera del Excel: tema + objetivos por semana y entrenador.
 export interface PlanSemana {
-  id: string;                 // `${entrenadorId}-${weekId}`
-  entrenadorId: string;       // user.id de Better Auth
-  entrenadorNombre: string;   // denormalizado (mock); en BD será FK
+  id: string; // `${entrenadorId}-${weekId}`
+  entrenadorId: string; // user.id de Better Auth
+  entrenadorNombre: string; // denormalizado (mock); en BD será FK
   weekId: string;
   tema: string;
   objetivos: string;
@@ -83,15 +83,15 @@ export interface PlanSemana {
 
 // Un día de entrenamiento: parte central (imagen TactalPad) + asistencia.
 export interface Sesion {
-  id: string;                 // `${entrenadorId}-${weekId}-${day}`
+  id: string; // `${entrenadorId}-${weekId}-${day}`
   entrenadorId: string;
-  entrenadorNombre: string;   // denormalizado (mock); en BD será FK
+  entrenadorNombre: string; // denormalizado (mock); en BD será FK
   weekId: string;
-  day: string;                // 'Lunes' | 'Miércoles' | 'Viernes'
+  day: string; // 'Lunes' | 'Miércoles' | 'Viernes'
   parteCentralImg: string | null; // object URL local (mock); URL de Blob al persistir
-  parteCentralNota: string;   // texto corto opcional de respaldo
+  parteCentralNota: string; // texto corto opcional de respaldo
   registrado: boolean;
-  ausentes: number[];         // ids de alumnos ausentes
+  ausentes: number[]; // ids de alumnos ausentes
 }
 ```
 
@@ -215,16 +215,16 @@ _Verifica:_ el admin ve lo registrado en la mock; no hay ningún control de edic
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| La imagen (object URL) se pierde al recargar y puede leerse como bug. | Es coherente con todo el mock (spec 07/08 igual); la pantalla lo asume sin romper (placeholder "Sin planeación") y la persistencia real llega con Blob. |
+| Riesgo                                                                                                                 | Mitigación                                                                                                                                                         |
+| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| La imagen (object URL) se pierde al recargar y puede leerse como bug.                                                  | Es coherente con todo el mock (spec 07/08 igual); la pantalla lo asume sin romper (placeholder "Sin planeación") y la persistencia real llega con Blob.            |
 | Las `cats` del entrenador (BD auth) no coinciden con las `cat` de los alumnos mock (texto libre en NuevoUsuarioSheet). | `rosterDe` compara normalizado (mismo `normaliza` del spec 05); si el roster queda vacío, el plantel muestra empty state con hint de revisar categorías en Equipo. |
-| El gate por rol dentro de la isla no protege datos (todo el mock viaja al cliente). | Aceptado en fase mock: no hay datos reales de alumnos. Al migrar a Actions, `requireUser` + filtro por rol en servidor (ya previsto en ARCHITECTURE.md). |
-| `weekId`/`day` en la URL admiten valores inválidos. | Parseo defensivo como en specs 05/07: semana o día inexistente → redirige a `entrenos`. |
-| Imágenes de TactalPad muy pesadas degradan la preview en celulares. | En mock es solo object URL local (sin red); la compresión cliente (WebP, máx ~1280px) queda especificada para el spec de Blob. |
-| La Ficha con modo `readOnly` infla archivos > 200 líneas. | El modo se resuelve por composición (ocultar tabs/acciones desde `Ficha.tsx` índice), no duplicando pantalla. |
-| Semanas generadas por fecha viva hacen el mock no determinista (labels cambian según el día). | La generación vive en dominio puro con fecha inyectable; la mock fija planes/sesiones por `weekId` relativo (w-actual, w-1…), no por fecha absoluta. |
-| El entrenador corrige historial muy viejo por error. | Alcance limitado: solo existen ~4 semanas en el mock; límites reales (ventana de edición) se decidirán con la persistencia. |
+| El gate por rol dentro de la isla no protege datos (todo el mock viaja al cliente).                                    | Aceptado en fase mock: no hay datos reales de alumnos. Al migrar a Actions, `requireUser` + filtro por rol en servidor (ya previsto en ARCHITECTURE.md).           |
+| `weekId`/`day` en la URL admiten valores inválidos.                                                                    | Parseo defensivo como en specs 05/07: semana o día inexistente → redirige a `entrenos`.                                                                            |
+| Imágenes de TactalPad muy pesadas degradan la preview en celulares.                                                    | En mock es solo object URL local (sin red); la compresión cliente (WebP, máx ~1280px) queda especificada para el spec de Blob.                                     |
+| La Ficha con modo `readOnly` infla archivos > 200 líneas.                                                              | El modo se resuelve por composición (ocultar tabs/acciones desde `Ficha.tsx` índice), no duplicando pantalla.                                                      |
+| Semanas generadas por fecha viva hacen el mock no determinista (labels cambian según el día).                          | La generación vive en dominio puro con fecha inyectable; la mock fija planes/sesiones por `weekId` relativo (w-actual, w-1…), no por fecha absoluta.               |
+| El entrenador corrige historial muy viejo por error.                                                                   | Alcance limitado: solo existen ~4 semanas en el mock; límites reales (ventana de edición) se decidirán con la persistencia.                                        |
 
 ---
 

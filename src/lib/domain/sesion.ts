@@ -1,6 +1,11 @@
 // Estados derivados de una sesión de entrenamiento (spec 10) — reglas puras.
 // Separado de `entrenos.ts` para respetar el límite de 200 líneas por archivo.
-import { DIAS_ENTRENO, puedePasarLista, type DiaEntreno, type Semana } from './entrenos';
+import {
+  DIAS_ENTRENO,
+  puedePasarLista,
+  type DiaEntreno,
+  type Semana,
+} from './entrenos';
 
 // Estructura mínima de una sesión para las reglas de estado (sin acoplar la
 // capa de datos; la `Sesion` real cumple estas formas por tipado estructural).
@@ -16,7 +21,9 @@ export function planeada(
   sesion: Pick<SesionMinima, 'parteCentralImg' | 'parteCentralNota'> | null,
 ): boolean {
   if (sesion === null) return false;
-  return sesion.parteCentralImg !== null || sesion.parteCentralNota.trim() !== '';
+  return (
+    sesion.parteCentralImg !== null || sesion.parteCentralNota.trim() !== ''
+  );
 }
 
 /** La lista ya se pasó: `ausentes` deja de ser `null`. */

@@ -9,16 +9,23 @@ interface Props {
   carteraVencida: number;
 }
 
-export function CabeceraTotales({ recaudoAnio, carteraVencida }: Readonly<Props>) {
+export function CabeceraTotales({
+  recaudoAnio,
+  carteraVencida,
+}: Readonly<Props>) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
       <div style={tarjeta}>
         <span className="eyebrow">Recaudado año</span>
-        <strong style={{ fontSize: 20, color: 'var(--text-strong)' }}>{fmt(recaudoAnio)}</strong>
+        <strong style={{ fontSize: 20, color: 'var(--text-strong)' }}>
+          {fmt(recaudoAnio)}
+        </strong>
       </div>
       <div style={tarjeta}>
         <span className="eyebrow">Cartera vencida</span>
-        <strong style={{ fontSize: 20, color: 'var(--error-deep)' }}>{fmt(carteraVencida)}</strong>
+        <strong style={{ fontSize: 20, color: 'var(--error-deep)' }}>
+          {fmt(carteraVencida)}
+        </strong>
       </div>
     </div>
   );

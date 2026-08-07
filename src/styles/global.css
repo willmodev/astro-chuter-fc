@@ -1,290 +1,312 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/plus-jakarta-sans";
-@import "@fontsource-variable/fraunces";
-@import "@fontsource/bebas-neue/400.css";
-@import "./motion.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource-variable/fraunces';
+@import '@fontsource/bebas-neue/400.css';
+@import './motion.css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --color-brand-navy: #1B3A6B;
-    --color-brand-navy-deep: #0F2647;
-    --color-brand-blue: #4A90E2;
-    --color-brand-gold: #F5C842;
-    --color-brand-gold-deep: #D4A82A;
-    /* Gold legible como TEXTO sobre fondos claros (AA 4.5:1 sobre blanco).
+  --color-brand-navy: #1b3a6b;
+  --color-brand-navy-deep: #0f2647;
+  --color-brand-blue: #4a90e2;
+  --color-brand-gold: #f5c842;
+  --color-brand-gold-deep: #d4a82a;
+  /* Gold legible como TEXTO sobre fondos claros (AA 4.5:1 sobre blanco).
        El gold de marca solo se usa sobre navy o como fondo. */
-    --color-brand-gold-ink: #8C6D0A;
-    --color-brand-cream: #FBF6E4;
-    --color-brand-cream-deep: #F2EAC7;
-    --color-brand-field: #2D6A3E;
-    --color-brand-clay: #BE4526;
+  --color-brand-gold-ink: #8c6d0a;
+  --color-brand-cream: #fbf6e4;
+  --color-brand-cream-deep: #f2eac7;
+  --color-brand-field: #2d6a3e;
+  --color-brand-clay: #be4526;
 
-    --color-neutral-950: #0A0F1A;
-    --color-neutral-900: #0F1B2D;
-    --color-neutral-700: #334155;
-    --color-neutral-500: #64748B;
-    --color-neutral-300: #CBD5E1;
-    --color-neutral-100: #F1F5F9;
-    --color-neutral-50: #F8FAFC;
+  --color-neutral-950: #0a0f1a;
+  --color-neutral-900: #0f1b2d;
+  --color-neutral-700: #334155;
+  --color-neutral-500: #64748b;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-50: #f8fafc;
 
-    --color-success: #10B981;
-    --color-whatsapp: #25D366;
-    --color-error: #EF4444;
+  --color-success: #10b981;
+  --color-whatsapp: #25d366;
+  --color-error: #ef4444;
 
-    --text-hero: 3rem;
-    --text-hero--line-height: 0.95;
-    --text-hero--letter-spacing: -0.02em;
-    --text-display: 2.25rem;
-    --text-display--line-height: 1.02;
-    --text-display--letter-spacing: -0.01em;
-    --text-h2: 1.75rem;
-    --text-h2--line-height: 1.15;
-    --text-h3: 1.375rem;
-    --text-h3--line-height: 1.25;
+  --text-hero: 3rem;
+  --text-hero--line-height: 0.95;
+  --text-hero--letter-spacing: -0.02em;
+  --text-display: 2.25rem;
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.01em;
+  --text-h2: 1.75rem;
+  --text-h2--line-height: 1.15;
+  --text-h3: 1.375rem;
+  --text-h3--line-height: 1.25;
 }
 
 @theme inline {
-    --font-sans: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
-    --font-display: 'Bebas Neue', sans-serif;
-    --font-serif: 'Fraunces Variable', 'Times New Roman', serif;
-    --font-heading: var(--font-display);
-    --color-sidebar-ring: var(--sidebar-ring);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar: var(--sidebar);
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-accent: var(--accent);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-secondary: var(--secondary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-primary: var(--primary);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
-    --color-card: var(--card);
-    --color-foreground: var(--foreground);
-    --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
+  --font-sans: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-serif: 'Fraunces Variable', 'Times New Roman', serif;
+  --font-heading: var(--font-display);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
-    --background: #F8FAFC;
-    --foreground: #0F1B2D;
-    --card: #FFFFFF;
-    --card-foreground: #0F1B2D;
-    --popover: #FFFFFF;
-    --popover-foreground: #0F1B2D;
-    --primary: #1B3A6B;
-    --primary-foreground: #FFFFFF;
-    --secondary: #F1F5F9;
-    --secondary-foreground: #1B3A6B;
-    --muted: #F1F5F9;
-    --muted-foreground: #64748B;
-    --accent: #F1F5F9;
-    --accent-foreground: #1B3A6B;
-    --destructive: #EF4444;
-    --border: #E2E8F0;
-    --input: #CBD5E1;
-    --ring: #F5C842;
-    --chart-1: #1B3A6B;
-    --chart-2: #4A90E2;
-    --chart-3: #F5C842;
-    --chart-4: #D4A82A;
-    --chart-5: #0F2647;
-    --radius: 0.75rem;
-    --sidebar: #F8FAFC;
-    --sidebar-foreground: #0F1B2D;
-    --sidebar-primary: #1B3A6B;
-    --sidebar-primary-foreground: #FFFFFF;
-    --sidebar-accent: #F1F5F9;
-    --sidebar-accent-foreground: #1B3A6B;
-    --sidebar-border: #CBD5E1;
-    --sidebar-ring: #F5C842;
+  --background: #f8fafc;
+  --foreground: #0f1b2d;
+  --card: #ffffff;
+  --card-foreground: #0f1b2d;
+  --popover: #ffffff;
+  --popover-foreground: #0f1b2d;
+  --primary: #1b3a6b;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #1b3a6b;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #1b3a6b;
+  --destructive: #ef4444;
+  --border: #e2e8f0;
+  --input: #cbd5e1;
+  --ring: #f5c842;
+  --chart-1: #1b3a6b;
+  --chart-2: #4a90e2;
+  --chart-3: #f5c842;
+  --chart-4: #d4a82a;
+  --chart-5: #0f2647;
+  --radius: 0.75rem;
+  --sidebar: #f8fafc;
+  --sidebar-foreground: #0f1b2d;
+  --sidebar-primary: #1b3a6b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #1b3a6b;
+  --sidebar-border: #cbd5e1;
+  --sidebar-ring: #f5c842;
 }
 
 .dark {
-    --background: #0A0F1A;
-    --foreground: #F8FAFC;
-    --card: #0F1B2D;
-    --card-foreground: #F8FAFC;
-    --popover: #0F1B2D;
-    --popover-foreground: #F8FAFC;
-    --primary: #4A90E2;
-    --primary-foreground: #0A0F1A;
-    --secondary: #1B3A6B;
-    --secondary-foreground: #F8FAFC;
-    --muted: #1B3A6B;
-    --muted-foreground: #CBD5E1;
-    --accent: #1B3A6B;
-    --accent-foreground: #F8FAFC;
-    --destructive: #EF4444;
-    --border: oklch(1 0 0 / 12%);
-    --input: oklch(1 0 0 / 18%);
-    --ring: #F5C842;
-    --chart-1: #4A90E2;
-    --chart-2: #F5C842;
-    --chart-3: #1B3A6B;
-    --chart-4: #D4A82A;
-    --chart-5: #0F2647;
-    --sidebar: #0F1B2D;
-    --sidebar-foreground: #F8FAFC;
-    --sidebar-primary: #F5C842;
-    --sidebar-primary-foreground: #0A0F1A;
-    --sidebar-accent: #1B3A6B;
-    --sidebar-accent-foreground: #F8FAFC;
-    --sidebar-border: oklch(1 0 0 / 12%);
-    --sidebar-ring: #F5C842;
+  --background: #0a0f1a;
+  --foreground: #f8fafc;
+  --card: #0f1b2d;
+  --card-foreground: #f8fafc;
+  --popover: #0f1b2d;
+  --popover-foreground: #f8fafc;
+  --primary: #4a90e2;
+  --primary-foreground: #0a0f1a;
+  --secondary: #1b3a6b;
+  --secondary-foreground: #f8fafc;
+  --muted: #1b3a6b;
+  --muted-foreground: #cbd5e1;
+  --accent: #1b3a6b;
+  --accent-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 18%);
+  --ring: #f5c842;
+  --chart-1: #4a90e2;
+  --chart-2: #f5c842;
+  --chart-3: #1b3a6b;
+  --chart-4: #d4a82a;
+  --chart-5: #0f2647;
+  --sidebar: #0f1b2d;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #f5c842;
+  --sidebar-primary-foreground: #0a0f1a;
+  --sidebar-accent: #1b3a6b;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: #f5c842;
 }
 
 @media (min-width: 768px) {
-    :root {
-        --text-hero: 5rem;
-        --text-display: 3.5rem;
-        --text-h2: 2.25rem;
-        --text-h3: 1.75rem;
-    }
+  :root {
+    --text-hero: 5rem;
+    --text-display: 3.5rem;
+    --text-h2: 2.25rem;
+    --text-h3: 1.75rem;
+  }
 }
 
 @layer base {
-    * {
-        @apply border-border outline-ring/50;
-    }
-    html {
-        @apply font-sans antialiased;
-        scroll-behavior: smooth;
-        text-rendering: optimizeLegibility;
-        -webkit-font-smoothing: antialiased;
-        /* Bloquea scroll horizontal causado por elementos decorativos con offsets
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans antialiased;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    /* Bloquea scroll horizontal causado por elementos decorativos con offsets
            negativos (stamps, balones, números filigrana). `clip` en lugar de
            `hidden` para no romper `position: sticky` del header ni el FAB fixed. */
-        overflow-x: clip;
-    }
-    body {
-        @apply bg-background text-foreground;
-        overflow-x: clip;
-    }
-    h1, h2, .font-display {
-        font-family: var(--font-display);
-        letter-spacing: 0.005em;
-    }
-    .font-serif {
-        font-family: var(--font-serif);
-        font-variation-settings: "opsz" 144, "SOFT" 50;
-    }
-    *:focus-visible {
-        outline: 2px solid var(--color-brand-gold);
-        outline-offset: 2px;
-        border-radius: 4px;
-    }
+    overflow-x: clip;
+  }
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: clip;
+  }
+  h1,
+  h2,
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.005em;
+  }
+  .font-serif {
+    font-family: var(--font-serif);
+    font-variation-settings:
+      'opsz' 144,
+      'SOFT' 50;
+  }
+  *:focus-visible {
+    outline: 2px solid var(--color-brand-gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 }
 
 /* ============================================================
    Textura de papel / grano sutil — capa decorativa
    ============================================================ */
 .bg-grain {
-    position: relative;
+  position: relative;
 }
 .bg-grain::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.5;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.07 0 0 0 0 0.13 0 0 0 0.07 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.07 0 0 0 0 0.13 0 0 0 0.07 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
 }
 
 /* ============================================================
    Líneas de cancha en marca de agua para fondos cremosos
    ============================================================ */
 .bg-pitch-lines {
-    background-image:
-      linear-gradient(transparent 0%, transparent calc(100% - 1px), rgba(27, 58, 107, 0.06) 100%),
-      linear-gradient(90deg, transparent 0%, transparent calc(100% - 1px), rgba(27, 58, 107, 0.04) 100%);
-    background-size: 80px 80px, 80px 80px;
+  background-image:
+    linear-gradient(
+      transparent 0%,
+      transparent calc(100% - 1px),
+      rgba(27, 58, 107, 0.06) 100%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent calc(100% - 1px),
+      rgba(27, 58, 107, 0.04) 100%
+    );
+  background-size:
+    80px 80px,
+    80px 80px;
 }
 
 /* ============================================================
    Cinta diagonal estilo "promo stamp"
    ============================================================ */
 .diagonal-stripes {
-    background-image: repeating-linear-gradient(
-      135deg,
-      currentColor 0,
-      currentColor 8px,
-      transparent 8px,
-      transparent 16px
-    );
+  background-image: repeating-linear-gradient(
+    135deg,
+    currentColor 0,
+    currentColor 8px,
+    transparent 8px,
+    transparent 16px
+  );
 }
 
 /* ============================================================
    Marker de sección numerado (estilo magazine)
    ============================================================ */
 .section-marker {
-    font-family: var(--font-serif);
-    font-variation-settings: "opsz" 144, "SOFT" 30, "wght" 400;
-    font-style: italic;
-    font-feature-settings: "ss01", "ss02";
+  font-family: var(--font-serif);
+  font-variation-settings:
+    'opsz' 144,
+    'SOFT' 30,
+    'wght' 400;
+  font-style: italic;
+  font-feature-settings: 'ss01', 'ss02';
 }
 
 /* ============================================================
    Animación de entrada para cards (stagger via animation-delay)
    ============================================================ */
 @keyframes cardRise {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .card-rise {
-    animation: cardRise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: cardRise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* ============================================================
    Hover tilt sutil para trading cards
    ============================================================ */
 .card-tilt {
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
-    transform-style: preserve-3d;
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s ease;
+  transform-style: preserve-3d;
 }
 .card-tilt:hover {
-    transform: translateY(-6px) rotate(-0.5deg);
+  transform: translateY(-6px) rotate(-0.5deg);
 }
 
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

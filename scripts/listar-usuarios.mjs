@@ -38,7 +38,9 @@ for (const u of usuarios) {
   const unis = await cuenta(uniformes, uniformes.registradoPor, u.id);
   const cats = Array.isArray(u.cats) ? u.cats.join(', ') : (u.cats ?? '');
 
-  console.log(`${u.role === 'admin' ? '[ADMIN]     ' : '[ENTRENADOR]'} ${u.name}`);
+  console.log(
+    `${u.role === 'admin' ? '[ADMIN]     ' : '[ENTRENADOR]'} ${u.name}`,
+  );
   console.log(`             ${u.email}  ${cats ? `· cats: ${cats}` : ''}`);
   console.log(
     `             planes=${planes} sesiones=${ses} pagos=${pgs} uniformes=${unis}` +

@@ -91,7 +91,11 @@ export function LoginField({
             aria-pressed={visible}
             style={toggleStyle}
           >
-            {visible ? <EyeOff size={19} strokeWidth={1.75} /> : <Eye size={19} strokeWidth={1.75} />}
+            {visible ? (
+              <EyeOff size={19} strokeWidth={1.75} />
+            ) : (
+              <Eye size={19} strokeWidth={1.75} />
+            )}
           </button>
         )}
       </div>

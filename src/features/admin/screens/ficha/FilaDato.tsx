@@ -19,7 +19,9 @@ export function FilaDato({ label, children }: Readonly<Props>) {
         fontSize: 13.5,
       }}
     >
-      <span style={{ color: 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}>
+      <span
+        style={{ color: 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}
+      >
         {label}
       </span>
       <span

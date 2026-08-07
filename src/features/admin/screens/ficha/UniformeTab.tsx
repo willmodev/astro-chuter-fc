@@ -62,15 +62,41 @@ function FilaKit({ kit }: Readonly<{ kit: KitUniforme }>) {
         border: '1px solid var(--border-subtle)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+        }}
+      >
         <EtiquetaKit kit={kit.kit} />
         <Badge tone={meta.tone}>{meta.label}</Badge>
       </div>
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 }}>
-        <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: 10,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 12.5,
+            color: 'var(--text-muted)',
+            fontWeight: 600,
+          }}
+        >
           {detalle}
         </span>
-        <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
+        <span
+          style={{
+            fontSize: 12.5,
+            color: 'var(--text-muted)',
+            fontWeight: 600,
+          }}
+        >
           {pagado ? 'Pagado' : `Saldo ${fmt(kit.saldo)}`}
         </span>
       </div>

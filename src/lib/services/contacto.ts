@@ -16,7 +16,8 @@ export interface DatosContacto {
 }
 
 const FROM =
-  import.meta.env.CONTACT_EMAIL_FROM ?? 'Chuter FC <inscripciones@chuterfc.com>';
+  import.meta.env.CONTACT_EMAIL_FROM ??
+  'Chuter FC <inscripciones@chuterfc.com>';
 const TO = import.meta.env.CONTACT_EMAIL_TO ?? 'olimak8@hotmail.com';
 
 // Orquesta el envío: calcula la categoría, arma el modelo del correo,

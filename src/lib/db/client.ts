@@ -5,8 +5,7 @@ import * as schema from './schema';
 
 // `import.meta.env` existe en Astro/Vite; en scripts Node es undefined y se
 // cae a `process.env` (por eso el optional chaining).
-const DATABASE_URL =
-  import.meta.env?.DATABASE_URL ?? process.env.DATABASE_URL;
+const DATABASE_URL = import.meta.env?.DATABASE_URL ?? process.env.DATABASE_URL;
 
 if (!DATABASE_URL) {
   throw new Error('Falta DATABASE_URL: configúrala en .env / Vercel.');

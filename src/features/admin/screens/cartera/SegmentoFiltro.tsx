@@ -9,7 +9,12 @@ interface Props {
   enMora: number;
 }
 
-export function SegmentoFiltro({ segmento, onChange, total, enMora }: Readonly<Props>) {
+export function SegmentoFiltro({
+  segmento,
+  onChange,
+  total,
+  enMora,
+}: Readonly<Props>) {
   const opciones: { id: SegmentoCartera; label: string; count: number }[] = [
     { id: 'todos', label: 'Todos', count: total },
     { id: 'mora', label: 'En mora', count: enMora },

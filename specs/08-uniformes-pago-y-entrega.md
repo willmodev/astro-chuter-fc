@@ -48,7 +48,11 @@ No se agregan campos nuevos: el tipo `Alumno` ya tiene los dos ejes (`uniforme: 
 ### Dominio — estado derivado (`src/lib/domain/uniformes.ts`)
 
 ```ts
-export type EstadoUniforme = 'completo' | 'porEntregar' | 'porCobrar' | 'sinIniciar';
+export type EstadoUniforme =
+  | 'completo'
+  | 'porEntregar'
+  | 'porCobrar'
+  | 'sinIniciar';
 
 // e = entregado, p = pagado:
 //  e && p  → 'completo'      (Entregado y pagado)
@@ -58,16 +62,23 @@ export type EstadoUniforme = 'completo' | 'porEntregar' | 'porCobrar' | 'sinInic
 export function estadoUniforme(uniforme, uniformePago): EstadoUniforme;
 
 // Metadatos presentacionales por estado (label + descripción + tono del DS).
-export const ESTADO_UNIFORME_META: Record<EstadoUniforme, {
-  label: string;   // "Completo" | "Por entregar" | "Pago pendiente" | "Sin iniciar"
-  desc: string;    // "Entregado y pagado", etc.
-  tone: 'paid' | 'info' | 'due' | 'pending';
-}>;
+export const ESTADO_UNIFORME_META: Record<
+  EstadoUniforme,
+  {
+    label: string; // "Completo" | "Por entregar" | "Pago pendiente" | "Sin iniciar"
+    desc: string; // "Entregado y pagado", etc.
+    tone: 'paid' | 'info' | 'due' | 'pending';
+  }
+>;
 
 // Orden por prioridad de acción (para la lista del tab Estado).
 // porCobrar primero: mercancía entregada sin pagar = plata en riesgo real.
-export const ORDEN_ESTADO_UNIFORME: EstadoUniforme[] =
-  ['porCobrar', 'porEntregar', 'sinIniciar', 'completo'];
+export const ORDEN_ESTADO_UNIFORME: EstadoUniforme[] = [
+  'porCobrar',
+  'porEntregar',
+  'sinIniciar',
+  'completo',
+];
 ```
 
 ### Store — contratos nuevos (`data/store.ts`)
@@ -200,13 +211,13 @@ _Verifica:_ los contadores 2×2 cuadran con la mock; el filtro acota la lista; N
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
+| Riesgo                                                          | Mitigación                                                                                                                 |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | Eliminar `guardarUniforme` rompe la pantalla de entrega actual. | El Bloque B mantiene `guardarUniforme` hasta que el Bloque C reescribe la pantalla; se borra al final de C, todo en verde. |
-| `anularEntrega` deja número/kit en null pero conserva la talla. | Es intencional: la talla es atributo del alumno, no de la entrega; un criterio lo cubre. |
-| El tab Estado lista a todos (~100 alumnos) sin paginación. | Filtro y orden en cliente sobre la lista completa, mismo patrón que `filtraAlumnos` (spec 05); volumen chico. |
-| Número repetido tras anular y reasignar. | `numerosDuplicados`/`numeroOcupado` siguen siendo la fuente; la alerta de Numeración y el aviso del form lo reflejan. |
-| Reescribir la pantalla de entrega infla archivos > 200 líneas. | Descomponer en sub-componentes (estado actual, registro pago, registro entrega) como el resto del admin. |
+| `anularEntrega` deja número/kit en null pero conserva la talla. | Es intencional: la talla es atributo del alumno, no de la entrega; un criterio lo cubre.                                   |
+| El tab Estado lista a todos (~100 alumnos) sin paginación.      | Filtro y orden en cliente sobre la lista completa, mismo patrón que `filtraAlumnos` (spec 05); volumen chico.              |
+| Número repetido tras anular y reasignar.                        | `numerosDuplicados`/`numeroOcupado` siguen siendo la fuente; la alerta de Numeración y el aviso del form lo reflejan.      |
+| Reescribir la pantalla de entrega infla archivos > 200 líneas.  | Descomponer en sub-componentes (estado actual, registro pago, registro entrega) como el resto del admin.                   |
 
 ---
 

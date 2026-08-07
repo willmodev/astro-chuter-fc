@@ -49,7 +49,9 @@ export function FilaUniforme({ fila, duplicado, onAbrir }: Readonly<Props>) {
           justifyContent: 'center',
           fontSize: 15,
           fontWeight: 800,
-          background: duplicado ? 'var(--warning-soft)' : 'var(--surface-sunken)',
+          background: duplicado
+            ? 'var(--warning-soft)'
+            : 'var(--surface-sunken)',
           color: duplicado ? '#946200' : 'var(--brand-navy)',
           border: duplicado ? '1px solid var(--warning)' : 'none',
         }}
@@ -69,7 +71,9 @@ export function FilaUniforme({ fila, duplicado, onAbrir }: Readonly<Props>) {
         >
           {fila.nombre}
         </strong>
-        <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
+        <span
+          style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}
+        >
           {fila.cat}
           {talla ? ` · Talla ${talla}` : ''}
         </span>

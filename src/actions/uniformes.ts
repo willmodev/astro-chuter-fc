@@ -24,7 +24,10 @@ export const listar = defineAction({
     const user = requireUser(locals);
     const hoy = new Date();
     if (user.role === 'admin') {
-      return { rol: 'admin' as const, alumnos: await listarUniformesAdmin(hoy) };
+      return {
+        rol: 'admin' as const,
+        alumnos: await listarUniformesAdmin(hoy),
+      };
     }
     return {
       rol: 'entrenador' as const,

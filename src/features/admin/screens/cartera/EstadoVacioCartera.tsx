@@ -16,7 +16,14 @@ export function EstadoVacioCartera() {
         <span style={{ color: 'var(--success)' }}>
           <Icon name="circle-check" size={28} />
         </span>
-        <p style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-strong)' }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 15,
+            fontWeight: 700,
+            color: 'var(--text-strong)',
+          }}
+        >
           Nadie en mora
         </p>
         <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>

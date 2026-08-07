@@ -40,7 +40,10 @@ export function construyeForm(
   fd.set('nota', nota);
   if (archivo) {
     const ext = archivo.type === 'image/jpeg' ? 'jpg' : 'webp';
-    fd.set('imagen', new File([archivo], `parte.${ext}`, { type: archivo.type }));
+    fd.set(
+      'imagen',
+      new File([archivo], `parte.${ext}`, { type: archivo.type }),
+    );
   }
   return fd;
 }

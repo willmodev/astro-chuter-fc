@@ -13,7 +13,7 @@ import { SCHEDULE, LOCATION, SITE } from '@/lib/site';
 
 <section
   id="inicio"
-  class="relative isolate flex min-h-[88vh] items-center overflow-hidden bg-brand-navy-deep"
+  class="bg-brand-navy-deep relative isolate flex min-h-[88vh] items-center overflow-hidden"
   aria-label="Sección principal de Chuter FC"
 >
   <!-- Capa 1 (más lenta): imagen hero, da sensación de fondo profundo.
@@ -33,52 +33,116 @@ import { SCHEDULE, LOCATION, SITE } from '@/lib/site';
   </HeroParallaxLayer>
 
   <!-- Overlay base navy (estático) -->
-  <div class="absolute inset-0 z-[1] bg-gradient-to-r from-brand-navy-deep/95 via-brand-navy-deep/85 to-brand-navy/55"></div>
+  <div
+    class="from-brand-navy-deep/95 via-brand-navy-deep/85 to-brand-navy/55 absolute inset-0 z-[1] bg-gradient-to-r"
+  >
+  </div>
   <!-- Vignette lateral derecho para enmascarar pixelación en pantallas wide sin oscurecer la foto al medio -->
-  <div class="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[40%] bg-gradient-to-l from-brand-navy-deep/50 to-transparent xl:block"></div>
+  <div
+    class="from-brand-navy-deep/50 pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[40%] bg-gradient-to-l to-transparent xl:block"
+  >
+  </div>
 
   <!-- Capa 2 (semi-fast): bloom dorado + pelota SVG, primer plano decorativo -->
-  <HeroParallaxLayer speed={1.25} client:idle className="pointer-events-none absolute inset-0 z-[2]">
-    <div class="pointer-events-none absolute -left-24 -top-24 h-[480px] w-[480px] rounded-full bg-brand-gold/15 blur-3xl"></div>
+  <HeroParallaxLayer
+    speed={1.25}
+    client:idle
+    className="pointer-events-none absolute inset-0 z-[2]"
+  >
+    <div
+      class="bg-brand-gold/15 pointer-events-none absolute -top-24 -left-24 h-[480px] w-[480px] rounded-full blur-3xl"
+    >
+    </div>
     <HeroBallBg />
   </HeroParallaxLayer>
 
   <!-- Grain overlay -->
-  <div class="pointer-events-none absolute inset-0 z-[3] bg-grain opacity-60 mix-blend-overlay"></div>
-
-  <!-- Cinta diagonal vertical lateral derecha (decorativa) -->
-  <div class="pointer-events-none absolute right-0 top-0 z-[3] hidden h-full w-16 lg:block xl:w-20">
-    <div
-      class="h-full w-full diagonal-stripes text-brand-gold/[0.04]"
-      style="mask-image: linear-gradient(to right, transparent 0%, black 60%);"
-    ></div>
+  <div
+    class="bg-grain pointer-events-none absolute inset-0 z-[3] opacity-60 mix-blend-overlay"
+  >
   </div>
 
-  <div class="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 md:px-6 lg:grid-cols-[1.5fr_1fr] lg:gap-16 lg:px-12 lg:py-24">
+  <!-- Cinta diagonal vertical lateral derecha (decorativa) -->
+  <div
+    class="pointer-events-none absolute top-0 right-0 z-[3] hidden h-full w-16 lg:block xl:w-20"
+  >
+    <div
+      class="diagonal-stripes text-brand-gold/[0.04] h-full w-full"
+      style="mask-image: linear-gradient(to right, transparent 0%, black 60%);"
+    >
+    </div>
+  </div>
+
+  <div
+    class="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 md:px-6 lg:grid-cols-[1.5fr_1fr] lg:gap-16 lg:px-12 lg:py-24"
+  >
     <!-- Columna principal -->
     <div class="space-y-8">
       <!-- Eyebrow editorial: dot + label + rule, con badges de canchas -->
       <div class="reveal-line space-y-3" style="--idx:0">
         <div class="flex items-center gap-4">
-          <span class="inline-block h-2 w-2 rounded-full bg-brand-gold" aria-hidden="true"></span>
-          <span class="ml-2 text-[0.7rem] font-bold uppercase tracking-[0.28em] text-brand-gold">
+          <span
+            class="bg-brand-gold inline-block h-2 w-2 rounded-full"
+            aria-hidden="true"></span>
+          <span
+            class="text-brand-gold ml-2 text-[0.7rem] font-bold tracking-[0.28em] uppercase"
+          >
             {SITE.legalName}
           </span>
-          <span class="hidden h-px max-w-[120px] flex-1 bg-brand-gold/40 sm:inline-block" aria-hidden="true"></span>
+          <span
+            class="bg-brand-gold/40 hidden h-px max-w-[120px] flex-1 sm:inline-block"
+            aria-hidden="true"></span>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <span class="inline-flex items-center gap-1.5 rounded-full border border-brand-gold/40 bg-brand-gold/10 py-1 pl-2.5 pr-1.5 text-[0.72rem] font-semibold text-white">
-            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F5C842" stroke-width="2.2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+          <span
+            class="border-brand-gold/40 bg-brand-gold/10 inline-flex items-center gap-1.5 rounded-full border py-1 pr-1.5 pl-2.5 text-[0.72rem] font-semibold text-white"
+          >
+            <svg
+              aria-hidden="true"
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#F5C842"
+              stroke-width="2.2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+              ></path>
             </svg>
             {LOCATION.venue}
-            <span class="rounded-full bg-brand-gold px-1.5 py-0.5 text-[0.58rem] font-bold uppercase tracking-wide text-brand-navy-deep">Principal</span>
+            <span
+              class="bg-brand-gold text-brand-navy-deep rounded-full px-1.5 py-0.5 text-[0.58rem] font-bold tracking-wide uppercase"
+              >Principal</span
+            >
           </span>
-          <span class="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-2.5 py-1 text-[0.72rem] font-semibold text-white/75">
-            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+          <span
+            class="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-2.5 py-1 text-[0.72rem] font-semibold text-white/75"
+          >
+            <svg
+              aria-hidden="true"
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+              ></path>
             </svg>
             {LOCATION.secondaryVenueShort}
           </span>
@@ -94,13 +158,18 @@ import { SCHEDULE, LOCATION, SITE } from '@/lib/site';
           Escuela de fútbol formativo para niños y niñas en Los Algarrobillos.
           Avalada por <span class="font-semibold text-white">INDER</span>.
         </p>
-        <p class="text-sm font-semibold uppercase tracking-wider text-brand-gold">
+        <p
+          class="text-brand-gold text-sm font-semibold tracking-wider uppercase"
+        >
           {SCHEDULE.daysHuman} — {SCHEDULE.hoursHuman}
         </p>
       </div>
 
       <!-- CTAs -->
-      <div class="reveal-line flex flex-col gap-3 sm:flex-row sm:items-center" style="--idx:7">
+      <div
+        class="reveal-line flex flex-col gap-3 sm:flex-row sm:items-center"
+        style="--idx:7"
+      >
         <BrandButton
           href={WA_HERO}
           variant="cta-gold"
@@ -112,10 +181,14 @@ import { SCHEDULE, LOCATION, SITE } from '@/lib/site';
         </BrandButton>
         <a
           href="#programas"
-          class="group inline-flex items-center gap-2 px-2 py-3 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:text-brand-gold focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-4"
+          class="group hover:text-brand-gold focus-visible:outline-brand-gold inline-flex items-center gap-2 px-2 py-3 text-sm font-semibold tracking-wider text-white uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
         >
           Ver programas
-          <span aria-hidden="true" class="inline-block transition-transform group-hover:translate-x-1">→</span>
+          <span
+            aria-hidden="true"
+            class="inline-block transition-transform group-hover:translate-x-1"
+            >→</span
+          >
         </a>
       </div>
     </div>
@@ -125,11 +198,20 @@ import { SCHEDULE, LOCATION, SITE } from '@/lib/site';
   </div>
 
   <!-- Strip inferior con "scroll" hint -->
-  <div class="absolute bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-brand-navy-deep/60 backdrop-blur-sm">
-    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 text-[0.65rem] uppercase tracking-[0.25em] text-white/60 md:px-6 lg:px-12">
-      <span class="hidden sm:inline">{LOCATION.venue} · {LOCATION.secondaryVenueShort}</span>
+  <div
+    class="bg-brand-navy-deep/60 absolute right-0 bottom-0 left-0 z-10 border-t border-white/10 backdrop-blur-sm"
+  >
+    <div
+      class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 text-[0.65rem] tracking-[0.25em] text-white/60 uppercase md:px-6 lg:px-12"
+    >
+      <span class="hidden sm:inline"
+        >{LOCATION.venue} · {LOCATION.secondaryVenueShort}</span
+      >
       <HeroScrollHint />
-      <span class="hidden text-white/70 sm:inline section-marker italic normal-case tracking-normal">desde 2024</span>
+      <span
+        class="section-marker hidden tracking-normal text-white/70 normal-case italic sm:inline"
+        >desde 2024</span
+      >
     </div>
   </div>
 </section>

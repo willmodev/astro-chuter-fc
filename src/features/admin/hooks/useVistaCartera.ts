@@ -10,7 +10,10 @@ function leerVista(): VistaCartera {
 }
 
 // Preferencia de vista (Tarjetas/Matriz) persistida en localStorage (R7.2).
-export function useVistaCartera(): [VistaCartera, (vista: VistaCartera) => void] {
+export function useVistaCartera(): [
+  VistaCartera,
+  (vista: VistaCartera) => void,
+] {
   const [vista, setVistaState] = useState<VistaCartera>(leerVista);
 
   const setVista = useCallback((nueva: VistaCartera): void => {

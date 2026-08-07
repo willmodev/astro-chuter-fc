@@ -16,7 +16,14 @@ export function AlDiaAviso() {
         <span style={{ color: 'var(--success)' }}>
           <Icon name="circle-check" size={30} />
         </span>
-        <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-strong)' }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 16,
+            fontWeight: 700,
+            color: 'var(--text-strong)',
+          }}
+        >
           ¡Al día!
         </p>
         <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>

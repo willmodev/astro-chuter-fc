@@ -46,7 +46,8 @@ function fila(label: string, valor: string): string {
 }
 
 function bloqueCategoria(categoria: string | null): string {
-  const texto = categoria ?? 'Fuera de las categorías actuales — revisar manualmente';
+  const texto =
+    categoria ?? 'Fuera de las categorías actuales — revisar manualmente';
   const fondo = categoria ? COLOR.cream : '#fdf1ec';
   const borde = categoria ? COLOR.gold : '#e6b8aa';
   return `

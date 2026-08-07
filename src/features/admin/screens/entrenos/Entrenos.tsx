@@ -61,7 +61,11 @@ export function Entrenos({
         )}
       </div>
 
-      <WeekChips semanas={data.semanas} value={semana.id} onChange={data.setWeekId} />
+      <WeekChips
+        semanas={data.semanas}
+        value={semana.id}
+        onChange={data.setWeekId}
+      />
 
       {data.estado !== 'listo' ? (
         <EstadoCarga estado={data.estado} onReintentar={data.recargar} />

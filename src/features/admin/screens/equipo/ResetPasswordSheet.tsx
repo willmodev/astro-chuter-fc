@@ -21,7 +21,11 @@ const field: CSSProperties = {
   outline: 'none',
 };
 
-export function ResetPasswordSheet({ nombre, onClose, onReset }: Readonly<Props>) {
+export function ResetPasswordSheet({
+  nombre,
+  onClose,
+  onReset,
+}: Readonly<Props>) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [estado, setEstado] = useState<'idle' | 'enviando' | 'listo'>('idle');
@@ -47,7 +51,11 @@ export function ResetPasswordSheet({ nombre, onClose, onReset }: Readonly<Props>
             Contraseña actualizada. Comunicásela al usuario por un canal seguro;
             que la cambie pronto.
           </p>
-          <button type="button" onClick={onClose} className="admin-login__submit">
+          <button
+            type="button"
+            onClick={onClose}
+            className="admin-login__submit"
+          >
             Entendido
           </button>
         </div>
@@ -60,7 +68,13 @@ export function ResetPasswordSheet({ nombre, onClose, onReset }: Readonly<Props>
           )}
           <div>
             <label
-              style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-body)', marginBottom: 5, display: 'block' }}
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: 'var(--text-body)',
+                marginBottom: 5,
+                display: 'block',
+              }}
               htmlFor="rp-pass"
             >
               Nueva contraseña

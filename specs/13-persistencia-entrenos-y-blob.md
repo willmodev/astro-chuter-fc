@@ -37,28 +37,40 @@
 export const diaEnum = pgEnum('dia_entreno', ['Lunes', 'Miércoles', 'Viernes']);
 
 // Cabecera del Excel de planeación: tema + objetivos por entrenador y semana.
-export const planesSemana = pgTable('planes_semana', {
-  id: serial('id').primaryKey(),
-  entrenadorId: text('entrenador_id').notNull().references(() => user.id),
-  semanaInicio: date('semana_inicio').notNull(),   // lunes de la semana (clave natural)
-  tema: text('tema').notNull(),
-  objetivos: text('objetivos').notNull(),
-  creadoEn: timestamp('creado_en').notNull().defaultNow(),
-  actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
-}, (t) => [unique().on(t.entrenadorId, t.semanaInicio)]);
+export const planesSemana = pgTable(
+  'planes_semana',
+  {
+    id: serial('id').primaryKey(),
+    entrenadorId: text('entrenador_id')
+      .notNull()
+      .references(() => user.id),
+    semanaInicio: date('semana_inicio').notNull(), // lunes de la semana (clave natural)
+    tema: text('tema').notNull(),
+    objetivos: text('objetivos').notNull(),
+    creadoEn: timestamp('creado_en').notNull().defaultNow(),
+    actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.entrenadorId, t.semanaInicio)],
+);
 
 // Un día de entrenamiento: parte central (imagen en Blob) + asistencia.
-export const sesiones = pgTable('sesiones', {
-  id: serial('id').primaryKey(),
-  entrenadorId: text('entrenador_id').notNull().references(() => user.id),
-  semanaInicio: date('semana_inicio').notNull(),
-  dia: diaEnum('dia').notNull(),
-  parteCentralUrl: text('parte_central_url'),      // URL de Vercel Blob; null = sin imagen
-  parteCentralNota: text('parte_central_nota').notNull().default(''),
-  ausentes: integer('ausentes').array(),           // null = lista NO pasada; [] = todos presentes
-  creadoEn: timestamp('creado_en').notNull().defaultNow(),
-  actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
-}, (t) => [unique().on(t.entrenadorId, t.semanaInicio, t.dia)]);
+export const sesiones = pgTable(
+  'sesiones',
+  {
+    id: serial('id').primaryKey(),
+    entrenadorId: text('entrenador_id')
+      .notNull()
+      .references(() => user.id),
+    semanaInicio: date('semana_inicio').notNull(),
+    dia: diaEnum('dia').notNull(),
+    parteCentralUrl: text('parte_central_url'), // URL de Vercel Blob; null = sin imagen
+    parteCentralNota: text('parte_central_nota').notNull().default(''),
+    ausentes: integer('ausentes').array(), // null = lista NO pasada; [] = todos presentes
+    creadoEn: timestamp('creado_en').notNull().defaultNow(),
+    actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.entrenadorId, t.semanaInicio, t.dia)],
+);
 ```
 
 Igual que en el mock, los slots **se derivan, no se pre-crean**: una fila existe solo cuando el entrenador registró algo. La semántica `ausentes: null` vs `[]` se conserva tal cual (lista sin pasar vs todos presentes). Sin `onDelete: cascade` hacia `user`: si un entrenador se elimina, su historial de sesiones se conserva (mismo criterio que `registradoPor` en pagos/uniformes).
@@ -67,8 +79,11 @@ Igual que en el mock, los slots **se derivan, no se pre-crean**: una fila existe
 
 ```ts
 // Semana gana su fecha ISO persistible; el weekId de la URL se conserva.
-export function semanaInicioISO(semana: Semana): string;      // 'YYYY-MM-DD' del lunes
-export function semanaPorWeekId(semanas: Semana[], weekId: string): Semana | null;
+export function semanaInicioISO(semana: Semana): string; // 'YYYY-MM-DD' del lunes
+export function semanaPorWeekId(
+  semanas: Semana[],
+  weekId: string,
+): Semana | null;
 // generarSemanas, asistenciaDe, rosterDe, fases fijas, puedePasarLista: sin cambios.
 ```
 
@@ -77,11 +92,11 @@ Las fechas `date` de Postgres viajan como string `YYYY-MM-DD` y se comparan como
 ### Actions (contrato RPC)
 
 ```ts
-entrenos.listar({ semanaInicio })        // entrenador: sus planes/sesiones; admin: de TODOS los entrenadores
-entrenos.guardarPlan({ semanaInicio, tema, objetivos })            // upsert; solo entrenador, solo lo suyo
-entrenos.guardarPlaneacion(FormData)     // semanaInicio + dia + nota + imagen? → sube a Blob, borra el anterior
-entrenos.guardarAsistencia({ semanaInicio, dia, ausentes })        // upsert; preserva planeación
-dashboard.stats()                        // gana `entrenoDeHoy`: filas por entrenador con estado del día (solo Lun/Mié/Vie)
+entrenos.listar({ semanaInicio }); // entrenador: sus planes/sesiones; admin: de TODOS los entrenadores
+entrenos.guardarPlan({ semanaInicio, tema, objetivos }); // upsert; solo entrenador, solo lo suyo
+entrenos.guardarPlaneacion(FormData); // semanaInicio + dia + nota + imagen? → sube a Blob, borra el anterior
+entrenos.guardarAsistencia({ semanaInicio, dia, ausentes }); // upsert; preserva planeación
+dashboard.stats(); // gana `entrenoDeHoy`: filas por entrenador con estado del día (solo Lun/Mié/Vie)
 ```
 
 - `entrenadorId` **sale de la sesión** en toda escritura — el payload nunca lo trae; un entrenador no puede escribir sesiones de otro.
@@ -216,16 +231,16 @@ _Verifica:_ en un día de entreno la card lista a cada entrenador con su estado 
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| `toBlob('image/webp')` no está soportado en algún navegador viejo (Safari < 16 exporta PNG/JPEG). | El helper detecta el tipo real del blob resultante y hace fallback a JPEG (~0.8); el servidor acepta `image/webp` y `image/jpeg`. La URL guarda la extensión real. |
-| La imagen viaja por la función serverless: un payload grande agota memoria o el límite del body (4.5MB). | La compresión en cliente la deja en ~100–300KB; el servidor rechaza > 1MB con error claro (defensa en profundidad, no ruta feliz). |
-| Reemplazos concurrentes o `del()` fallido dejan blobs huérfanos. | Aceptado y acotado: el `del` es best-effort (se loguea el fallo); volumen estimado ~120MB/año contra ~1GB gratis. Limpieza manual por prefijo `entrenos/` si algún día duele. |
-| El cambio de `weekId` a `semanaInicio` desalinea URL, dominio y BD (off-by-one de zona horaria en el lunes). | Fechas como string `YYYY-MM-DD` de punta a punta (mismo criterio del spec 11); `semanaInicioISO` es puro y testeable; el criterio de aceptación de identidad de semana lo cubre. |
-| Migrar 3 hooks a async a la vez introduce estados de carga inconsistentes. | Los hooks conservan su contrato (misma forma + `loading/error` uniformes); patrón de skeleton/error ya definido en specs 11–12 y reusado. |
-| Las `cats` del entrenador no cruzan con los alumnos reales y el roster de asistencia sale vacío. | Riesgo heredado del spec 09 y ya mitigado: `rosterDe` compara normalizado y el empty state con hint de revisar Equipo se conserva; ahora los alumnos son reales (spec 11), reduciendo el desalineo. |
-| Un blob `public` filtra una planeación si la URL se comparte. | Aceptado explícitamente (decisión): contenido no sensible, URL no-adivinable; si el club lo objetara, el proxy autenticado sería otro spec. |
-| El upsert de planeación y el de asistencia se pisan entre sí (dos escritores del mismo slot). | Cada Action actualiza **solo sus columnas** (planeación: url/nota; asistencia: ausentes) sobre la fila única por constraint — mismo patrón "no pisa" del store mock, ahora garantizado por SQL. |
+| Riesgo                                                                                                       | Mitigación                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `toBlob('image/webp')` no está soportado en algún navegador viejo (Safari < 16 exporta PNG/JPEG).            | El helper detecta el tipo real del blob resultante y hace fallback a JPEG (~0.8); el servidor acepta `image/webp` y `image/jpeg`. La URL guarda la extensión real.                                  |
+| La imagen viaja por la función serverless: un payload grande agota memoria o el límite del body (4.5MB).     | La compresión en cliente la deja en ~100–300KB; el servidor rechaza > 1MB con error claro (defensa en profundidad, no ruta feliz).                                                                  |
+| Reemplazos concurrentes o `del()` fallido dejan blobs huérfanos.                                             | Aceptado y acotado: el `del` es best-effort (se loguea el fallo); volumen estimado ~120MB/año contra ~1GB gratis. Limpieza manual por prefijo `entrenos/` si algún día duele.                       |
+| El cambio de `weekId` a `semanaInicio` desalinea URL, dominio y BD (off-by-one de zona horaria en el lunes). | Fechas como string `YYYY-MM-DD` de punta a punta (mismo criterio del spec 11); `semanaInicioISO` es puro y testeable; el criterio de aceptación de identidad de semana lo cubre.                    |
+| Migrar 3 hooks a async a la vez introduce estados de carga inconsistentes.                                   | Los hooks conservan su contrato (misma forma + `loading/error` uniformes); patrón de skeleton/error ya definido en specs 11–12 y reusado.                                                           |
+| Las `cats` del entrenador no cruzan con los alumnos reales y el roster de asistencia sale vacío.             | Riesgo heredado del spec 09 y ya mitigado: `rosterDe` compara normalizado y el empty state con hint de revisar Equipo se conserva; ahora los alumnos son reales (spec 11), reduciendo el desalineo. |
+| Un blob `public` filtra una planeación si la URL se comparte.                                                | Aceptado explícitamente (decisión): contenido no sensible, URL no-adivinable; si el club lo objetara, el proxy autenticado sería otro spec.                                                         |
+| El upsert de planeación y el de asistencia se pisan entre sí (dos escritores del mismo slot).                | Cada Action actualiza **solo sus columnas** (planeación: url/nota; asistencia: ausentes) sobre la fila única por constraint — mismo patrón "no pisa" del store mock, ahora garantizado por SQL.     |
 
 ---
 

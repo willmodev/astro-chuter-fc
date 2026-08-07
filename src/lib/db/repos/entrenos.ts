@@ -111,7 +111,13 @@ export async function upsertPlaneacion(
 ): Promise<void> {
   await db
     .insert(sesiones)
-    .values({ entrenadorId, semanaInicio, dia, parteCentralUrl, parteCentralNota })
+    .values({
+      entrenadorId,
+      semanaInicio,
+      dia,
+      parteCentralUrl,
+      parteCentralNota,
+    })
     .onConflictDoUpdate({
       target: [sesiones.entrenadorId, sesiones.semanaInicio, sesiones.dia],
       set: { parteCentralUrl, parteCentralNota, actualizadoEn: new Date() },

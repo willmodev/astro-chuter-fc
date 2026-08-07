@@ -23,7 +23,9 @@ export function BadgeCategoria({ fechaNacimiento }: Readonly<Props>) {
   }
   return (
     <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
+      <span
+        style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}
+      >
         Categoría
       </span>
       <Badge tone="navy" subtle={false}>

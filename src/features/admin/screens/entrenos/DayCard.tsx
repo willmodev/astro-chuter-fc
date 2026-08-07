@@ -57,7 +57,11 @@ export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
       </button>
 
       {vacia ? (
-        <button type="button" onClick={onOpen} style={{ ...ZONA_RESET, flex: 1, minWidth: 0 }}>
+        <button
+          type="button"
+          onClick={onOpen}
+          style={{ ...ZONA_RESET, flex: 1, minWidth: 0 }}
+        >
           <VaciaBody />
         </button>
       ) : (
@@ -72,12 +76,24 @@ export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
               <ThumbImg src={img} />
             </button>
           ) : (
-            <button type="button" onClick={onOpen} style={{ ...ZONA_RESET, flexShrink: 0 }}>
+            <button
+              type="button"
+              onClick={onOpen}
+              style={{ ...ZONA_RESET, flexShrink: 0 }}
+            >
               <ThumbPlaceholder />
             </button>
           )}
-          <button type="button" onClick={onOpen} style={{ ...ZONA_RESET, flex: 1, minWidth: 0 }}>
-            <RegistroLabel sesion={sesion} roster={roster} tieneLista={tieneLista} />
+          <button
+            type="button"
+            onClick={onOpen}
+            style={{ ...ZONA_RESET, flex: 1, minWidth: 0 }}
+          >
+            <RegistroLabel
+              sesion={sesion}
+              roster={roster}
+              tieneLista={tieneLista}
+            />
           </button>
         </>
       )}

@@ -29,29 +29,44 @@ interface Args {
 }
 
 const VACIO: FormValores = {
-  name: '', doc: '', fechaNacimiento: '', acu: '', phone: '', dir: '',
+  name: '',
+  doc: '',
+  fechaNacimiento: '',
+  acu: '',
+  phone: '',
+  dir: '',
 };
 
 // Un migrado sin fecha llega con el campo vacío → obligatorio completarlo.
 function desdeAlumno(a: Alumno): FormValores {
   return {
-    name: a.name, doc: a.doc, fechaNacimiento: a.fechaNacimiento ?? '',
-    acu: a.acu, phone: a.phone, dir: a.dir,
+    name: a.name,
+    doc: a.doc,
+    fechaNacimiento: a.fechaNacimiento ?? '',
+    acu: a.acu,
+    phone: a.phone,
+    dir: a.dir,
   };
 }
 
 function aDatos(v: FormValores): DatosAlumnoInput {
   return {
-    name: v.name, doc: v.doc, fechaNacimiento: v.fechaNacimiento,
-    acu: v.acu, phone: v.phone,
+    name: v.name,
+    doc: v.doc,
+    fechaNacimiento: v.fechaNacimiento,
+    acu: v.acu,
+    phone: v.phone,
   };
 }
 
 function aInput(v: FormValores) {
   return {
-    nombre: v.name.trim(), documento: v.doc.trim(),
-    fechaNacimiento: v.fechaNacimiento, acudiente: v.acu.trim(),
-    celular: v.phone.trim(), direccion: v.dir.trim(),
+    nombre: v.name.trim(),
+    documento: v.doc.trim(),
+    fechaNacimiento: v.fechaNacimiento,
+    acudiente: v.acu.trim(),
+    celular: v.phone.trim(),
+    direccion: v.dir.trim(),
   };
 }
 
@@ -84,7 +99,8 @@ export function useAlumnoForm({ modo, alumnoId, onGuardado }: Args) {
     [valores, alumnos, alumnoId],
   );
   const sugerencias = useMemo(
-    () => sugerirAcudientes(alumnos, valores.acu).filter((s) => s !== valores.acu),
+    () =>
+      sugerirAcudientes(alumnos, valores.acu).filter((s) => s !== valores.acu),
     [alumnos, valores.acu],
   );
 

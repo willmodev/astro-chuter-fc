@@ -12,11 +12,25 @@ interface Props {
 }
 
 const TONES: Record<Tone, { bg: string; fg: string; bd: string }> = {
-  default: { bg: 'var(--surface-sunken)', fg: 'var(--brand-navy)', bd: 'var(--border-subtle)' },
-  gold: { bg: 'var(--brand-gold)', fg: 'var(--text-on-gold)', bd: 'var(--brand-gold)' },
+  default: {
+    bg: 'var(--surface-sunken)',
+    fg: 'var(--brand-navy)',
+    bd: 'var(--border-subtle)',
+  },
+  gold: {
+    bg: 'var(--brand-gold)',
+    fg: 'var(--text-on-gold)',
+    bd: 'var(--brand-gold)',
+  },
 };
 
-export function IconButton({ icon, onClick, tone = 'default', badge, label }: Props) {
+export function IconButton({
+  icon,
+  onClick,
+  tone = 'default',
+  badge,
+  label,
+}: Props) {
   const t = TONES[tone];
   return (
     <button

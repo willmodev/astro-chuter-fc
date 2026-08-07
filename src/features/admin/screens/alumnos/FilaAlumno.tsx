@@ -64,7 +64,9 @@ export function FilaAlumno({ alumno, onOpen }: Readonly<Props>) {
         </span>
       </span>
       <BadgeFila retirado={retirado} meses={enMora ? meses : 0} />
-      <span style={{ display: 'flex', color: 'var(--text-muted)', flexShrink: 0 }}>
+      <span
+        style={{ display: 'flex', color: 'var(--text-muted)', flexShrink: 0 }}
+      >
         <Icon name="chevron-right" size={18} />
       </span>
     </button>

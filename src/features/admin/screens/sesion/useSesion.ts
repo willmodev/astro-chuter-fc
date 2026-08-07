@@ -101,7 +101,9 @@ export function useSesion(params: ParamsSesion): SesionData {
         return URL.createObjectURL(blob);
       });
     } catch (e) {
-      setErrorImagen(e instanceof Error ? e.message : 'No se pudo procesar la imagen.');
+      setErrorImagen(
+        e instanceof Error ? e.message : 'No se pudo procesar la imagen.',
+      );
     }
   }, []);
 

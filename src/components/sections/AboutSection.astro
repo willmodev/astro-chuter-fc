@@ -8,7 +8,13 @@ import { WA_HERO } from '@/lib/whatsapp';
 
 const stats = [
   { value: '7', valueNum: 7, label: 'Categorías', sub: 'Baby a Juvenil' },
-  { value: '3×', valueNum: 3, valueSuffix: '×', label: 'Entrenamientos', sub: 'por semana' },
+  {
+    value: '3×',
+    valueNum: 3,
+    valueSuffix: '×',
+    label: 'Entrenamientos',
+    sub: 'por semana',
+  },
   { value: 'INDER', label: 'Aval oficial', sub: 'reconocimiento deportivo' },
 ];
 ---
@@ -26,19 +32,29 @@ const stats = [
         />
 
         <div class="space-y-5">
-          <p class="reveal font-serif text-xl leading-snug text-brand-navy-deep" style="--idx:0; font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 450;">
-            Chuter F.C. nació con la convicción de que cada niño merece un espacio seguro
-            para aprender, crecer y brillar.
+          <p
+            class="reveal text-brand-navy-deep font-serif text-xl leading-snug"
+            style="--idx:0; font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 450;"
+          >
+            Chuter F.C. nació con la convicción de que cada niño merece un
+            espacio seguro para aprender, crecer y brillar.
           </p>
-          <p class="reveal text-base leading-relaxed text-neutral-600" style="--idx:1">
-            Avalados por el INDER, nuestro enfoque va más allá del fútbol: formamos
-            personas íntegras que triunfan dentro y fuera de la cancha. Nuestro programa
-            se adapta a cada etapa de desarrollo, desde los primeros pasos en la categoría
-            Pony hasta la proyección competitiva de la categoría Prejuvenil.
+          <p
+            class="reveal text-base leading-relaxed text-neutral-600"
+            style="--idx:1"
+          >
+            Avalados por el INDER, nuestro enfoque va más allá del fútbol:
+            formamos personas íntegras que triunfan dentro y fuera de la cancha.
+            Nuestro programa se adapta a cada etapa de desarrollo, desde los
+            primeros pasos en la categoría Pony hasta la proyección competitiva
+            de la categoría Prejuvenil.
           </p>
         </div>
 
-        <div class="reveal relative inline-flex items-center gap-4 rounded-sm border-l-4 border-brand-clay bg-brand-cream px-5 py-4" style="--idx:2">
+        <div
+          class="reveal border-brand-clay bg-brand-cream relative inline-flex items-center gap-4 rounded-sm border-l-4 px-5 py-4"
+          style="--idx:2"
+        >
           <svg
             aria-hidden="true"
             width="36"
@@ -47,59 +63,110 @@ const stats = [
             fill="none"
             stroke="currentColor"
             stroke-width="1.5"
-            class="shrink-0 text-brand-clay"
+            class="text-brand-clay shrink-0"
           >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+            ></path>
           </svg>
           <div>
-            <p class="font-display text-lg leading-tight text-brand-navy-deep">
+            <p class="font-display text-brand-navy-deep text-lg leading-tight">
               Reconocimiento Deportivo · INDER
             </p>
-            <p class="font-serif text-sm italic text-neutral-600" style="font-variation-settings: 'opsz' 144, 'wght' 400;">
-              Club avalado oficialmente. Tu hijo entrena con respaldo institucional.
+            <p
+              class="font-serif text-sm text-neutral-600 italic"
+              style="font-variation-settings: 'opsz' 144, 'wght' 400;"
+            >
+              Club avalado oficialmente. Tu hijo entrena con respaldo
+              institucional.
             </p>
           </div>
         </div>
 
-        <BrandButton href={WA_HERO} variant="cta-gold" size="md" target="_blank">
+        <BrandButton
+          href={WA_HERO}
+          variant="cta-gold"
+          size="md"
+          target="_blank"
+        >
           ¡Inscripción gratis!
         </BrandButton>
       </div>
 
       <!-- Bloque editorial: caja navy con manifesto -->
       <aside class="reveal reveal--from-right relative" style="--idx:0">
-        <div class="relative overflow-hidden rounded-sm bg-brand-navy-deep p-8 text-brand-cream shadow-2xl shadow-brand-navy/30 md:p-10">
+        <div
+          class="bg-brand-navy-deep text-brand-cream shadow-brand-navy/30 relative overflow-hidden rounded-sm p-8 shadow-2xl md:p-10"
+        >
           <!-- Pattern de líneas (cancha) -->
-          <div class="pointer-events-none absolute inset-0 opacity-[0.08]" aria-hidden="true">
-            <svg viewBox="0 0 200 200" class="h-full w-full" preserveAspectRatio="none">
-              <pattern id="aboutLines" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#FBF6E4" stroke-width="0.5" />
+          <div
+            class="pointer-events-none absolute inset-0 opacity-[0.08]"
+            aria-hidden="true"
+          >
+            <svg
+              viewBox="0 0 200 200"
+              class="h-full w-full"
+              preserveAspectRatio="none"
+            >
+              <pattern
+                id="aboutLines"
+                x="0"
+                y="0"
+                width="40"
+                height="40"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M 40 0 L 0 0 0 40"
+                  fill="none"
+                  stroke="#FBF6E4"
+                  stroke-width="0.5"></path>
               </pattern>
-              <rect width="200" height="200" fill="url(#aboutLines)" />
+              <rect width="200" height="200" fill="url(#aboutLines)"></rect>
             </svg>
           </div>
 
           <!-- Quote mark sutil dentro del card -->
-          <span class="pointer-events-none absolute right-6 top-4 select-none font-serif text-6xl leading-none text-brand-gold/30" aria-hidden="true" style="font-variation-settings: 'opsz' 144, 'wght' 700;">
+          <span
+            class="text-brand-gold/30 pointer-events-none absolute top-4 right-6 font-serif text-6xl leading-none select-none"
+            aria-hidden="true"
+            style="font-variation-settings: 'opsz' 144, 'wght' 700;"
+          >
             "
           </span>
 
           <div class="relative">
-            <p class="section-marker text-sm italic text-brand-gold">Manifiesto Chuter</p>
-            <p class="mt-4 font-serif text-2xl leading-tight md:text-[1.6rem]" style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'wght' 400;">
+            <p class="section-marker text-brand-gold text-sm italic">
+              Manifiesto Chuter
+            </p>
+            <p
+              class="mt-4 font-serif text-2xl leading-tight md:text-[1.6rem]"
+              style="font-variation-settings: 'opsz' 144, 'SOFT' 50, 'wght' 400;"
+            >
               No formamos solo jugadores.<br />
-              Formamos <em class="text-brand-gold not-italic font-display tracking-wide">campeones de la vida</em> con balón en los pies.
+              Formamos <em
+                class="text-brand-gold font-display tracking-wide not-italic"
+                >campeones de la vida</em
+              > con balón en los pies.
             </p>
             <div class="mt-8 flex items-center gap-3">
-              <span class="h-px w-10 bg-brand-gold/50"></span>
-              <p class="text-xs uppercase tracking-[0.2em] text-brand-cream/70">Familia Andrade · Fundadores</p>
+              <span class="bg-brand-gold/50 h-px w-10"></span>
+              <p class="text-brand-cream/70 text-xs tracking-[0.2em] uppercase">
+                Familia Andrade · Fundadores
+              </p>
             </div>
           </div>
         </div>
 
         <!-- Stamp circular flotante "est. 2024" (solo desktop, mobile lo oculta para no chocar con el footer del manifesto) -->
-        <div class="stamp-spin absolute -bottom-5 -right-5 hidden h-24 w-24 items-center justify-center rounded-full border-2 border-brand-navy-deep bg-brand-gold shadow-lg md:flex">
-          <span class="section-marker text-center text-xs italic leading-tight text-brand-navy-deep px-2">
+        <div
+          class="stamp-spin border-brand-navy-deep bg-brand-gold absolute -right-5 -bottom-5 hidden h-24 w-24 items-center justify-center rounded-full border-2 shadow-lg md:flex"
+        >
+          <span
+            class="section-marker text-brand-navy-deep px-2 text-center text-xs leading-tight italic"
+          >
             desde<br /><span class="font-display text-xl not-italic">2024</span>
           </span>
         </div>

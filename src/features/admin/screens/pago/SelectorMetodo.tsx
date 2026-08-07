@@ -33,8 +33,12 @@ export function SelectorMetodo({ metodo, onChange }: Readonly<Props>) {
                 justifyContent: 'center',
                 gap: 8,
                 borderRadius: 'var(--radius-md)',
-                border: activo ? '2px solid var(--brand-navy)' : '1px solid var(--border-subtle)',
-                background: activo ? 'var(--brand-blue-soft)' : 'var(--surface-card)',
+                border: activo
+                  ? '2px solid var(--brand-navy)'
+                  : '1px solid var(--border-subtle)',
+                background: activo
+                  ? 'var(--brand-blue-soft)'
+                  : 'var(--surface-card)',
                 color: activo ? 'var(--brand-navy)' : 'var(--text-body)',
                 fontSize: 14,
                 fontWeight: 700,

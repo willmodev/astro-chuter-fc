@@ -20,7 +20,8 @@ export function colorUniforme(cell) {
   if (fg.theme === 9) return 'verde';
   if (fg.theme === 4) return 'azul';
   if (fg.theme === 0) return 'blanco';
-  if (typeof fg.argb === 'string' && fg.argb.toUpperCase() === 'FFFF0000') return 'rojo';
+  if (typeof fg.argb === 'string' && fg.argb.toUpperCase() === 'FFFF0000')
+    return 'rojo';
   return 'desconocido';
 }
 
@@ -31,11 +32,18 @@ export function kitsDeFila(ws, r, nombre, anomalias) {
     const color = colorUniforme(ws.getCell(`${col}${r}`));
     if (color === 'blanco') continue;
     if (color === 'desconocido') {
-      anomalias.push(`F${r} ${nombre}: relleno de color desconocido en ${kit} → kit omitido`);
+      anomalias.push(
+        `F${r} ${nombre}: relleno de color desconocido en ${kit} → kit omitido`,
+      );
       continue;
     }
     // verde/rojo entregados; verde/azul pagados.
-    kits.push({ kit, entregado: color !== 'azul', pagado: color !== 'rojo', color });
+    kits.push({
+      kit,
+      entregado: color !== 'azul',
+      pagado: color !== 'rojo',
+      color,
+    });
   }
   return kits;
 }
@@ -64,8 +72,12 @@ export async function insertarUniformes(db, uniformes, alumnoId, kits, precio) {
 
 // Resumen de kits por color, por kit (para el reporte del seed).
 export function resumenUniformes(filas) {
-  const cnt = { AZUL: { verde: 0, rojo: 0, azul: 0 }, ORO: { verde: 0, rojo: 0, azul: 0 } };
+  const cnt = {
+    AZUL: { verde: 0, rojo: 0, azul: 0 },
+    ORO: { verde: 0, rojo: 0, azul: 0 },
+  };
   for (const f of filas) for (const k of f.kits) cnt[k.kit][k.color] += 1;
-  const fmt = (kit) => `${kit}(verde=${cnt[kit].verde} rojo=${cnt[kit].rojo} azul=${cnt[kit].azul})`;
+  const fmt = (kit) =>
+    `${kit}(verde=${cnt[kit].verde} rojo=${cnt[kit].rojo} azul=${cnt[kit].azul})`;
   return `${fmt('AZUL')} ${fmt('ORO')}`;
 }

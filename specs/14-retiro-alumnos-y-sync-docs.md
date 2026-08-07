@@ -35,7 +35,7 @@
 
 ## Modelo de datos
 
-**No introduce estructuras nuevas.** Reutiliza la columna `alumnos.activo` (`boolean`, `notNull`, `default true`) del SPEC 11. **Cero migración**: `activo=false` significa *retirado*.
+**No introduce estructuras nuevas.** Reutiliza la columna `alumnos.activo` (`boolean`, `notNull`, `default true`) del SPEC 11. **Cero migración**: `activo=false` significa _retirado_.
 
 Contratos nuevos o cambiados (solo firmas — la implementación va después):
 
@@ -171,14 +171,14 @@ _Verifica:_ ninguna HU ya hecha queda marcada ☐; `NEXT-STEPS.md` no existe; ni
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
+| Riesgo                                                                                                                                              | Mitigación                                                                                                                                                                                                                         |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Olvidar filtrar `activo` en algún derivado (cartera, morosos, cartera vencida, cumpleaños, plantel) y que un retirado siga apareciendo en un lugar. | El filtro se centraliza en el service que arma la lista base de activos; los derivados consumen esa lista. Los criterios de aceptación cubren cada superficie por separado (activos, % al día, morosos, cartera vencida, plantel). |
-| Cambiar el default de `listarAlumnos()` a "solo activos" altera en silencio a un consumidor existente que esperaba ver a todos. | Auditar los llamadores actuales antes de cambiar el default; el único caso que necesita a todos es el chip del admin, que pasa `incluirRetirados` explícito. |
-| El "recaudado del año" baja por error al excluir los pagos de un retirado. | El recaudado se calcula sobre la tabla `pagos`, no sobre la lista de alumnos activos; hay un criterio de aceptación explícito para esto. |
-| El chip "Mostrar retirados" se combina mal con el buscador/filtro de categoría y cuela un retirado con el chip apagado. | El filtro por `activo` se aplica **antes** del filtro de búsqueda/categoría; el criterio "por defecto no aparecen" lo verifica. |
-| Reactivar a mitad de año hace reaparecer como mora los meses no cobrados durante el retiro. | Es el comportamiento correcto y buscado: reactivar devuelve al alumno con su historia real, no "perdona" mora por haber estado retirado. Se documenta como semántica esperada, no como bug. |
-| Reconciliar el backlog a mano introduce marcas nuevas equivocadas. | Cada HU se cruza contra el spec que la cerró (ya mapeado en esta sesión) y cada ☑ cita su spec; el criterio de aceptación exige que ninguna HU hecha quede ☐. |
+| Cambiar el default de `listarAlumnos()` a "solo activos" altera en silencio a un consumidor existente que esperaba ver a todos.                     | Auditar los llamadores actuales antes de cambiar el default; el único caso que necesita a todos es el chip del admin, que pasa `incluirRetirados` explícito.                                                                       |
+| El "recaudado del año" baja por error al excluir los pagos de un retirado.                                                                          | El recaudado se calcula sobre la tabla `pagos`, no sobre la lista de alumnos activos; hay un criterio de aceptación explícito para esto.                                                                                           |
+| El chip "Mostrar retirados" se combina mal con el buscador/filtro de categoría y cuela un retirado con el chip apagado.                             | El filtro por `activo` se aplica **antes** del filtro de búsqueda/categoría; el criterio "por defecto no aparecen" lo verifica.                                                                                                    |
+| Reactivar a mitad de año hace reaparecer como mora los meses no cobrados durante el retiro.                                                         | Es el comportamiento correcto y buscado: reactivar devuelve al alumno con su historia real, no "perdona" mora por haber estado retirado. Se documenta como semántica esperada, no como bug.                                        |
+| Reconciliar el backlog a mano introduce marcas nuevas equivocadas.                                                                                  | Cada HU se cruza contra el spec que la cerró (ya mapeado en esta sesión) y cada ☑ cita su spec; el criterio de aceptación exige que ninguna HU hecha quede ☐.                                                                      |
 
 ---
 

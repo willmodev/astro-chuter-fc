@@ -10,7 +10,13 @@ interface Props {
   style?: CSSProperties;
 }
 
-export function Avatar({ name, src = null, size = 40, ring = false, style }: Props) {
+export function Avatar({
+  name,
+  src = null,
+  size = 40,
+  ring = false,
+  style,
+}: Props) {
   const initials = name
     .split(' ')
     .filter(Boolean)

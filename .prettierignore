@@ -1,0 +1,16 @@
+# Build y generados
+dist/
+.astro/
+.vercel/
+drizzle/
+package-lock.json
+
+# Generado por shadcn: CLAUDE.md dice "no tocar manualmente"
+src/components/ui/
+
+# Material no versionado (.gitignore): prototipo de referencia,
+# bundle del design system y artefactos locales
+references/
+admin-design-system-*/
+docs/comercial/
+.playwright-cli/

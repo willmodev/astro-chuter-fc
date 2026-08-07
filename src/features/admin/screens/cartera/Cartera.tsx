@@ -52,7 +52,11 @@ export function Cartera({ onCobrarMes }: Readonly<Props>) {
       ) : vista === 'tarjetas' ? (
         <div style={{ display: 'grid', gap: 10 }}>
           {visibles.map((a) => (
-            <TarjetaAlumno key={a.id} alumno={a} onCobrarMes={(mes) => onCobrarMes(a.id, mes)} />
+            <TarjetaAlumno
+              key={a.id}
+              alumno={a}
+              onCobrarMes={(mes) => onCobrarMes(a.id, mes)}
+            />
           ))}
         </div>
       ) : (

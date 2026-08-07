@@ -88,7 +88,10 @@ export function Ficha({
         />
       )}
       {tab === 'uniforme' && (
-        <UniformeTab alumno={alumno} onGestionar={() => onRegistrarUniforme?.()} />
+        <UniformeTab
+          alumno={alumno}
+          onGestionar={() => onRegistrarUniforme?.()}
+        />
       )}
       {tab === 'acudiente' && <AcudienteTab alumno={alumno} />}
 

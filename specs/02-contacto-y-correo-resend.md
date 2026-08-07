@@ -95,8 +95,7 @@ export const SITE = {
   url: import.meta.env.PUBLIC_SITE_URL ?? 'https://chuterfc.com',
 } as const;
 
-const whatsappNumber =
-  import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573008725964';
+const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573008725964';
 const numeroNacional = whatsappNumber.replace(/^57/, '');
 
 export const CONTACT = {
@@ -187,13 +186,14 @@ Cada paso deja el sitio compilando (`npm run dev`) y desplegable.
     forms (Resend + Action) y env vars; quitar "sin backend propio".
 17. **Verificación**: `grep` de `573015216830`, `301 521 6830`, `chuterfc.vercel.app` y
     `web3forms` en el repo = 0; envío de prueba real llega branded a `olimak8@hotmail.com`;
-    `npm run build` (+ `astro sync`) en verde. *(`npm run check` queda para la Fase 0 del tooling.)*
+    `npm run build` (+ `astro sync`) en verde. _(`npm run check` queda para la Fase 0 del tooling.)_
 
 ---
 
 ## Criterios de aceptación
 
 ### Datos de contacto
+
 - [x] `.env.example` incluye los **nombres** de las variables (`PUBLIC_CONTACT_EMAIL`,
       `PUBLIC_SITE_URL`, las de Resend, etc.) con **valores vacíos**; la data real vive en `.env`
       (gitignored) y en Vercel, no en el ejemplo versionado.
@@ -206,6 +206,7 @@ Cada paso deja el sitio compilando (`npm run dev`) y desplegable.
 - [x] Footer y bloque de contacto muestran el email como `mailto:` a `olimak8@hotmail.com`.
 
 ### Correo (Resend)
+
 - [x] `npm run build` genera el sitio estático y la Action funciona en Vercel (páginas siguen
       prerenderizadas; solo la Action es server).
 - [x] El dominio `chuterfc.com` figura **verificado** en Resend (SPF/DKIM/DMARC en verde).
@@ -218,51 +219,52 @@ Cada paso deja el sitio compilando (`npm run dev`) y desplegable.
 - [x] `RESEND_API_KEY`, `CONTACT_EMAIL_FROM` y `CONTACT_EMAIL_TO` son server-only (sin `PUBLIC_`).
 
 ### Calidad
+
 - [x] La lógica de negocio vive en `lib/services`/`lib/domain`, no en el componente ni en la
       Action; ningún archivo supera 200 líneas; cero `any`.
 - [x] `CLAUDE.md` refleja número, email, dominio y el nuevo stack de forms.
-- [x] `npm run build` (con `astro sync`) pasa sin errores. *(El script `npm run check` —eslint +
+- [x] `npm run build` (con `astro sync`) pasa sin errores. _(El script `npm run check` —eslint +
       `astro check`— es la Fase 0 del tooling en `coding-rules.md`, fuera del alcance de este spec;
-      cuando exista, debe quedar en verde.)*
+      cuando exista, debe quedar en verde.)_
 
 ---
 
 ## Decisiones
 
-- **Sí:** número, email y URL vía `PUBLIC_*` con fallback real. *Por qué:* patrón del repo;
+- **Sí:** número, email y URL vía `PUBLIC_*` con fallback real. _Por qué:_ patrón del repo;
   fuente única.
-- **Sí:** eliminar el número hardcodeado de los 3 componentes. *Por qué:* DRY; hoy la env var
+- **Sí:** eliminar el número hardcodeado de los 3 componentes. _Por qué:_ DRY; hoy la env var
   no los actualiza.
 - **Sí:** `phoneE164`/`phoneDisplay` **derivados** de `whatsappNumber` con una regex simple.
-  *Por qué:* una sola variable (`PUBLIC_WHATSAPP_NUMBER`) gobierna las tres formas; cambiarla en
+  _Por qué:_ una sola variable (`PUBLIC_WHATSAPP_NUMBER`) gobierna las tres formas; cambiarla en
   Vercel + redeploy actualiza todo sin tocar código. El celular colombiano (`57` + 10 dígitos,
   agrupación 3-3-4) es determinístico, así que la derivación es trivial y no agrega complejidad
-  real. *(Revisa la decisión original de dejarlas como constantes literales.)*
-- **Sí:** email como `mailto:` en footer y contacto. *Por qué:* pedido explícito de Will; vía
+  real. _(Revisa la decisión original de dejarlas como constantes literales.)_
+- **Sí:** email como `mailto:` en footer y contacto. _Por qué:_ pedido explícito de Will; vía
   alterna al WhatsApp.
-- **Sí:** Resend como proveedor. *Por qué:* dominio propio verificable → mejor entrega a
+- **Sí:** Resend como proveedor. _Por qué:_ dominio propio verificable → mejor entrega a
   Hotmail; HTML branded; free tier suficiente; oficial y liviano.
 - **No:** Nodemailer/SMTP (solo transporte, exige SMTP externo, peor entrega) ni Web3Forms Pro
   (pagar por menos control que Resend gratis con dominio propio).
-- **Sí:** Astro Action (no endpoint `/api` a mano). *Por qué:* RPC tipado + Zod; patrón del admin.
-- **Sí:** plantilla como función pura con HTML inline-styled. *Por qué:* los clientes de correo
+- **Sí:** Astro Action (no endpoint `/api` a mano). _Por qué:_ RPC tipado + Zod; patrón del admin.
+- **Sí:** plantilla como función pura con HTML inline-styled. _Por qué:_ los clientes de correo
   no soportan CSS externo; evita libs de render (React Email).
 - **Sí:** capas `action → service → template/transport`, categoría desde `lib/domain`.
-  *Por qué:* la lógica no vive en la UI ni en la Action.
-- **No:** autorespuesta al padre por ahora. *Por qué:* suma alcance; se agrega luego.
+  _Por qué:_ la lógica no vive en la UI ni en la Action.
+- **No:** autorespuesta al padre por ahora. _Por qué:_ suma alcance; se agrega luego.
 
 ---
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| DNS de Resend sin verificar → correos a spam o rechazados. | El paso 8 bloquea: no cerrar el spec hasta ver el dominio verificado y una prueba real en bandeja. |
-| Agregar el adapter rompe el build estático actual. | Mantener `output` por defecto; el adapter solo habilita la Action. Verificar `npm run build` y un preview. |
-| `RESEND_API_KEY` expuesta al cliente. | Nunca prefijo `PUBLIC_`; se usa solo en Action/servicio. Criterio de aceptación lo verifica. |
-| Coincidencia con el adapter que instale el módulo admin. | Si el admin ya lo agregó, no duplicar: reusar el `adapter` de `astro.config.mjs`. |
-| Queda número/URL viejos escondidos. | Paso 17: `grep` de `573015216830`, `301 521 6830`, `chuterfc.vercel.app`, `web3forms` = 0. |
-| Bots enviando el form. | Honeypot `botcheck` en la Action; rate limiting/captcha para otro spec. |
+| Riesgo                                                     | Mitigación                                                                                                 |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| DNS de Resend sin verificar → correos a spam o rechazados. | El paso 8 bloquea: no cerrar el spec hasta ver el dominio verificado y una prueba real en bandeja.         |
+| Agregar el adapter rompe el build estático actual.         | Mantener `output` por defecto; el adapter solo habilita la Action. Verificar `npm run build` y un preview. |
+| `RESEND_API_KEY` expuesta al cliente.                      | Nunca prefijo `PUBLIC_`; se usa solo en Action/servicio. Criterio de aceptación lo verifica.               |
+| Coincidencia con el adapter que instale el módulo admin.   | Si el admin ya lo agregó, no duplicar: reusar el `adapter` de `astro.config.mjs`.                          |
+| Queda número/URL viejos escondidos.                        | Paso 17: `grep` de `573015216830`, `301 521 6830`, `chuterfc.vercel.app`, `web3forms` = 0.                 |
+| Bots enviando el form.                                     | Honeypot `botcheck` en la Action; rate limiting/captcha para otro spec.                                    |
 
 ---
 

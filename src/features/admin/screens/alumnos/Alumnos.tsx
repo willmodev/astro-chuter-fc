@@ -78,7 +78,9 @@ export function Alumnos({ onOpenFicha }: Readonly<Props>) {
           {visibles.map((a, i) => (
             <div
               key={a.id}
-              style={{ borderTop: i ? '1px solid var(--border-subtle)' : 'none' }}
+              style={{
+                borderTop: i ? '1px solid var(--border-subtle)' : 'none',
+              }}
             >
               <FilaAlumno alumno={a} onOpen={() => onOpenFicha(a.id)} />
             </div>

@@ -20,7 +20,9 @@ const COLUMNAS = ['Pagado', 'Sin pagar'] as const;
 
 export function MatrizEstado({ conteos, filtro, onFiltrar }: Readonly<Props>) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr', gap: 8 }}>
+    <div
+      style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr', gap: 8 }}
+    >
       <span />
       {COLUMNAS.map((c) => (
         <span key={c} className="eyebrow" style={{ textAlign: 'center' }}>
@@ -45,7 +47,10 @@ export function MatrizEstado({ conteos, filtro, onFiltrar }: Readonly<Props>) {
   );
 }
 
-function Fila({ label, children }: Readonly<{ label: string; children: ReactNode }>) {
+function Fila({
+  label,
+  children,
+}: Readonly<{ label: string; children: ReactNode }>) {
   return (
     <>
       <span
@@ -83,16 +88,22 @@ function Celda({ estado, conteo, activa, onClick }: Readonly<CeldaProps>) {
         gap: 2,
         padding: '12px 10px',
         borderRadius: 'var(--radius-md)',
-        border: activa ? '2px solid var(--brand-navy)' : '1px solid var(--border-subtle)',
+        border: activa
+          ? '2px solid var(--brand-navy)'
+          : '1px solid var(--border-subtle)',
         background: activa ? 'var(--brand-blue-soft)' : 'var(--surface-card)',
         cursor: 'pointer',
         textAlign: 'left',
       }}
     >
-      <strong style={{ fontSize: 22, color: 'var(--text-strong)', lineHeight: 1 }}>
+      <strong
+        style={{ fontSize: 22, color: 'var(--text-strong)', lineHeight: 1 }}
+      >
         {conteo}
       </strong>
-      <span style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--text-muted)' }}>
+      <span
+        style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--text-muted)' }}
+      >
         {meta.label}
       </span>
     </button>

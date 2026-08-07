@@ -29,7 +29,8 @@ export function MasEntrenador({ userName, cats }: Readonly<Props>) {
           gap: 14,
           padding: 18,
           borderRadius: 'var(--radius-lg)',
-          background: 'linear-gradient(160deg, var(--brand-navy), var(--brand-navy-deep))',
+          background:
+            'linear-gradient(160deg, var(--brand-navy), var(--brand-navy-deep))',
           boxShadow: 'var(--shadow-md)',
         }}
       >
@@ -48,7 +49,8 @@ export function MasEntrenador({ userName, cats }: Readonly<Props>) {
       </div>
 
       <span className="eyebrow" style={{ padding: '2px 2px 0' }}>
-        Mis categorías · {roster.length} {roster.length === 1 ? 'alumno' : 'alumnos'}
+        Mis categorías · {roster.length}{' '}
+        {roster.length === 1 ? 'alumno' : 'alumnos'}
       </span>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
         {cats.length > 0 ? (
@@ -81,7 +83,12 @@ export function MasEntrenador({ userName, cats }: Readonly<Props>) {
           title={LOCATION.venue}
           sub={`${LOCATION.neighborhood} · INDER`}
         />
-        <InfoRow icon="clock" title="Lun · Mié · Vie" sub="4:30 – 6:00 PM" borde />
+        <InfoRow
+          icon="clock"
+          title="Lun · Mié · Vie"
+          sub="4:30 – 6:00 PM"
+          borde
+        />
       </div>
 
       <button
@@ -138,7 +145,9 @@ function InfoRow({
         <Icon name={icon} size={19} />
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-strong)' }}>
+        <div
+          style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-strong)' }}
+        >
           {title}
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{sub}</div>

@@ -29,11 +29,15 @@ interface Props {
 }
 
 // Mes tocado → ese mes; sin origen → primer mes cobrable (HU-3.5).
-function preseleccion(states: EstadoMes[], mesTocado: number | undefined): number[] {
+function preseleccion(
+  states: EstadoMes[],
+  mesTocado: number | undefined,
+): number[] {
   const cobrables = states
     .map((estado, i) => (esMesCobrable(estado) ? i : -1))
     .filter((i) => i >= 0);
-  if (mesTocado !== undefined && cobrables.includes(mesTocado)) return [mesTocado];
+  if (mesTocado !== undefined && cobrables.includes(mesTocado))
+    return [mesTocado];
   return cobrables.slice(0, 1);
 }
 
@@ -65,7 +69,9 @@ export function Pago({ alumnoId, mes, onVolver }: Readonly<Props>) {
   const hayCobrables = alumno.states.some((element) => esMesCobrable(element));
 
   const toggleMes = (i: number): void => {
-    setSeleccionados((prev) => (prev.includes(i) ? prev.filter((m) => m !== i) : [...prev, i]));
+    setSeleccionados((prev) =>
+      prev.includes(i) ? prev.filter((m) => m !== i) : [...prev, i],
+    );
   };
 
   const confirmar = async (): Promise<void> => {
@@ -86,7 +92,14 @@ export function Pago({ alumnoId, mes, onVolver }: Readonly<Props>) {
   };
 
   if (exito) {
-    return <ExitoPago alumno={alumno} meses={seleccionados} total={total} onVolver={onVolver} />;
+    return (
+      <ExitoPago
+        alumno={alumno}
+        meses={seleccionados}
+        total={total}
+        onVolver={onVolver}
+      />
+    );
   }
 
   return (
@@ -114,11 +127,22 @@ export function Pago({ alumnoId, mes, onVolver }: Readonly<Props>) {
         </button>
         <div style={{ minWidth: 0 }}>
           <strong
-            style={{ display: 'block', fontSize: 16, color: 'var(--text-strong)', lineHeight: 1.2 }}
+            style={{
+              display: 'block',
+              fontSize: 16,
+              color: 'var(--text-strong)',
+              lineHeight: 1.2,
+            }}
           >
             {alumno.name}
           </strong>
-          <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
+          <span
+            style={{
+              fontSize: 12.5,
+              color: 'var(--text-muted)',
+              fontWeight: 600,
+            }}
+          >
             {alumno.cat} · Registrar pago
           </span>
         </div>
@@ -126,10 +150,21 @@ export function Pago({ alumnoId, mes, onVolver }: Readonly<Props>) {
 
       {hayCobrables ? (
         <>
-          <SelectorMeses alumno={alumno} seleccionados={seleccionados} onToggle={toggleMes} />
+          <SelectorMeses
+            alumno={alumno}
+            seleccionados={seleccionados}
+            onToggle={toggleMes}
+          />
           <SelectorMetodo metodo={metodo} onChange={setMetodo} />
           {errorMsg && (
-            <p style={{ margin: 0, fontSize: 13, color: 'var(--error)', fontWeight: 600 }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 13,
+                color: 'var(--error)',
+                fontWeight: 600,
+              }}
+            >
               {errorMsg}
             </p>
           )}

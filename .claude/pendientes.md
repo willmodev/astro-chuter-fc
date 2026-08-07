@@ -12,6 +12,7 @@ Estos datos bloquean contenido real. Faltan solo estos:
 - [ ] **Bios de Camilo y Ebed** → revisar y confirmar o corregir los textos inventados en `src/content/formadores/`
 
 ### Ya resueltos ✓
+
 - [x] Logo SVG integrado en header, footer y favicon
 - [x] Fotos de perfil Instagram descargadas y usadas en CoachCard
 - [x] Bios realistas escritas (pendiente confirmación del cliente)
@@ -53,6 +54,7 @@ Más las server-only (Resend, Neon, Better Auth, Blob). Ver `.env.example` para 
 > **Metodología:** Lighthouse tiene mucha varianza — una sola corrida sobre este sitio llegó a dar Performance 59 y un CLS falso de 0.322 que no se reprodujo en ninguna otra medición ni con un `PerformanceObserver` real (CLS efectivo: 0.0003). **Medir siempre 3 veces y tomar la mediana.**
 
 ### Ya resueltos ✓
+
 - [x] Deploy a Vercel y repo conectado (proyecto `astro-chuter-fc`)
 - [x] Dominio propio `chuterfc.com` con NS de Vercel; `www` redirige al apex (308) con cert wildcard
 - [x] Correo del formulario migrado a Resend; dominio verificado con DKIM + SPF + MX

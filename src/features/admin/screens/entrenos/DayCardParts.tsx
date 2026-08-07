@@ -24,12 +24,20 @@ export const ZONA_RESET = {
 } as const;
 
 // Columna de la izquierda: día abreviado + icono de estado.
-export function DayGlyph({ day, completa }: Readonly<{ day: DiaEntreno; completa: boolean }>) {
+export function DayGlyph({
+  day,
+  completa,
+}: Readonly<{ day: DiaEntreno; completa: boolean }>) {
   return (
     <span style={{ width: 46, flexShrink: 0, textAlign: 'center' }}>
       <span
         className="font-display"
-        style={{ display: 'block', fontSize: 13, color: 'var(--text-muted)', letterSpacing: '.04em' }}
+        style={{
+          display: 'block',
+          fontSize: 13,
+          color: 'var(--text-muted)',
+          letterSpacing: '.04em',
+        }}
       >
         {day.slice(0, 3).toUpperCase()}
       </span>
@@ -52,10 +60,24 @@ export function VaciaBody() {
   return (
     <>
       <span style={{ flex: 1, minWidth: 0 }}>
-        <span style={{ display: 'block', fontSize: 14, fontWeight: 700, color: 'var(--text-muted)' }}>
+        <span
+          style={{
+            display: 'block',
+            fontSize: 14,
+            fontWeight: 700,
+            color: 'var(--text-muted)',
+          }}
+        >
           Sin registrar
         </span>
-        <span style={{ display: 'block', fontSize: 12, color: 'var(--text-faint)', marginTop: 2 }}>
+        <span
+          style={{
+            display: 'block',
+            fontSize: 12,
+            color: 'var(--text-faint)',
+            marginTop: 2,
+          }}
+        >
           Sube la planeación y pasa lista
         </span>
       </span>
@@ -81,8 +103,13 @@ export function RegistroLabel({
   sesion,
   roster,
   tieneLista,
-}: Readonly<{ sesion: Sesion; roster: readonly AlumnoPlantel[]; tieneLista: boolean }>) {
-  const conPlan = sesion.parteCentralNota.trim() !== '' || sesion.parteCentralImg !== null;
+}: Readonly<{
+  sesion: Sesion;
+  roster: readonly AlumnoPlantel[];
+  tieneLista: boolean;
+}>) {
+  const conPlan =
+    sesion.parteCentralNota.trim() !== '' || sesion.parteCentralImg !== null;
   return (
     <>
       <span style={{ flex: 1, minWidth: 0 }}>
@@ -97,11 +124,15 @@ export function RegistroLabel({
             whiteSpace: 'nowrap',
           }}
         >
-          {conPlan ? sesion.parteCentralNota || 'Parte central' : 'Sin planeación'}
+          {conPlan
+            ? sesion.parteCentralNota || 'Parte central'
+            : 'Sin planeación'}
         </span>
         <span style={{ display: 'block', marginTop: 7 }}>
           {tieneLista ? (
-            <AsistPill asistencia={asistenciaDe(sesion.ausentes ?? [], roster)} />
+            <AsistPill
+              asistencia={asistenciaDe(sesion.ausentes ?? [], roster)}
+            />
           ) : (
             <Badge tone="pending" dot>
               Sin lista
@@ -109,7 +140,9 @@ export function RegistroLabel({
           )}
         </span>
       </span>
-      <span style={{ color: 'var(--text-faint)', flexShrink: 0, display: 'flex' }}>
+      <span
+        style={{ color: 'var(--text-faint)', flexShrink: 0, display: 'flex' }}
+      >
         <Icon name="chevron-right" size={18} />
       </span>
     </>

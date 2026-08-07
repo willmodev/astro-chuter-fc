@@ -23,35 +23,43 @@ const waConsultaCategoria = whatsappURL(
         title="Siete categorías, una misma cancha."
         subtitle="Cada niño y niña en la categoría que le corresponde según su edad, con metodología adaptada a su etapa de desarrollo."
       />
-      <p class="hidden font-serif italic text-sm text-brand-navy/70 md:block md:max-w-xs md:text-right" style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 400;">
-        «Nada de improvisar — formamos por edad, con un plan que crece con el chico.»
+      <p
+        class="text-brand-navy/70 hidden font-serif text-sm italic md:block md:max-w-xs md:text-right"
+        style="font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wght' 400;"
+      >
+        «Nada de improvisar — formamos por edad, con un plan que crece con el
+        chico.»
       </p>
     </div>
 
     <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-6">
-      {programas.map((programa, index) => (
-        <ProgramCard
-          nombre={programa.nombre}
-          edades={programa.edades}
-          horario={programa.horario}
-          descripcion={programa.descripcion}
-          entrenador={programa.entrenador}
-          icono={programa.icono}
-          color={programa.color}
-          numero={String(index + 1).padStart(2, '0')}
-          idx={index}
-          class={`lg:col-span-2 ${
-            index === programas.length - 1 && programas.length % 3 === 1
-              ? 'lg:col-start-3'
-              : ''
-          }`}
-        />
-      ))}
+      {
+        programas.map((programa, index) => (
+          <ProgramCard
+            nombre={programa.nombre}
+            edades={programa.edades}
+            horario={programa.horario}
+            descripcion={programa.descripcion}
+            entrenador={programa.entrenador}
+            icono={programa.icono}
+            color={programa.color}
+            numero={String(index + 1).padStart(2, '0')}
+            idx={index}
+            class={`lg:col-span-2 ${
+              index === programas.length - 1 && programas.length % 3 === 1
+                ? 'lg:col-start-3'
+                : ''
+            }`}
+          />
+        ))
+      }
     </div>
 
     <script>
       // Tilt 3D cursor-driven para cards de programas — solo desktop con mouse fino.
-      const supportsHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+      const supportsHover = matchMedia(
+        '(hover: hover) and (pointer: fine)',
+      ).matches;
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       if (supportsHover && !reduced) {
@@ -82,19 +90,21 @@ const waConsultaCategoria = whatsappURL(
     </script>
 
     <div class="mt-10 flex items-center justify-center gap-3">
-      <span class="h-px flex-1 max-w-[80px] bg-brand-navy/15" aria-hidden="true"></span>
-      <p class="text-center text-sm text-brand-navy-deep/70">
+      <span class="bg-brand-navy/15 h-px max-w-[80px] flex-1" aria-hidden="true"
+      ></span>
+      <p class="text-brand-navy-deep/70 text-center text-sm">
         ¿No sabés en qué categoría entra tu hijo o hija?{' '}
         <a
           href={waConsultaCategoria}
           target="_blank"
           rel="noopener noreferrer"
-          class="font-semibold text-brand-navy-deep underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-brand-gold"
+          class="text-brand-navy-deep focus-visible:outline-brand-gold font-semibold underline-offset-4 hover:underline focus-visible:outline-2"
         >
           Consultanos por WhatsApp →
         </a>
       </p>
-      <span class="h-px flex-1 max-w-[80px] bg-brand-navy/15" aria-hidden="true"></span>
+      <span class="bg-brand-navy/15 h-px max-w-[80px] flex-1" aria-hidden="true"
+      ></span>
     </div>
   </Container>
 </Section>

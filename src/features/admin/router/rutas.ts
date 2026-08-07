@@ -25,7 +25,8 @@ export function parseRuta(pathname: string): RutaAdmin {
     if (id === 'nuevo') return { vista: 'alumnoNuevo' };
     if (id === undefined) return { vista: 'alumnos' };
     const alumnoId = Number(id);
-    if (!Number.isInteger(alumnoId) || alumnoId <= 0) return { vista: 'alumnos' };
+    if (!Number.isInteger(alumnoId) || alumnoId <= 0)
+      return { vista: 'alumnos' };
     if (sub === undefined) return { vista: 'ficha', alumnoId };
     if (sub === 'pago') return { vista: 'pago', alumnoId };
     if (sub === 'editar') return { vista: 'alumnoEditar', alumnoId };

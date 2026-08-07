@@ -12,7 +12,15 @@ interface Props {
 export function EstadoCarga({ estado, onReintentar }: Readonly<Props>) {
   if (estado === 'error') {
     return (
-      <div style={{ display: 'grid', gap: 12, placeItems: 'center', padding: '48px 24px', textAlign: 'center' }}>
+      <div
+        style={{
+          display: 'grid',
+          gap: 12,
+          placeItems: 'center',
+          padding: '48px 24px',
+          textAlign: 'center',
+        }}
+      >
         <span style={{ color: 'var(--error)' }}>
           <Icon name="triangle-alert" size={34} />
         </span>

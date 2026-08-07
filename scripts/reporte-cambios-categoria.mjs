@@ -21,11 +21,17 @@ console.log(
 );
 
 const desvios = anomalias.filter((a) => a.includes('categoría Excel'));
-console.log(`\n== Categoría por AÑO (fallback) ≠ categoría del Excel: ${desvios.length} ==`);
+console.log(
+  `\n== Categoría por AÑO (fallback) ≠ categoría del Excel: ${desvios.length} ==`,
+);
 desvios.forEach((a) => console.log('   ' + a));
 
-console.log(`\n== Cambian de SUB al aplicar la fecha real (${cambios.length}) ==`);
-for (const c of [...cambios].sort((a, b) => a.catAnio.localeCompare(b.catAnio))) {
+console.log(
+  `\n== Cambian de SUB al aplicar la fecha real (${cambios.length}) ==`,
+);
+for (const c of [...cambios].sort((a, b) =>
+  a.catAnio.localeCompare(b.catAnio),
+)) {
   console.log(
     `   ${c.nombre.padEnd(34)} ${c.fechaNacimiento}   ${c.catAnio.padEnd(7)} → ${c.catFecha}`,
   );
@@ -33,7 +39,9 @@ for (const c of [...cambios].sort((a, b) => a.catAnio.localeCompare(b.catAnio)))
 
 console.log(`\n== Sin fecha de nacimiento (${sinFecha.length}) ==`);
 sinFecha.forEach((f) =>
-  console.log(`   ${f.nombre.padEnd(34)} año ${f.anioNacimiento} → ${f.catAnio}`),
+  console.log(
+    `   ${f.nombre.padEnd(34)} año ${f.anioNacimiento} → ${f.catAnio}`,
+  ),
 );
 
 console.log(`\n== Anomalías (${anomalias.length}) ==`);

@@ -45,7 +45,9 @@ export function AsistenciaBloque({
             fontSize: 12,
             fontWeight: 700,
             color:
-              asistencia.ausentes > 0 ? 'var(--error-deep)' : 'var(--success-deep)',
+              asistencia.ausentes > 0
+                ? 'var(--error-deep)'
+                : 'var(--success-deep)',
           }}
         >
           {asistencia.presentes}/{asistencia.total} presentes
@@ -57,7 +59,9 @@ export function AsistenciaBloque({
         onMarcar={onMarcar}
       />
       <BotonGuardar
-        label={listaExistente ? 'Guardar cambios de lista' : 'Guardar asistencia'}
+        label={
+          listaExistente ? 'Guardar cambios de lista' : 'Guardar asistencia'
+        }
         onClick={onGuardar}
       />
     </>
@@ -82,7 +86,13 @@ function ListaDeshabilitada() {
     >
       <Icon name="clock" size={18} />
       <div style={{ minWidth: 0 }}>
-        <strong style={{ display: 'block', fontSize: 13.5, color: 'var(--text-strong)' }}>
+        <strong
+          style={{
+            display: 'block',
+            fontSize: 13.5,
+            color: 'var(--text-strong)',
+          }}
+        >
           Lista no disponible
         </strong>
         <span style={{ fontSize: 12 }}>Disponible el día del entreno</span>

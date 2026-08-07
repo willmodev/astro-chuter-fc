@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type PointerEvent, type WheelEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent,
+  type WheelEvent,
+} from 'react';
 
 // Zoom + pan sin dependencias: rueda (PC), pinch y doble tap (móvil), arrastre.
 // Transform con origen en el centro; el translate se limita al overflow para
@@ -41,8 +47,8 @@ export function useZoomPan(): ZoomPan {
   const elRef = useRef<HTMLElement | null>(null);
   const pts = useRef(new Map<number, Punto>());
   const pinch = useRef<{ dist: number; scale: number } | null>(null);
-  const start = useRef<Punto & { t: number } | null>(null);
-  const lastTap = useRef<Punto & { t: number } | null>(null);
+  const start = useRef<(Punto & { t: number }) | null>(null);
+  const lastTap = useRef<(Punto & { t: number }) | null>(null);
   const scaleRef = useRef(1);
 
   useEffect(() => {
@@ -52,7 +58,12 @@ export function useZoomPan(): ZoomPan {
   const centro = () => {
     const r = elRef.current?.getBoundingClientRect();
     if (!r) return { cx: 0, cy: 0, w: 0, h: 0 };
-    return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, w: r.width, h: r.height };
+    return {
+      cx: r.left + r.width / 2,
+      cy: r.top + r.height / 2,
+      w: r.width,
+      h: r.height,
+    };
   };
 
   // Limita el translate al overflow (mitad del alto/ancho sobrante al ampliar).
@@ -60,15 +71,27 @@ export function useZoomPan(): ZoomPan {
     const { w, h } = centro();
     const maxX = (w * (s.scale - 1)) / 2;
     const maxY = (h * (s.scale - 1)) / 2;
-    return { scale: s.scale, tx: clamp(s.tx, -maxX, maxX), ty: clamp(s.ty, -maxY, maxY) };
+    return {
+      scale: s.scale,
+      tx: clamp(s.tx, -maxX, maxX),
+      ty: clamp(s.ty, -maxY, maxY),
+    };
   };
 
   // Zoom manteniendo fijo el punto (qx, qy) relativo al centro.
-  const zoomA = (qx: number, qy: number, calc: (prev: number) => number): void => {
+  const zoomA = (
+    qx: number,
+    qy: number,
+    calc: (prev: number) => number,
+  ): void => {
     setSt((p) => {
       const s2 = clamp(calc(p.scale), MIN, MAX);
       const k = s2 / p.scale;
-      return limita({ scale: s2, tx: qx * (1 - k) + p.tx * k, ty: qy * (1 - k) + p.ty * k });
+      return limita({
+        scale: s2,
+        tx: qx * (1 - k) + p.tx * k,
+        ty: qy * (1 - k) + p.ty * k,
+      });
     });
   };
 
@@ -77,7 +100,11 @@ export function useZoomPan(): ZoomPan {
     setSt((p) =>
       p.scale > 1
         ? { scale: 1, tx: 0, ty: 0 }
-        : limita({ scale: 2.5, tx: (clientX - cx) * -1.5, ty: (clientY - cy) * -1.5 }),
+        : limita({
+            scale: 2.5,
+            tx: (clientX - cx) * -1.5,
+            ty: (clientY - cy) * -1.5,
+          }),
     );
   };
 
@@ -109,7 +136,11 @@ export function useZoomPan(): ZoomPan {
       const [a, b] = [...pts.current.values()];
       const { cx, cy } = centro();
       const base = pinch.current;
-      zoomA((a.x + b.x) / 2 - cx, (a.y + b.y) / 2 - cy, () => base.scale * (dist(a, b) / base.dist));
+      zoomA(
+        (a.x + b.x) / 2 - cx,
+        (a.y + b.y) / 2 - cy,
+        () => base.scale * (dist(a, b) / base.dist),
+      );
     } else if (pts.current.size === 1 && scaleRef.current > 1) {
       const dx = cur.x - prev.x;
       const dy = cur.y - prev.y;

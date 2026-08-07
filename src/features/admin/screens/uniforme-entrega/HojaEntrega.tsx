@@ -14,13 +14,25 @@ import type { KitUniforme } from '../../data/types';
 interface Props {
   kit: KitUniforme;
   numeroOcupadoEn: (kit: TipoKit, numero: number) => boolean;
-  onConfirmar: (kit: TipoKit, numero: number, talla: string) => Promise<string | null>;
+  onConfirmar: (
+    kit: TipoKit,
+    numero: number,
+    talla: string,
+  ) => Promise<string | null>;
   onAnular: (kit: TipoKit) => Promise<string | null>;
   onClose: () => void;
 }
 
-export function HojaEntrega({ kit, numeroOcupadoEn, onConfirmar, onAnular, onClose }: Readonly<Props>) {
-  const [numeroTxt, setNumeroTxt] = useState(kit.numero != null ? String(kit.numero) : '');
+export function HojaEntrega({
+  kit,
+  numeroOcupadoEn,
+  onConfirmar,
+  onAnular,
+  onClose,
+}: Readonly<Props>) {
+  const [numeroTxt, setNumeroTxt] = useState(
+    kit.numero != null ? String(kit.numero) : '',
+  );
   const [talla, setTalla] = useState(kit.talla);
   const [enviando, setEnviando] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -30,7 +42,9 @@ export function HojaEntrega({ kit, numeroOcupadoEn, onConfirmar, onAnular, onClo
   const valido = numeroValido && talla.trim() !== '';
   const repetido = numeroValido && numeroOcupadoEn(kit.kit, numero);
 
-  const correr = async (accion: () => Promise<string | null>): Promise<void> => {
+  const correr = async (
+    accion: () => Promise<string | null>,
+  ): Promise<void> => {
     setEnviando(true);
     setErrorMsg(null);
     const err = await accion();
@@ -40,7 +54,10 @@ export function HojaEntrega({ kit, numeroOcupadoEn, onConfirmar, onAnular, onClo
   };
 
   return (
-    <Sheet title={`Entrega · Kit ${kit.kit === 'AZUL' ? 'Azul' : 'Oro'}`} onClose={onClose}>
+    <Sheet
+      title={`Entrega · Kit ${kit.kit === 'AZUL' ? 'Azul' : 'Oro'}`}
+      onClose={onClose}
+    >
       <div style={{ display: 'grid', gap: 14 }}>
         <EtiquetaKit kit={kit.kit} />
         <CampoTexto
@@ -61,7 +78,14 @@ export function HojaEntrega({ kit, numeroOcupadoEn, onConfirmar, onAnular, onClo
 
         {repetido && <AvisoRepetido />}
         {errorMsg && (
-          <p style={{ margin: 0, fontSize: 13, color: 'var(--error)', fontWeight: 600 }}>
+          <p
+            style={{
+              margin: 0,
+              fontSize: 13,
+              color: 'var(--error)',
+              fontWeight: 600,
+            }}
+          >
             {errorMsg}
           </p>
         )}
@@ -70,7 +94,9 @@ export function HojaEntrega({ kit, numeroOcupadoEn, onConfirmar, onAnular, onClo
           <button
             type="button"
             disabled={!valido || enviando}
-            onClick={() => void correr(() => onConfirmar(kit.kit, numero, talla.trim()))}
+            onClick={() =>
+              void correr(() => onConfirmar(kit.kit, numero, talla.trim()))
+            }
             style={{
               height: 48,
               borderRadius: 'var(--radius-md)',
@@ -126,8 +152,8 @@ function AvisoRepetido() {
         <Icon name="triangle-alert" size={18} />
       </span>
       <span style={{ fontSize: 12.5, color: '#946200', lineHeight: 1.35 }}>
-        Ese número ya está usado en este kit. Podés guardar igual, pero revisá que
-        no quede repetido.
+        Ese número ya está usado en este kit. Podés guardar igual, pero revisá
+        que no quede repetido.
       </span>
     </div>
   );

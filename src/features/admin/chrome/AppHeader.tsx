@@ -52,7 +52,10 @@ export function AppHeader({ title, eyebrow, onBack, right }: Readonly<Props>) {
         )}
         <div style={{ flex: 1, minWidth: 0 }}>
           {eyebrow && (
-            <div className="eyebrow" style={{ color: 'var(--accent-deep)', marginBottom: 1 }}>
+            <div
+              className="eyebrow"
+              style={{ color: 'var(--accent-deep)', marginBottom: 1 }}
+            >
               {eyebrow}
             </div>
           )}

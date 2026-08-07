@@ -32,7 +32,10 @@ async function main() {
     .composite([
       {
         input: await sharp(logoSvg, { density: 300 })
-          .resize(160, 160, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+          .resize(160, 160, {
+            fit: 'contain',
+            background: { r: 0, g: 0, b: 0, alpha: 0 },
+          })
           .png()
           .toBuffer(),
         gravity: 'center',
@@ -77,7 +80,10 @@ async function main() {
     .composite([
       {
         input: await sharp(logoSvg, { density: 400 })
-          .resize(320, 320, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+          .resize(320, 320, {
+            fit: 'contain',
+            background: { r: 0, g: 0, b: 0, alpha: 0 },
+          })
           .png()
           .toBuffer(),
         left: 70,

@@ -25,10 +25,18 @@ export function CampoTexto({
 }: Readonly<Props>) {
   return (
     <label style={{ display: 'grid', gap: 6 }}>
-      <span style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+      <span
+        style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}
+      >
         <span className="eyebrow">{label}</span>
         {opcional && (
-          <span style={{ fontSize: 11.5, color: 'var(--text-muted)', fontWeight: 600 }}>
+          <span
+            style={{
+              fontSize: 11.5,
+              color: 'var(--text-muted)',
+              fontWeight: 600,
+            }}
+          >
             Opcional
           </span>
         )}

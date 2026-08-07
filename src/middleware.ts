@@ -43,7 +43,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // Ya autenticado: no tiene sentido volver al login.
   if (enLogin) {
-    return context.redirect(destinoSeguro(context.url.searchParams.get('next')));
+    return context.redirect(
+      destinoSeguro(context.url.searchParams.get('next')),
+    );
   }
 
   return next();

@@ -74,7 +74,12 @@ interface Props extends Omit<LucideProps, 'ref'> {
   name: IconName;
 }
 
-export function Icon({ name, size = 20, strokeWidth = 1.75, ...rest }: Readonly<Props>) {
+export function Icon({
+  name,
+  size = 20,
+  strokeWidth = 1.75,
+  ...rest
+}: Readonly<Props>) {
   const Glyph = ICONS[name];
   return <Glyph size={size} strokeWidth={strokeWidth} {...rest} />;
 }

@@ -57,9 +57,7 @@ export async function vistaAdmin(
     listarUsuarios(),
     listarPlantelCompleto(),
   ]);
-  const ids = [
-    ...new Set([...planes, ...sesiones].map((x) => x.entrenadorId)),
-  ];
+  const ids = [...new Set([...planes, ...sesiones].map((x) => x.entrenadorId))];
   return ids
     .map((id) => {
       const u = usuarios.find((x) => x.id === id);

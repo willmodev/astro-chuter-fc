@@ -48,7 +48,11 @@ export function Entrenamientos({ onBack }: Readonly<Props>) {
       <span className="eyebrow" style={{ padding: '2px 2px 0' }}>
         Semana {semana.n} · {semana.sub}
       </span>
-      <WeekChips semanas={data.semanas} value={semana.id} onChange={data.setWeekId} />
+      <WeekChips
+        semanas={data.semanas}
+        value={semana.id}
+        onChange={data.setWeekId}
+      />
 
       {data.estado !== 'listo' ? (
         <EstadoCarga estado={data.estado} onReintentar={data.recargar} />

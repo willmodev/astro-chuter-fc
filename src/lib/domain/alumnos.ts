@@ -62,9 +62,9 @@ export function soloActivos<T extends { activo: boolean }>(
  * Alumnos a los que les falta la fecha de nacimiento (spec 15): su categoría se
  * está calculando por año hasta que el club complete el dato.
  */
-export function sinFechaNacimiento<T extends { fechaNacimiento: string | null }>(
-  alumnos: readonly T[],
-): T[] {
+export function sinFechaNacimiento<
+  T extends { fechaNacimiento: string | null },
+>(alumnos: readonly T[]): T[] {
   return alumnos.filter((a) => a.fechaNacimiento === null);
 }
 
@@ -102,7 +102,9 @@ export function parseFechaNacimiento(iso: string): Date | null {
   const [y, m, d] = iso.split('-').map(Number);
   const fecha = new Date(y, m - 1, d);
   const real =
-    fecha.getFullYear() === y && fecha.getMonth() === m - 1 && fecha.getDate() === d;
+    fecha.getFullYear() === y &&
+    fecha.getMonth() === m - 1 &&
+    fecha.getDate() === d;
   return real ? fecha : null;
 }
 
@@ -142,7 +144,8 @@ export function validarAlumno(
 
   const doc = soloDigitos(datos.doc);
   if (doc === '') errores.doc = 'El documento es obligatorio.';
-  else if (doc.length < 8) errores.doc = 'El documento debe tener al menos 8 dígitos.';
+  else if (doc.length < 8)
+    errores.doc = 'El documento debe tener al menos 8 dígitos.';
   else if (docDuplicado(alumnos, doc, idActual))
     errores.doc = 'Ya existe un alumno con este documento.';
 
@@ -153,7 +156,8 @@ export function validarAlumno(
   if (fecha === null)
     errores.fechaNacimiento = 'La fecha de nacimiento es obligatoria.';
   else if (categoriaDeFecha(fecha, hoy) === null)
-    errores.fechaNacimiento = 'La fecha no corresponde a ninguna categoría (SUB 4–16).';
+    errores.fechaNacimiento =
+      'La fecha no corresponde a ninguna categoría (SUB 4–16).';
 
   return errores;
 }

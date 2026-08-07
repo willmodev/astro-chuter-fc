@@ -30,7 +30,11 @@ const ghostLink: CSSProperties = {
   padding: 0,
 };
 
-export function Dashboard({ data, onNav, onOpenEntrenamientos }: Readonly<Props>) {
+export function Dashboard({
+  data,
+  onNav,
+  onOpenEntrenamientos,
+}: Readonly<Props>) {
   return (
     <div>
       <HeroRecaudo stats={data.stats} mesLong={data.mesesLong[data.mesVivo]} />
@@ -38,7 +42,10 @@ export function Dashboard({ data, onNav, onOpenEntrenamientos }: Readonly<Props>
       <RecaudoPorMes monthly={data.monthly} />
 
       {data.entrenoDeHoy !== null && data.entrenoDeHoy.filas.length > 0 && (
-        <EntrenoDeHoyCard entreno={data.entrenoDeHoy} onOpen={onOpenEntrenamientos} />
+        <EntrenoDeHoyCard
+          entreno={data.entrenoDeHoy}
+          onOpen={onOpenEntrenamientos}
+        />
       )}
 
       <SectionLabel
@@ -50,7 +57,10 @@ export function Dashboard({ data, onNav, onOpenEntrenamientos }: Readonly<Props>
       >
         Cobros pendientes
       </SectionLabel>
-      <CobrosPendientes morosos={data.morosos} onOpen={() => onNav('alumnos')} />
+      <CobrosPendientes
+        morosos={data.morosos}
+        onOpen={() => onNav('alumnos')}
+      />
 
       <SectionLabel>Próximos cumpleaños</SectionLabel>
       <ProximosCumples cumple={data.cumples} />

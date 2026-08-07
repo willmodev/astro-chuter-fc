@@ -22,7 +22,12 @@ const { db } = await import('@/lib/db/client');
 const { alumnos } = await import('@/lib/db/schema');
 const { normaliza } = await import('@/lib/domain/alumnos');
 
-const tokens = (s) => new Set(normaliza(s).split(' ').filter((t) => t.length > 2));
+const tokens = (s) =>
+  new Set(
+    normaliza(s)
+      .split(' ')
+      .filter((t) => t.length > 2),
+  );
 
 // Índice del libro: una entrada por fila con nombre, con sus documentos y el
 // contenido de la celda de nacimiento cuando se puede ubicar.
@@ -50,7 +55,11 @@ async function indexar(ruta) {
         docs: new Set(docs),
         nacimiento: celdas
           .map((c) => c.v)
-          .find((v) => v instanceof Date || (Number.isInteger(v) && v > 1900 && v < 2100)),
+          .find(
+            (v) =>
+              v instanceof Date ||
+              (Number.isInteger(v) && v > 1900 && v < 2100),
+          ),
       });
     }
   });
@@ -84,7 +93,10 @@ const columnas = {
 
 const pendientes =
   EXTRA.length > 0
-    ? await db.select(columnas).from(alumnos).where(inArray(alumnos.documento, EXTRA))
+    ? await db
+        .select(columnas)
+        .from(alumnos)
+        .where(inArray(alumnos.documento, EXTRA))
     : await db
         .select(columnas)
         .from(alumnos)
@@ -97,7 +109,11 @@ for (const [etiqueta, ruta] of ARCHIVOS) {
 }
 
 const fmt = (v) =>
-  v instanceof Date ? v.toISOString().slice(0, 10) : v === undefined ? '—' : String(v);
+  v instanceof Date
+    ? v.toISOString().slice(0, 10)
+    : v === undefined
+      ? '—'
+      : String(v);
 
 console.log(
   EXTRA.length > 0

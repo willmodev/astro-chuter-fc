@@ -76,12 +76,16 @@ export function CobrosPendientes({ morosos, onOpen }: Readonly<Props>) {
                     fontWeight: 600,
                   }}
                 >
-                  {meses} {meses === 1 ? 'mes' : 'meses'} · {fmt(saldoPendiente(s))}
+                  {meses} {meses === 1 ? 'mes' : 'meses'} ·{' '}
+                  {fmt(saldoPendiente(s))}
                 </span>
               </span>
             </button>
             <a
-              href={waTo(s.phone, `Hola ${s.acu}, te recordamos la mensualidad de ${s.name} en Chuter FC.`)}
+              href={waTo(
+                s.phone,
+                `Hola ${s.acu}, te recordamos la mensualidad de ${s.name} en Chuter FC.`,
+              )}
               target="_blank"
               rel="noreferrer"
               aria-label="Recordar por WhatsApp"

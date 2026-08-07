@@ -51,10 +51,9 @@ if (!COMMIT) {
   process.exit(0);
 }
 
-await db
-  .update(alumnos)
-  .set({ anioNacimiento: ANIO_BUENO })
-  .where(condicion);
+await db.update(alumnos).set({ anioNacimiento: ANIO_BUENO }).where(condicion);
 
-console.log(`✓ Corregido: ${ANIO_MALO} → ${ANIO_BUENO} (${pendientes.length} fila).\n`);
+console.log(
+  `✓ Corregido: ${ANIO_MALO} → ${ANIO_BUENO} (${pendientes.length} fila).\n`,
+);
 process.exit(0);

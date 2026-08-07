@@ -29,8 +29,15 @@ export function UniformePlantel({ kits }: Readonly<Props>) {
           <span style={{ display: 'grid', gap: 3 }}>
             <EtiquetaKit kit={kit.kit} />
             {kit.entregado && (
-              <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
-                Nº {kit.numero ?? '—'}{kit.talla ? ` · Talla ${kit.talla}` : ''}
+              <span
+                style={{
+                  fontSize: 12,
+                  color: 'var(--text-muted)',
+                  fontWeight: 600,
+                }}
+              >
+                Nº {kit.numero ?? '—'}
+                {kit.talla ? ` · Talla ${kit.talla}` : ''}
               </span>
             )}
           </span>

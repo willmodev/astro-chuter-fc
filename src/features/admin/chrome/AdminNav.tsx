@@ -25,9 +25,17 @@ function Sidebar({ tabs, active, onTab }: Readonly<Omit<Props, 'onAction'>>) {
   return (
     <aside className="admin-sidebar bg-pitch-lines">
       <div className="admin-sidebar__brand">
-        <img src="/images/chuter-logo.svg" alt="Chuter FC" width={40} height={40} />
+        <img
+          src="/images/chuter-logo.svg"
+          alt="Chuter FC"
+          width={40}
+          height={40}
+        />
         <div>
-          <div className="font-display" style={{ color: '#fff', fontSize: 21, lineHeight: 0.9 }}>
+          <div
+            className="font-display"
+            style={{ color: '#fff', fontSize: 21, lineHeight: 0.9 }}
+          >
             Chuter FC
           </div>
           <div className="admin-sidebar__tag">Administración</div>
@@ -64,7 +72,13 @@ function TabBar({ tabs, active, onTab, onAction }: Readonly<Props>) {
         data-active={on}
       >
         <Icon name={t.icon} size={23} />
-        <span style={{ fontSize: 10, fontWeight: on ? 800 : 600, letterSpacing: '.01em' }}>
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: on ? 800 : 600,
+            letterSpacing: '.01em',
+          }}
+        >
           {t.label}
         </span>
       </button>
@@ -80,7 +94,11 @@ function TabBar({ tabs, active, onTab, onAction }: Readonly<Props>) {
         <>
           <div style={{ width: 64, flexShrink: 0 }} />
           {tabs.slice(mitad).map(item)}
-          <button onClick={onAction} aria-label="Acción rápida" className="admin-tabbar__fab">
+          <button
+            onClick={onAction}
+            aria-label="Acción rápida"
+            className="admin-tabbar__fab"
+          >
             <Icon name="plus" size={28} strokeWidth={2.4} />
           </button>
         </>

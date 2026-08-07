@@ -136,7 +136,9 @@ export async function listarPlantel(
   hoy: Date = new Date(),
 ): Promise<AlumnoPlantel[]> {
   const permitidas = new Set(cats);
-  return (await listarPlantelCompleto(hoy)).filter((a) => permitidas.has(a.cat));
+  return (await listarPlantelCompleto(hoy)).filter((a) =>
+    permitidas.has(a.cat),
+  );
 }
 
 // Ficha: incluye retirados — su historial sigue consultable (spec 14).

@@ -50,30 +50,47 @@ export type EstadoMes = 'paid' | 'due' | 'pending' | 'na';
 export interface Alumno {
   id: number;
   name: string;
-  cat: string;            // "SUB 10"
-  anio: number;           // año de nacimiento
+  cat: string; // "SUB 10"
+  anio: number; // año de nacimiento
   doc: string;
-  acu: string;            // acudiente
-  phone: string;          // "301 521 6830"
+  acu: string; // acudiente
+  phone: string; // "301 521 6830"
   dir: string;
-  desde: string;          // "Feb 2024"
-  cuota: number;          // COP
+  desde: string; // "Feb 2024"
+  cuota: number; // COP
   hermanos: number;
   uniforme: 'entregado' | 'pendiente';
   uniformePago: 'pagado' | 'pendiente';
   numero: number | null;
   tipoKit: 'AZUL' | 'DORADO' | null;
   talla: string;
-  states: EstadoMes[];    // 11 meses FEB..DIC
+  states: EstadoMes[]; // 11 meses FEB..DIC
 }
 
-export interface Cumple { name: string; cat: string; fecha: string; dias: number; }
-export interface Training { day: string; cat: string; focus: string; coach: string; time: string; }
+export interface Cumple {
+  name: string;
+  cat: string;
+  fecha: string;
+  dias: number;
+}
+export interface Training {
+  day: string;
+  cat: string;
+  focus: string;
+  coach: string;
+  time: string;
+}
 
 export interface Stats {
-  active: number; upToDate: number; morosos: number; pctUpToDate: number;
-  recaudo: number; recaudoMes: number; carteraVencida: number;
-  metaMes: number; pctMeta: number;
+  active: number;
+  upToDate: number;
+  morosos: number;
+  pctUpToDate: number;
+  recaudo: number;
+  recaudoMes: number;
+  carteraVencida: number;
+  metaMes: number;
+  pctMeta: number;
 }
 ```
 
@@ -84,11 +101,13 @@ Es la interfaz que luego servirán las Actions **sin tocar la UI**:
 ```ts
 interface DashboardData {
   stats: Stats;
-  morosos: Alumno[];                        // top 4 por saldo desc
-  monthly: { m: string; total: number }[];  // recaudo por mes hasta el mes vivo
+  morosos: Alumno[]; // top 4 por saldo desc
+  monthly: { m: string; total: number }[]; // recaudo por mes hasta el mes vivo
   cumple: Cumple[];
   entrenoHoy: Training[];
-  meses: string[]; mesesLong: string[]; mesVivo: number; // CURRENT
+  meses: string[];
+  mesesLong: string[];
+  mesVivo: number; // CURRENT
 }
 ```
 
@@ -110,7 +129,7 @@ Cada bloque deja `npm run dev` y `npm run build` en verde y el **marketing intac
 3. `src/pages/admin/index.astro`: `export const prerender = false`; monta `AdminApp client:only="react"`.
 4. `astro.config.mjs`: `sitemap({ filter: (p) => !p.includes('/admin') })`; disallow `/admin` en `robots.txt` (si existe).
 
-*Verifica:* `/admin` carga (placeholder), marketing sin cambios, `build` sigue estático.
+_Verifica:_ `/admin` carga (placeholder), marketing sin cambios, `build` sigue estático.
 
 ### Bloque B — Chrome responsive
 
@@ -119,7 +138,7 @@ Cada bloque deja `npm run dev` y `npm run build` en verde y el **marketing intac
 7. `chrome/`: `AppHeader`, `IconButton`, `SectionLabel`, **`AdminNav`** (tab bar inferior en mobile ↔ sidebar en desktop vía clases de `admin.css`) y **`AdminShell`** (compone header + nav + `<main>` con reflow y `max-width` de contenido).
 8. `features/admin/AdminApp.tsx`: router interno por estado con las 4 tabs; `dashboard` real, las otras 3 con placeholder "Próximamente"; FAB dorado → placeholder.
 
-*Verifica:* navegación entre tabs; shell muta de columna mobile a sidebar desktop; cero scroll horizontal 320px→desktop.
+_Verifica:_ navegación entre tabs; shell muta de columna mobile a sidebar desktop; cero scroll horizontal 320px→desktop.
 
 ### Bloque C — Datos + Dashboard
 
@@ -128,7 +147,7 @@ Cada bloque deja `npm run dev` y `npm run build` en verde y el **marketing intac
 11. `features/admin/hooks/useDashboardData.ts`: arma `DashboardData` desde la mock (contrato estable para Actions futuras).
 12. `features/admin/screens/dashboard/`: `Dashboard.tsx` (índice) + `HeroRecaudo`, `KpisGrid` (2 cols mobile → 4 desktop), `RecaudoPorMes`, `CobrosPendientes`, `ProximosCumples`, `EntrenoDeHoy` — cada archivo < 200 líneas, grids `auto-fit/minmax`.
 
-*Verifica:* Dashboard completo con mock, responsive real, cifras coherentes con las reglas de dominio.
+_Verifica:_ Dashboard completo con mock, responsive real, cifras coherentes con las reglas de dominio.
 
 ### Bloque D — Cierre
 
@@ -139,22 +158,26 @@ Cada bloque deja `npm run dev` y `npm run build` en verde y el **marketing intac
 ## Criterios de aceptación
 
 ### Ruta y aislamiento
+
 - [x] `/admin` carga la isla React (`client:only`), renderiza Dashboard y es `noindex` (meta + `robots.txt` + fuera del `sitemap.xml`).
 - [x] `npm run build` sigue **estático**: las páginas de marketing quedan prerenderizadas; solo `/admin` es función on-demand. Ninguna página pública cambia de output ni de estilos.
 - [x] Los tokens del admin viven bajo `.admin-app`: el sitio público no hereda ni un color ni una fuente del DS admin, y viceversa.
 
 ### Responsive (mobile-first + adaptativo)
+
 - [x] De 320px a desktop: **cero scroll horizontal** en cualquier ancho.
 - [x] Mobile: header sticky + **tab bar inferior** con FAB dorado; `100dvh` y safe-area respetados.
 - [x] Desktop (≥1024px): la tab bar muta a **sidebar lateral fija**; los KPIs pasan de 2 a 4 columnas; el contenido respeta un `max-width` (no se estira).
 - [x] La navegación entre las 4 tabs funciona; `dashboard` es real, las otras 3 muestran "Próximamente"; el FAB abre un placeholder.
 
 ### Dashboard con datos
+
 - [x] Se ven las 6 secciones: hero de recaudo del mes (con % de meta y cartera vencida), KPIs 2×2/1×4, barras de recaudo por mes, cobros pendientes (top 4 morosos con botón WhatsApp), próximos cumpleaños y entreno de hoy.
 - [x] Las cifras derivan de `src/lib/domain/*` (`estaEnMora`, `saldoPendiente`, `mesesEnMora`) y `format.ts`, no de números hardcodeados en la UI.
 - [x] Cambiar la fuente de datos implicaría tocar **solo** `useDashboardData.ts` (la mock cumple el mismo contrato que tendrán las Actions); los componentes de pantalla no se tocarían.
 
 ### Calidad
+
 - [x] Ningún archivo supera **200 líneas**; cero `any`; sin lógica de negocio dentro de componentes.
 - [x] La mock queda marcada como **datos ilustrativos** (comentario), no registros reales.
 - [x] No se agregan dependencias nuevas (todo con lo ya instalado: React 19, `@astrojs/react`, `lucide-react`, fontsource).
@@ -163,25 +186,25 @@ Cada bloque deja `npm run dev` y `npm run build` en verde y el **marketing intac
 
 ## Decisiones
 
-- **Sí:** empezar por **Dashboard**. *Por qué:* es la landing del router, ejercita casi todos los primitivos del DS (valida el porte de tokens) y es read-only → menos scope creep.
-- **Sí:** **shell mínimo completo** (isla + router de tabs + chrome + mock adapter) junto a la pantalla. *Por qué:* renderizar una pantalla con el feel real ya exige header + nav; hacerlo suelto obligaría a rehacerlo.
-- **Sí:** **diferir toda la auth y la BD**. *Por qué:* mantiene el spec en "una pantalla con mock"; auth y datos reales son piezas grandes con su propio spec.
-- **Sí:** **mock-first tras `useDashboardData()`** con el mismo contrato que las Actions. *Por qué:* la Fase 5 cambia la fuente sin tocar la UI (patrón de `ARCHITECTURE.md §5`).
-- **Sí:** **nomenclatura SUB 4–16** de la mock. *Por qué:* fidelidad al prototipo y al DS (el admin usa SUB; el sitio público usa Baby/Pony…); el mapeo entre ambas se resuelve en la capa de datos real, no aquí.
-- **Sí:** **layout que cambia por viewport en clases de `admin.css`**, no en inline styles. *Por qué:* los inline styles no soportan media queries; se conservan inline solo los detalles visuales fijos.
-- **Sí:** **AdminNav responsive** (tab bar ↔ sidebar) en vez del `TabBar` fijo del prototipo. *Por qué:* la decisión de desktop adaptativo lo exige.
-- **No:** marco iPhone ni `Stage` de escalado del prototipo. *Por qué:* eran andamiaje de demo; la app real es responsive nativa (`ARCHITECTURE.md §6`).
-- **No:** BottomSheets funcionales, Cartera, forms, recibo WhatsApp real. *Por qué:* fuera del alcance de "una pantalla".
+- **Sí:** empezar por **Dashboard**. _Por qué:_ es la landing del router, ejercita casi todos los primitivos del DS (valida el porte de tokens) y es read-only → menos scope creep.
+- **Sí:** **shell mínimo completo** (isla + router de tabs + chrome + mock adapter) junto a la pantalla. _Por qué:_ renderizar una pantalla con el feel real ya exige header + nav; hacerlo suelto obligaría a rehacerlo.
+- **Sí:** **diferir toda la auth y la BD**. _Por qué:_ mantiene el spec en "una pantalla con mock"; auth y datos reales son piezas grandes con su propio spec.
+- **Sí:** **mock-first tras `useDashboardData()`** con el mismo contrato que las Actions. _Por qué:_ la Fase 5 cambia la fuente sin tocar la UI (patrón de `ARCHITECTURE.md §5`).
+- **Sí:** **nomenclatura SUB 4–16** de la mock. _Por qué:_ fidelidad al prototipo y al DS (el admin usa SUB; el sitio público usa Baby/Pony…); el mapeo entre ambas se resuelve en la capa de datos real, no aquí.
+- **Sí:** **layout que cambia por viewport en clases de `admin.css`**, no en inline styles. _Por qué:_ los inline styles no soportan media queries; se conservan inline solo los detalles visuales fijos.
+- **Sí:** **AdminNav responsive** (tab bar ↔ sidebar) en vez del `TabBar` fijo del prototipo. _Por qué:_ la decisión de desktop adaptativo lo exige.
+- **No:** marco iPhone ni `Stage` de escalado del prototipo. _Por qué:_ eran andamiaje de demo; la app real es responsive nativa (`ARCHITECTURE.md §6`).
+- **No:** BottomSheets funcionales, Cartera, forms, recibo WhatsApp real. _Por qué:_ fuera del alcance de "una pantalla".
 
 ---
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| Agregar `/admin` con `prerender=false` rompe el build estático del marketing. | Mantener `output` por defecto; solo `/admin` opta a server. Criterio de aceptación verifica build estático + marketing intacto. |
-| Los tokens del DS "se escapan" y contaminan el sitio público (o al revés). | Todo scopeado bajo `.admin-app`; `admin.css` solo se carga en `AdminLayout`. Criterio explícito de aislamiento. |
-| Portar inline styles del prototipo a un shell responsive infla archivos > 200 líneas. | Descomponer Dashboard en 6 sub-componentes y separar chrome/ui/screens desde el inicio. |
-| `/admin` sin auth queda accesible en producción. | `noindex` + disallow en robots + sin enlaces entrantes; **la protección real es requisito bloqueante del siguiente spec** antes de exponer datos sensibles (aquí solo hay mock). |
-| El contrato de `useDashboardData` no calza con las Actions futuras y obliga a reescribir la UI. | Modelar `DashboardData` desde la forma que ya sugiere `ARCHITECTURE.md §5` (stats + listas derivadas), no desde la mock cruda. |
-| `client:only="react"` deja la pantalla en blanco si falla la hidratación. | Estado de carga mínimo en `AdminApp`; probar en `dev` y en `preview` del build. |
+| Riesgo                                                                                          | Mitigación                                                                                                                                                                       |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agregar `/admin` con `prerender=false` rompe el build estático del marketing.                   | Mantener `output` por defecto; solo `/admin` opta a server. Criterio de aceptación verifica build estático + marketing intacto.                                                  |
+| Los tokens del DS "se escapan" y contaminan el sitio público (o al revés).                      | Todo scopeado bajo `.admin-app`; `admin.css` solo se carga en `AdminLayout`. Criterio explícito de aislamiento.                                                                  |
+| Portar inline styles del prototipo a un shell responsive infla archivos > 200 líneas.           | Descomponer Dashboard en 6 sub-componentes y separar chrome/ui/screens desde el inicio.                                                                                          |
+| `/admin` sin auth queda accesible en producción.                                                | `noindex` + disallow en robots + sin enlaces entrantes; **la protección real es requisito bloqueante del siguiente spec** antes de exponer datos sensibles (aquí solo hay mock). |
+| El contrato de `useDashboardData` no calza con las Actions futuras y obliga a reescribir la UI. | Modelar `DashboardData` desde la forma que ya sugiere `ARCHITECTURE.md §5` (stats + listas derivadas), no desde la mock cruda.                                                   |
+| `client:only="react"` deja la pantalla en blanco si falla la hidratación.                       | Estado de carga mínimo en `AdminApp`; probar en `dev` y en `preview` del build.                                                                                                  |
