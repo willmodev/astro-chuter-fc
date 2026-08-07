@@ -1,6 +1,6 @@
-import type { CSSProperties } from 'react';
-
 import { fmt } from '@/lib/format';
+
+import type { CSSProperties } from 'react';
 
 // Recaudado año + Cartera vencida en COP (HU-3.1), derivados de `states`
 // con las reglas de `lib/domain/cartera` (sin `stats` precocinado).

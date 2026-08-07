@@ -9,12 +9,13 @@ import {
 } from '@/lib/domain/entrenos';
 import { pendientesDe } from '@/lib/domain/sesion';
 
-import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 import { semanas } from '../../data/mock';
 import { aPlan, aSesiones } from '../../data/mapea-entrenos';
-import type { AlumnoPlantel, PlanSemana, Sesion } from '../../data/types';
 import { combinaEstado } from '../../hooks/combinaEstado';
+
+import type { AlumnoPlantel, PlanSemana, Sesion } from '../../data/types';
+import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 
 // Home del entrenador: semana seleccionada (local), su plan y sesiones desde
 // Neon (Action), roster de sus categorías. Mutación pesimista (Action → refetch).

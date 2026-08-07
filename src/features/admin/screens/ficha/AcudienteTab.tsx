@@ -1,5 +1,7 @@
 import { Card } from '../../ui/Card';
+
 import { FilaDato } from './FilaDato';
+
 import type { AlumnoPlantel } from '../../data/types';
 
 // Tab Acudiente: datos de contacto y de inscripción del alumno. Usa el

@@ -4,6 +4,7 @@ import { mesesEnMora } from '@/lib/domain/cartera';
 import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
+
 import type { Alumno } from '../../data/types';
 
 // Fila tocable de la lista: avatar (aro dorado si mora), nombre,

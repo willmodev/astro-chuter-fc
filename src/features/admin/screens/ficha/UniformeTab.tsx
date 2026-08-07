@@ -4,6 +4,7 @@ import { fmt } from '@/lib/format';
 import { Badge } from '../../ui/Badge';
 import { Card } from '../../ui/Card';
 import { EtiquetaKit } from '../uniformes/EtiquetaKit';
+
 import type { Alumno, KitUniforme } from '../../data/types';
 
 // Tab Uniforme (spec 12): los DOS kits (AZUL/ORO) con estado, número/talla si

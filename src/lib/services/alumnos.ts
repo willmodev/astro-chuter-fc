@@ -21,7 +21,6 @@ import {
 } from '@/lib/domain/alumnos';
 import type { Mes } from '@/lib/domain/cartera';
 import { categoriaDeFecha } from '@/lib/domain/categoria';
-
 import type { Alumno, AlumnoPlantel } from '@/features/admin/data/types';
 
 import { aAlumno, aPlantel, parseFechaLocal } from './mapea-alumno';

@@ -1,15 +1,16 @@
-import type { CSSProperties } from 'react';
-
 import type { DashboardStats } from '@/lib/services/dashboard';
 
 import { SectionLabel } from '../../chrome/SectionLabel';
-import type { TabId } from '../../chrome/tabs';
+
 import { CobrosPendientes } from './CobrosPendientes';
 import { EntrenoDeHoyCard } from './EntrenoDeHoyCard';
 import { HeroRecaudo } from './HeroRecaudo';
 import { KpisGrid } from './KpisGrid';
 import { ProximosCumples } from './ProximosCumples';
 import { RecaudoPorMes } from './RecaudoPorMes';
+
+import type { TabId } from '../../chrome/tabs';
+import type { CSSProperties } from 'react';
 
 // Pantalla Dashboard: compone las secciones a partir de `dashboard.stats`. La
 // card EntrenoDeHoy solo aparece en días Lun/Mié/Vie (spec 13); los cumpleaños

@@ -4,6 +4,7 @@ import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { BuscadorAlumnos } from '../alumnos/BuscadorAlumnos';
 import { ChipsCategoria } from '../alumnos/ChipsCategoria';
 import { SinResultados } from '../alumnos/SinResultados';
+
 import { FilaPlantel } from './FilaPlantel';
 import { usePlantel } from './usePlantel';
 

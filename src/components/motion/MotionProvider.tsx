@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
 import { LazyMotion, domAnimation } from 'motion/react';
+
+import type { ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;

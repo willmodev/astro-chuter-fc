@@ -9,9 +9,10 @@ import {
   type ErroresAlumno,
 } from '@/lib/domain/alumnos';
 
+import { useAlumnos } from '../../hooks/useAlumnos';
+
 import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 import type { Alumno } from '../../data/types';
-import { useAlumnos } from '../../hooks/useAlumnos';
 
 export interface FormValores {
   name: string;

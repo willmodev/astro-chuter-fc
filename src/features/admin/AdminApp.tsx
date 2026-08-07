@@ -20,6 +20,7 @@ import { MasMenu } from './screens/mas/MasMenu';
 import { Pago } from './screens/pago/Pago';
 import { UniformeEntrega } from './screens/uniforme-entrega/UniformeEntrega';
 import { Uniformes } from './screens/uniformes/Uniformes';
+
 import type { RutaAdmin } from './router/types';
 
 export interface AdminAppProps {

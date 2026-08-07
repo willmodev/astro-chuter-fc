@@ -1,6 +1,7 @@
 import { ejePago } from '@/lib/domain/uniformes';
 
 import { Badge, type BadgeTone } from '../../ui/Badge';
+
 import type { KitFila } from './filas';
 
 // Fila del listado del kit: número, nombre, categoría, talla y estado de pago

@@ -1,5 +1,4 @@
 import type { TabId } from '../chrome/tabs';
-
 import type { RutaAdmin } from './types';
 
 // Metadata de cada vista del admin (título/eyebrow del header, tab resaltada y

@@ -11,7 +11,6 @@ import {
   type DiaEntreno,
   type ResumenAsistencia,
 } from '@/lib/domain/entrenos';
-
 import type { AlumnoPlantel } from '@/features/admin/data/types';
 
 import { listarPlantelCompleto } from './alumnos';

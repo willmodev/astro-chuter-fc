@@ -1,4 +1,5 @@
 import { Icon } from './Icon';
+
 import type { TabDef, TabId } from './tabs';
 
 // Navegación responsive: en mobile es tab-bar inferior (con FAB dorado

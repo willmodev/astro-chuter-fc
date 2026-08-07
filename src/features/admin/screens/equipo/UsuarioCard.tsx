@@ -1,7 +1,7 @@
-import type { CSSProperties } from 'react';
-
 import { Badge } from '../../ui/Badge';
 import { Card } from '../../ui/Card';
+
+import type { CSSProperties } from 'react';
 import type { UsuarioRow } from './types';
 
 interface Props {

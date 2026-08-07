@@ -2,6 +2,7 @@ import { fmtShort } from '@/lib/format';
 
 import { Icon } from '../../chrome/Icon';
 import { KpiCard } from '../../ui/KpiCard';
+
 import type { Stats } from '../../data/types';
 
 // KPIs: 2 columnas en mobile → 4 en desktop (clase `.admin-kpis` en admin.css).

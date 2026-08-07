@@ -2,6 +2,7 @@ import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
 import { WeekChips } from '../../ui/WeekChips';
 import { VenueCard } from '../entrenos/VenueCard';
+
 import { GrupoEntrenadorCard } from './GrupoEntrenadorCard';
 import { useEntrenamientos } from './useEntrenamientos';
 

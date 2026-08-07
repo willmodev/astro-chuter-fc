@@ -1,5 +1,6 @@
 import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
+
 import type { AlumnoPlantel } from '../../data/types';
 
 // Fila del plantel del entrenador: identidad + categoría/acudiente. A

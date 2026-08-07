@@ -1,4 +1,5 @@
 import { Avatar } from '../../ui/Avatar';
+
 import type { AlumnoPlantel } from '../../data/types';
 
 // Pasar lista: una fila por alumno del roster con toggles P/A. Presentes =

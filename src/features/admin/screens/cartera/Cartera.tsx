@@ -5,6 +5,7 @@ import { carteraVencida, estaEnMora, recaudoAnio } from '@/lib/domain/cartera';
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useAlumnos } from '../../hooks/useAlumnos';
 import { useVistaCartera } from '../../hooks/useVistaCartera';
+
 import { CabeceraTotales } from './CabeceraTotales';
 import { EstadoVacioCartera } from './EstadoVacioCartera';
 import { MatrizCartera } from './MatrizCartera';

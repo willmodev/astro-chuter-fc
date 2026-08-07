@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
-
 import { AdminNav } from './AdminNav';
 import { AppHeader } from './AppHeader';
+
+import type { ReactNode } from 'react';
 import type { TabDef, TabId } from './tabs';
 
 // Shell adaptativo. Mobile: columna full-height (header sticky + main

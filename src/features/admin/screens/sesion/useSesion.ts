@@ -11,13 +11,15 @@ import {
   type Semana,
 } from '@/lib/domain/entrenos';
 
-import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 import { comprimeImagen } from '../../lib/comprime-imagen';
 import { combinaEstado } from '../../hooks/combinaEstado';
 import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 import { semanas } from '../../data/mock';
-import type { AlumnoPlantel } from '../../data/types';
+
 import { cargaSesionDia, construyeForm } from './carga-sesion';
+
+import type { AlumnoPlantel } from '../../data/types';
+import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 
 export interface ParamsSesion {
   entrenadorId: string;

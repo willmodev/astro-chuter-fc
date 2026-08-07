@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
-
 import { ESTADO_UNIFORME_META, type EstadoKit } from '@/lib/domain/uniformes';
+
+import type { ReactNode } from 'react';
 
 // Matriz 2×2 alineada a los ejes (spec 08): filas = entrega, columnas = pago.
 // Cada celda es un estado; tocarla filtra la lista (toca la activa → limpia).

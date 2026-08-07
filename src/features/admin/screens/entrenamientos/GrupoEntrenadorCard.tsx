@@ -1,5 +1,7 @@
 import { Avatar } from '../../ui/Avatar';
+
 import { SesionRow } from './SesionRow';
+
 import type { GrupoEntrenador } from './useEntrenamientos';
 
 // Bloque de un entrenador en la semana: identidad + plan (tema/objetivos)

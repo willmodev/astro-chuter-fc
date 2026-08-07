@@ -6,6 +6,7 @@ import { FichaPlantel } from './screens/plantel/FichaPlantel';
 import { MasEntrenador } from './screens/mas/MasEntrenador';
 import { Plantel } from './screens/plantel/Plantel';
 import { Sesion } from './screens/sesion/Sesion';
+
 import type { RutaAdmin } from './router/types';
 
 export interface EntrenadorAppProps {

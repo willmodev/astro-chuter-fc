@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Sheet } from '../../chrome/Sheet';
 import { CampoTexto } from '../../ui/CampoTexto';
+
 import type { PlanSemana } from '../../data/types';
 
 // Hoja modal del plan semanal (patrón HojaEntrega, spec 08): tema + objetivos.

@@ -1,6 +1,7 @@
 import { fmtShort } from '@/lib/format';
 
 import { Badge } from '../../ui/Badge';
+
 import type { Stats } from '../../data/types';
 
 // Hero navy: recaudo del mes en curso, barra de progreso a la meta y

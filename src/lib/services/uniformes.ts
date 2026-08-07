@@ -9,9 +9,9 @@ import {
 import { AlumnoReglaError } from '@/lib/domain/alumnos';
 import { precioUniforme } from '@/lib/domain/precios';
 import type { TipoKit } from '@/lib/domain/uniformes';
-
-import type { Alumno, KitUniforme } from '@/features/admin/data/types';
 import type {
+  Alumno,
+  KitUniforme,
   KitEntrega,
   UniformeAlumno,
   UniformeAlumnoEntrenador,

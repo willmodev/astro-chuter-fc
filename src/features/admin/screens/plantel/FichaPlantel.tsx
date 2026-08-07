@@ -5,6 +5,7 @@ import { useUniformesEntrenador } from '../../hooks/useUniformesEntrenador';
 import { Avatar } from '../../ui/Avatar';
 import { AcudienteTab } from '../ficha/AcudienteTab';
 import { AlumnoNoEncontrado } from '../ficha/AlumnoNoEncontrado';
+
 import { UniformePlantel } from './UniformePlantel';
 
 // Ficha del entrenador (solo lectura): identidad + acudiente + entrega del

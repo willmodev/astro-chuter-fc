@@ -4,6 +4,7 @@ import { type DiaEntreno } from '@/lib/domain/entrenos';
 import { listaPasada, planeada } from '@/lib/domain/sesion';
 
 import { VisorImagen } from '../../ui/VisorImagen';
+
 import {
   DayGlyph,
   RegistroLabel,
@@ -12,6 +13,7 @@ import {
   VaciaBody,
   ZONA_RESET,
 } from './DayCardParts';
+
 import type { AlumnoPlantel, Sesion } from '../../data/types';
 
 // Card de un día de entrenamiento. 4 estados derivados de la sesión:

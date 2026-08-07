@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useAlumno } from '../../hooks/useAlumno';
+
 import { AcudienteTab } from './AcudienteTab';
 import { AlumnoNoEncontrado } from './AlumnoNoEncontrado';
 import { FichaAcciones } from './FichaAcciones';

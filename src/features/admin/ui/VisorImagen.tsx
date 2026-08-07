@@ -2,6 +2,7 @@ import { useEffect, useRef, type WheelEvent } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Icon } from '../chrome/Icon';
+
 import { useZoomPan } from './useZoomPan';
 
 // Visor a pantalla completa de la imagen de la parte central (lightbox propio,

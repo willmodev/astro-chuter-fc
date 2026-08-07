@@ -6,6 +6,7 @@ import { Icon } from '../../chrome/Icon';
 import { Sheet } from '../../chrome/Sheet';
 import { CampoTexto } from '../../ui/CampoTexto';
 import { EtiquetaKit } from '../uniformes/EtiquetaKit';
+
 import type { KitUniforme } from '../../data/types';
 
 // Hoja de captura de la entrega (spec 12): número + talla del kit (implícito por

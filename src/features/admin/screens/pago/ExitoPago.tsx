@@ -3,6 +3,7 @@ import { fmt } from '@/lib/format';
 import { waTo } from '@/lib/whatsapp';
 
 import { Icon } from '../../chrome/Icon';
+
 import type { Alumno } from '../../data/types';
 
 // Pantalla de éxito tras `registrarPago`: recibo por WhatsApp al acudiente

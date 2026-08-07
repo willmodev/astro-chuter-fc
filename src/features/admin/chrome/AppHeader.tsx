@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
-
 import { Icon } from './Icon';
+
+import type { ReactNode } from 'react';
 
 // Header del contenido: eyebrow + título display, botón atrás y slot
 // derecho opcional. Vive dentro de la columna de contenido tanto en

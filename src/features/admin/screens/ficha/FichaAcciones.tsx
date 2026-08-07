@@ -1,8 +1,8 @@
-import type { CSSProperties } from 'react';
-
 import { waTo } from '@/lib/whatsapp';
 
 import { Icon } from '../../chrome/Icon';
+
+import type { CSSProperties } from 'react';
 import type { Alumno } from '../../data/types';
 
 // Acciones de la ficha (solo admin): cobrar, escribir por WhatsApp y

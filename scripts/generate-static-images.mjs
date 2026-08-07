@@ -3,6 +3,7 @@
 import { readFile, writeFile, copyFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+
 import sharp from 'sharp';
 
 const root = fileURLToPath(new URL('..', import.meta.url));

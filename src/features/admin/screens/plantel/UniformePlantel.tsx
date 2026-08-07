@@ -1,5 +1,6 @@
 import { Badge } from '../../ui/Badge';
 import { EtiquetaKit } from '../uniformes/EtiquetaKit';
+
 import type { KitEntrega } from '../../data/types';
 
 // Uniforme en la ficha del entrenador (readOnly): SOLO la entrega de cada kit,

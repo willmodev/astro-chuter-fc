@@ -2,7 +2,9 @@ import { ESTADO_UNIFORME_META } from '@/lib/domain/uniformes';
 
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
+
 import { EtiquetaKit } from './EtiquetaKit';
+
 import type { KitFila } from './filas';
 
 // Fila del tab Estado: alumno + kit (AZUL/ORO) + badge de estado. Abre la

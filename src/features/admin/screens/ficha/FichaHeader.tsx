@@ -4,8 +4,10 @@ import { mesesEnMora } from '@/lib/domain/cartera';
 import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
-import type { Alumno } from '../../data/types';
+
 import { BadgeFaltaFecha } from './BadgeFaltaFecha';
+
+import type { Alumno } from '../../data/types';
 
 // Cabecera de la Ficha: volver, identidad (avatar, nombre, categoría) y
 // estado. Un retirado se marca como tal en vez de mostrar mora (spec 14).

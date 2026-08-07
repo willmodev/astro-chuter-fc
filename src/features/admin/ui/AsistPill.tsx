@@ -1,6 +1,6 @@
-import { Badge, type BadgeTone } from './Badge';
-
 import type { ResumenAsistencia } from '@/lib/domain/entrenos';
+
+import { Badge, type BadgeTone } from './Badge';
 
 // Pastilla presentes/total de una sesión. Tono según el prototipo: sin
 // ausentes = verde; asistencia ≥ 70% = info; por debajo = alerta.

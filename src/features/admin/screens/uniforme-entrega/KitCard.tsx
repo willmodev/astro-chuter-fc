@@ -5,8 +5,10 @@ import { ESTADO_UNIFORME_META, type TipoKit } from '@/lib/domain/uniformes';
 
 import { Badge } from '../../ui/Badge';
 import { EtiquetaKit } from '../uniformes/EtiquetaKit';
+
 import { HojaAbono } from './HojaAbono';
 import { HojaEntrega } from './HojaEntrega';
+
 import type { KitUniforme } from '../../data/types';
 
 // Tarjeta de un kit: estado + detalle + saldo, con dos acciones (entrega y

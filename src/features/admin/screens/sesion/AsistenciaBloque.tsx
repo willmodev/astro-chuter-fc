@@ -1,8 +1,10 @@
 import type { ResumenAsistencia } from '@/lib/domain/entrenos';
 
 import { Icon } from '../../chrome/Icon';
+
 import { AsistenciaLista } from './AsistenciaLista';
 import { BotonGuardar } from './BotonGuardar';
+
 import type { AlumnoPlantel } from '../../data/types';
 
 // Bloque de asistencia con CTA propio. Gate por fecha: un día que aún no llega

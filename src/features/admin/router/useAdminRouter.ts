@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import type { Rol } from '@/lib/domain/usuarios';
+
 import { aplicarGate } from './gate';
 import { parseRuta, rutaAPath } from './rutas';
+
 import type { RutaAdmin } from './types';
-import type { Rol } from '@/lib/domain/usuarios';
 
 // Estado de `history` (no ensucia la URL): hoy solo transporta el mes tocado
 // hacia Registrar pago, para preseleccionarlo sin que viaje en el path.

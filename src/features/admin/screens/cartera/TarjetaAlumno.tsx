@@ -4,8 +4,10 @@ import { fmt } from '@/lib/format';
 
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
-import type { Alumno } from '../../data/types';
+
 import { TiraMeses } from './TiraMeses';
+
+import type { Alumno } from '../../data/types';
 
 // Tarjeta de cartera (HU-3.2): alumno, categoría, cuota/mes, saldo o
 // "Al día", y tira de meses. Tocar una celda cobrable navega a Registrar pago.

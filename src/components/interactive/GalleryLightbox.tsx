@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Dialog } from 'radix-ui';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+
 import MotionProvider from '@/components/motion/MotionProvider';
 import { m, AnimatePresence } from '@/components/motion/M';
 import { ease } from '@/lib/motion';

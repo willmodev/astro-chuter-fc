@@ -1,8 +1,10 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
 
 import { Sheet } from '../../chrome/Sheet';
+
 import { SelectorCategorias } from './SelectorCategorias';
 import { useCategoriasAsignables } from './useCategoriasAsignables';
+
 import type { NuevoUsuarioInput } from './types';
 
 interface Props {

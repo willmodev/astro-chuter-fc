@@ -1,6 +1,7 @@
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
 import { AlumnoNoEncontrado } from '../ficha/AlumnoNoEncontrado';
+
 import { KitCard } from './KitCard';
 import { useUniformeAlumno } from './useUniformeAlumno';
 

@@ -6,6 +6,7 @@ import { Icon } from '../../chrome/Icon';
 import { AsistPill } from '../../ui/AsistPill';
 import { Badge } from '../../ui/Badge';
 import { VisorImagen } from '../../ui/VisorImagen';
+
 import type { AlumnoPlantel, Sesion } from '../../data/types';
 
 // Fila de una sesión registrada (vista admin, solo lectura): día, thumbnail

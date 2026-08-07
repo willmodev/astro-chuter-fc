@@ -1,5 +1,6 @@
 import { Icon } from '../../chrome/Icon';
 import { Card } from '../../ui/Card';
+
 import type { PlanSemana } from '../../data/types';
 
 // Card del plan semanal (cabecera del Excel): tema + objetivos del entrenador

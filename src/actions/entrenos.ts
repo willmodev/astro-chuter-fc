@@ -78,7 +78,7 @@ export const guardarPlaneacionDia = defineAction({
     await guardarPlaneacion({
       entrenadorId: user.id,
       semanaInicio,
-      dia: dia as DiaEntreno,
+      dia: dia,
       nota,
       imagen: archivo,
     });
@@ -111,7 +111,7 @@ export const guardarAsistenciaDia = defineAction({
   handler: async ({ semanaInicio, dia, ausentes }, { locals }) => {
     const user = requireEntrenador(locals);
     exigirSemanaEnVentana(semanaInicio);
-    await guardarAsistencia(user.id, semanaInicio, dia as DiaEntreno, ausentes);
+    await guardarAsistencia(user.id, semanaInicio, dia, ausentes);
     return { ok: true };
   },
 });

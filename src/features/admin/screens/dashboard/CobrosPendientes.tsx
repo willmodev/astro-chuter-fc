@@ -4,6 +4,7 @@ import { waTo } from '@/lib/whatsapp';
 
 import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
+
 import type { Alumno } from '../../data/types';
 
 // Top morosos con avatar (aro dorado), saldo y botón de recordatorio por

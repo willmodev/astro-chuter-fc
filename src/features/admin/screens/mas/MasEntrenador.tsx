@@ -5,6 +5,7 @@ import { Icon, type IconName } from '../../chrome/Icon';
 import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
+
 import { useLogout } from './useLogout';
 
 // Más del entrenador (spec 09): perfil (nombre + cats), sede/horario y

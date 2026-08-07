@@ -1,4 +1,5 @@
 import { Icon } from '../../chrome/Icon';
+
 import type { Cumple } from '../../data/types';
 
 // Próximos cumpleaños. Grid `auto-fit/minmax` que reflúye (2 cols en mobile,

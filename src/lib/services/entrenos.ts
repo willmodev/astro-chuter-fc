@@ -13,7 +13,6 @@ import {
 } from '@/lib/db/repos/entrenos';
 import { listarUsuarios } from '@/lib/db/repos/usuarios';
 import { DIAS_ENTRENO, rosterDe, type DiaEntreno } from '@/lib/domain/entrenos';
-
 import type { AlumnoPlantel } from '@/features/admin/data/types';
 
 import { listarPlantelCompleto } from './alumnos';

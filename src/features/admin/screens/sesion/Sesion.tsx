@@ -4,6 +4,7 @@ import { FASE_ACTIVACION, FASE_VUELTA_CALMA } from '@/lib/domain/entrenos';
 
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
+
 import { AsistenciaBloque } from './AsistenciaBloque';
 import { BotonGuardar } from './BotonGuardar';
 import { FaseFijaCard } from './FaseFijaCard';

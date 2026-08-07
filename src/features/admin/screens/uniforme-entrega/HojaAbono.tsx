@@ -4,6 +4,7 @@ import { fmt } from '@/lib/format';
 import type { TipoKit } from '@/lib/domain/uniformes';
 
 import { CampoTexto } from '../../ui/CampoTexto';
+
 import type { KitUniforme } from '../../data/types';
 
 // Hoja de abono (spec 12): registra un pago parcial o total del kit. Muestra

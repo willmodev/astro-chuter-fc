@@ -10,14 +10,16 @@ import {
 
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
-import type { EstadoMes } from '../../data/types';
 import { useAlumno } from '../../hooks/useAlumno';
 import { AlumnoNoEncontrado } from '../ficha/AlumnoNoEncontrado';
+
 import { AlDiaAviso } from './AlDiaAviso';
 import { ExitoPago } from './ExitoPago';
 import { ResumenPago } from './ResumenPago';
 import { SelectorMeses } from './SelectorMeses';
 import { SelectorMetodo } from './SelectorMetodo';
+
+import type { EstadoMes } from '../../data/types';
 
 // Registrar pago (HU-3.5, HU-3.7): selección de meses cobrables + método →
 // confirmar muta el store → éxito con recibo por WhatsApp. Solo orquesta;

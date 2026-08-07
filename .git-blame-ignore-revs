@@ -1,0 +1,6 @@
+# Commits de formato masivo que no aportan autoría real.
+# Uso:  git config blame.ignoreRevsFile .git-blame-ignore-revs
+# (GitHub lo respeta automáticamente.)
+
+# 💄 style: aplicar Prettier y normalizar finales de línea a LF (spec 16)
+dca4dc35ba228814efab59015f5c577796fcee48

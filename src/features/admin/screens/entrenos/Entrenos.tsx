@@ -5,6 +5,7 @@ import { DIAS_ENTRENO, type DiaEntreno } from '@/lib/domain/entrenos';
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Badge } from '../../ui/Badge';
 import { WeekChips } from '../../ui/WeekChips';
+
 import { DayCard } from './DayCard';
 import { PlanCard } from './PlanCard';
 import { PlanSheet } from './PlanSheet';
