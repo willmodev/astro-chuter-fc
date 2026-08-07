@@ -37,7 +37,7 @@ export function Cartera({ onCobrarMes }: Readonly<Props>) {
   // lista completa, nunca `visibles`.
   const { visibles, hayMas, mostrarMas, sentinelRef } = useListaIncremental(
     filtrados,
-    `${segmento}|${vista}`,
+    `cartera|${segmento}|${vista}`,
   );
 
   if (estado !== 'listo') {
@@ -45,7 +45,16 @@ export function Cartera({ onCobrarMes }: Readonly<Props>) {
   }
 
   return (
-    <div style={{ display: 'grid', gap: 14, padding: '14px 16px 24px' }}>
+    // `minmax(0, 1fr)`: sin esto el track `auto` toma el min-content del
+    // nombre más largo de la lista y estira toda la pantalla a 320px.
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1fr)',
+        gap: 14,
+        padding: '14px 16px 24px',
+      }}
+    >
       <CabeceraTotales
         recaudoAnio={recaudoAnio(alumnos)}
         carteraVencida={carteraVencida(activos)}
@@ -74,7 +83,13 @@ export function Cartera({ onCobrarMes }: Readonly<Props>) {
       ) : (
         <>
           {vista === 'tarjetas' ? (
-            <div style={{ display: 'grid', gap: 10 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 1fr)',
+                gap: 10,
+              }}
+            >
               {visibles.map((a) => (
                 <TarjetaAlumno
                   key={a.id}

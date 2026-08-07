@@ -45,7 +45,7 @@ export function Alumnos({ onOpenFicha }: Readonly<Props>) {
   // Ventana de render: `ResumenAlumnos` sigue contando la lista completa.
   const { visibles, hayMas, mostrarMas, sentinelRef } = useListaIncremental(
     filtrados,
-    `${query}|${cat}|${String(retirados)}`,
+    `alumnos|${query}|${cat}|${String(retirados)}`,
   );
 
   if (estado !== 'listo') {

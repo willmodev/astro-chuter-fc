@@ -4,6 +4,11 @@ import type { RefObject } from 'react';
 
 const PASO = 15;
 
+// El tope vive fuera de React: al abrir una ficha, `VistaAdmin` desmonta la
+// pantalla y un `useState` se perdería. Solo se recuerda el filtro vigente;
+// al cambiar de filtro se olvida el anterior para que empiece en `paso`.
+const memoria = new Map<string, number>();
+
 export interface ListaIncremental<T> {
   visibles: T[];
   hayMas: boolean;
@@ -19,21 +24,30 @@ export function useListaIncremental<T>(
   clave: string,
   paso: number = PASO,
 ): ListaIncremental<T> {
-  const [tope, setTope] = useState(paso);
+  const [tope, setTope] = useState(() => memoria.get(clave) ?? paso);
+  const claveAnterior = useRef(clave);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (claveAnterior.current === clave) return;
+    memoria.delete(claveAnterior.current);
+    claveAnterior.current = clave;
+    memoria.set(clave, paso);
     setTope(paso);
   }, [clave, paso]);
 
   const hayMas = tope < items.length;
 
   const mostrarMas = useCallback((): void => {
-    setTope((t) => t + paso);
-  }, [paso]);
+    setTope((t) => {
+      const nuevo = t + paso;
+      memoria.set(clave, nuevo);
+      return nuevo;
+    });
+  }, [clave, paso]);
 
-  // El admin scrollea el documento, así que el root por defecto sirve.
-  // rootMargin adelanta la carga antes de tocar el fondo.
+  // Quien scrollea es `main.admin-main`, pero con `root: null` el observer
+  // mide contra el viewport y funciona igual. rootMargin adelanta la carga.
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el || !hayMas || typeof IntersectionObserver === 'undefined') return;

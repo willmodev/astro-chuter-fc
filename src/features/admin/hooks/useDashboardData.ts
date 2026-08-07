@@ -1,5 +1,5 @@
 import { actions } from 'astro:actions';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import type { DashboardStats } from '@/lib/services/dashboard';
 
@@ -29,9 +29,8 @@ export function useDashboardData(): DashboardData {
     setEstado('listo');
   }, []);
 
-  useEffect(() => {
-    void recargar();
-  }, [recargar]);
-
+  // Sin carga propia: quien decide cuándo pedir es `AdminHome`, que ya
+  // llama a `recargar()` al entrar a la vista `dashboard` (DT-2). Tener
+  // los dos efectos duplicaba la petición en la primera carga.
   return { data, estado, recargar };
 }

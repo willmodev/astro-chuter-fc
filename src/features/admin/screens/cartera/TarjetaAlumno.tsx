@@ -24,6 +24,9 @@ export function TarjetaAlumno({ alumno, onCobrarMes }: Readonly<Props>) {
     <div
       style={{
         display: 'grid',
+        // El nombre largo va con `nowrap`; sin `minmax(0, 1fr)` su
+        // min-content estira el track y desborda la pantalla a 320px.
+        gridTemplateColumns: 'minmax(0, 1fr)',
         gap: 10,
         padding: '14px 16px',
         borderRadius: 'var(--radius-lg)',
