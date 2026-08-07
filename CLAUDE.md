@@ -33,10 +33,10 @@ Sitio web institucional para el **Club Deportivo Chuter F.C.**, una escuela de f
 - **Instagram:** [@1chuter](https://instagram.com/1chuter)
 
 ### Ubicación
-- **Cancha principal:** Cancha Los Algarrobillos
-- **Cancha secundaria:** Cancha del 12 de Octubre
+- **Ciudad:** Valledupar, Cesar *(confirmado por el cliente, 2026-08-07)*
+- **Cancha principal:** Cancha Los Algarrobillos — [Maps](https://maps.app.goo.gl/yvHRJFxW7WCUhWJQ7)
+- **Cancha secundaria:** Cancha del 12 de Octubre — [Maps](https://maps.app.goo.gl/24oxxbufXfMzXnwf9)
 - **Sector:** Los Algarrobillos
-- *(Dirección exacta y link de Google Maps embed pendientes de confirmar con el dueño)*
 
 ### Horarios
 - **Días:** Lunes, miércoles y viernes
@@ -342,7 +342,8 @@ Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar
 
 - [ ] Logo SVG en alta calidad (mientras tanto usar el PNG en `/public/logo-temp.png`)
 - [x] Costos confirmados (cliente, 2026-07-10): mensualidad **$50.000 COP/jugador sin descuento por hermanos**; uniforme **$100.000 COP** ($80.000 c/u si son hermanos); inscripción gratis. El descuento de hermanos es del **uniforme**, no de la mensualidad.
-- [ ] Dirección exacta de la Cancha Los Algarrobillos + link de Google Maps embed
+- [x] Ubicación confirmada (cliente, 2026-08-07): **Valledupar, Cesar**, con link de Maps propio para cada una de las dos canchas en `LOCATION.mapsUrl` y `LOCATION.secondaryMapsUrl`
+- [x] Costos en el sitio público: **no se publican** (cliente, 2026-08-07). Siguen solo en el admin
 - [ ] Confirmar si el horario es uniforme para todas las categorías o varía
 - [ ] **Entrenador de Baby (SUB 4), Benjamín (SUB 8) y Juvenil (SUB 16)** — hoy hay 4 entrenadores para 7 categorías; las tarjetas omiten la línea
 - [x] **Fechas de nacimiento** (cerrado 2026-08-07): la base tiene **82 alumnos activos y 0 sin fecha**. El cliente confirmó que de los 15 que faltaban solo sigue Ángel Santiago (`2020-02-26`); los otros 14 ya no están en el club y se retiraron (`scripts/retirar-alumnos.mjs`)

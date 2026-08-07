@@ -8,13 +8,7 @@
 
 Estos datos bloquean contenido real. Faltan solo estos:
 
-- [ ] **Ciudad y departamento exacto** de Los Algarrobillos → actualizar `LOCATION.city` y `LOCATION.region` en `src/lib/site.ts`
-- [ ] **¿Mostrar los costos en el sitio público?** — decisión de producto, no dato faltante: el cliente ya
-      confirmó los precios (mensualidad $50.000, uniforme $100.000 / $80.000 c/u entre hermanos, inscripción
-      gratis) y viven en `src/lib/domain/precios.ts`, pero solo los usa el admin. El sitio público hoy solo
-      dice "Inscripción gratis". Preguntar a Camilo si quiere publicarlos en `AboutSection`/`ContactSection`.
-- [ ] **Logros del club** (torneos ganados, posiciones, años de trayectoria) → reemplazar los 3 stats en `src/components/sections/AboutSection.astro` (hoy muestran valores genéricos correctos pero no son logros reales)
-- [ ] **Fotos profesionales de los formadores** → reemplazar `public/images/formadores/camilo-andrade.webp` y `ebed-shaday-calderon.webp` (actualmente son fotos de Instagram)
+- [ ] **Fotos profesionales de los formadores** → reemplazar `public/images/formadores/camilo-andrade.webp` y `ebed-shaday-calderon.webp` (actualmente son fotos de Instagram). Confirmado pendiente por el cliente el 2026-08-07.
 - [ ] **Bios de Camilo y Ebed** → revisar y confirmar o corregir los textos inventados en `src/content/formadores/`
 
 ### Ya resueltos ✓
@@ -26,6 +20,10 @@ Estos datos bloquean contenido real. Faltan solo estos:
 - [x] Mapa → resuelto con SVG ilustrado custom (no necesita Google Maps embed)
 - [x] Imagen OG → generada en `public/og-default.jpg`
 - [x] Favicon → `public/favicon.svg` y `public/apple-touch-icon.png`
+- [x] **Ciudad y departamento** (cliente, 2026-08-07): **Valledupar, Cesar**. Las dos canchas tienen link propio de Google Maps en `LOCATION.mapsUrl` y `LOCATION.secondaryMapsUrl`.
+- [x] **¿Publicar los costos en el sitio público?** → **No** (cliente, 2026-08-07). Los precios siguen solo en el admin; el sitio mantiene "Inscripción gratis" como único mensaje de precio.
+- [x] **Logros del club** → no aplica: los 3 stats de `AboutSection` son datos reales (categorías, entrenamientos por semana, aval INDER), no placeholders. Se corrigió el primero, que decía "4 categorías · Pony a Prejuvenil" y quedó desactualizado tras el spec 15 (son 7, de Baby a Juvenil).
+- [x] **Categorías sin entrenador** → se publican igual (cliente, 2026-08-07): si entra un niño de esa edad, la categoría tiene que existir. La tarjeta omite la línea del entrenador cuando no hay dato.
 
 ---
 

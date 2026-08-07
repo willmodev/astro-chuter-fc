@@ -313,7 +313,7 @@ Como club queremos que planes, sesiones y asistencia sobrevivan a la recarga par
 
 ### HU-7.1 · Identidad y contacto del club — `Could` · Pantalla: Más · ☐
 Como administrador quiero ver la identidad y contacto del club en el panel para tenerlos a mano.
-- **Aceptación:** Tarjeta con logo + nombre; accesos a WhatsApp (301 521 6830 / @1chuter), sede (Cancha de la Provincia, Los Algarrobillos · INDER) y directores técnicos.
+- **Aceptación:** Tarjeta con logo + nombre; accesos a WhatsApp (300 872 5964 / @1chuter), sede (Cancha Los Algarrobillos, Valledupar · Cesar · INDER) y directores técnicos. **Todo se lee de `src/lib/site.ts`, nunca hardcodeado.** _(Corregido 2026-08-07: esta línea traía el teléfono `301 521 6830` y el nombre "Cancha de la Provincia", ninguno de los dos vigente.)_
 - **Estado real:** pendiente. Hoy "Más" solo muestra la sesión activa y los accesos (Equipo, Uniformes, Entrenamientos) + cerrar sesión.
 
 ### HU-7.2 · Apariencia persistida — `Should` · Pantalla: Cartera/Más · ◐
@@ -395,8 +395,8 @@ Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboar
 ## Notas / pendientes del cliente (placeholders)
 
 - ~~Costos de mensualidad/matrícula~~ **Confirmados (cliente, 2026-07-10):** mensualidad $50.000/jugador sin descuento; uniforme $100.000 ($80.000 c/u hermanos); inscripción gratis.
-- Aclarar qué significan las filas con CUOTA 40.000 en el Excel (la mensualidad no tiene descuento de hermanos — ¿dato viejo o acuerdo puntual?).
-- Dirección exacta + Google Maps de la Cancha de la Provincia.
+- ~~Aclarar qué significan las filas con CUOTA 40.000~~ **Cerrado:** dato viejo de la hoja, sin efecto — el seed fuerza $50.000 y nunca lee esa columna.
+- ~~Dirección exacta + Google Maps~~ **Cerrado (cliente, 2026-08-07):** Valledupar, Cesar. Las dos canchas tienen link propio de Maps en `LOCATION.mapsUrl` y `LOCATION.secondaryMapsUrl`.
 - Confirmar si el horario varía por categoría.
 - Bios y fotos de los formadores.
 - **Entrenador de Baby (SUB 4), Benjamín (SUB 8) y Juvenil (SUB 16)** — 4 entrenadores para 7 categorías (spec 15).
