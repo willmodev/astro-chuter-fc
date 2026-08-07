@@ -50,7 +50,9 @@ Más las server-only (Resend, Neon, Better Auth, Blob). Ver `.env.example` para 
 
 ## Tareas técnicas pendientes
 
-- [ ] **Lighthouse real en producción**: correr desde Chrome DevTools o PageSpeed Insights sobre `https://chuterfc.com`. Target: Performance ≥95, A11y 100, SEO 100.
+- [ ] **Lighthouse: cerrar los últimos puntos de Performance.** Medido en producción el 2026-08-07 (3 corridas, mobile): **A11y 100 · Best Practices 100 · SEO 100 · CLS 0** ✓, pero **Performance 93–96** (target ≥95, entra apenas) y **LCP 2.2 s** (target < 1.5 s). Lo que falta: `HeroTicket` todavía se sirve con `opacity:0` hasta que hidrata (mismo problema que tenía el titular) y el bundle de islands trae ~27 KB de JS sin usar. Bajar el LCP de 2.2 s pide decisiones de diseño: acortar o quitar el splash `PageBoot`, o achicar la foto del hero.
+
+> **Metodología:** Lighthouse tiene mucha varianza — una sola corrida sobre este sitio llegó a dar Performance 59 y un CLS falso de 0.322 que no se reprodujo en ninguna otra medición ni con un `PerformanceObserver` real (CLS efectivo: 0.0003). **Medir siempre 3 veces y tomar la mediana.**
 
 ### Ya resueltos ✓
 - [x] Deploy a Vercel y repo conectado (proyecto `astro-chuter-fc`)
