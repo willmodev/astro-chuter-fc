@@ -2,7 +2,8 @@ import type { Rol } from '@/lib/domain/usuarios';
 
 import type { RutaAdmin } from './types';
 
-// Vistas que puede montar el entrenador (la ficha va en modo readOnly, spec 09).
+// Vistas que puede montar el entrenador (spec 09). Su ruta `ficha` la resuelve
+// `EntrenadorApp` contra `screens/plantel/FichaPlantel.tsx`, sin dinero.
 const VISTAS_ENTRENADOR: ReadonlySet<RutaAdmin['vista']> = new Set([
   'entrenos',
   'sesion',

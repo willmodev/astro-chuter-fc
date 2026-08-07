@@ -5,7 +5,7 @@ import type { EstadoCargaValor } from '../chrome/EstadoCarga';
 import type { AlumnoPlantel } from '../data/types';
 
 // Roster real del entrenador servido por `alumnos.listar` (rol entrenador →
-// AlumnoPlantel[], SIN dinero). Fuente única para plantel, ficha readOnly y el
+// AlumnoPlantel[], SIN dinero). Fuente única para plantel, `FichaPlantel` y el
 // roster de asistencia de entrenos (que sigue en mock para plan/sesión).
 export interface AlumnosPlantelData {
   alumnos: AlumnoPlantel[];
@@ -20,7 +20,7 @@ export function useAlumnosPlantel(): AlumnosPlantelData {
   const recargar = useCallback(async () => {
     setEstado('cargando');
     const { data, error } = await actions.alumnos.listar({});
-    if (error || !data || data.rol !== 'entrenador') {
+    if (error || data.rol !== 'entrenador') {
       setEstado('error');
       return;
     }

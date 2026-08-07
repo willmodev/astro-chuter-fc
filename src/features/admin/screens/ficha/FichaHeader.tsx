@@ -9,25 +9,18 @@ import { BadgeFaltaFecha } from './BadgeFaltaFecha';
 
 import type { Alumno } from '../../data/types';
 
-// Cabecera de la Ficha: volver, identidad (avatar, nombre, categoría) y
-// estado. Un retirado se marca como tal en vez de mostrar mora (spec 14).
-// En modo readOnly (entrenador, spec 09) solo identidad: sin mora, sin editar.
-// Las acciones viven en `FichaAcciones`.
+// Cabecera de la Ficha del admin: volver, identidad (avatar, nombre,
+// categoría) y estado. Un retirado se marca como tal en vez de mostrar mora
+// (spec 14). Las acciones viven en `FichaAcciones`.
 interface Props {
   alumno: Alumno;
   onVolver: () => void;
-  readOnly?: boolean;
-  onEditar?: () => void;
+  onEditar: () => void;
 }
 
-export function FichaHeader({
-  alumno,
-  onVolver,
-  readOnly = false,
-  onEditar,
-}: Readonly<Props>) {
+export function FichaHeader({ alumno, onVolver, onEditar }: Readonly<Props>) {
   const retirado = !alumno.activo;
-  const enMora = !readOnly && !retirado && estadoAlumno(alumno) === 'mora';
+  const enMora = !retirado && estadoAlumno(alumno) === 'mora';
   const meses = mesesEnMora(alumno);
 
   return (
@@ -75,31 +68,27 @@ export function FichaHeader({
             {alumno.cat}
           </span>
         </div>
-        {!readOnly && (
-          <BadgeEstado retirado={retirado} meses={enMora ? meses : 0} />
-        )}
-        {!readOnly && (
-          <button
-            type="button"
-            onClick={onEditar}
-            aria-label="Editar alumno"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--border-subtle)',
-              background: 'var(--surface-sunken)',
-              color: 'var(--brand-navy)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
-            <Icon name="pencil" size={17} />
-          </button>
-        )}
+        <BadgeEstado retirado={retirado} meses={enMora ? meses : 0} />
+        <button
+          type="button"
+          onClick={onEditar}
+          aria-label="Editar alumno"
+          style={{
+            width: 38,
+            height: 38,
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-subtle)',
+            background: 'var(--surface-sunken)',
+            color: 'var(--brand-navy)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}
+        >
+          <Icon name="pencil" size={17} />
+        </button>
       </div>
       {alumno.fechaNacimiento === null && <BadgeFaltaFecha />}
     </div>

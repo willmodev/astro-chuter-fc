@@ -1,11 +1,9 @@
-// Selector segmentado de las tabs de la Ficha. En modo readOnly (entrenador,
-// spec 09) la Ficha pasa `tabs` sin 'pagos'; por defecto están las 3.
+// Selector segmentado de las 3 tabs de la Ficha del admin.
 export type TabFicha = 'pagos' | 'uniforme' | 'acudiente';
 
 interface Props {
   tab: TabFicha;
   onTab: (tab: TabFicha) => void;
-  tabs?: readonly TabFicha[];
 }
 
 const LABELS: Record<TabFicha, string> = {
@@ -14,14 +12,14 @@ const LABELS: Record<TabFicha, string> = {
   acudiente: 'Acudiente',
 };
 
-const TODAS: readonly TabFicha[] = ['pagos', 'uniforme', 'acudiente'];
+const TABS: readonly TabFicha[] = ['pagos', 'uniforme', 'acudiente'];
 
-export function TabsFicha({ tab, onTab, tabs = TODAS }: Readonly<Props>) {
+export function TabsFicha({ tab, onTab }: Readonly<Props>) {
   return (
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${tabs.length}, 1fr)`,
+        gridTemplateColumns: `repeat(${String(TABS.length)}, 1fr)`,
         gap: 4,
         padding: 4,
         borderRadius: 'var(--radius-md)',
@@ -29,13 +27,15 @@ export function TabsFicha({ tab, onTab, tabs = TODAS }: Readonly<Props>) {
         border: '1px solid var(--border-subtle)',
       }}
     >
-      {tabs.map((id) => {
+      {TABS.map((id) => {
         const activa = tab === id;
         return (
           <button
             key={id}
             type="button"
-            onClick={() => onTab(id)}
+            onClick={() => {
+              onTab(id);
+            }}
             aria-pressed={activa}
             style={{
               height: 36,
