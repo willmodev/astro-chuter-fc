@@ -19,7 +19,9 @@ export function Plantel({ cats, onOpenFicha }: Readonly<Props>) {
   const p = usePlantel(cats);
 
   if (p.estado !== 'listo') {
-    return <EstadoCarga estado={p.estado} onReintentar={p.recargar} />;
+    return (
+      <EstadoCarga estado={p.estado} onReintentar={() => void p.recargar()} />
+    );
   }
   if (p.rosterVacio) return <PlantelVacio />;
 

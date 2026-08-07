@@ -1,4 +1,3 @@
-import { actions } from 'astro:actions';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
@@ -11,7 +10,8 @@ import {
 
 import { useAlumnos } from '../../hooks/useAlumnos';
 
-import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
+import { aInput, guardaAlumno } from './guardado-alumno';
+
 import type { Alumno } from '../../data/types';
 
 export interface FormValores {
@@ -60,17 +60,6 @@ function aDatos(v: FormValores): DatosAlumnoInput {
   };
 }
 
-function aInput(v: FormValores) {
-  return {
-    nombre: v.name.trim(),
-    documento: v.doc.trim(),
-    fechaNacimiento: v.fechaNacimiento,
-    acudiente: v.acu.trim(),
-    celular: v.phone.trim(),
-    direccion: v.dir.trim(),
-  };
-}
-
 export function useAlumnoForm({ modo, alumnoId, onGuardado }: Args) {
   // Con retirados: el documento único y los acudientes se validan contra el
   // padrón completo, no solo contra los activos (spec 14).
@@ -112,28 +101,14 @@ export function useAlumnoForm({ modo, alumnoId, onGuardado }: Args) {
     }
     setEnviando(true);
     setErrorServidor(null);
-    const input = aInput(valores);
-    if (modo === 'nuevo') {
-      const { data, error } = await actions.alumnos.crear(input);
-      setEnviando(false);
-      if (error || !data) {
-        setErrorServidor(error?.message ?? 'No se pudo guardar.');
-        return;
-      }
-      onGuardado(data.id);
-      return;
-    }
-    if (alumnoId === undefined) {
-      setEnviando(false);
-      return;
-    }
-    const { error } = await actions.alumnos.editar({ id: alumnoId, ...input });
+    const res = await guardaAlumno(modo, alumnoId, aInput(valores));
     setEnviando(false);
-    if (error) {
-      setErrorServidor(error.message);
+    if (res === null) return;
+    if ('error' in res) {
+      setErrorServidor(res.error);
       return;
     }
-    onGuardado(alumnoId);
+    onGuardado(res.id);
   }, [errores, valores, modo, alumnoId, onGuardado]);
 
   return {

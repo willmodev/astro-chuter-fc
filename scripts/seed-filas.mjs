@@ -59,85 +59,91 @@ function nacimientoDeCelda(valor) {
   return { fechaNacimiento: null, fechaLocal: null, anioNacimiento: null };
 }
 
-// Una fila válida o null (con la anomalía ya registrada). La categoría de
-// control se calcula por AÑO: es la que reproduce la del Excel.
-function parseFila(ws, r, vistos, anomalias) {
-  const nombre = texto(ws.getCell(`C${r}`));
-  if (nombre === '') return null;
+// Columnas crudas de la fila ya normalizadas. La categoría de control se
+// calcula por AÑO: es la que reproduce la del Excel.
+function datosDeFila(ws, r) {
   const hoy = new Date();
-  const nac = nacimientoDeCelda(ws.getCell(`F${r}`).value);
-  const catAnio =
-    nac.anioNacimiento === null
-      ? null
-      : (categoriaDeAnio(nac.anioNacimiento, hoy)?.etiqueta ?? null);
-  const catFecha = nac.fechaLocal
-    ? (categoriaDeFecha(nac.fechaLocal, hoy)?.etiqueta ?? null)
-    : null;
+  const crudoF = ws.getCell(`F${r}`).value;
+  const nac = nacimientoDeCelda(crudoF);
   const docRaw = ws.getCell(`D${r}`).value;
-  const documento = docRaw == null ? '' : String(docRaw).replace(/\D/g, '');
-  const catExcel = texto(ws.getCell(`E${r}`));
-  const fechaInicio = fechaISO(ws.getCell(`H${r}`).value);
+  return {
+    nac,
+    crudoF,
+    catAnio:
+      nac.anioNacimiento === null
+        ? null
+        : (categoriaDeAnio(nac.anioNacimiento, hoy)?.etiqueta ?? null),
+    catFecha: nac.fechaLocal
+      ? (categoriaDeFecha(nac.fechaLocal, hoy)?.etiqueta ?? null)
+      : null,
+    documento: docRaw == null ? '' : String(docRaw).replace(/\D/g, ''),
+    catExcel: texto(ws.getCell(`E${r}`)),
+    fechaInicio: fechaISO(ws.getCell(`H${r}`).value),
+  };
+}
 
-  if (catAnio === null) {
-    anomalias.push(
-      `F${r} ${nombre}: nacimiento '${String(ws.getCell(`F${r}`).value)}' fuera de rango (SUB 4–16) → omitida`,
-    );
-    return null;
-  }
-  if (documento === '') {
-    anomalias.push(`F${r} ${nombre}: documento vacío → omitida`);
-    return null;
-  }
-  if (vistos.has(documento)) {
-    anomalias.push(
-      `F${r} ${nombre}: documento ${documento} duplicado (ya en F${vistos.get(documento)}) → omitida`,
-    );
-    return null;
-  }
+// Motivo por el que la fila se omite, o null si es válida.
+function motivoDeOmision(d, vistos) {
+  if (d.catAnio === null)
+    return `nacimiento '${String(d.crudoF)}' fuera de rango (SUB 4–16) → omitida`;
+  if (d.documento === '') return 'documento vacío → omitida';
+  if (vistos.has(d.documento))
+    return `documento ${d.documento} duplicado (ya en F${vistos.get(d.documento)}) → omitida`;
   // El cross-check contra la categoría del Excel detecta digitación mala, pero
   // vale contra CUALQUIERA de las dos reglas: si el Excel coincide con la de la
   // fecha real, el dato es correcto aunque la del año difiera (spec 15).
-  if (catExcel && catExcel !== catAnio && catExcel !== catFecha) {
-    anomalias.push(
-      `F${r} ${nombre}: categoría Excel '${catExcel}' ≠ por año '${catAnio}'` +
-        (catFecha ? ` ni por fecha '${catFecha}'` : '') +
-        ' → omitida',
+  if (d.catExcel && d.catExcel !== d.catAnio && d.catExcel !== d.catFecha)
+    return (
+      `categoría Excel '${d.catExcel}' ≠ por año '${d.catAnio}'` +
+      (d.catFecha ? ` ni por fecha '${d.catFecha}'` : '') +
+      ' → omitida'
     );
-    return null;
-  }
-  if (fechaInicio === null) {
-    anomalias.push(
-      `F${r} ${nombre}: fecha de inicio (INCIO) inválida → omitida`,
-    );
-    return null;
-  }
-  vistos.set(documento, r);
+  if (d.fechaInicio === null)
+    return 'fecha de inicio (INCIO) inválida → omitida';
+  return null;
+}
 
-  const mesesPagados = [];
+// Meses con relleno verde. El color desconocido se reporta y no cuenta.
+function mesesPagadosDeFila(ws, r, nombre, anomalias) {
+  const meses = [];
   for (const [col, mes] of Object.entries(MES_COL)) {
     const est = estadoCelda(ws.getCell(`${col}${r}`));
-    if (est === 'pagado') mesesPagados.push(mes);
+    if (est === 'pagado') meses.push(mes);
     else if (est === 'desconocido') {
       anomalias.push(
         `F${r} ${nombre}: relleno de color desconocido en ${mes} → pago omitido`,
       );
     }
   }
+  return meses;
+}
+
+// Una fila válida o null (con la anomalía ya registrada).
+function parseFila(ws, r, vistos, anomalias) {
+  const nombre = texto(ws.getCell(`C${r}`));
+  if (nombre === '') return null;
+  const d = datosDeFila(ws, r);
+  const motivo = motivoDeOmision(d, vistos);
+  if (motivo !== null) {
+    anomalias.push(`F${r} ${nombre}: ${motivo}`);
+    return null;
+  }
+  vistos.set(d.documento, r);
 
   return {
     fila: r,
     nombre,
-    documento,
-    anioNacimiento: nac.anioNacimiento,
-    fechaNacimiento: nac.fechaNacimiento,
+    documento: d.documento,
+    anioNacimiento: d.nac.anioNacimiento,
+    fechaNacimiento: d.nac.fechaNacimiento,
     // Categoría real por edad cumplida; puede diferir de la del Excel (spec 15).
-    catAnio,
-    catFecha,
+    catAnio: d.catAnio,
+    catFecha: d.catFecha,
     acudiente: texto(ws.getCell(`I${r}`)),
     celular: String(ws.getCell(`J${r}`).value ?? '').replace(/\D/g, ''),
     direccion: texto(ws.getCell(`K${r}`)),
-    fechaInicio,
-    mesesPagados,
+    fechaInicio: d.fechaInicio,
+    mesesPagados: mesesPagadosDeFila(ws, r, nombre, anomalias),
     kits: kitsDeFila(ws, r, nombre, anomalias),
   };
 }

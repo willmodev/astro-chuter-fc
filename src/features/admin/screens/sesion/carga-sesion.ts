@@ -11,18 +11,28 @@ export interface SnapshotSesion {
   listaExistente: boolean;
 }
 
+// Día sin sesión guardada: el borrador arranca en blanco.
+const SIN_SESION: SnapshotSesion = {
+  img: null,
+  nota: '',
+  ausentes: [],
+  listaExistente: false,
+};
+
 export async function cargaSesionDia(
   semanaInicio: string,
   day: DiaEntreno,
 ): Promise<SnapshotSesion | null> {
   const { data, error } = await actions.entrenos.listar({ semanaInicio });
-  if (error || data?.rol !== 'entrenador') return null;
-  const s = data.sesiones.find((x) => x.dia === day) ?? null;
+  if (error) return null;
+  if (data.rol !== 'entrenador') return null;
+  const s = data.sesiones.find((x) => x.dia === day);
+  if (!s) return SIN_SESION;
   return {
-    img: s?.parteCentralUrl ?? null,
-    nota: s?.parteCentralNota ?? '',
-    ausentes: s?.ausentes ?? [],
-    listaExistente: s ? s.ausentes !== null : false,
+    img: s.parteCentralUrl,
+    nota: s.parteCentralNota ?? '',
+    ausentes: s.ausentes ?? [],
+    listaExistente: s.ausentes !== null,
   };
 }
 

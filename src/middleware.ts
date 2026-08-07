@@ -2,6 +2,8 @@ import { defineMiddleware } from 'astro:middleware';
 
 import { auth } from '@/lib/auth/server';
 
+import type { APIContext } from 'astro';
+
 const LOGIN = '/admin/login';
 const DASHBOARD = '/admin';
 
@@ -12,6 +14,16 @@ function destinoSeguro(next: string | null): string {
     return DASHBOARD;
   }
   return next;
+}
+
+// Lee la sesión de Better Auth y la deja en `locals` para el resto del request.
+async function poblarSesion(context: APIContext) {
+  const sesion = await auth.api.getSession({
+    headers: context.request.headers,
+  });
+  context.locals.user = sesion?.user ?? null;
+  context.locals.session = sesion?.session ?? null;
+  return sesion;
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -25,11 +37,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // El marketing (todo lo demás) no toca la sesión y queda intacto.
   if (!esAdmin && !esAction) return next();
 
-  const sesion = await auth.api.getSession({
-    headers: context.request.headers,
-  });
-  context.locals.user = sesion?.user ?? null;
-  context.locals.session = sesion?.session ?? null;
+  const sesion = await poblarSesion(context);
 
   if (esAction) return next();
 

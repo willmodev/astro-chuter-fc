@@ -24,7 +24,6 @@ export const CONTACT = {
   instagramHandle: '@1chuter',
 } as const;
 
-// TODO: pedir a Camilo — confirmar ciudad y departamento exactos del barrio Los Algarrobillos
 export const LOCATION = {
   venue: 'Cancha Los Algarrobillos',
   neighborhood: 'Los Algarrobillos',

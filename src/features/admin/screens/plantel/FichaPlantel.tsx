@@ -21,7 +21,7 @@ export function FichaPlantel({ alumnoId, onVolver }: Readonly<Props>) {
   const uniformes = useUniformesEntrenador();
 
   if (estado !== 'listo') {
-    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+    return <EstadoCarga estado={estado} onReintentar={() => void recargar()} />;
   }
   const alumno = alumnos.find((a) => a.id === alumnoId);
   if (!alumno) {

@@ -60,7 +60,10 @@ export function ResetPasswordSheet({
           </button>
         </div>
       ) : (
-        <form onSubmit={onSubmit} style={{ display: 'grid', gap: 12 }}>
+        <form
+          onSubmit={(e) => void onSubmit(e)}
+          style={{ display: 'grid', gap: 12 }}
+        >
           {error && (
             <div className="admin-login__error" role="alert">
               {error}

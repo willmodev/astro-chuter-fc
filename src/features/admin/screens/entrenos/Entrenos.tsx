@@ -69,7 +69,10 @@ export function Entrenos({
       />
 
       {data.estado !== 'listo' ? (
-        <EstadoCarga estado={data.estado} onReintentar={data.recargar} />
+        <EstadoCarga
+          estado={data.estado}
+          onReintentar={() => void data.recargar()}
+        />
       ) : (
         <>
           <PlanCard plan={data.plan} onEditar={() => setSheetAbierto(true)} />
@@ -91,7 +94,7 @@ export function Entrenos({
           plan={data.plan}
           semanaLabel={semana.label}
           onGuardar={(tema, objetivos) => {
-            data.guardarPlan(tema, objetivos);
+            void data.guardarPlan(tema, objetivos);
             setSheetAbierto(false);
           }}
           onClose={() => setSheetAbierto(false)}

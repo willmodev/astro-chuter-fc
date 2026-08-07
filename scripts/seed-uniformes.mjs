@@ -50,7 +50,13 @@ export function kitsDeFila(ws, r, nombre, anomalias) {
 
 // Inserta las filas de kits del alumno. Idempotente por (alumnoId, kit): no pisa
 // datos capturados en la app. abono = precio si pagado, 0 si no.
-export async function insertarUniformes(db, uniformes, alumnoId, kits, precio) {
+export async function insertarUniformes({
+  db,
+  uniformes,
+  alumnoId,
+  kits,
+  precio,
+}) {
   if (kits.length === 0) return 0;
   const ins = await db
     .insert(uniformes)

@@ -62,7 +62,7 @@ export function Pago({ alumnoId, mes, onVolver }: Readonly<Props>) {
   );
 
   if (estado !== 'listo') {
-    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+    return <EstadoCarga estado={estado} onReintentar={() => void recargar()} />;
   }
   if (!alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;

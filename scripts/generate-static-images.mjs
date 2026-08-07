@@ -1,6 +1,6 @@
 // Genera favicon.svg, apple-touch-icon.png y og-default.jpg desde el logo principal.
 // Correr una sola vez: `node scripts/generate-static-images.mjs`
-import { readFile, writeFile, copyFile } from 'node:fs/promises';
+import { readFile, copyFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -14,14 +14,25 @@ const NAVY = '#1B3A6B';
 const NAVY_DEEP = '#0F2647';
 const GOLD = '#F5C842';
 
-async function main() {
-  const logoSvg = await readFile(logoPath);
+// Logo vectorial → PNG cuadrado transparente del tamaño pedido.
+async function logoPng(logoSvg, densidad, lado) {
+  return sharp(logoSvg, { density: densidad })
+    .resize(lado, lado, {
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
+}
 
-  // 1. favicon.svg → copia directa del logo (los browsers modernos lo soportan)
+// favicon.svg → copia directa del logo (los browsers modernos lo soportan)
+async function generarFavicon() {
   await copyFile(logoPath, path.join(publicDir, 'favicon.svg'));
   console.log('OK favicon.svg');
+}
 
-  // 2. apple-touch-icon.png 180x180 con padding y fondo navy redondeado
+// apple-touch-icon.png 180x180 con padding y fondo navy redondeado
+async function generarAppleTouchIcon(logoSvg) {
   await sharp({
     create: {
       width: 180,
@@ -30,25 +41,15 @@ async function main() {
       background: NAVY,
     },
   })
-    .composite([
-      {
-        input: await sharp(logoSvg, { density: 300 })
-          .resize(160, 160, {
-            fit: 'contain',
-            background: { r: 0, g: 0, b: 0, alpha: 0 },
-          })
-          .png()
-          .toBuffer(),
-        gravity: 'center',
-      },
-    ])
+    .composite([{ input: await logoPng(logoSvg, 300, 160), gravity: 'center' }])
     .png()
     .toFile(path.join(publicDir, 'apple-touch-icon.png'));
   console.log('OK apple-touch-icon.png');
+}
 
-  // 3. og-default.jpg 1200x630 con composición:
-  //    fondo navy gradient + logo a la izquierda + tagline + INDER badge
-  const ogSvg = `<?xml version="1.0" encoding="UTF-8"?>
+// Lienzo 1200x630: fondo navy gradient + tagline + INDER badge.
+function lienzoOg() {
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -76,25 +77,24 @@ async function main() {
   <rect x="430" y="500" width="280" height="52" rx="26" fill="${GOLD}"/>
   <text x="465" y="533" font-family="Inter, Arial, sans-serif" font-size="22" fill="${NAVY_DEEP}" font-weight="800">¡INSCRIPCIÓN GRATIS!</text>
 </svg>`;
+}
 
-  await sharp(Buffer.from(ogSvg))
+// og-default.jpg 1200x630: lienzo + logo a la izquierda.
+async function generarOgImage(logoSvg) {
+  await sharp(Buffer.from(lienzoOg()))
     .composite([
-      {
-        input: await sharp(logoSvg, { density: 400 })
-          .resize(320, 320, {
-            fit: 'contain',
-            background: { r: 0, g: 0, b: 0, alpha: 0 },
-          })
-          .png()
-          .toBuffer(),
-        left: 70,
-        top: 155,
-      },
+      { input: await logoPng(logoSvg, 400, 320), left: 70, top: 155 },
     ])
     .jpeg({ quality: 88, mozjpeg: true })
     .toFile(path.join(publicDir, 'og-default.jpg'));
   console.log('OK og-default.jpg');
+}
 
+async function main() {
+  const logoSvg = await readFile(logoPath);
+  await generarFavicon();
+  await generarAppleTouchIcon(logoSvg);
+  await generarOgImage(logoSvg);
   console.log('\n✓ Imágenes estáticas generadas en /public');
 }
 

@@ -19,14 +19,26 @@ type SheetState =
   | { tipo: 'reset'; usuario: UsuarioRow }
   | null;
 
+// Texto del banner de categorías huérfanas; null si están todas cubiertas.
+function textoSinEntrenador(usuarios: readonly UsuarioRow[]): string | null {
+  const sin = categoriasSinEntrenador(usuarios);
+  if (sin.length === 0) return null;
+  const sujeto =
+    sin.length === 1
+      ? 'categoría sin entrenador asignado'
+      : 'categorías sin entrenador asignado';
+  return `${String(sin.length)} ${sujeto}: ${sin.join(', ')}`;
+}
+
 export function EquipoScreen({ onBack }: Readonly<Props>) {
   const { usuarios, estado, crear, toggleActivo, resetPassword } = useEquipo();
   const [sheet, setSheet] = useState<SheetState>(null);
   const [ocupado, setOcupado] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
+  const listo = estado === 'listo';
   const sinEntrenador = useMemo(
-    () => categoriasSinEntrenador(usuarios),
-    [usuarios],
+    () => (listo ? textoSinEntrenador(usuarios) : null),
+    [listo, usuarios],
   );
 
   async function alTogglear(u: UsuarioRow): Promise<void> {
@@ -101,7 +113,7 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
         </p>
       )}
 
-      {estado === 'listo' && sinEntrenador.length > 0 && (
+      {sinEntrenador !== null && (
         <p
           style={{
             margin: 0,
@@ -110,15 +122,11 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
             color: '#946200',
           }}
         >
-          {sinEntrenador.length}{' '}
-          {sinEntrenador.length === 1
-            ? 'categoría sin entrenador asignado'
-            : 'categorías sin entrenador asignado'}
-          : {sinEntrenador.join(', ')}
+          {sinEntrenador}
         </p>
       )}
 
-      {estado === 'listo' &&
+      {listo &&
         usuarios.map((u) => (
           <UsuarioCard
             key={u.id}

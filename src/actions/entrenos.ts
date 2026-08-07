@@ -2,11 +2,7 @@ import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro/zod';
 
 import { requireEntrenador, requireUser } from '@/actions/_guard';
-import {
-  generarSemanas,
-  semanaInicioISO,
-  type DiaEntreno,
-} from '@/lib/domain/entrenos';
+import { generarSemanas, semanaInicioISO } from '@/lib/domain/entrenos';
 import {
   guardarAsistencia,
   guardarPlan,

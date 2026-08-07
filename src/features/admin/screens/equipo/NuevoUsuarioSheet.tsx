@@ -72,7 +72,10 @@ export function NuevoUsuarioSheet({ onClose, onCrear }: Readonly<Props>) {
 
   return (
     <Sheet title="Nuevo usuario" onClose={onClose}>
-      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 12 }}>
+      <form
+        onSubmit={(e) => void onSubmit(e)}
+        style={{ display: 'grid', gap: 12 }}
+      >
         {error && (
           <div className="admin-login__error" role="alert">
             {error}

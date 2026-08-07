@@ -24,6 +24,34 @@ interface Props {
   onClose: () => void;
 }
 
+const NOMBRE_KIT: Record<TipoKit, string> = { AZUL: 'Azul', ORO: 'Oro' };
+
+function numeroInicial(kit: KitUniforme): string {
+  return kit.numero != null ? String(kit.numero) : '';
+}
+
+interface Validacion {
+  numero: number;
+  valido: boolean;
+  repetido: boolean;
+}
+
+// Número entero positivo + talla no vacía; el repetido solo advierte.
+function validar(
+  kit: KitUniforme,
+  numeroTxt: string,
+  talla: string,
+  numeroOcupadoEn: (kit: TipoKit, numero: number) => boolean,
+): Validacion {
+  const numero = Number(numeroTxt);
+  const numeroValido = Number.isInteger(numero) && numero > 0;
+  return {
+    numero,
+    valido: numeroValido && talla.trim() !== '',
+    repetido: numeroValido && numeroOcupadoEn(kit.kit, numero),
+  };
+}
+
 export function HojaEntrega({
   kit,
   numeroOcupadoEn,
@@ -31,17 +59,18 @@ export function HojaEntrega({
   onAnular,
   onClose,
 }: Readonly<Props>) {
-  const [numeroTxt, setNumeroTxt] = useState(
-    kit.numero != null ? String(kit.numero) : '',
-  );
+  const [numeroTxt, setNumeroTxt] = useState(() => numeroInicial(kit));
   const [talla, setTalla] = useState(kit.talla);
   const [enviando, setEnviando] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const numero = Number(numeroTxt);
-  const numeroValido = Number.isInteger(numero) && numero > 0;
-  const valido = numeroValido && talla.trim() !== '';
-  const repetido = numeroValido && numeroOcupadoEn(kit.kit, numero);
+  const { numero, valido, repetido } = validar(
+    kit,
+    numeroTxt,
+    talla,
+    numeroOcupadoEn,
+  );
+  const bloqueado = !valido || enviando;
 
   const correr = async (
     accion: () => Promise<string | null>,
@@ -55,10 +84,7 @@ export function HojaEntrega({
   };
 
   return (
-    <Sheet
-      title={`Entrega · Kit ${kit.kit === 'AZUL' ? 'Azul' : 'Oro'}`}
-      onClose={onClose}
-    >
+    <Sheet title={`Entrega · Kit ${NOMBRE_KIT[kit.kit]}`} onClose={onClose}>
       <div style={{ display: 'grid', gap: 14 }}>
         <EtiquetaKit kit={kit.kit} />
         <CampoTexto
@@ -94,7 +120,7 @@ export function HojaEntrega({
         <div style={{ display: 'grid', gap: 10 }}>
           <button
             type="button"
-            disabled={!valido || enviando}
+            disabled={bloqueado}
             onClick={() =>
               void correr(() => onConfirmar(kit.kit, numero, talla.trim()))
             }
@@ -106,8 +132,8 @@ export function HojaEntrega({
               color: '#fff',
               fontSize: 14.5,
               fontWeight: 700,
-              cursor: !valido || enviando ? 'default' : 'pointer',
-              opacity: !valido || enviando ? 0.55 : 1,
+              cursor: bloqueado ? 'default' : 'pointer',
+              opacity: bloqueado ? 0.55 : 1,
             }}
           >
             {kit.entregado ? 'Guardar cambios' : 'Registrar entrega'}

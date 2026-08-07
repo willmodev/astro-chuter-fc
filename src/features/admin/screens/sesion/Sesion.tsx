@@ -99,7 +99,7 @@ export function Sesion({ onVolver, onGuardado, ...params }: Readonly<Props>) {
           <FaseFijaCard icono="wind" fase={FASE_VUELTA_CALMA} />
           <BotonGuardar
             label={s.guardando ? 'Guardando…' : 'Guardar planeación'}
-            onClick={guardarPlaneacion}
+            onClick={() => void guardarPlaneacion()}
           />
 
           <div
@@ -117,7 +117,7 @@ export function Sesion({ onVolver, onGuardado, ...params }: Readonly<Props>) {
             roster={s.roster}
             estaAusente={s.estaAusente}
             onMarcar={s.marcar}
-            onGuardar={guardarAsistencia}
+            onGuardar={() => void guardarAsistencia()}
           />
           <div style={{ height: 8 }} />
         </>

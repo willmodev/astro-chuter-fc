@@ -20,7 +20,7 @@ export function Uniformes({ onEntrega }: Readonly<Props>) {
   const [tab, setTab] = useState<TabUniformes>('estado');
 
   if (estado !== 'listo') {
-    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+    return <EstadoCarga estado={estado} onReintentar={() => void recargar()} />;
   }
 
   const filas = aFilas(alumnos);

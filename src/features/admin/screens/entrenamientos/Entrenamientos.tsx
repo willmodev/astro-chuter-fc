@@ -56,7 +56,10 @@ export function Entrenamientos({ onBack }: Readonly<Props>) {
       />
 
       {data.estado !== 'listo' ? (
-        <EstadoCarga estado={data.estado} onReintentar={data.recargar} />
+        <EstadoCarga
+          estado={data.estado}
+          onReintentar={() => void data.recargar()}
+        />
       ) : grupos.length === 0 ? (
         <p
           style={{

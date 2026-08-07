@@ -1,89 +1,25 @@
-import { useState, type FormEvent } from 'react';
-import { actions } from 'astro:actions';
-
-import { CONTACT } from '@/lib/site';
-import { WA_FAB } from '@/lib/whatsapp';
-import { formatearFechaISO, parseFechaNacimiento } from '@/lib/domain/alumnos';
-import { categoriaDeFecha, rangoFechasAdmitidas } from '@/lib/domain/categoria';
-
-type Status = 'idle' | 'submitting' | 'success' | 'error';
-
-const inputClass =
-  'w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-navy focus:ring-2 focus:ring-brand-navy/20';
-
-// Límites del campo de fecha: derivados del catálogo, no escritos a mano.
-const HOY = new Date();
-const RANGO = rangoFechasAdmitidas(HOY);
+import { ContactFields } from './contact-form/ContactFields';
+import { ContactSuccess } from './contact-form/ContactSuccess';
+import { useContactForm } from './contact-form/useContactForm';
 
 export default function ContactForm() {
-  const [status, setStatus] = useState<Status>('idle');
-  const [childDate, setChildDate] = useState('');
-  const fechaNino = parseFechaNacimiento(childDate);
-  const catSugerida = fechaNino ? categoriaDeFecha(fechaNino, HOY) : null;
-  const suggestedCat = catSugerida
-    ? `${catSugerida.nombre} · ${catSugerida.etiqueta}`
-    : null;
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setStatus('submitting');
-
-    const form = e.currentTarget;
-    const { error } = await actions.enviarContacto(new FormData(form));
-
-    if (error) {
-      setStatus('error');
-      return;
-    }
-    setStatus('success');
-    form.reset();
-    setChildDate('');
-  }
+  const {
+    status,
+    childDate,
+    setChildDate,
+    suggestedCat,
+    fueraDeRango,
+    minFecha,
+    maxFecha,
+    enviar,
+  } = useContactForm();
 
   if (status === 'success') {
-    return (
-      <div className="bg-success/10 flex flex-col items-center gap-4 rounded-2xl p-8 text-center">
-        <div className="bg-success/20 flex h-14 w-14 items-center justify-center rounded-full">
-          <svg
-            aria-hidden="true"
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#10B981"
-            strokeWidth="2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        </div>
-        <div>
-          <p className="text-lg font-semibold text-neutral-800">
-            ¡Mensaje enviado!
-          </p>
-          <p className="mt-1 text-sm text-neutral-500">
-            Te contactaremos pronto. También podés escribirnos directo por
-            WhatsApp al{' '}
-            <a
-              href={WA_FAB}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-brand-navy font-medium underline-offset-2 hover:underline"
-            >
-              {CONTACT.phoneDisplay}
-            </a>
-            .
-          </p>
-        </div>
-      </div>
-    );
+    return <ContactSuccess />;
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+    <form onSubmit={(e) => void enviar(e)} className="space-y-5" noValidate>
       <input
         type="checkbox"
         name="botcheck"
@@ -93,163 +29,14 @@ export default function ContactForm() {
         autoComplete="off"
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="field-wrap relative flex flex-col gap-1.5">
-          <label
-            htmlFor="cf-parent"
-            className="text-sm font-medium text-neutral-700"
-          >
-            Tu nombre (papá/mamá){' '}
-            <span className="text-error" aria-label="campo requerido">
-              *
-            </span>
-          </label>
-          <div className="relative">
-            <input
-              id="cf-parent"
-              type="text"
-              name="nombreAcudiente"
-              required
-              minLength={2}
-              placeholder="Ej. María González"
-              className={inputClass}
-            />
-            <span className="field-underline" aria-hidden="true" />
-          </div>
-        </div>
-
-        <div className="field-wrap relative flex flex-col gap-1.5">
-          <label
-            htmlFor="cf-phone"
-            className="text-sm font-medium text-neutral-700"
-          >
-            Teléfono / WhatsApp{' '}
-            <span className="text-error" aria-label="campo requerido">
-              *
-            </span>
-          </label>
-          <div className="relative">
-            <input
-              id="cf-phone"
-              type="tel"
-              name="telefono"
-              required
-              placeholder="Ej. 300 123 4567"
-              className={inputClass}
-            />
-            <span className="field-underline" aria-hidden="true" />
-          </div>
-        </div>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="field-wrap relative flex flex-col gap-1.5">
-          <label
-            htmlFor="cf-child"
-            className="text-sm font-medium text-neutral-700"
-          >
-            Nombre del niño / niña{' '}
-            <span className="text-error" aria-label="campo requerido">
-              *
-            </span>
-          </label>
-          <div className="relative">
-            <input
-              id="cf-child"
-              type="text"
-              name="nombreNino"
-              required
-              minLength={2}
-              placeholder="Ej. Juan Camilo"
-              className={inputClass}
-            />
-            <span className="field-underline" aria-hidden="true" />
-          </div>
-        </div>
-
-        <div className="field-wrap relative flex flex-col gap-1.5">
-          <label
-            htmlFor="cf-birth"
-            className="text-sm font-medium text-neutral-700"
-          >
-            Fecha de nacimiento del niño/a{' '}
-            <span className="text-error" aria-label="campo requerido">
-              *
-            </span>
-          </label>
-          <div className="relative">
-            <input
-              id="cf-birth"
-              type="date"
-              name="fechaNacimiento"
-              required
-              min={formatearFechaISO(RANGO.min)}
-              max={formatearFechaISO(RANGO.max)}
-              value={childDate}
-              onChange={(e) => setChildDate(e.target.value)}
-              className={inputClass}
-            />
-            <span className="field-underline" aria-hidden="true" />
-          </div>
-          {suggestedCat && (
-            <p
-              className="text-brand-navy text-xs"
-              role="status"
-              aria-live="polite"
-            >
-              ✓ Categoría: <strong>{suggestedCat}</strong>
-            </p>
-          )}
-          {fechaNino && !suggestedCat && (
-            <p
-              className="text-xs text-neutral-500"
-              role="status"
-              aria-live="polite"
-            >
-              Por ahora las categorías llegan hasta los 16 años — escribinos por
-              WhatsApp.
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="field-wrap relative flex flex-col gap-1.5">
-        <label
-          htmlFor="cf-email"
-          className="text-sm font-medium text-neutral-700"
-        >
-          Tu email (opcional)
-        </label>
-        <div className="relative">
-          <input
-            id="cf-email"
-            type="email"
-            name="emailAcudiente"
-            placeholder="Ej. maria@correo.com"
-            className={inputClass}
-          />
-          <span className="field-underline" aria-hidden="true" />
-        </div>
-      </div>
-
-      <div className="field-wrap relative flex flex-col gap-1.5">
-        <label
-          htmlFor="cf-message"
-          className="text-sm font-medium text-neutral-700"
-        >
-          Mensaje / preguntas (opcional)
-        </label>
-        <div className="relative">
-          <textarea
-            id="cf-message"
-            name="mensaje"
-            rows={3}
-            placeholder="¿Alguna pregunta sobre horarios, costos o el programa?"
-            className={`resize-none ${inputClass}`}
-          />
-          <span className="field-underline" aria-hidden="true" />
-        </div>
-      </div>
+      <ContactFields
+        childDate={childDate}
+        onChildDate={setChildDate}
+        suggestedCat={suggestedCat}
+        fueraDeRango={fueraDeRango}
+        minFecha={minFecha}
+        maxFecha={maxFecha}
+      />
 
       {status === 'error' && (
         <p

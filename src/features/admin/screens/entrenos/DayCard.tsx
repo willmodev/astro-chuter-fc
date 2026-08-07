@@ -27,13 +27,27 @@ interface Props {
   onOpen: () => void;
 }
 
-export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
-  const [visor, setVisor] = useState(false);
+interface EstadoCard {
+  tieneLista: boolean;
+  completa: boolean;
+  vacia: boolean;
+  img: string | null;
+}
+
+function estadoDeCard(sesion: Sesion | null): EstadoCard {
   const tienePlan = planeada(sesion);
   const tieneLista = listaPasada(sesion);
-  const completa = tienePlan && tieneLista;
-  const vacia = sesion === null || (!tienePlan && !tieneLista);
-  const img = sesion?.parteCentralImg ?? null;
+  return {
+    tieneLista,
+    completa: tienePlan && tieneLista,
+    vacia: sesion === null || (!tienePlan && !tieneLista),
+    img: sesion?.parteCentralImg ?? null,
+  };
+}
+
+export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
+  const [visor, setVisor] = useState(false);
+  const { tieneLista, completa, vacia, img } = estadoDeCard(sesion);
 
   return (
     <div
@@ -58,7 +72,7 @@ export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
         <DayGlyph day={day} completa={completa} />
       </button>
 
-      {vacia ? (
+      {vacia || sesion === null ? (
         <button
           type="button"
           onClick={onOpen}

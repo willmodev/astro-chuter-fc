@@ -101,7 +101,13 @@ export async function guardarPlaneacion(input: PlaneacionInput): Promise<void> {
     anterior = url;
     url = await subirImagen(entrenadorId, semanaInicio, dia, imagen);
   }
-  await upsertPlaneacion(entrenadorId, semanaInicio, dia, url, nota.trim());
+  await upsertPlaneacion({
+    entrenadorId,
+    semanaInicio,
+    dia,
+    parteCentralUrl: url,
+    parteCentralNota: nota.trim(),
+  });
   if (anterior) await borrarBlob(anterior);
 }
 

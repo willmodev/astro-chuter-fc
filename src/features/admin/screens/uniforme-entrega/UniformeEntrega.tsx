@@ -17,7 +17,12 @@ export function UniformeEntrega({ alumnoId, onVolver }: Readonly<Props>) {
   const data = useUniformeAlumno(alumnoId);
 
   if (data.estado !== 'listo') {
-    return <EstadoCarga estado={data.estado} onReintentar={data.recargar} />;
+    return (
+      <EstadoCarga
+        estado={data.estado}
+        onReintentar={() => void data.recargar()}
+      />
+    );
   }
   if (!data.alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;

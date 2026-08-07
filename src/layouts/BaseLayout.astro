@@ -1,4 +1,9 @@
 ---
+// Solo Bebas Neue se precarga: es la display de todos los titulares y la que
+// más difiere del fallback, así que su swap es el que movía el layout.
+// Las otras dos no se precargan para no competir con el LCP del hero.
+import fontDisplay from '@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2?url';
+
 import { SITE } from '@/lib/site';
 import { pageTitle, buildSportsActivityLocationJsonLd } from '@/lib/seo';
 import Header from '@/components/layout/Header.astro';
@@ -9,10 +14,6 @@ import CursorDot from '@/components/interactive/CursorDot';
 import ScrollProgress from '@/components/interactive/ScrollProgress';
 
 import '@/styles/global.css';
-// Solo Bebas Neue se precarga: es la display de todos los titulares y la que
-// más difiere del fallback, así que su swap es el que movía el layout.
-// Las otras dos no se precargan para no competir con el LCP del hero.
-import fontDisplay from '@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2?url';
 
 interface Props {
   title?: string;

@@ -25,7 +25,12 @@ export function AlumnoForm({
   const form = useAlumnoForm({ modo, alumnoId, onGuardado });
 
   if (form.estado !== 'listo') {
-    return <EstadoCarga estado={form.estado} onReintentar={form.recargar} />;
+    return (
+      <EstadoCarga
+        estado={form.estado}
+        onReintentar={() => void form.recargar()}
+      />
+    );
   }
   if (!form.existe) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
