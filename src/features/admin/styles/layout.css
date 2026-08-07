@@ -174,6 +174,75 @@
     box-shadow: inset 3px 0 0 var(--brand-gold);
   }
 
+  /* ---- Pie del sidebar: sesión activa + cerrar sesión (HU-7.7) ----
+     `__nav` tiene flex: 1, así que el pie queda anclado abajo solo. */
+  .admin-sidebar__footer {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .admin-sidebar__user {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 0 12px;
+    min-width: 0;
+  }
+  .admin-sidebar__user-name {
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .admin-sidebar__user-role {
+    color: var(--brand-gold);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  /* Variante de borde, no de relleno: sobre navy el `--error-deep` del
+     botón de "Más" solo da 3.1:1, así que el rojo se aclara para AA. */
+  .admin-sidebar__logout {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    cursor: pointer;
+    border: 1px solid color-mix(in srgb, var(--error) 42%, transparent);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: color-mix(in srgb, var(--error) 45%, #fff);
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 600;
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      color 0.15s;
+  }
+  .admin-sidebar__logout:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--error) 16%, transparent);
+    border-color: color-mix(in srgb, var(--error) 70%, transparent);
+    color: #fff;
+  }
+  .admin-sidebar__logout:focus-visible {
+    outline: 2px solid var(--brand-gold);
+    outline-offset: 2px;
+  }
+  .admin-sidebar__logout:disabled {
+    cursor: progress;
+    opacity: 0.65;
+  }
+
   /* El contenido no se estira: se limita y centra */
   .admin-main__inner {
     max-width: var(--content-max);

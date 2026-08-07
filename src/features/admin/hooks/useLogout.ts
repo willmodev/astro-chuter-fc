@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import { signOut } from '@/lib/auth/client';
 
+// Única implementación de cierre de sesión del admin: la consumen la
+// pantalla "Más" (mobile) y el pie del sidebar (desktop, HU-7.7).
 interface UseLogout {
   saliendo: boolean;
   cerrarSesion: () => Promise<void>;

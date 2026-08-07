@@ -72,6 +72,8 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
         title={meta.title}
         eyebrow={meta.eyebrow}
         right={right}
+        userName={userName}
+        role={role}
       >
         <VistaAdmin
           ruta={ruta}
