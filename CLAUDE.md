@@ -345,9 +345,9 @@ Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar
 - [ ] Dirección exacta de la Cancha Los Algarrobillos + link de Google Maps embed
 - [ ] Confirmar si el horario es uniforme para todas las categorías o varía
 - [ ] **Entrenador de Baby (SUB 4), Benjamín (SUB 8) y Juvenil (SUB 16)** — hoy hay 4 entrenadores para 7 categorías; las tarjetas omiten la línea
-- [ ] **Fechas de nacimiento pendientes** — tras el seed del 2026-07-30 la base tiene **96 alumnos activos y 20 sin fecha**: 8 del Excel que traen solo el año + 12 que ya no figuran en la hoja. Mientras falten, su categoría se calcula por año
-- [ ] **13 alumnos activos que ya no están en el Excel** — confirmar con Camilo si se retiraron (lista en `docs/excel-data-dictionary.md`)
-- [ ] **3 filas del Excel que el seed omite** — `GERONIMO ESCORCIA` (año `2106`), `ABRAHAM PEREZ` (sin nacimiento), `JUAN PABLO MAESTRE` (sin documento)
+- [x] **Fechas de nacimiento** (cerrado 2026-08-07): la base tiene **82 alumnos activos y 0 sin fecha**. El cliente confirmó que de los 15 que faltaban solo sigue Ángel Santiago (`2020-02-26`); los otros 14 ya no están en el club y se retiraron (`scripts/retirar-alumnos.mjs`)
+- [ ] **Limpiar la hoja `CATEGORIAS`** — quedan 3 filas de alumnos ya retirados (`JOSE ANTONIO LOPEZ`, `MATIAS VIDES VASQUEZ`, `MAXIMILIANO PINTO`). No rompe nada (el seed no reactiva), pero la hoja no refleja el plantel real
+- [ ] **3 filas del Excel que el seed omite** — `GERONIMO ESCORCIA` (año `2106`; su fecha real ya está en la base, falta corregir la hoja), `ABRAHAM PEREZ` (sin nacimiento), `JUAN PABLO MAESTRE` (sin documento)
 - [ ] Testimonios reales (nombre del padre/madre + texto + foto opcional)
 - [ ] Logros del club (torneos, posiciones, años)
 - [ ] Bios completas de Camilo Andrade y Ebed Shaday Calderón

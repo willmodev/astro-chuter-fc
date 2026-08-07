@@ -51,13 +51,13 @@ Más las server-only (Resend, Neon, Better Auth, Blob). Ver `.env.example` para 
 ## Tareas técnicas pendientes
 
 - [ ] **Lighthouse real en producción**: correr desde Chrome DevTools o PageSpeed Insights sobre `https://chuterfc.com`. Target: Performance ≥95, A11y 100, SEO 100.
-- [ ] **Verificación WHOIS del dominio**: el contacto registrante en Namecheap es un correo universitario (`...@unilibre.edu.co`). Cambiarlo por uno permanente en *Registrant Contacts → EDIT*; si ICANN pide reverificar y no llega el correo, Namecheap vuelve a suspender el dominio.
-- [ ] **DMARC**: agregar `TXT _dmarc = v=DMARC1; p=none;` en el DNS de Vercel (mejora entrega a Hotmail, que es la bandeja del club). La CLI devuelve `permission_denied`; hacerlo desde el panel.
 
 ### Ya resueltos ✓
 - [x] Deploy a Vercel y repo conectado (proyecto `astro-chuter-fc`)
 - [x] Dominio propio `chuterfc.com` con NS de Vercel; `www` redirige al apex (308) con cert wildcard
 - [x] Correo del formulario migrado a Resend; dominio verificado con DKIM + SPF + MX
+- [x] Verificación WHOIS del dominio: contacto registrante corregido (2026-08-07)
+- [x] DMARC publicado en el DNS (2026-08-07)
 
 ---
 

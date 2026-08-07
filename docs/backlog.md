@@ -400,5 +400,5 @@ Los hooks de lista y ficha refetchean tras el toggle (spec 14), pero el Dashboar
 - Confirmar si el horario varía por categoría.
 - Bios y fotos de los formadores.
 - **Entrenador de Baby (SUB 4), Benjamín (SUB 8) y Juvenil (SUB 16)** — 4 entrenadores para 7 categorías (spec 15).
-- **Fechas de nacimiento** — el Excel actualizado (2026-07-30) trae 77 de 87; faltan 8 alumnos con solo el año y 2 filas anómalas. Hasta que lleguen, esos alumnos van por el fallback de año.
-- **Confirmar los 10 alumnos que cambian de SUB** al aplicar las fechas reales (los lista `npm run db:seed` en DRY RUN).
+- ~~**Fechas de nacimiento**~~ **Cerrado (2026-08-07):** 82 activos, **0 sin fecha**. De los 15 que faltaban, el cliente confirmó que solo sigue `ANGEL SANTIAGO` (`2020-02-26`); los otros 14 se retiraron (`scripts/retirar-alumnos.mjs`). Ningún alumno activo usa ya el fallback por año.
+- ~~**Confirmar los 10 alumnos que cambian de SUB**~~ confirmado por el cliente antes del seed del 2026-07-30 (spec 15).
