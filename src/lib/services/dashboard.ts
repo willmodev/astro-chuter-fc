@@ -15,7 +15,6 @@ import {
 } from '@/lib/domain/cartera';
 import { proximosCumples } from '@/lib/domain/cumples';
 import type { Cumple } from '@/lib/domain/cumples';
-
 import type { AlumnoRow } from '@/lib/db/repos/alumnos';
 import type { Alumno, Stats } from '@/features/admin/data/types';
 

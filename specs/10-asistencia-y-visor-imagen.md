@@ -47,14 +47,14 @@ Sin persistencia nueva (sigue mock). Solo cambia el contrato de `Sesion` y se di
 ```ts
 // features/admin/data/types.ts — cambia ausentes y muere `registrado`
 export interface Sesion {
-  id: string;                 // `${entrenadorId}-${weekId}-${day}`
+  id: string; // `${entrenadorId}-${weekId}-${day}`
   entrenadorId: string;
-  entrenadorNombre: string;   // denormalizado (mock); en BD será FK
+  entrenadorNombre: string; // denormalizado (mock); en BD será FK
   weekId: string;
-  day: string;                // 'Lunes' | 'Miércoles' | 'Viernes'
+  day: string; // 'Lunes' | 'Miércoles' | 'Viernes'
   parteCentralImg: string | null; // object URL local (mock)
   parteCentralNota: string;
-  ausentes: number[] | null;  // null = lista NO pasada; [] = pasada, todos presentes
+  ausentes: number[] | null; // null = lista NO pasada; [] = pasada, todos presentes
 }
 ```
 
@@ -186,15 +186,15 @@ _Verifica:_ el visor abre desde los tres puntos, hace zoom y pan en móvil y des
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| El pinch/pan táctil custom es delicado (gestos simultáneos, jitter). | Pointer events estándar con doble tap como gesto principal en móvil; pinch como mejora progresiva. Si el gesto falla, el doble tap siempre funciona. |
-| La DayCard hoy es un solo `<button>`; meter el thumbnail clickeable adentro anida interactivos (inválido en HTML y rompe a11y). | Reestructurar la DayCard por composición: card contenedora con dos zonas interactivas hermanas (thumbnail → visor, cuerpo → sesión), sin botones anidados. |
-| "Hoy" del dispositivo hace el gate de lista no determinista en el mock. | Igual que el spec 09: la regla vive en dominio puro con fecha inyectable; la UI inyecta `new Date()` en un solo punto. |
-| El cambio de semántica de `ausentes` (antes `[]` = default todos presentes; ahora `[]` = lista pasada sin ausentes) puede confundir al migrar el mock. | El mock se reescribe en el bloque A con la semántica nueva; no hay datos reales que migrar. En BD (spec de persistencia) nacerá ya con `null`. |
-| El visor sobre object URLs muestra imagen rota tras recargar. | Coherente con todo el mock (specs 07–09); el visor solo se ofrece cuando hay imagen viva. |
-| Con el visor abierto, el scroll del body de fondo se mueve o Escape/atrás rompen la navegación. | Bloquear scroll del body mientras el visor está abierto; el visor es estado local (no ruta), así atrás/adelante del navegador no lo ven. |
-| Los 4 estados de la DayCard inflan el archivo > 200 líneas. | Los estados se resuelven con las funciones de dominio (`planeada`, `listaPasada`) y sub-componentes pequeños, no con ramas inline. |
+| Riesgo                                                                                                                                                 | Mitigación                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| El pinch/pan táctil custom es delicado (gestos simultáneos, jitter).                                                                                   | Pointer events estándar con doble tap como gesto principal en móvil; pinch como mejora progresiva. Si el gesto falla, el doble tap siempre funciona.       |
+| La DayCard hoy es un solo `<button>`; meter el thumbnail clickeable adentro anida interactivos (inválido en HTML y rompe a11y).                        | Reestructurar la DayCard por composición: card contenedora con dos zonas interactivas hermanas (thumbnail → visor, cuerpo → sesión), sin botones anidados. |
+| "Hoy" del dispositivo hace el gate de lista no determinista en el mock.                                                                                | Igual que el spec 09: la regla vive en dominio puro con fecha inyectable; la UI inyecta `new Date()` en un solo punto.                                     |
+| El cambio de semántica de `ausentes` (antes `[]` = default todos presentes; ahora `[]` = lista pasada sin ausentes) puede confundir al migrar el mock. | El mock se reescribe en el bloque A con la semántica nueva; no hay datos reales que migrar. En BD (spec de persistencia) nacerá ya con `null`.             |
+| El visor sobre object URLs muestra imagen rota tras recargar.                                                                                          | Coherente con todo el mock (specs 07–09); el visor solo se ofrece cuando hay imagen viva.                                                                  |
+| Con el visor abierto, el scroll del body de fondo se mueve o Escape/atrás rompen la navegación.                                                        | Bloquear scroll del body mientras el visor está abierto; el visor es estado local (no ruta), así atrás/adelante del navegador no lo ven.                   |
+| Los 4 estados de la DayCard inflan el archivo > 200 líneas.                                                                                            | Los estados se resuelven con las funciones de dominio (`planeada`, `listaPasada`) y sub-componentes pequeños, no con ramas inline.                         |
 
 ---
 

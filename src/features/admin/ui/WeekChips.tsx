@@ -28,7 +28,9 @@ export function WeekChips({ semanas, value, onChange }: Readonly<Props>) {
                 padding: '0 14px',
                 borderRadius: 'var(--radius-pill)',
                 border: activa ? 'none' : '1px solid var(--border-subtle)',
-                background: activa ? 'var(--brand-navy)' : 'var(--surface-card)',
+                background: activa
+                  ? 'var(--brand-navy)'
+                  : 'var(--surface-card)',
                 color: activa ? '#fff' : 'var(--text-body)',
                 fontSize: 13,
                 fontWeight: activa ? 700 : 600,

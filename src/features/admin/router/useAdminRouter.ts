@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import type { Rol } from '@/lib/domain/usuarios';
+
 import { aplicarGate } from './gate';
 import { parseRuta, rutaAPath } from './rutas';
+
 import type { RutaAdmin } from './types';
-import type { Rol } from '@/lib/domain/usuarios';
 
 // Estado de `history` (no ensucia la URL): hoy solo transporta el mes tocado
 // hacia Registrar pago, para preseleccionarlo sin que viaje en el path.
@@ -41,8 +43,12 @@ export function useAdminRouter(role: Rol): {
 
     const alCambiarHistorial = (evento: PopStateEvent): void => {
       const base = aplicarGate(parseRuta(window.location.pathname), role);
-      const mes = esEstadoNavegacion(evento.state) ? evento.state.mes : undefined;
-      setRuta(base.vista === 'pago' && mes !== undefined ? { ...base, mes } : base);
+      const mes = esEstadoNavegacion(evento.state)
+        ? evento.state.mes
+        : undefined;
+      setRuta(
+        base.vista === 'pago' && mes !== undefined ? { ...base, mes } : base,
+      );
     };
     window.addEventListener('popstate', alCambiarHistorial);
     return () => window.removeEventListener('popstate', alCambiarHistorial);

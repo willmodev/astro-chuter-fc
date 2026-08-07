@@ -3,9 +3,10 @@ import { useMemo, useState } from 'react';
 import { CATEGORIA_TODAS, filtraAlumnos } from '@/lib/domain/alumnos';
 import { rosterDe } from '@/lib/domain/entrenos';
 
+import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
+
 import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 import type { AlumnoPlantel } from '../../data/types';
-import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
 
 // Plantel del entrenador: SOLO los alumnos de sus categorías (payload sin
 // dinero), con búsqueda (nombre/acudiente, sin acentos) y filtro por cat —

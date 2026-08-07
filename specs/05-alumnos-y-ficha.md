@@ -64,7 +64,7 @@ export type RutaAdmin =
 ```ts
 // features/admin/hooks/useAlumnos.ts
 interface AlumnosData {
-  alumnos: Alumno[];        // orden alfabético
+  alumnos: Alumno[]; // orden alfabético
   total: number;
   enMora: number;
 }
@@ -176,13 +176,13 @@ _Verifica:_ deep-link `/admin/alumnos/:id` directo funciona; volver regresa a la
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| El catch-all `[...ruta].astro` captura rutas que no debe (`/admin/login`, `/api/**`) o rompe el gate. | Astro prioriza rutas estáticas sobre dinámicas (`login.astro` e `index.astro` ganan); el middleware protege `/admin/**` antes de renderizar. Criterios verifican login y deep-links con y sin sesión. |
-| Duplicar el markup de montaje entre `index.astro` y `[...ruta].astro` genera divergencia. | Extraer lo común (o hacer que `index.astro` sea trivial); criterio de DRY en la revisión del cierre. |
-| Migrar el router por estado a URL rompe navegación existente (Equipo, FAB, gate de rol del entrenador). | El Bloque A migra todo en un solo paso y verifica cada tab + rol entrenador antes de seguir; `RutaAdmin` tipado hace imposible una vista sin ruta. |
-| Desincronización URL ↔ estado (doble fuente de verdad). | La URL es la única fuente: `useAdminRouter` deriva `ruta` de `location.pathname`; nadie guarda la vista en estado propio. |
-| `parseRuta` con `:id` malformado (`/admin/alumnos/abc`) crashea. | Parseo defensivo: id no numérico → `{ vista: 'alumnos' }`; id numérico inexistente → "Alumno no encontrado". Ambos con criterio. |
-| La Ficha (cabecera + 3 tabs) infla archivos > 200 líneas. | Descomponer en sub-componentes por tab desde el diseño, como en el Dashboard del spec 03. |
-| La búsqueda sin acentos se implementa distinto en cada pantalla futura. | `normaliza`/`filtraAlumnos` viven en `lib/domain` y son la única vía; Cartera las reutilizará. |
-| El contrato de `useAlumnos`/`useAlumno` no calza con las Actions futuras. | Modelarlo desde `ARCHITECTURE.md §5` (misma disciplina que `useDashboardData`, que ya pasó por esto). |
+| Riesgo                                                                                                  | Mitigación                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| El catch-all `[...ruta].astro` captura rutas que no debe (`/admin/login`, `/api/**`) o rompe el gate.   | Astro prioriza rutas estáticas sobre dinámicas (`login.astro` e `index.astro` ganan); el middleware protege `/admin/**` antes de renderizar. Criterios verifican login y deep-links con y sin sesión. |
+| Duplicar el markup de montaje entre `index.astro` y `[...ruta].astro` genera divergencia.               | Extraer lo común (o hacer que `index.astro` sea trivial); criterio de DRY en la revisión del cierre.                                                                                                  |
+| Migrar el router por estado a URL rompe navegación existente (Equipo, FAB, gate de rol del entrenador). | El Bloque A migra todo en un solo paso y verifica cada tab + rol entrenador antes de seguir; `RutaAdmin` tipado hace imposible una vista sin ruta.                                                    |
+| Desincronización URL ↔ estado (doble fuente de verdad).                                                 | La URL es la única fuente: `useAdminRouter` deriva `ruta` de `location.pathname`; nadie guarda la vista en estado propio.                                                                             |
+| `parseRuta` con `:id` malformado (`/admin/alumnos/abc`) crashea.                                        | Parseo defensivo: id no numérico → `{ vista: 'alumnos' }`; id numérico inexistente → "Alumno no encontrado". Ambos con criterio.                                                                      |
+| La Ficha (cabecera + 3 tabs) infla archivos > 200 líneas.                                               | Descomponer en sub-componentes por tab desde el diseño, como en el Dashboard del spec 03.                                                                                                             |
+| La búsqueda sin acentos se implementa distinto en cada pantalla futura.                                 | `normaliza`/`filtraAlumnos` viven en `lib/domain` y son la única vía; Cartera las reutilizará.                                                                                                        |
+| El contrato de `useAlumnos`/`useAlumno` no calza con las Actions futuras.                               | Modelarlo desde `ARCHITECTURE.md §5` (misma disciplina que `useDashboardData`, que ya pasó por esto).                                                                                                 |

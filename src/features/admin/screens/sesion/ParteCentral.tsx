@@ -13,7 +13,12 @@ interface Props {
   onElegirImagen: (file: File) => void;
 }
 
-export function ParteCentral({ img, nota, setNota, onElegirImagen }: Readonly<Props>) {
+export function ParteCentral({
+  img,
+  nota,
+  setNota,
+  onElegirImagen,
+}: Readonly<Props>) {
   const inputId = useId();
   const [verVisor, setVerVisor] = useState(false);
 
@@ -77,8 +82,12 @@ export function ParteCentral({ img, nota, setNota, onElegirImagen }: Readonly<Pr
           gap: 8,
           height: 46,
           borderRadius: 'var(--radius-md)',
-          border: img === null ? '1.5px dashed var(--brand-gold)' : '1px solid var(--border-subtle)',
-          background: img === null ? 'var(--brand-gold-soft)' : 'var(--surface-sunken)',
+          border:
+            img === null
+              ? '1.5px dashed var(--brand-gold)'
+              : '1px solid var(--border-subtle)',
+          background:
+            img === null ? 'var(--brand-gold-soft)' : 'var(--surface-sunken)',
           color: img === null ? 'var(--brand-gold-deep)' : 'var(--brand-navy)',
           fontSize: 14,
           fontWeight: 700,

@@ -4,6 +4,7 @@ import { type DiaEntreno } from '@/lib/domain/entrenos';
 import { listaPasada, planeada } from '@/lib/domain/sesion';
 
 import { VisorImagen } from '../../ui/VisorImagen';
+
 import {
   DayGlyph,
   RegistroLabel,
@@ -12,6 +13,7 @@ import {
   VaciaBody,
   ZONA_RESET,
 } from './DayCardParts';
+
 import type { AlumnoPlantel, Sesion } from '../../data/types';
 
 // Card de un día de entrenamiento. 4 estados derivados de la sesión:
@@ -25,13 +27,27 @@ interface Props {
   onOpen: () => void;
 }
 
-export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
-  const [visor, setVisor] = useState(false);
+interface EstadoCard {
+  tieneLista: boolean;
+  completa: boolean;
+  vacia: boolean;
+  img: string | null;
+}
+
+function estadoDeCard(sesion: Sesion | null): EstadoCard {
   const tienePlan = planeada(sesion);
   const tieneLista = listaPasada(sesion);
-  const completa = tienePlan && tieneLista;
-  const vacia = sesion === null || (!tienePlan && !tieneLista);
-  const img = sesion?.parteCentralImg ?? null;
+  return {
+    tieneLista,
+    completa: tienePlan && tieneLista,
+    vacia: sesion === null || (!tienePlan && !tieneLista),
+    img: sesion?.parteCentralImg ?? null,
+  };
+}
+
+export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
+  const [visor, setVisor] = useState(false);
+  const { tieneLista, completa, vacia, img } = estadoDeCard(sesion);
 
   return (
     <div
@@ -56,8 +72,12 @@ export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
         <DayGlyph day={day} completa={completa} />
       </button>
 
-      {vacia ? (
-        <button type="button" onClick={onOpen} style={{ ...ZONA_RESET, flex: 1, minWidth: 0 }}>
+      {vacia || sesion === null ? (
+        <button
+          type="button"
+          onClick={onOpen}
+          style={{ ...ZONA_RESET, flex: 1, minWidth: 0 }}
+        >
           <VaciaBody />
         </button>
       ) : (
@@ -72,12 +92,24 @@ export function DayCard({ day, sesion, roster, onOpen }: Readonly<Props>) {
               <ThumbImg src={img} />
             </button>
           ) : (
-            <button type="button" onClick={onOpen} style={{ ...ZONA_RESET, flexShrink: 0 }}>
+            <button
+              type="button"
+              onClick={onOpen}
+              style={{ ...ZONA_RESET, flexShrink: 0 }}
+            >
               <ThumbPlaceholder />
             </button>
           )}
-          <button type="button" onClick={onOpen} style={{ ...ZONA_RESET, flex: 1, minWidth: 0 }}>
-            <RegistroLabel sesion={sesion} roster={roster} tieneLista={tieneLista} />
+          <button
+            type="button"
+            onClick={onOpen}
+            style={{ ...ZONA_RESET, flex: 1, minWidth: 0 }}
+          >
+            <RegistroLabel
+              sesion={sesion}
+              roster={roster}
+              tieneLista={tieneLista}
+            />
           </button>
         </>
       )}

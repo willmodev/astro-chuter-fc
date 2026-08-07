@@ -1,11 +1,10 @@
-import type { CSSProperties } from 'react';
-
 import {
   esMesCobrable,
   MESES_VISIBLES as MONTHS,
   MESES_VISIBLES_LARGOS as MONTHS_LONG,
 } from '@/lib/domain/cartera';
 
+import type { CSSProperties } from 'react';
 import type { EstadoMes } from '../../data/types';
 
 interface Props {

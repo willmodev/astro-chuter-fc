@@ -1,10 +1,4 @@
-import {
-  boolean,
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-} from 'drizzle-orm/pg-core';
+import { boolean, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
 // Los dos roles del back-office. El plugin `admin` de Better Auth usa el
 // campo `role`; el enum lo acota a los dos valores válidos.

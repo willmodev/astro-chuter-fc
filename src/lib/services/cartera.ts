@@ -42,7 +42,13 @@ export async function registrarPagos(
     .filter((mes) => !yaPagados.has(mes))
     .filter((mes) =>
       esMesCobrable(
-        estadoDelMes({ anio: input.anio, mes, pagado: false, fechaInicio, hoy }),
+        estadoDelMes({
+          anio: input.anio,
+          mes,
+          pagado: false,
+          fechaInicio,
+          hoy,
+        }),
       ),
     )
     .map((mes) => ({

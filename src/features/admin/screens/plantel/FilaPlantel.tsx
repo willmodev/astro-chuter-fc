@@ -1,5 +1,6 @@
 import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
+
 import type { AlumnoPlantel } from '../../data/types';
 
 // Fila del plantel del entrenador: identidad + categoría/acudiente. A
@@ -51,12 +52,16 @@ export function FilaPlantel({ alumno, onOpen }: Readonly<Props>) {
             textOverflow: 'ellipsis',
           }}
         >
-          <b style={{ color: 'var(--text-body)', fontWeight: 700 }}>{alumno.cat}</b>
+          <b style={{ color: 'var(--text-body)', fontWeight: 700 }}>
+            {alumno.cat}
+          </b>
           {' · '}
           {alumno.acu}
         </span>
       </span>
-      <span style={{ display: 'flex', color: 'var(--text-faint)', flexShrink: 0 }}>
+      <span
+        style={{ display: 'flex', color: 'var(--text-faint)', flexShrink: 0 }}
+      >
         <Icon name="chevron-right" size={18} />
       </span>
     </button>

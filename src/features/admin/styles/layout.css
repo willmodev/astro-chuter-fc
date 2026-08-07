@@ -159,7 +159,9 @@
     font-family: var(--font-sans);
     font-size: 13.5px;
     font-weight: 500;
-    transition: background 0.15s, color 0.15s;
+    transition:
+      background 0.15s,
+      color 0.15s;
   }
   .admin-sidebar__link:hover {
     background: rgba(255, 255, 255, 0.06);

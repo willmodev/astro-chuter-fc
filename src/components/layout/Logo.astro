@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+
 import logo from '@/assets/images/chuter-logo.jpg';
 
 interface Props {
@@ -24,7 +25,14 @@ const sizeClass = light ? 'h-14 w-14' : 'h-11 w-11';
     loading="eager"
     class={`${sizeClass} rounded-lg shadow-sm`}
   />
-  <span class:list={["font-display text-xl leading-none tracking-wide", light ? "text-white" : "text-brand-navy"]}>
-    Chuter <span class:list={[light ? "text-brand-gold" : "text-brand-gold-ink"]}>FC</span>
+  <span
+    class:list={[
+      'font-display text-xl leading-none tracking-wide',
+      light ? 'text-white' : 'text-brand-navy',
+    ]}
+  >
+    Chuter <span
+      class:list={[light ? 'text-brand-gold' : 'text-brand-gold-ink']}>FC</span
+    >
   </span>
 </a>

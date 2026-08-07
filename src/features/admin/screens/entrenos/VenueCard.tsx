@@ -36,10 +36,18 @@ export function VenueCard() {
         <Icon name="map-pin" size={19} />
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-strong)' }}>
+        <div
+          style={{
+            fontSize: 13.5,
+            fontWeight: 700,
+            color: 'var(--text-strong)',
+          }}
+        >
           {LOCATION.venue}
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{HORARIO_CORTO}</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+          {HORARIO_CORTO}
+        </div>
       </div>
     </div>
   );

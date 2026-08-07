@@ -1,9 +1,10 @@
 import { mesesEnMora, saldoPendiente } from '@/lib/domain/cartera';
-import { fmt } from '@/lib/format';
 import { waTo } from '@/lib/whatsapp';
 
 import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
+import { Monto } from '../../ui/Monto';
+
 import type { Alumno } from '../../data/types';
 
 // Top morosos con avatar (aro dorado), saldo y botón de recordatorio por
@@ -76,12 +77,16 @@ export function CobrosPendientes({ morosos, onOpen }: Readonly<Props>) {
                     fontWeight: 600,
                   }}
                 >
-                  {meses} {meses === 1 ? 'mes' : 'meses'} · {fmt(saldoPendiente(s))}
+                  {meses} {meses === 1 ? 'mes' : 'meses'} ·{' '}
+                  <Monto valor={saldoPendiente(s)} />
                 </span>
               </span>
             </button>
             <a
-              href={waTo(s.phone, `Hola ${s.acu}, te recordamos la mensualidad de ${s.name} en Chuter FC.`)}
+              href={waTo(
+                s.phone,
+                `Hola ${s.acu}, te recordamos la mensualidad de ${s.name} en Chuter FC.`,
+              )}
               target="_blank"
               rel="noreferrer"
               aria-label="Recordar por WhatsApp"

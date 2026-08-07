@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
-
 import { useModalDialog } from './useModalDialog';
+
+import type { ReactNode } from 'react';
 
 interface Props {
   title: string;

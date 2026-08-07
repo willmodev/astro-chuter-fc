@@ -7,6 +7,7 @@ import { NuevoUsuarioSheet } from './NuevoUsuarioSheet';
 import { ResetPasswordSheet } from './ResetPasswordSheet';
 import { UsuarioCard } from './UsuarioCard';
 import { useEquipo } from './useEquipo';
+
 import type { UsuarioRow } from './types';
 
 interface Props {
@@ -18,14 +19,26 @@ type SheetState =
   | { tipo: 'reset'; usuario: UsuarioRow }
   | null;
 
+// Texto del banner de categorías huérfanas; null si están todas cubiertas.
+function textoSinEntrenador(usuarios: readonly UsuarioRow[]): string | null {
+  const sin = categoriasSinEntrenador(usuarios);
+  if (sin.length === 0) return null;
+  const sujeto =
+    sin.length === 1
+      ? 'categoría sin entrenador asignado'
+      : 'categorías sin entrenador asignado';
+  return `${String(sin.length)} ${sujeto}: ${sin.join(', ')}`;
+}
+
 export function EquipoScreen({ onBack }: Readonly<Props>) {
   const { usuarios, estado, crear, toggleActivo, resetPassword } = useEquipo();
   const [sheet, setSheet] = useState<SheetState>(null);
   const [ocupado, setOcupado] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
+  const listo = estado === 'listo';
   const sinEntrenador = useMemo(
-    () => categoriasSinEntrenador(usuarios),
-    [usuarios],
+    () => (listo ? textoSinEntrenador(usuarios) : null),
+    [listo, usuarios],
   );
 
   async function alTogglear(u: UsuarioRow): Promise<void> {
@@ -90,7 +103,9 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
       )}
 
       {estado === 'cargando' && (
-        <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>Cargando equipo…</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
+          Cargando equipo…
+        </p>
       )}
       {estado === 'error' && (
         <p style={{ color: 'var(--error-deep)', fontSize: 14 }}>
@@ -98,17 +113,20 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
         </p>
       )}
 
-      {estado === 'listo' && sinEntrenador.length > 0 && (
-        <p style={{ margin: 0, fontSize: 12.5, fontWeight: 600, color: '#946200' }}>
-          {sinEntrenador.length}{' '}
-          {sinEntrenador.length === 1
-            ? 'categoría sin entrenador asignado'
-            : 'categorías sin entrenador asignado'}
-          : {sinEntrenador.join(', ')}
+      {sinEntrenador !== null && (
+        <p
+          style={{
+            margin: 0,
+            fontSize: 12.5,
+            fontWeight: 600,
+            color: '#946200',
+          }}
+        >
+          {sinEntrenador}
         </p>
       )}
 
-      {estado === 'listo' &&
+      {listo &&
         usuarios.map((u) => (
           <UsuarioCard
             key={u.id}

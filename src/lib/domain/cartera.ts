@@ -10,14 +10,34 @@ export type MetodoPago = 'efectivo' | 'transferencia';
 // La BD guarda solo pagos reales; el estado de cada mes se DERIVA aquí.
 
 export const MESES = [
-  'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC',
+  'ENE',
+  'FEB',
+  'MAR',
+  'ABR',
+  'MAY',
+  'JUN',
+  'JUL',
+  'AGO',
+  'SEP',
+  'OCT',
+  'NOV',
+  'DIC',
 ] as const;
 export type Mes = (typeof MESES)[number];
 
 export const NOMBRE_MES: Record<Mes, string> = {
-  ENE: 'Enero', FEB: 'Febrero', MAR: 'Marzo', ABR: 'Abril',
-  MAY: 'Mayo', JUN: 'Junio', JUL: 'Julio', AGO: 'Agosto',
-  SEP: 'Septiembre', OCT: 'Octubre', NOV: 'Noviembre', DIC: 'Diciembre',
+  ENE: 'Enero',
+  FEB: 'Febrero',
+  MAR: 'Marzo',
+  ABR: 'Abril',
+  MAY: 'Mayo',
+  JUN: 'Junio',
+  JUL: 'Julio',
+  AGO: 'Agosto',
+  SEP: 'Septiembre',
+  OCT: 'Octubre',
+  NOV: 'Noviembre',
+  DIC: 'Diciembre',
 };
 
 // Arranque del club: meses previos (incl. ENE/FEB 2026) quedan `na`.
@@ -40,7 +60,9 @@ export const MESES_VISIBLES: Mes[] = MESES.slice(0, idxMes(MES_FIN_COBRO) + 1);
 export const MESES_TEMPORADA = MESES_VISIBLES.length;
 
 // Nombres largos alineados a la tira visible (para títulos/tooltips en la UI).
-export const MESES_VISIBLES_LARGOS: string[] = MESES_VISIBLES.map((m) => NOMBRE_MES[m]);
+export const MESES_VISIBLES_LARGOS: string[] = MESES_VISIBLES.map(
+  (m) => NOMBRE_MES[m],
+);
 
 // Índice del mes en curso dentro de la tira visible (acotado a [0, len−1]).
 // Fuente única: la usa el dashboard (servidor) y la cartera/pago (cliente).
@@ -104,14 +126,21 @@ export function esMesCobrable(estado: EstadoMes): boolean {
 /** Recaudo total del año: Σ (meses pagados × cuota) de todos los alumnos. */
 export function recaudoAnio(alumnos: readonly AlumnoCartera[]): number {
   return alumnos.reduce(
-    (sum, a) => sum + a.states.filter((estado) => estado === 'paid').length * a.cuota,
+    (sum, a) =>
+      sum + a.states.filter((estado) => estado === 'paid').length * a.cuota,
     0,
   );
 }
 
 /** Recaudo del mes en curso: Σ cuotas pagadas en `mesVivo`. */
-export function recaudoMes(alumnos: readonly AlumnoCartera[], mesVivo: number): number {
-  return alumnos.reduce((sum, a) => (a.states[mesVivo] === 'paid' ? sum + a.cuota : sum), 0);
+export function recaudoMes(
+  alumnos: readonly AlumnoCartera[],
+  mesVivo: number,
+): number {
+  return alumnos.reduce(
+    (sum, a) => (a.states[mesVivo] === 'paid' ? sum + a.cuota : sum),
+    0,
+  );
 }
 
 /** Cartera vencida total: Σ saldo pendiente (meses en mora × cuota) de todos. */
@@ -120,8 +149,14 @@ export function carteraVencida(alumnos: readonly AlumnoCartera[]): number {
 }
 
 /** Meta del mes en curso: Σ cuotas esperadas (alumnos fuera de temporada no cuentan). */
-export function metaMes(alumnos: readonly AlumnoCartera[], mesVivo: number): number {
-  return alumnos.reduce((sum, a) => (a.states[mesVivo] !== 'na' ? sum + a.cuota : sum), 0);
+export function metaMes(
+  alumnos: readonly AlumnoCartera[],
+  mesVivo: number,
+): number {
+  return alumnos.reduce(
+    (sum, a) => (a.states[mesVivo] !== 'na' ? sum + a.cuota : sum),
+    0,
+  );
 }
 
 /** % de alumnos sin ningún mes en mora. */

@@ -1,4 +1,7 @@
-import type { EntrenoDeHoy, EntrenoDeHoyFila } from '@/lib/services/entreno-de-hoy';
+import type {
+  EntrenoDeHoy,
+  EntrenoDeHoyFila,
+} from '@/lib/services/entreno-de-hoy';
 
 import { SectionLabel } from '../../chrome/SectionLabel';
 import { AsistPill } from '../../ui/AsistPill';
@@ -29,7 +32,14 @@ function Estado({ fila }: Readonly<{ fila: EntrenoDeHoyFila }>) {
 
 function Fila({ fila }: Readonly<{ fila: EntrenoDeHoyFila }>) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '10px 14px' }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 11,
+        padding: '10px 14px',
+      }}
+    >
       <Avatar name={fila.entrenadorNombre} size={30} />
       {fila.parteCentralUrl !== null ? (
         <img

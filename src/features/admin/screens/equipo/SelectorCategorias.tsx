@@ -40,7 +40,9 @@ export function SelectorCategorias({
               padding: '9px 11px',
               borderRadius: 'var(--radius-md)',
               border: `1px solid ${activa ? 'var(--brand-navy)' : 'var(--border-subtle)'}`,
-              background: ocupada ? 'var(--surface-sunken)' : 'var(--surface-card)',
+              background: ocupada
+                ? 'var(--surface-sunken)'
+                : 'var(--surface-card)',
               color: ocupada ? 'var(--text-muted)' : 'var(--text-strong)',
               cursor: ocupada || disabled ? 'not-allowed' : 'pointer',
               fontSize: 14,
@@ -51,7 +53,11 @@ export function SelectorCategorias({
               checked={activa}
               disabled={ocupada || disabled}
               onChange={() => onToggle(c.etiqueta)}
-              style={{ width: 17, height: 17, accentColor: 'var(--brand-navy)' }}
+              style={{
+                width: 17,
+                height: 17,
+                accentColor: 'var(--brand-navy)',
+              }}
             />
             <span style={{ fontWeight: 600 }}>
               {c.etiqueta} · {c.nombre}

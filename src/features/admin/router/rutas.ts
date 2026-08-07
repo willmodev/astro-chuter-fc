@@ -10,51 +10,76 @@ function diaDeSlug(slug: string): DiaEntreno | null {
 
 const WEEK_ID = /^w-\d+$/;
 
+// Vistas sin parámetros: /admin/<vista> y nada más.
+type VistaSimple =
+  | 'cartera'
+  | 'mas'
+  | 'equipo'
+  | 'uniformes'
+  | 'plantel'
+  | 'entrenamientos';
+
+const VISTAS_SIMPLES = new Set<string>([
+  'cartera',
+  'mas',
+  'equipo',
+  'uniformes',
+  'plantel',
+  'entrenamientos',
+]);
+
+function esVistaSimple(vista: string): vista is VistaSimple {
+  return VISTAS_SIMPLES.has(vista);
+}
+
+// /admin/alumnos/:id/<sub>
+const SUB_ALUMNO = new Map<string, 'pago' | 'alumnoEditar' | 'uniformeEntrega'>(
+  [
+    ['pago', 'pago'],
+    ['editar', 'alumnoEditar'],
+    ['uniforme', 'uniformeEntrega'],
+  ],
+);
+
+// Un :id no numérico cae a la lista (un id numérico inexistente lo resuelve
+// la Ficha con su estado "Alumno no encontrado").
+function parseAlumnos(id?: string, sub?: string): RutaAdmin {
+  // "nuevo" se resuelve antes que :id (no es un id numérico).
+  if (id === 'nuevo') return { vista: 'alumnoNuevo' };
+  if (id === undefined) return { vista: 'alumnos' };
+
+  const alumnoId = Number(id);
+  if (!Number.isInteger(alumnoId) || alumnoId <= 0) return { vista: 'alumnos' };
+  if (sub === undefined) return { vista: 'ficha', alumnoId };
+
+  const vista = SUB_ALUMNO.get(sub);
+  return vista === undefined ? { vista: 'alumnos' } : { vista, alumnoId };
+}
+
+// /admin/entrenos/:weekId/:day — semana o día inválidos caen a entrenos.
+function parseEntrenos(id?: string, sub?: string): RutaAdmin {
+  if (id === undefined) return { vista: 'entrenos' };
+
+  const day = sub === undefined ? null : diaDeSlug(sub);
+  if (WEEK_ID.test(id) && day !== null) {
+    return { vista: 'sesion', weekId: id, day };
+  }
+  return { vista: 'entrenos' };
+}
+
 // Conversión pura pathname ↔ RutaAdmin. Parseo defensivo: cualquier ruta
-// desconocida cae al dashboard y un :id no numérico cae a la lista de
-// alumnos (un id numérico inexistente lo resuelve la Ficha con su estado
-// "Alumno no encontrado").
+// desconocida cae al dashboard.
 export function parseRuta(pathname: string): RutaAdmin {
   const [raiz, vista, id, sub, ...resto] = pathname.split('/').filter(Boolean);
 
   if (raiz !== 'admin' || resto.length > 0) return { vista: 'dashboard' };
   if (vista === undefined) return { vista: 'dashboard' };
 
-  if (vista === 'alumnos') {
-    // "nuevo" se resuelve antes que :id (no es un id numérico).
-    if (id === 'nuevo') return { vista: 'alumnoNuevo' };
-    if (id === undefined) return { vista: 'alumnos' };
-    const alumnoId = Number(id);
-    if (!Number.isInteger(alumnoId) || alumnoId <= 0) return { vista: 'alumnos' };
-    if (sub === undefined) return { vista: 'ficha', alumnoId };
-    if (sub === 'pago') return { vista: 'pago', alumnoId };
-    if (sub === 'editar') return { vista: 'alumnoEditar', alumnoId };
-    if (sub === 'uniforme') return { vista: 'uniformeEntrega', alumnoId };
-    return { vista: 'alumnos' };
-  }
-
-  if (vista === 'entrenos') {
-    if (id === undefined) return { vista: 'entrenos' };
-    // /admin/entrenos/:weekId/:day — semana o día inválidos caen a entrenos.
-    const day = sub === undefined ? null : diaDeSlug(sub);
-    if (WEEK_ID.test(id) && day !== null) {
-      return { vista: 'sesion', weekId: id, day };
-    }
-    return { vista: 'entrenos' };
-  }
+  if (vista === 'alumnos') return parseAlumnos(id, sub);
+  if (vista === 'entrenos') return parseEntrenos(id, sub);
 
   if (id !== undefined) return { vista: 'dashboard' };
-  if (
-    vista === 'cartera' ||
-    vista === 'mas' ||
-    vista === 'equipo' ||
-    vista === 'uniformes' ||
-    vista === 'plantel' ||
-    vista === 'entrenamientos'
-  ) {
-    return { vista };
-  }
-  return { vista: 'dashboard' };
+  return esVistaSimple(vista) ? { vista } : { vista: 'dashboard' };
 }
 
 export function rutaAPath(ruta: RutaAdmin): string {

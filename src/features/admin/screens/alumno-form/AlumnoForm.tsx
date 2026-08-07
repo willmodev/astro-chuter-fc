@@ -1,6 +1,7 @@
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
 import { AlumnoNoEncontrado } from '../ficha/AlumnoNoEncontrado';
+
 import { AvisoHermano } from './AvisoHermano';
 import { CamposAlumno } from './CamposAlumno';
 import { useAlumnoForm } from './useAlumnoForm';
@@ -15,11 +16,21 @@ interface Props {
   onGuardado: (id: number) => void;
 }
 
-export function AlumnoForm({ modo, alumnoId, onVolver, onGuardado }: Readonly<Props>) {
+export function AlumnoForm({
+  modo,
+  alumnoId,
+  onVolver,
+  onGuardado,
+}: Readonly<Props>) {
   const form = useAlumnoForm({ modo, alumnoId, onGuardado });
 
   if (form.estado !== 'listo') {
-    return <EstadoCarga estado={form.estado} onReintentar={form.recargar} />;
+    return (
+      <EstadoCarga
+        estado={form.estado}
+        onReintentar={() => void form.recargar()}
+      />
+    );
   }
   if (!form.existe) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
@@ -70,7 +81,14 @@ export function AlumnoForm({ modo, alumnoId, onVolver, onGuardado }: Readonly<Pr
       {form.hermano && <AvisoHermano />}
 
       {form.errorServidor && (
-        <p style={{ margin: 0, fontSize: 13, color: 'var(--error)', fontWeight: 600 }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 13,
+            color: 'var(--error)',
+            fontWeight: 600,
+          }}
+        >
           {form.errorServidor}
         </p>
       )}

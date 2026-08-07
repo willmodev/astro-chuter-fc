@@ -71,5 +71,7 @@ console.log(
     ? `\n✓ Eliminados ${borrables} entrenador(es).`
     : `\n(DRY RUN) ${borrables} entrenador(es) por eliminar. Usá --yes.`,
 );
-console.log(`  Quedan ${admins.length} admin(s): ${admins.map((a) => a.email).join(', ')}\n`);
+console.log(
+  `  Quedan ${admins.length} admin(s): ${admins.map((a) => a.email).join(', ')}\n`,
+);
 process.exit(0);

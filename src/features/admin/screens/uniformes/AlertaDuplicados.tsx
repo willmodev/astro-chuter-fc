@@ -23,9 +23,8 @@ export function AlertaDuplicados({ numeros }: Readonly<Props>) {
         <Icon name="triangle-alert" size={18} />
       </span>
       <span style={{ fontSize: 12.5, color: '#946200', lineHeight: 1.35 }}>
-        Números repetidos en este kit:{' '}
-        <strong>{numeros.join(', ')}</strong>. Revisá las entregas para evitar
-        duplicados.
+        Números repetidos en este kit: <strong>{numeros.join(', ')}</strong>.
+        Revisá las entregas para evitar duplicados.
       </span>
     </div>
   );

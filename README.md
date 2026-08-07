@@ -84,17 +84,17 @@ src/
 
 ## Secciones del home (en orden)
 
-| Anchor | Sección | Notas |
-|---|---|---|
-| `#inicio` | Hero | Imagen hero + "¡Inscripción Gratis!" + CTA WhatsApp |
-| `#programas` | Categorías | 5 categorías por año de nacimiento — CTA WhatsApp por cada una |
-| `#nosotros` | Sobre el club | Aval INDER + stats placeholder |
-| `#formadores` | Formadores | Camilo + Ebed Shaday — fotos y bios pendientes |
-| `#galeria` | Galería | 7 imágenes con lightbox (←/→/Esc) |
-| `#testimonios` | Testimonios | Placeholder hasta recibir testimonios reales |
-| `#ubicacion` | Dónde entrenamos | Cancha de la Provincia — mapa pendiente |
-| `#contacto` | Contacto | WhatsApp directo + formulario (Astro Action + Resend) |
-| — | Footer | Redes + INDER + programas |
+| Anchor         | Sección          | Notas                                                          |
+| -------------- | ---------------- | -------------------------------------------------------------- |
+| `#inicio`      | Hero             | Imagen hero + "¡Inscripción Gratis!" + CTA WhatsApp            |
+| `#programas`   | Categorías       | 5 categorías por año de nacimiento — CTA WhatsApp por cada una |
+| `#nosotros`    | Sobre el club    | Aval INDER + stats placeholder                                 |
+| `#formadores`  | Formadores       | Camilo + Ebed Shaday — fotos y bios pendientes                 |
+| `#galeria`     | Galería          | 7 imágenes con lightbox (←/→/Esc)                              |
+| `#testimonios` | Testimonios      | Placeholder hasta recibir testimonios reales                   |
+| `#ubicacion`   | Dónde entrenamos | Cancha de la Provincia — mapa pendiente                        |
+| `#contacto`    | Contacto         | WhatsApp directo + formulario (Astro Action + Resend)          |
+| —              | Footer           | Redes + INDER + programas                                      |
 
 ---
 
@@ -118,6 +118,7 @@ Ver `.claude/pendientes.md` para la lista completa de datos que faltan confirmar
 ## Convenciones de commits
 
 Conventional Commits en español con emoji, usando el slash command `/commit`:
+
 ```
 ✨ feat(sección): descripción en imperativo
 🐛 fix(componente): descripción del arreglo

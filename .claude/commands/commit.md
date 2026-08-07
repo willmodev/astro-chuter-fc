@@ -1,6 +1,12 @@
 ---
-description: "Genera commits en español con Conventional Commits + emojis"
-allowed-tools: ["Bash(git add:*)", "Bash(git status:*)", "Bash(git commit:*)", "Bash(git diff:*)"]
+description: 'Genera commits en español con Conventional Commits + emojis'
+allowed-tools:
+  [
+    'Bash(git add:*)',
+    'Bash(git status:*)',
+    'Bash(git commit:*)',
+    'Bash(git diff:*)',
+  ]
 ---
 
 Actúa como un Senior Developer. Analiza el diff actual con `git diff HEAD` y `git status`, luego genera un commit en español.
@@ -10,6 +16,7 @@ Actúa como un Senior Developer. Analiza el diff actual con `git diff HEAD` y `g
 `<emoji> <type>(<scope>): <subject>`
 
 ### Tipos y emojis (usar EXACTAMENTE estos):
+
 - feat: ✨
 - fix: 🐛
 - docs: 📚
@@ -19,12 +26,14 @@ Actúa como un Senior Developer. Analiza el diff actual con `git diff HEAD` y `g
 - chore: 🛠️
 
 ### Reglas:
+
 1. El subject debe estar en modo imperativo y ser conciso (máx 70 chars).
 2. Usa los emojis exactamente como están listados arriba.
 3. Después del título, agrega una lista con los cambios principales realizados.
 4. NO agregues el footer de co-autoría de Claude.
 
 ### Ejemplo de salida esperada:
+
 ```
 ✨ feat(reports): actualizar dashboard de caracterización con nuevas métricas
 

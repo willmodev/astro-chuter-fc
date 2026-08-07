@@ -1,4 +1,5 @@
 import { Avatar } from '../../ui/Avatar';
+
 import type { AlumnoPlantel } from '../../data/types';
 
 // Pasar lista: una fila por alumno del roster con toggles P/A. Presentes =
@@ -9,7 +10,11 @@ interface Props {
   onMarcar: (alumnoId: number, presente: boolean) => void;
 }
 
-export function AsistenciaLista({ roster, estaAusente, onMarcar }: Readonly<Props>) {
+export function AsistenciaLista({
+  roster,
+  estaAusente,
+  onMarcar,
+}: Readonly<Props>) {
   return (
     <div
       style={{
@@ -45,7 +50,9 @@ export function AsistenciaLista({ roster, estaAusente, onMarcar }: Readonly<Prop
             >
               {a.name}
             </div>
-            <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{a.cat}</div>
+            <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
+              {a.cat}
+            </div>
           </div>
           <ToggleAsistencia
             ausente={estaAusente(a.id)}
@@ -61,7 +68,12 @@ function ToggleAsistencia({
   ausente,
   onMarcar,
 }: Readonly<{ ausente: boolean; onMarcar: (presente: boolean) => void }>) {
-  const boton = (letra: 'P' | 'A', activo: boolean, color: string, presente: boolean) => (
+  const boton = (
+    letra: 'P' | 'A',
+    activo: boolean,
+    color: string,
+    presente: boolean,
+  ) => (
     <button
       type="button"
       onClick={() => onMarcar(presente)}

@@ -23,15 +23,15 @@ Consecuencias medidas sobre los datos reales del club:
 
 ### Respuestas del cliente que cierran el modelo
 
-| Tema | Respuesta (2026-07-27/28) |
-| --- | --- |
-| Mapeo SUB ↔ nombre | **1:1**: `SUB 4 → Baby`, `SUB 6 → Pony`, `SUB 8 → Benjamín`, `SUB 10 → Preinfantil`, `SUB 12 → Infantil`, `SUB 14 → Prejuvenil`, `SUB 16 → Juvenil` |
-| SUB 16 | Se abre — "métela también, JUVENIL" |
-| Edad mínima | Sí reciben nacidos en 2023 ("tienen en la actualidad 3 años") |
-| Temporada | Año calendario — "no paramos, incluso en diciembre hacemos un vacacional; desde el otro año vamos desde enero" |
-| **Cuándo cambia de SUB** | **Al cumplir años**, no al cambiar de temporada |
-| Fecha de nacimiento | Hoy no la pide en la inscripción; **empieza a pedirla y va a pasar las 77 fechas en estos días** |
-| Miguel Ángel Rodríguez | Es **2014**, no 2024 |
+| Tema                     | Respuesta (2026-07-27/28)                                                                                                                           |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mapeo SUB ↔ nombre       | **1:1**: `SUB 4 → Baby`, `SUB 6 → Pony`, `SUB 8 → Benjamín`, `SUB 10 → Preinfantil`, `SUB 12 → Infantil`, `SUB 14 → Prejuvenil`, `SUB 16 → Juvenil` |
+| SUB 16                   | Se abre — "métela también, JUVENIL"                                                                                                                 |
+| Edad mínima              | Sí reciben nacidos en 2023 ("tienen en la actualidad 3 años")                                                                                       |
+| Temporada                | Año calendario — "no paramos, incluso en diciembre hacemos un vacacional; desde el otro año vamos desde enero"                                      |
+| **Cuándo cambia de SUB** | **Al cumplir años**, no al cambiar de temporada                                                                                                     |
+| Fecha de nacimiento      | Hoy no la pide en la inscripción; **empieza a pedirla y va a pasar las 77 fechas en estos días**                                                    |
+| Miguel Ángel Rodríguez   | Es **2014**, no 2024                                                                                                                                |
 
 La decisión sobre "cambia al cumplir años" tiene consecuencias fuertes que este spec asume explícitamente — ver **Decisiones** y **Riesgos**.
 
@@ -73,9 +73,9 @@ La decisión sobre "cambia al cumplir años" tiene consecuencias fuertes que est
 
 ```ts
 export const CATEGORIAS = [
-  { sub: 4,  nombre: 'Baby' },
-  { sub: 6,  nombre: 'Pony' },
-  { sub: 8,  nombre: 'Benjamín' },
+  { sub: 4, nombre: 'Baby' },
+  { sub: 6, nombre: 'Pony' },
+  { sub: 8, nombre: 'Benjamín' },
   { sub: 10, nombre: 'Preinfantil' },
   { sub: 12, nombre: 'Infantil' },
   { sub: 14, nombre: 'Prejuvenil' },
@@ -83,10 +83,10 @@ export const CATEGORIAS = [
 ] as const;
 
 export type Categoria = {
-  sub: number;        // 4 … 16
-  nombre: string;     // 'Benjamín'
-  etiqueta: string;   // 'SUB 8'   ← formato ya persistido en user.cats, no cambia
-  edades: string;     // '7 a 8 años'
+  sub: number; // 4 … 16
+  nombre: string; // 'Benjamín'
+  etiqueta: string; // 'SUB 8'   ← formato ya persistido en user.cats, no cambia
+  edades: string; // '7 a 8 años'
 };
 ```
 
@@ -121,15 +121,15 @@ Esto es **exactamente equivalente** a suponer que el alumno nació el 1 de enero
 
 ### Categorías por temporada 2026 (con el fallback vigente)
 
-| SUB | Categoría | Edad | Nacidos (fallback) | Alumnos |
-|---|---|---|---|---|
-| SUB 4 | Baby | 3 a 4 años | 2022 - 2023 | 2 |
-| SUB 6 | Pony | 5 a 6 años | 2020 - 2021 | 12 |
-| SUB 8 | Benjamín | 7 a 8 años | 2018 - 2019 | 17 |
-| SUB 10 | Preinfantil | 9 a 10 años | 2016 - 2017 | 13 |
-| SUB 12 | Infantil | 11 a 12 años | 2014 - 2015 | 22 |
-| SUB 14 | Prejuvenil | 13 a 14 años | 2012 - 2013 | 11 |
-| SUB 16 | Juvenil | 15 a 16 años | 2010 - 2011 | 0 (se abre) |
+| SUB    | Categoría   | Edad         | Nacidos (fallback) | Alumnos     |
+| ------ | ----------- | ------------ | ------------------ | ----------- |
+| SUB 4  | Baby        | 3 a 4 años   | 2022 - 2023        | 2           |
+| SUB 6  | Pony        | 5 a 6 años   | 2020 - 2021        | 12          |
+| SUB 8  | Benjamín    | 7 a 8 años   | 2018 - 2019        | 17          |
+| SUB 10 | Preinfantil | 9 a 10 años  | 2016 - 2017        | 13          |
+| SUB 12 | Infantil    | 11 a 12 años | 2014 - 2015        | 22          |
+| SUB 14 | Prejuvenil  | 13 a 14 años | 2012 - 2013        | 11          |
+| SUB 16 | Juvenil     | 15 a 16 años | 2010 - 2011        | 0 (se abre) |
 
 ### Asignación de categorías a entrenadores
 
@@ -165,15 +165,15 @@ Reglas:
 
 ### Bloque B — Migrar los consumidores
 
-| Archivo | Cambio |
-|---|---|
-| `src/lib/services/mapea-alumno.ts:32` | `categoriaDeAlumno(row, hoy)` — usa la fecha si existe, si no el año |
-| `src/lib/services/dashboard.ts:66` | idem |
-| `src/lib/services/alumnos.ts:168` | validación de rango con `categoriaDeFecha` |
-| `src/lib/domain/alumnos.ts:138` | idem |
-| `src/lib/services/contacto.ts:24` | `categoriaDeFecha`; el correo trae `Benjamín (SUB 8)` |
-| `features/admin/screens/alumnos/ChipsCategoria.tsx` | chips desde `listarCategorias()` |
-| `features/admin/screens/alumno-form/BadgeCategoria.tsx` | muestra `SUB 8 · Benjamín` |
+| Archivo                                                 | Cambio                                                               |
+| ------------------------------------------------------- | -------------------------------------------------------------------- |
+| `src/lib/services/mapea-alumno.ts:32`                   | `categoriaDeAlumno(row, hoy)` — usa la fecha si existe, si no el año |
+| `src/lib/services/dashboard.ts:66`                      | idem                                                                 |
+| `src/lib/services/alumnos.ts:168`                       | validación de rango con `categoriaDeFecha`                           |
+| `src/lib/domain/alumnos.ts:138`                         | idem                                                                 |
+| `src/lib/services/contacto.ts:24`                       | `categoriaDeFecha`; el correo trae `Benjamín (SUB 8)`                |
+| `features/admin/screens/alumnos/ChipsCategoria.tsx`     | chips desde `listarCategorias()`                                     |
+| `features/admin/screens/alumno-form/BadgeCategoria.tsx` | muestra `SUB 8 · Benjamín`                                           |
 
 ### Bloque C — Visibilidad de las fechas faltantes
 
@@ -284,7 +284,7 @@ Reglas:
 - **Sí:** **cero FK `alumnos → categoría`.** _Por qué:_ la categoría es una proyección de la edad; persistirla obliga a recalcular a mano y se desincroniza al editar la fecha.
 - **Sí:** **categoría por edad cumplida.** _Por qué:_ es lo que el cliente definió y reafirmó al comprometerse a recolectar las fechas. Ver el primer riesgo por lo que implica.
 - **Sí:** **`fecha_nacimiento` se queda en `null` en vez de inventarle mes y día.** _Por qué:_ el resultado es **idéntico** al 1-enero que él propuso (la fórmula por año es exactamente ese caso), pero sin meter un dato falso a la base — que además `CLAUDE.md` prohíbe. Y con `null` podemos contar y perseguir los que faltan; con una fecha inventada no habría forma de distinguirlos nunca más.
-- **Sí:** **clamp inferior a SUB 4.** _Por qué:_ "sub 4" significa *hasta* 4 años, así que un niño de 3 es SUB 4 por definición. Sin clamp, los 2 alumnos de 2023 que el cliente confirmó que recibe caerían en un "SUB 2" inexistente y desaparecerían de los filtros la mitad del año.
+- **Sí:** **clamp inferior a SUB 4.** _Por qué:_ "sub 4" significa _hasta_ 4 años, así que un niño de 3 es SUB 4 por definición. Sin clamp, los 2 alumnos de 2023 que el cliente confirmó que recibe caerían en un "SUB 2" inexistente y desaparecerían de los filtros la mitad del año.
 - **Sí:** **la landing publica edades, no años de nacimiento.** _Por qué:_ invierte la regla vigente de `CLAUDE.md`, y con razón: esa regla existía porque "las edades cambian cada año". Bajo la regla por cumpleaños es al revés — `Benjamín = 7 a 8 años` es cierto para siempre, mientras que `nacidos 2018-2019` deja de serlo cada enero **y** es inexacto todo el año (un 2019 de noviembre es Pony hasta noviembre). Se actualiza `CLAUDE.md` en consecuencia.
 - **Sí:** **el form público pasa a pedir fecha de nacimiento.** _Por qué:_ con la regla por edad, el año solo permite una respuesta ambigua ("Benjamín o Pony, según el mes"). Además captura en el origen justo el dato que el cliente empezó a recolectar, así que las inscripciones nuevas nunca nacen incompletas. _Contra:_ un campo algo más pesado en un formulario de conversión; mitigado con `type="date"` nativo, que en móvil es un solo tap.
 - **Sí:** **una categoría, un entrenador activo.** _Por qué:_ es lo que pidió el usuario y lo que evita que dos personas se atribuyan el mismo plantel. El caso "dos entrenadores comparten grupo" no existe hoy y agregarlo después no rompe datos.
@@ -298,19 +298,19 @@ Reglas:
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
+| Riesgo                                                                                                                                                                                                                                                                                                                                                                                                              | Mitigación                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **La regla por cumpleaños va a mover alumnos de SUB respecto del Excel del cliente.** De los 77, **36 (47%) están en cohortes "impares"** (2013, 2015, 2017, 2019, 2021, 2023): los que aún no cumplieron años **bajan una categoría** respecto de donde él los tiene hoy. Estimado ~15 alumnos al llegar las fechas, y el número cambia cada mes. Sus hojas de asistencia por SUB dejarán de cuadrar con el admin. | **Es consecuencia directa de la regla que él eligió, no un bug.** El fallback por año hace que **hoy no se mueva nadie**: el cambio ocurre alumno por alumno a medida que él cargue cada fecha, no de golpe. Antes de cargar las 77 hay que mostrarle la lista de quiénes cambian y confirmar que es lo que espera. |
-| Un alumno cambia de SUB **a mitad de torneo**, el día de su cumpleaños. | Inherente a la regla. Se documenta como semántica esperada. Si el club se queja, el arreglo es de una línea (volver a la regla por año calendario), porque toda la lógica está aislada en `categoriaDeAlumno`. |
-| Los 2 alumnos de 2023 quedan fuera de rango y desaparecen de los filtros. | Resuelto por el clamp inferior a SUB 4, con criterio de aceptación explícito. |
-| Cargar las 77 fechas a mano introduce errores de digitación (día/mes invertido, año mal). | La fecha se valida contra `anio_nacimiento` ya existente: si el año de la fecha no coincide, se rechaza. `anio_nacimiento` sigue siendo el dato duro que ya está verificado contra el Excel. |
-| Las 3 categorías nuevas quedan **sin entrenador** y la tarjeta se ve incompleta. | `entrenador` pasa a opcional; la tarjeta omite la línea en vez de mostrar un placeholder. Queda `TODO` en el markdown y en los pendientes de `CLAUDE.md`. |
-| **Doble fuente de verdad del entrenador**: `user.cats` (BD, real) vs `entrenador:` en el markdown de la landing. Pueden divergir. | Se documenta explícitamente en `ARCHITECTURE.md` como duplicación conocida y aceptada: la landing es estática y no debe depender de la BD en build. Candidato a otro spec si empieza a doler. |
-| Al cambiar el form público de año a fecha, cae la conversión. | `type="date"` nativo, un solo tap en móvil, campo requerido igual que antes. Vercel Analytics ya mide el envío del form; comparar dos semanas antes/después. |
-| Borrar `sugerirCategoria` rompe el correo de contacto en silencio. | `strict` lo detecta en compilación (la función deja de existir) + criterio de aceptación sobre el correo. |
-| Race: dos admins asignan la misma categoría a la vez. | La validación en servidor lee las ocupadas dentro de la misma operación de escritura; el segundo falla con mensaje claro. Riesgo residual despreciable con 2 admins. |
-| El script de Miguel Ángel se corre dos veces o contra la BD equivocada. | Idempotente por `documento` con guarda `WHERE anio_nacimiento = 2024`. |
-| `categoria.ts` supera las 200 líneas. | El catálogo son 9 líneas y las funciones 3-6; si crece, los helpers de formato salen a `categoria-formato.ts`. |
+| Un alumno cambia de SUB **a mitad de torneo**, el día de su cumpleaños.                                                                                                                                                                                                                                                                                                                                             | Inherente a la regla. Se documenta como semántica esperada. Si el club se queja, el arreglo es de una línea (volver a la regla por año calendario), porque toda la lógica está aislada en `categoriaDeAlumno`.                                                                                                      |
+| Los 2 alumnos de 2023 quedan fuera de rango y desaparecen de los filtros.                                                                                                                                                                                                                                                                                                                                           | Resuelto por el clamp inferior a SUB 4, con criterio de aceptación explícito.                                                                                                                                                                                                                                       |
+| Cargar las 77 fechas a mano introduce errores de digitación (día/mes invertido, año mal).                                                                                                                                                                                                                                                                                                                           | La fecha se valida contra `anio_nacimiento` ya existente: si el año de la fecha no coincide, se rechaza. `anio_nacimiento` sigue siendo el dato duro que ya está verificado contra el Excel.                                                                                                                        |
+| Las 3 categorías nuevas quedan **sin entrenador** y la tarjeta se ve incompleta.                                                                                                                                                                                                                                                                                                                                    | `entrenador` pasa a opcional; la tarjeta omite la línea en vez de mostrar un placeholder. Queda `TODO` en el markdown y en los pendientes de `CLAUDE.md`.                                                                                                                                                           |
+| **Doble fuente de verdad del entrenador**: `user.cats` (BD, real) vs `entrenador:` en el markdown de la landing. Pueden divergir.                                                                                                                                                                                                                                                                                   | Se documenta explícitamente en `ARCHITECTURE.md` como duplicación conocida y aceptada: la landing es estática y no debe depender de la BD en build. Candidato a otro spec si empieza a doler.                                                                                                                       |
+| Al cambiar el form público de año a fecha, cae la conversión.                                                                                                                                                                                                                                                                                                                                                       | `type="date"` nativo, un solo tap en móvil, campo requerido igual que antes. Vercel Analytics ya mide el envío del form; comparar dos semanas antes/después.                                                                                                                                                        |
+| Borrar `sugerirCategoria` rompe el correo de contacto en silencio.                                                                                                                                                                                                                                                                                                                                                  | `strict` lo detecta en compilación (la función deja de existir) + criterio de aceptación sobre el correo.                                                                                                                                                                                                           |
+| Race: dos admins asignan la misma categoría a la vez.                                                                                                                                                                                                                                                                                                                                                               | La validación en servidor lee las ocupadas dentro de la misma operación de escritura; el segundo falla con mensaje claro. Riesgo residual despreciable con 2 admins.                                                                                                                                                |
+| El script de Miguel Ángel se corre dos veces o contra la BD equivocada.                                                                                                                                                                                                                                                                                                                                             | Idempotente por `documento` con guarda `WHERE anio_nacimiento = 2024`.                                                                                                                                                                                                                                              |
+| `categoria.ts` supera las 200 líneas.                                                                                                                                                                                                                                                                                                                                                                               | El catálogo son 9 líneas y las funciones 3-6; si crece, los helpers de formato salen a `categoria-formato.ts`.                                                                                                                                                                                                      |
 
 ---
 
@@ -320,18 +320,18 @@ Reglas:
 - [ ] **Entrenador de Baby, Benjamín y Juvenil** — hoy hay 4 entrenadores para 7 categorías.
 - [x] **Confirmado por el cliente (2026-07-30)** y aplicado: los 11 alumnos que cambian de SUB al aplicar las fechas reales. La lista la genera `npx tsx scripts/reporte-cambios-categoria.mjs` (solo lectura, no toca la base). El 11.º es `KEINER BOSCAN` (SUB 16 → SUB 14), que solo cambia respecto del fallback por año: en el Excel del cliente ya estaba en SUB 14.
 
-  | Alumno | Fecha | Excel | Real |
-  |---|---|---|---|
-  | MARTIN SANCHEZ CONTRERAS | 2017-10-28 | SUB 10 | SUB 8 |
-  | JUAN DAVID GUTIERREZ | 2017-08-21 | SUB 10 | SUB 8 |
-  | ALEX ESCALONA | 2017-10-08 | SUB 10 | SUB 8 |
+  | Alumno                   | Fecha      | Excel  | Real   |
+  | ------------------------ | ---------- | ------ | ------ |
+  | MARTIN SANCHEZ CONTRERAS | 2017-10-28 | SUB 10 | SUB 8  |
+  | JUAN DAVID GUTIERREZ     | 2017-08-21 | SUB 10 | SUB 8  |
+  | ALEX ESCALONA            | 2017-10-08 | SUB 10 | SUB 8  |
   | JAZMIN ARCINIEGAS DAMIAN | 2015-08-13 | SUB 12 | SUB 10 |
-  | JONAS QUINTERO SANTANA | 2015-11-24 | SUB 12 | SUB 10 |
-  | ANGEL VASQUEZ SANTANA | 2021-11-28 | SUB 6 | SUB 4 |
-  | LIAM ISAAC LARA ARRIETA | 2019-11-04 | SUB 8 | SUB 6 |
-  | SAMUEL MARCHENA | 2019-12-14 | SUB 8 | SUB 6 |
-  | MATIAS QUINTERO | 2019-09-27 | SUB 8 | SUB 6 |
-  | ANDRES MENDOZA ANGEL | 2019-09-01 | SUB 8 | SUB 6 |
+  | JONAS QUINTERO SANTANA   | 2015-11-24 | SUB 12 | SUB 10 |
+  | ANGEL VASQUEZ SANTANA    | 2021-11-28 | SUB 6  | SUB 4  |
+  | LIAM ISAAC LARA ARRIETA  | 2019-11-04 | SUB 8  | SUB 6  |
+  | SAMUEL MARCHENA          | 2019-12-14 | SUB 8  | SUB 6  |
+  | MATIAS QUINTERO          | 2019-09-27 | SUB 8  | SUB 6  |
+  | ANDRES MENDOZA ANGEL     | 2019-09-01 | SUB 8  | SUB 6  |
 
 - [ ] **3 filas del Excel que el seed omite** hasta que se corrijan: `GERONIMO ESCORCIA` (año `2106`), `ABRAHAM PEREZ` (sin nacimiento) y `JUAN PABLO MAESTRE` (sin documento).
 - [ ] **13 alumnos activos en la base que ya no están en el Excel** — el seed nunca borra, así que siguen contando. Hay que preguntarle a Camilo si se retiraron (ver la lista en `docs/excel-data-dictionary.md`).

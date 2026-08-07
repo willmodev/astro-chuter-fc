@@ -3,9 +3,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { semanaInicioISO, type Semana } from '@/lib/domain/entrenos';
 
-import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 import { semanas } from '../../data/mock';
 import { aPlan, aSesiones } from '../../data/mapea-entrenos';
+
+import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 import type { AlumnoPlantel, PlanSemana, Sesion } from '../../data/types';
 
 // Lo registrado en una semana, agrupado por entrenador (solo lectura del

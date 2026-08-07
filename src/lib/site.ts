@@ -11,8 +11,7 @@ export const SITE = {
   language: 'es',
 } as const;
 
-const whatsappNumber =
-  import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573008725964';
+const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573008725964';
 const numeroNacional = whatsappNumber.replace(/^57/, '');
 
 export const CONTACT = {
@@ -25,7 +24,6 @@ export const CONTACT = {
   instagramHandle: '@1chuter',
 } as const;
 
-// TODO: pedir a Camilo — confirmar ciudad y departamento exactos del barrio Los Algarrobillos
 export const LOCATION = {
   venue: 'Cancha Los Algarrobillos',
   neighborhood: 'Los Algarrobillos',

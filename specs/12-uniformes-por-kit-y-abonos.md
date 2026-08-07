@@ -56,18 +56,24 @@ Por eso el spec 11 **difirió los uniformes** y dejó las vistas de uniformes (p
 
 ```ts
 export const kitEnum = pgEnum('kit', ['AZUL', 'ORO']);
-export const uniformes = pgTable('uniformes', {
-  id: serial('id').primaryKey(),
-  alumnoId: integer('alumno_id').notNull().references(() => alumnos.id, { onDelete: 'cascade' }),
-  kit: kitEnum('kit').notNull(),
-  entregado: boolean('entregado').notNull().default(false),
-  numero: integer('numero'),                 // null hasta entregar
-  talla: text('talla').notNull().default(''),
-  abonadoCop: integer('abonado_cop').notNull().default(0), // 0..precio del kit
-  registradoPor: text('registrado_por').references(() => user.id), // null en seed
-  creadoEn: timestamp('creado_en').notNull().defaultNow(),
-  actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
-}, (t) => [unique().on(t.alumnoId, t.kit)]);   // un registro por alumno-kit
+export const uniformes = pgTable(
+  'uniformes',
+  {
+    id: serial('id').primaryKey(),
+    alumnoId: integer('alumno_id')
+      .notNull()
+      .references(() => alumnos.id, { onDelete: 'cascade' }),
+    kit: kitEnum('kit').notNull(),
+    entregado: boolean('entregado').notNull().default(false),
+    numero: integer('numero'), // null hasta entregar
+    talla: text('talla').notNull().default(''),
+    abonadoCop: integer('abonado_cop').notNull().default(0), // 0..precio del kit
+    registradoPor: text('registrado_por').references(() => user.id), // null en seed
+    creadoEn: timestamp('creado_en').notNull().defaultNow(),
+    actualizadoEn: timestamp('actualizado_en').notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.alumnoId, t.kit)],
+); // un registro por alumno-kit
 ```
 
 El **estado de pago es tri-estado derivado** de `abonadoCop` vs el precio del kit: `0` → sin pagar · `0 < abono < precio` → abonado (parcial) · `abono ≥ precio` → pagado. La unicidad de `numero` por kit **no** es constraint de BD (el club puede repetir a propósito): se valida en dominio como advertencia.
@@ -75,8 +81,8 @@ El **estado de pago es tri-estado derivado** de `abonadoCop` vs el precio del ki
 ### Dominio (contratos nuevos/cambiados en `lib/domain/uniformes.ts`)
 
 ```ts
-export type TipoKit = 'AZUL' | 'ORO';           // antes 'AZUL' | 'DORADO'
-export type EjePago = 'pagado' | 'abonado' | 'pendiente';   // ahora tri-estado
+export type TipoKit = 'AZUL' | 'ORO'; // antes 'AZUL' | 'DORADO'
+export type EjePago = 'pagado' | 'abonado' | 'pendiente'; // ahora tri-estado
 export type EstadoKit = 'completo' | 'porEntregar' | 'porCobrar' | 'sinIniciar';
 
 // Estado del kit a partir de entrega + abono vs precio (extiende estadoUniforme):
@@ -84,9 +90,13 @@ export type EstadoKit = 'completo' | 'porEntregar' | 'porCobrar' | 'sinIniciar';
 // !entregado && pagado        → 'porEntregar'
 //  entregado && !pagado       → 'porCobrar'   (etiqueta "Pago pendiente"; incluye abono parcial)
 // !entregado && !pagado       → 'sinIniciar'
-export function estadoKit(entregado: boolean, abonadoCop: number, precio: number): EstadoKit;
+export function estadoKit(
+  entregado: boolean,
+  abonadoCop: number,
+  precio: number,
+): EstadoKit;
 export function ejePago(abonadoCop: number, precio: number): EjePago;
-export function saldoKit(abonadoCop: number, precio: number): number;   // precio − abono, ≥ 0
+export function saldoKit(abonadoCop: number, precio: number): number; // precio − abono, ≥ 0
 
 // ESTADO_UNIFORME_META y ORDEN_ESTADO_UNIFORME se conservan (mismas etiquetas/orden).
 // numerosDuplicados / numeroOcupado: firma igual, ahora por kit sobre los registros reales.
@@ -97,10 +107,10 @@ export function saldoKit(abonadoCop: number, precio: number): number;   // preci
 ### Actions (contrato RPC)
 
 ```ts
-uniformes.registrarEntrega({ alumnoId, kit, numero, talla })   // entregado=true + numero/talla
-uniformes.anularEntrega({ alumnoId, kit })                     // entregado=false, numero=null (talla y abono intactos)
-uniformes.registrarPago({ alumnoId, kit, montoCop })           // suma al abono (acota a [0, precio]); pagar completo = precio
-uniformes.listar()   // admin: 2 kits por alumno + estados + saldos; entrenador: solo entrega (sin montos)
+uniformes.registrarEntrega({ alumnoId, kit, numero, talla }); // entregado=true + numero/talla
+uniformes.anularEntrega({ alumnoId, kit }); // entregado=false, numero=null (talla y abono intactos)
+uniformes.registrarPago({ alumnoId, kit, montoCop }); // suma al abono (acota a [0, precio]); pagar completo = precio
+uniformes.listar(); // admin: 2 kits por alumno + estados + saldos; entrenador: solo entrega (sin montos)
 ```
 
 Mutaciones **pesimistas** (Action confirma → refetch), como en spec 11.
@@ -211,14 +221,14 @@ _Verifica:_ flujo completo en `npm run dev` contra Neon: entregar el kit AZUL de
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| Cambiar `Alumno` de un kit a dos kits rompe consumidores en cadena (ficha, plantel, uniformes). | El bloque D cambia el tipo con `tsc` como red; los consumidores se migran en el mismo bloque/E antes de retirar el aviso. |
-| El Excel no codifica los abonos parciales, solo los 4 estados por color. | Decisión pendiente #1: por defecto el seed siembra estados binarios (abono 0 o precio) y los abonos parciales se capturan en vivo; se confirma con Camilo antes del bloque C. |
-| La detección de color de AZUL/ORO depende de cómo Excel codifica cada tono. | Lista blanca de fills conocidos (verde/rojo/azul/blanco) y **reporte de anomalía** para cualquier fill desconocido con fila + kit, como el seed de pagos (spec 11). |
-| El descuento de hermanos por kit no está confirmado. | Decisión pendiente #2: por defecto R9 aplica por kit ($100.000/$80.000 cada uno); se confirma con Camilo. |
-| El universo del tab Estado pasa de N alumnos a 2N kits y puede confundir los contadores. | La lista y los contadores operan sobre **kits**, no alumnos; se rotula claramente (AZUL/ORO) y se reusa el patrón de filtro del spec 08. |
-| Referencias residuales a `'DORADO'` en tipos/UI tras el rename. | Un criterio de aceptación exige cero referencias a `'DORADO'`; `tsc` y una búsqueda global lo verifican. |
+| Riesgo                                                                                          | Mitigación                                                                                                                                                                    |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cambiar `Alumno` de un kit a dos kits rompe consumidores en cadena (ficha, plantel, uniformes). | El bloque D cambia el tipo con `tsc` como red; los consumidores se migran en el mismo bloque/E antes de retirar el aviso.                                                     |
+| El Excel no codifica los abonos parciales, solo los 4 estados por color.                        | Decisión pendiente #1: por defecto el seed siembra estados binarios (abono 0 o precio) y los abonos parciales se capturan en vivo; se confirma con Camilo antes del bloque C. |
+| La detección de color de AZUL/ORO depende de cómo Excel codifica cada tono.                     | Lista blanca de fills conocidos (verde/rojo/azul/blanco) y **reporte de anomalía** para cualquier fill desconocido con fila + kit, como el seed de pagos (spec 11).           |
+| El descuento de hermanos por kit no está confirmado.                                            | Decisión pendiente #2: por defecto R9 aplica por kit ($100.000/$80.000 cada uno); se confirma con Camilo.                                                                     |
+| El universo del tab Estado pasa de N alumnos a 2N kits y puede confundir los contadores.        | La lista y los contadores operan sobre **kits**, no alumnos; se rotula claramente (AZUL/ORO) y se reusa el patrón de filtro del spec 08.                                      |
+| Referencias residuales a `'DORADO'` en tipos/UI tras el rename.                                 | Un criterio de aceptación exige cero referencias a `'DORADO'`; `tsc` y una búsqueda global lo verifican.                                                                      |
 
 ---
 

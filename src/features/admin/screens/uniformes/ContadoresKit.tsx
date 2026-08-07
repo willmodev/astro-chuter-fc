@@ -30,11 +30,22 @@ export function ContadoresKit({ entregados, pendientes }: Readonly<Props>) {
             border: '1px solid var(--border-subtle)',
           }}
         >
-          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)' }}>
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: 'var(--text-muted)',
+            }}
+          >
             {t.label}
           </span>
           <strong
-            style={{ display: 'block', fontSize: 24, color: t.tone, lineHeight: 1.1 }}
+            style={{
+              display: 'block',
+              fontSize: 24,
+              color: t.tone,
+              lineHeight: 1.1,
+            }}
           >
             {t.valor}
           </strong>

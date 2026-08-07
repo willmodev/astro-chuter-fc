@@ -62,9 +62,21 @@ export const ESTADO_UNIFORME_META: Record<
   { label: string; desc: string; tone: TonoEstado }
 > = {
   completo: { label: 'Completo', desc: 'Entregado y pagado', tone: 'paid' },
-  porEntregar: { label: 'Por entregar', desc: 'Pagó · falta entregar', tone: 'info' },
-  porCobrar: { label: 'Pago pendiente', desc: 'Entregado · falta el pago', tone: 'due' },
-  sinIniciar: { label: 'Sin iniciar', desc: 'Sin pagar ni entregar', tone: 'pending' },
+  porEntregar: {
+    label: 'Por entregar',
+    desc: 'Pagó · falta entregar',
+    tone: 'info',
+  },
+  porCobrar: {
+    label: 'Pago pendiente',
+    desc: 'Entregado · falta el pago',
+    tone: 'due',
+  },
+  sinIniciar: {
+    label: 'Sin iniciar',
+    desc: 'Sin pagar ni entregar',
+    tone: 'pending',
+  },
 };
 
 // Orden por prioridad de acción para la lista del tab Estado. `porCobrar`

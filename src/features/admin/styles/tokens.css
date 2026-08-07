@@ -5,7 +5,9 @@
 .admin-app {
   /* ---- Familias ---- */
   --font-display: 'Bebas Neue', 'Arial Narrow', sans-serif;
-  --font-sans: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans:
+    'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
   --font-serif: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
@@ -147,9 +149,12 @@
 
   /* ---- Sombras (suaves, tintadas navy) ---- */
   --shadow-xs: 0 1px 2px rgba(15, 27, 45, 0.06);
-  --shadow-sm: 0 1px 3px rgba(15, 27, 45, 0.08), 0 1px 2px rgba(15, 27, 45, 0.05);
-  --shadow-md: 0 4px 12px rgba(15, 27, 45, 0.08), 0 2px 4px rgba(15, 27, 45, 0.04);
-  --shadow-lg: 0 12px 28px rgba(15, 27, 45, 0.12), 0 4px 8px rgba(15, 27, 45, 0.06);
+  --shadow-sm:
+    0 1px 3px rgba(15, 27, 45, 0.08), 0 1px 2px rgba(15, 27, 45, 0.05);
+  --shadow-md:
+    0 4px 12px rgba(15, 27, 45, 0.08), 0 2px 4px rgba(15, 27, 45, 0.04);
+  --shadow-lg:
+    0 12px 28px rgba(15, 27, 45, 0.12), 0 4px 8px rgba(15, 27, 45, 0.06);
   --shadow-pop: 0 16px 40px rgba(15, 27, 45, 0.18);
   --shadow-gold: 0 6px 18px rgba(212, 168, 42, 0.3);
   --shadow-inset: inset 0 1px 2px rgba(15, 27, 45, 0.06);

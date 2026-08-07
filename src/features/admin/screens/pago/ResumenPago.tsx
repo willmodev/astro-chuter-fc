@@ -8,7 +8,11 @@ interface Props {
   onConfirmar: () => void;
 }
 
-export function ResumenPago({ total, deshabilitado, onConfirmar }: Readonly<Props>) {
+export function ResumenPago({
+  total,
+  deshabilitado,
+  onConfirmar,
+}: Readonly<Props>) {
   return (
     <div style={{ display: 'grid', gap: 10 }}>
       <div
@@ -22,8 +26,14 @@ export function ResumenPago({ total, deshabilitado, onConfirmar }: Readonly<Prop
           border: '1px solid var(--border-subtle)',
         }}
       >
-        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)' }}>Total</span>
-        <strong style={{ fontSize: 20, color: 'var(--text-strong)' }}>{fmt(total)}</strong>
+        <span
+          style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)' }}
+        >
+          Total
+        </span>
+        <strong style={{ fontSize: 20, color: 'var(--text-strong)' }}>
+          {fmt(total)}
+        </strong>
       </div>
       <button
         type="button"
@@ -33,7 +43,9 @@ export function ResumenPago({ total, deshabilitado, onConfirmar }: Readonly<Prop
           height: 48,
           borderRadius: 'var(--radius-md)',
           border: 'none',
-          background: deshabilitado ? 'var(--neutral-300)' : 'var(--brand-navy)',
+          background: deshabilitado
+            ? 'var(--neutral-300)'
+            : 'var(--brand-navy)',
           color: '#fff',
           fontSize: 15,
           fontWeight: 700,

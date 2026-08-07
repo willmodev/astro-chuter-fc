@@ -5,6 +5,7 @@ import { DIAS_ENTRENO, type DiaEntreno } from '@/lib/domain/entrenos';
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Badge } from '../../ui/Badge';
 import { WeekChips } from '../../ui/WeekChips';
+
 import { DayCard } from './DayCard';
 import { PlanCard } from './PlanCard';
 import { PlanSheet } from './PlanSheet';
@@ -61,10 +62,17 @@ export function Entrenos({
         )}
       </div>
 
-      <WeekChips semanas={data.semanas} value={semana.id} onChange={data.setWeekId} />
+      <WeekChips
+        semanas={data.semanas}
+        value={semana.id}
+        onChange={data.setWeekId}
+      />
 
       {data.estado !== 'listo' ? (
-        <EstadoCarga estado={data.estado} onReintentar={data.recargar} />
+        <EstadoCarga
+          estado={data.estado}
+          onReintentar={() => void data.recargar()}
+        />
       ) : (
         <>
           <PlanCard plan={data.plan} onEditar={() => setSheetAbierto(true)} />
@@ -86,7 +94,7 @@ export function Entrenos({
           plan={data.plan}
           semanaLabel={semana.label}
           onGuardar={(tema, objetivos) => {
-            data.guardarPlan(tema, objetivos);
+            void data.guardarPlan(tema, objetivos);
             setSheetAbierto(false);
           }}
           onClose={() => setSheetAbierto(false)}

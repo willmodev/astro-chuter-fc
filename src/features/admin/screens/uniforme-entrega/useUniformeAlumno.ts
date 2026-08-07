@@ -3,9 +3,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { numeroOcupado, type TipoKit } from '@/lib/domain/uniformes';
 
+import { aFilas } from '../uniformes/filas';
+
 import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 import type { UniformeAlumno } from '../../data/types';
-import { aFilas } from '../uniformes/filas';
 
 // Gestión de uniforme de un alumno (spec 12): sirve sus dos kits desde
 // `uniformes.listar` (admin) y expone las mutaciones (pesimistas: Action →

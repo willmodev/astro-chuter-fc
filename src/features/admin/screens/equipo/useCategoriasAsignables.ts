@@ -11,11 +11,13 @@ export function useCategoriasAsignables(usuarioId?: string) {
 
   useEffect(() => {
     let vigente = true;
-    void actions.usuarios.categoriasAsignables({ usuarioId }).then(({ data }) => {
-      if (!vigente) return;
-      setCategorias(data ?? []);
-      setCargando(false);
-    });
+    void actions.usuarios
+      .categoriasAsignables({ usuarioId })
+      .then(({ data }) => {
+        if (!vigente) return;
+        setCategorias(data ?? []);
+        setCargando(false);
+      });
     return () => {
       vigente = false;
     };

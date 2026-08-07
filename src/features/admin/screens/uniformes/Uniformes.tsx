@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useUniformes } from '../../hooks/useUniformes';
+
 import { aFilas } from './filas';
 import { EstadoTab } from './EstadoTab';
 import { NumeracionTab } from './NumeracionTab';
@@ -19,7 +20,7 @@ export function Uniformes({ onEntrega }: Readonly<Props>) {
   const [tab, setTab] = useState<TabUniformes>('estado');
 
   if (estado !== 'listo') {
-    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+    return <EstadoCarga estado={estado} onReintentar={() => void recargar()} />;
   }
 
   const filas = aFilas(alumnos);

@@ -32,7 +32,9 @@ export function BotonMenu({ icon, label, hint, onClick }: Readonly<Props>) {
     >
       <Icon name={icon} size={20} color="var(--brand-navy)" />
       <span style={{ flex: 1 }}>{label}</span>
-      <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>
+      <span
+        style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}
+      >
         {hint}
       </span>
     </button>

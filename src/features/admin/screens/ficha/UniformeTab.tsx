@@ -1,9 +1,10 @@
 import { ESTADO_UNIFORME_META } from '@/lib/domain/uniformes';
-import { fmt } from '@/lib/format';
 
 import { Badge } from '../../ui/Badge';
 import { Card } from '../../ui/Card';
+import { Monto } from '../../ui/Monto';
 import { EtiquetaKit } from '../uniformes/EtiquetaKit';
+
 import type { Alumno, KitUniforme } from '../../data/types';
 
 // Tab Uniforme (spec 12): los DOS kits (AZUL/ORO) con estado, número/talla si
@@ -62,16 +63,48 @@ function FilaKit({ kit }: Readonly<{ kit: KitUniforme }>) {
         border: '1px solid var(--border-subtle)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+        }}
+      >
         <EtiquetaKit kit={kit.kit} />
         <Badge tone={meta.tone}>{meta.label}</Badge>
       </div>
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 }}>
-        <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: 10,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 12.5,
+            color: 'var(--text-muted)',
+            fontWeight: 600,
+          }}
+        >
           {detalle}
         </span>
-        <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
-          {pagado ? 'Pagado' : `Saldo ${fmt(kit.saldo)}`}
+        <span
+          style={{
+            fontSize: 12.5,
+            color: 'var(--text-muted)',
+            fontWeight: 600,
+          }}
+        >
+          {pagado ? (
+            'Pagado'
+          ) : (
+            <>
+              Saldo <Monto valor={kit.saldo} />
+            </>
+          )}
         </span>
       </div>
     </div>

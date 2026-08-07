@@ -5,8 +5,10 @@ import { ESTADO_UNIFORME_META, type TipoKit } from '@/lib/domain/uniformes';
 
 import { Badge } from '../../ui/Badge';
 import { EtiquetaKit } from '../uniformes/EtiquetaKit';
+
 import { HojaAbono } from './HojaAbono';
 import { HojaEntrega } from './HojaEntrega';
+
 import type { KitUniforme } from '../../data/types';
 
 // Tarjeta de un kit: estado + detalle + saldo, con dos acciones (entrega y
@@ -14,12 +16,22 @@ import type { KitUniforme } from '../../data/types';
 interface Props {
   kit: KitUniforme;
   numeroOcupadoEn: (kit: TipoKit, numero: number) => boolean;
-  onEntrega: (kit: TipoKit, numero: number, talla: string) => Promise<string | null>;
+  onEntrega: (
+    kit: TipoKit,
+    numero: number,
+    talla: string,
+  ) => Promise<string | null>;
   onAnular: (kit: TipoKit) => Promise<string | null>;
   onAbono: (kit: TipoKit, montoCop: number) => Promise<string | null>;
 }
 
-export function KitCard({ kit, numeroOcupadoEn, onEntrega, onAnular, onAbono }: Readonly<Props>) {
+export function KitCard({
+  kit,
+  numeroOcupadoEn,
+  onEntrega,
+  onAnular,
+  onAbono,
+}: Readonly<Props>) {
   const [hoja, setHoja] = useState<'entrega' | 'abono' | null>(null);
   const meta = ESTADO_UNIFORME_META[kit.estado];
   const pagado = kit.saldo === 0;
@@ -35,18 +47,41 @@ export function KitCard({ kit, numeroOcupadoEn, onEntrega, onAnular, onAbono }: 
         border: '1px solid var(--border-subtle)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+        }}
+      >
         <EtiquetaKit kit={kit.kit} />
         <Badge tone={meta.tone}>{meta.label}</Badge>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 }}>
-        <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 600 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: 10,
+        }}
+      >
+        <span
+          style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 600 }}
+        >
           {pagado ? 'Pagado' : `Saldo ${fmt(kit.saldo)} de ${fmt(kit.precio)}`}
         </span>
         {kit.entregado && (
-          <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
-            Nº {kit.numero ?? '—'}{kit.talla ? ` · Talla ${kit.talla}` : ''}
+          <span
+            style={{
+              fontSize: 12.5,
+              color: 'var(--text-muted)',
+              fontWeight: 600,
+            }}
+          >
+            Nº {kit.numero ?? '—'}
+            {kit.talla ? ` · Talla ${kit.talla}` : ''}
           </span>
         )}
       </div>
@@ -88,7 +123,12 @@ interface BotonProps {
   onClick: () => void;
 }
 
-function Boton({ solido, disabled = false, label, onClick }: Readonly<BotonProps>) {
+function Boton({
+  solido,
+  disabled = false,
+  label,
+  onClick,
+}: Readonly<BotonProps>) {
   return (
     <button
       type="button"

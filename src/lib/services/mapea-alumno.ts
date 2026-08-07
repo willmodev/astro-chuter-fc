@@ -6,7 +6,6 @@ import type { EstadoMes, Mes } from '@/lib/domain/cartera';
 import { categoriaDeAlumno } from '@/lib/domain/categoria';
 import { CUOTA_MENSUAL, precioUniforme } from '@/lib/domain/precios';
 import { estadoKit, KITS, saldoKit } from '@/lib/domain/uniformes';
-
 import type { AlumnoRow } from '@/lib/db/repos/alumnos';
 import type { UniformeRow } from '@/lib/db/repos/uniformes';
 import type {

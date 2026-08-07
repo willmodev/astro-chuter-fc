@@ -22,7 +22,12 @@ export function LoginScreen({ next }: Readonly<Props>) {
     <div className="admin-login">
       <form className="admin-login__card" onSubmit={onSubmit} noValidate>
         <div className="admin-login__brand">
-          <img src="/images/chuter-logo.svg" alt="Chuter FC" width={56} height={56} />
+          <img
+            src="/images/chuter-logo.svg"
+            alt="Chuter FC"
+            width={56}
+            height={56}
+          />
           <div>
             <div className="font-display admin-login__title">Chuter FC</div>
             <div className="eyebrow" style={{ color: 'var(--accent-deep)' }}>
@@ -62,7 +67,11 @@ export function LoginScreen({ next }: Readonly<Props>) {
           />
         </div>
 
-        <button type="submit" className="admin-login__submit" disabled={enviando}>
+        <button
+          type="submit"
+          className="admin-login__submit"
+          disabled={enviando}
+        >
           {enviando ? 'Ingresando…' : 'Ingresar'}
         </button>
       </form>

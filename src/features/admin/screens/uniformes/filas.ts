@@ -29,7 +29,9 @@ export function aFilas(alumnos: readonly UniformeAlumno[]): KitFila[] {
 }
 
 // Conteo por estado sobre todas las filas (para la matriz 2×2).
-export function conteosDe(filas: readonly KitFila[]): Record<EstadoKit, number> {
+export function conteosDe(
+  filas: readonly KitFila[],
+): Record<EstadoKit, number> {
   return contarEstados(filas.map((f) => f.kit.estado));
 }
 

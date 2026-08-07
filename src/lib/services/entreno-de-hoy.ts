@@ -11,7 +11,6 @@ import {
   type DiaEntreno,
   type ResumenAsistencia,
 } from '@/lib/domain/entrenos';
-
 import type { AlumnoPlantel } from '@/features/admin/data/types';
 
 import { listarPlantelCompleto } from './alumnos';
@@ -35,12 +34,17 @@ function aFila(
   sesiones: SesionRow[],
   plantel: AlumnoPlantel[],
 ): EntrenoDeHoyFila {
-  const s = sesiones.find((x) => x.entrenadorId === u.id && x.dia === dia) ?? null;
+  const s =
+    sesiones.find((x) => x.entrenadorId === u.id && x.dia === dia) ?? null;
   const registrado =
     s !== null &&
-    (s.parteCentralUrl !== null || s.parteCentralNota.trim() !== '' || s.ausentes !== null);
+    (s.parteCentralUrl !== null ||
+      s.parteCentralNota.trim() !== '' ||
+      s.ausentes !== null);
   const asistencia =
-    s && s.ausentes !== null ? asistenciaDe(s.ausentes, rosterDe(u.cats, plantel)) : null;
+    s && s.ausentes !== null
+      ? asistenciaDe(s.ausentes, rosterDe(u.cats, plantel))
+      : null;
   return {
     entrenadorId: u.id,
     entrenadorNombre: u.name,

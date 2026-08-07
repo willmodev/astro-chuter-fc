@@ -23,7 +23,10 @@ export interface CtxEntreno {
   weekId: string;
 }
 
-export function aPlan(row: PlanCrudo | null, ctx: CtxEntreno): PlanSemana | null {
+export function aPlan(
+  row: PlanCrudo | null,
+  ctx: CtxEntreno,
+): PlanSemana | null {
   if (!row) return null;
   return {
     id: `${ctx.entrenadorId}-${ctx.weekId}`,

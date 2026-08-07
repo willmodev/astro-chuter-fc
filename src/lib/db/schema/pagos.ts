@@ -14,7 +14,18 @@ import { user } from './auth';
 // Los 12 meses aunque hoy solo se cobre hasta NOV: cambiar la ventana de cobro
 // (MES_FIN_COBRO en dominio) no toca la BD.
 export const mesEnum = pgEnum('mes', [
-  'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC',
+  'ENE',
+  'FEB',
+  'MAR',
+  'ABR',
+  'MAY',
+  'JUN',
+  'JUL',
+  'AGO',
+  'SEP',
+  'OCT',
+  'NOV',
+  'DIC',
 ]);
 
 // Fila SOLO cuando se paga (decisión 1a): `due/pending/na` se derivan en dominio.

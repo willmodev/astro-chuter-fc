@@ -85,7 +85,7 @@ export interface UsuarioRow {
   name: string;
   email: string;
   role: 'admin' | 'entrenador';
-  activo: boolean;          // = !banned
+  activo: boolean; // = !banned
   cats: string[];
 }
 
@@ -94,7 +94,7 @@ export interface NuevoUsuarioInput {
   email: string;
   password: string;
   role: 'admin' | 'entrenador';
-  cats: string[];           // [] si role = 'admin'
+  cats: string[]; // [] si role = 'admin'
 }
 ```
 
@@ -224,16 +224,16 @@ _Verifica:_ Camilo crea a Ebed (admin) y a un entrenador con cats; el entrenador
 
 ## Riesgos identificados
 
-| Riesgo | Mitigación |
-| --- | --- |
-| Añadir Neon+Drizzle+Better Auth rompe el build estático del marketing. | Solo `/admin/**` y `/api/auth/**` optan a servidor (`prerender = false`); `output` sigue por defecto. Criterio de aceptación verifica build estático + marketing intacto. |
+| Riesgo                                                                                                                | Mitigación                                                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Añadir Neon+Drizzle+Better Auth rompe el build estático del marketing.                                                | Solo `/admin/**` y `/api/auth/**` optan a servidor (`prerender = false`); `output` sigue por defecto. Criterio de aceptación verifica build estático + marketing intacto. |
 | Los imports/API de Better Auth + Drizzle + Neon cambian rápido y el bosquejo de `ARCHITECTURE.md §3` queda desfasado. | Confirmar `better-auth/adapters/drizzle`, el plugin `admin` y `drizzle-orm/neon-http` contra la doc vigente al implementar (Bloque B); fijar versiones en `package.json`. |
-| El plugin `admin` requiere que el actor tenga rol admin, y su config de roles no calza con el enum. | Configurar `adminRoles`/`role` del plugin al valor `admin` y cubrir con `requireAdmin` en cada Action; probar que un entrenador recibe `FORBIDDEN`. |
-| Middleware mal alcanzado bloquea el marketing o deja `/admin` abierto. | Guard temprano `if (!pathname.startsWith('/admin')) return next()`; caso login exceptuado. Criterios cubren ambos lados (marketing pasa, `/admin` protegido). |
-| `text[]` (`cats`) sin soporte parejo entre Drizzle y Neon serverless. | Usar `text('cats').array()`; si diera guerra, fallback a `jsonb`. `normalizaCats` centraliza el saneo antes de persistir. |
-| Dejar al club sin admin (auto-ban o degradar al último). | `esUltimoAdmin`/`puedeDesactivar` en `lib/domain`, aplicadas en la Action antes de mutar; criterios de aceptación las verifican. |
-| Secretos (`DATABASE_URL`, `BETTER_AUTH_SECRET`, clave del seed) filtrados al repo. | Solo nombres en `.env.example`; valores en `.env` (gitignored) y Vercel. Criterio explícito de "sin secretos en el repo". |
-| Contraseña inicial comunicada por canal inseguro (WhatsApp) queda expuesta. | Fuera de alcance técnico, pero el reset de contraseña permite rotarla; documentar en el handoff que la primera clave se cambie pronto. |
+| El plugin `admin` requiere que el actor tenga rol admin, y su config de roles no calza con el enum.                   | Configurar `adminRoles`/`role` del plugin al valor `admin` y cubrir con `requireAdmin` en cada Action; probar que un entrenador recibe `FORBIDDEN`.                       |
+| Middleware mal alcanzado bloquea el marketing o deja `/admin` abierto.                                                | Guard temprano `if (!pathname.startsWith('/admin')) return next()`; caso login exceptuado. Criterios cubren ambos lados (marketing pasa, `/admin` protegido).             |
+| `text[]` (`cats`) sin soporte parejo entre Drizzle y Neon serverless.                                                 | Usar `text('cats').array()`; si diera guerra, fallback a `jsonb`. `normalizaCats` centraliza el saneo antes de persistir.                                                 |
+| Dejar al club sin admin (auto-ban o degradar al último).                                                              | `esUltimoAdmin`/`puedeDesactivar` en `lib/domain`, aplicadas en la Action antes de mutar; criterios de aceptación las verifican.                                          |
+| Secretos (`DATABASE_URL`, `BETTER_AUTH_SECRET`, clave del seed) filtrados al repo.                                    | Solo nombres en `.env.example`; valores en `.env` (gitignored) y Vercel. Criterio explícito de "sin secretos en el repo".                                                 |
+| Contraseña inicial comunicada por canal inseguro (WhatsApp) queda expuesta.                                           | Fuera de alcance técnico, pero el reset de contraseña permite rotarla; documentar en el handoff que la primera clave se cambie pronto.                                    |
 
 ---
 

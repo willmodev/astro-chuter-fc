@@ -6,13 +6,13 @@
  * Debe envolverse en <MotionProvider> en algún ancestro del árbol.
  */
 export {
-    m,
-    AnimatePresence,
-    useInView,
-    useMotionValue,
-    useTransform,
-    animate,
-    useReducedMotion,
-    useScroll,
-    useSpring,
-} from "motion/react";
+  m,
+  AnimatePresence,
+  useInView,
+  useMotionValue,
+  useTransform,
+  animate,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+} from 'motion/react';

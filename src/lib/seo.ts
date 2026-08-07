@@ -9,7 +9,9 @@ export interface PageSeo {
 }
 
 export function pageTitle(section?: string): string {
-  return section ? `${section} | ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
+  return section
+    ? `${section} | ${SITE.name}`
+    : `${SITE.name} — ${SITE.tagline}`;
 }
 
 export function buildSportsActivityLocationJsonLd() {

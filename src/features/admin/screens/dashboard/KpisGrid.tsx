@@ -1,7 +1,7 @@
-import { fmtShort } from '@/lib/format';
-
 import { Icon } from '../../chrome/Icon';
 import { KpiCard } from '../../ui/KpiCard';
+import { Monto } from '../../ui/Monto';
+
 import type { Stats } from '../../data/types';
 
 // KPIs: 2 columnas en mobile → 4 en desktop (clase `.admin-kpis` en admin.css).
@@ -40,7 +40,7 @@ export function KpisGrid({ stats }: Readonly<Props>) {
       />
       <KpiCard
         label="Recaudo año"
-        value={fmtShort(stats.recaudo)}
+        value={<Monto valor={stats.recaudo} corto />}
         delta="Temporada 2026"
         deltaTone="neutral"
         accent="gold"

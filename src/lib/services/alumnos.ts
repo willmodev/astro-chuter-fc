@@ -21,7 +21,6 @@ import {
 } from '@/lib/domain/alumnos';
 import type { Mes } from '@/lib/domain/cartera';
 import { categoriaDeFecha } from '@/lib/domain/categoria';
-
 import type { Alumno, AlumnoPlantel } from '@/features/admin/data/types';
 
 import { aAlumno, aPlantel, parseFechaLocal } from './mapea-alumno';
@@ -136,7 +135,9 @@ export async function listarPlantel(
   hoy: Date = new Date(),
 ): Promise<AlumnoPlantel[]> {
   const permitidas = new Set(cats);
-  return (await listarPlantelCompleto(hoy)).filter((a) => permitidas.has(a.cat));
+  return (await listarPlantelCompleto(hoy)).filter((a) =>
+    permitidas.has(a.cat),
+  );
 }
 
 // Ficha: incluye retirados — su historial sigue consultable (spec 14).

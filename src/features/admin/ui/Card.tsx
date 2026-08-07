@@ -12,7 +12,14 @@ interface Props {
   style?: CSSProperties;
 }
 
-export function Card({ title, eyebrow, actions, pad = true, children, style }: Props) {
+export function Card({
+  title,
+  eyebrow,
+  actions,
+  pad = true,
+  children,
+  style,
+}: Props) {
   const hasHeader = title || eyebrow || actions;
   return (
     <section
@@ -57,7 +64,9 @@ export function Card({ title, eyebrow, actions, pad = true, children, style }: P
             )}
           </div>
           {actions && (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>{actions}</div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              {actions}
+            </div>
           )}
         </header>
       )}

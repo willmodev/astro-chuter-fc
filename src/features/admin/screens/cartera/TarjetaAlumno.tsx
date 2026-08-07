@@ -1,11 +1,13 @@
 import { estadoAlumno } from '@/lib/domain/alumnos';
 import { saldoPendiente } from '@/lib/domain/cartera';
-import { fmt } from '@/lib/format';
 
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
-import type { Alumno } from '../../data/types';
+import { Monto } from '../../ui/Monto';
+
 import { TiraMeses } from './TiraMeses';
+
+import type { Alumno } from '../../data/types';
 
 // Tarjeta de cartera (HU-3.2): alumno, categoría, cuota/mes, saldo o
 // "Al día", y tira de meses. Tocar una celda cobrable navega a Registrar pago.
@@ -22,6 +24,9 @@ export function TarjetaAlumno({ alumno, onCobrarMes }: Readonly<Props>) {
     <div
       style={{
         display: 'grid',
+        // El nombre largo va con `nowrap`; sin `minmax(0, 1fr)` su
+        // min-content estira el track y desborda la pantalla a 320px.
+        gridTemplateColumns: 'minmax(0, 1fr)',
         gap: 10,
         padding: '14px 16px',
         borderRadius: 'var(--radius-lg)',
@@ -45,11 +50,24 @@ export function TarjetaAlumno({ alumno, onCobrarMes }: Readonly<Props>) {
           >
             {alumno.name}
           </strong>
-          <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
-            {alumno.cat} · {fmt(alumno.cuota)}/mes
+          <span
+            style={{
+              fontSize: 12,
+              color: 'var(--text-muted)',
+              fontWeight: 600,
+            }}
+          >
+            {alumno.cat} · <Monto valor={alumno.cuota} />
+            /mes
           </span>
         </div>
-        {enMora ? <Badge tone="due">{fmt(saldo)}</Badge> : <Badge tone="paid">Al día</Badge>}
+        {enMora ? (
+          <Badge tone="due">
+            <Monto valor={saldo} />
+          </Badge>
+        ) : (
+          <Badge tone="paid">Al día</Badge>
+        )}
       </div>
       <TiraMeses states={alumno.states} onTocarMes={onCobrarMes} />
     </div>

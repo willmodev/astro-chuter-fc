@@ -36,7 +36,9 @@ const objetivo = await db
 
 console.log(`\nBD: ${host}`);
 console.log(`Usuarios con correo ${DOMINIO}: ${objetivo.length}`);
-objetivo.forEach((u) => console.log(`   ${u.name} · ${u.email} · [${u.cats.join(', ')}]`));
+objetivo.forEach((u) =>
+  console.log(`   ${u.name} · ${u.email} · [${u.cats.join(', ')}]`),
+);
 
 if (objetivo.length === 0) {
   console.log('✓ Nada que borrar.\n');
@@ -66,5 +68,7 @@ if (!COMMIT) {
 await db.delete(sesiones).where(inArray(sesiones.entrenadorId, ids));
 await db.delete(planesSemana).where(inArray(planesSemana.entrenadorId, ids));
 await db.delete(user).where(like(user.email, DOMINIO));
-console.log(`✓ Borrados ${objetivo.length} usuario(s) de prueba con su historial.\n`);
+console.log(
+  `✓ Borrados ${objetivo.length} usuario(s) de prueba con su historial.\n`,
+);
 process.exit(0);

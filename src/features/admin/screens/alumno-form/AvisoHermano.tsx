@@ -24,7 +24,13 @@ export function AvisoHermano() {
         <strong style={{ fontSize: 13.5, color: 'var(--brand-navy)' }}>
           Hermano detectado
         </strong>
-        <span style={{ fontSize: 12.5, color: 'var(--text-body)', lineHeight: 1.35 }}>
+        <span
+          style={{
+            fontSize: 12.5,
+            color: 'var(--text-body)',
+            lineHeight: 1.35,
+          }}
+        >
           Descuento en el uniforme: {fmt(PRECIO_UNIFORME_HERMANO)} c/u. La
           mensualidad se mantiene en {fmt(CUOTA_MENSUAL)}.
         </span>

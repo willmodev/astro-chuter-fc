@@ -1,15 +1,16 @@
-import type { CSSProperties } from 'react';
-
 import type { DashboardStats } from '@/lib/services/dashboard';
 
 import { SectionLabel } from '../../chrome/SectionLabel';
-import type { TabId } from '../../chrome/tabs';
+
 import { CobrosPendientes } from './CobrosPendientes';
 import { EntrenoDeHoyCard } from './EntrenoDeHoyCard';
 import { HeroRecaudo } from './HeroRecaudo';
 import { KpisGrid } from './KpisGrid';
 import { ProximosCumples } from './ProximosCumples';
 import { RecaudoPorMes } from './RecaudoPorMes';
+
+import type { TabId } from '../../chrome/tabs';
+import type { CSSProperties } from 'react';
 
 // Pantalla Dashboard: compone las secciones a partir de `dashboard.stats`. La
 // card EntrenoDeHoy solo aparece en días Lun/Mié/Vie (spec 13); los cumpleaños
@@ -30,7 +31,11 @@ const ghostLink: CSSProperties = {
   padding: 0,
 };
 
-export function Dashboard({ data, onNav, onOpenEntrenamientos }: Readonly<Props>) {
+export function Dashboard({
+  data,
+  onNav,
+  onOpenEntrenamientos,
+}: Readonly<Props>) {
   return (
     <div>
       <HeroRecaudo stats={data.stats} mesLong={data.mesesLong[data.mesVivo]} />
@@ -38,7 +43,10 @@ export function Dashboard({ data, onNav, onOpenEntrenamientos }: Readonly<Props>
       <RecaudoPorMes monthly={data.monthly} />
 
       {data.entrenoDeHoy !== null && data.entrenoDeHoy.filas.length > 0 && (
-        <EntrenoDeHoyCard entreno={data.entrenoDeHoy} onOpen={onOpenEntrenamientos} />
+        <EntrenoDeHoyCard
+          entreno={data.entrenoDeHoy}
+          onOpen={onOpenEntrenamientos}
+        />
       )}
 
       <SectionLabel
@@ -50,7 +58,10 @@ export function Dashboard({ data, onNav, onOpenEntrenamientos }: Readonly<Props>
       >
         Cobros pendientes
       </SectionLabel>
-      <CobrosPendientes morosos={data.morosos} onOpen={() => onNav('alumnos')} />
+      <CobrosPendientes
+        morosos={data.morosos}
+        onOpen={() => onNav('alumnos')}
+      />
 
       <SectionLabel>Próximos cumpleaños</SectionLabel>
       <ProximosCumples cumple={data.cumples} />

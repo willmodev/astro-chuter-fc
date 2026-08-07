@@ -1,8 +1,10 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
 
 import { Sheet } from '../../chrome/Sheet';
+
 import { SelectorCategorias } from './SelectorCategorias';
 import { useCategoriasAsignables } from './useCategoriasAsignables';
+
 import type { NuevoUsuarioInput } from './types';
 
 interface Props {
@@ -70,31 +72,71 @@ export function NuevoUsuarioSheet({ onClose, onCrear }: Readonly<Props>) {
 
   return (
     <Sheet title="Nuevo usuario" onClose={onClose}>
-      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 12 }}>
+      <form
+        onSubmit={(e) => void onSubmit(e)}
+        style={{ display: 'grid', gap: 12 }}
+      >
         {error && (
           <div className="admin-login__error" role="alert">
             {error}
           </div>
         )}
         <div>
-          <label style={lbl} htmlFor="nu-name">Nombre</label>
-          <input id="nu-name" style={field} value={name} required minLength={2}
-            onChange={(e) => setName(e.target.value)} disabled={enviando} />
+          <label style={lbl} htmlFor="nu-name">
+            Nombre
+          </label>
+          <input
+            id="nu-name"
+            style={field}
+            value={name}
+            required
+            minLength={2}
+            onChange={(e) => setName(e.target.value)}
+            disabled={enviando}
+          />
         </div>
         <div>
-          <label style={lbl} htmlFor="nu-email">Correo</label>
-          <input id="nu-email" type="email" style={field} value={email} required
-            autoComplete="off" onChange={(e) => setEmail(e.target.value)} disabled={enviando} />
+          <label style={lbl} htmlFor="nu-email">
+            Correo
+          </label>
+          <input
+            id="nu-email"
+            type="email"
+            style={field}
+            value={email}
+            required
+            autoComplete="off"
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={enviando}
+          />
         </div>
         <div>
-          <label style={lbl} htmlFor="nu-pass">Contraseña inicial</label>
-          <input id="nu-pass" type="text" style={field} value={password} required minLength={8}
-            autoComplete="off" onChange={(e) => setPassword(e.target.value)} disabled={enviando} />
+          <label style={lbl} htmlFor="nu-pass">
+            Contraseña inicial
+          </label>
+          <input
+            id="nu-pass"
+            type="text"
+            style={field}
+            value={password}
+            required
+            minLength={8}
+            autoComplete="off"
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={enviando}
+          />
         </div>
         <div>
-          <label style={lbl} htmlFor="nu-role">Rol</label>
-          <select id="nu-role" style={field} value={role} disabled={enviando}
-            onChange={(e) => setRole(e.target.value as 'admin' | 'entrenador')}>
+          <label style={lbl} htmlFor="nu-role">
+            Rol
+          </label>
+          <select
+            id="nu-role"
+            style={field}
+            value={role}
+            disabled={enviando}
+            onChange={(e) => setRole(e.target.value as 'admin' | 'entrenador')}
+          >
             <option value="entrenador">Entrenador</option>
             <option value="admin">Administrador</option>
           </select>
@@ -111,8 +153,12 @@ export function NuevoUsuarioSheet({ onClose, onCrear }: Readonly<Props>) {
             />
           </fieldset>
         )}
-        <button type="submit" className="admin-login__submit" disabled={enviando}
-          style={{ marginTop: 4 }}>
+        <button
+          type="submit"
+          className="admin-login__submit"
+          disabled={enviando}
+          style={{ marginTop: 4 }}
+        >
           {enviando ? 'Creando…' : 'Crear usuario'}
         </button>
       </form>

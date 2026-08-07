@@ -114,7 +114,11 @@ export function categoriaDeAlumno(
 /** Rango de fechas de nacimiento admitidas hoy (para `min`/`max` del form). */
 export function rangoFechasAdmitidas(hoy: Date): { min: Date; max: Date } {
   return {
-    min: new Date(hoy.getFullYear() - (SUB_MAX + 1), hoy.getMonth(), hoy.getDate() + 1),
+    min: new Date(
+      hoy.getFullYear() - (SUB_MAX + 1),
+      hoy.getMonth(),
+      hoy.getDate() + 1,
+    ),
     max: hoy,
   };
 }

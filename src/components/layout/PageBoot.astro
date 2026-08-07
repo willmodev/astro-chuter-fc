@@ -1,40 +1,41 @@
 ---
 import { Image } from 'astro:assets';
+
 import logo from '@/assets/images/chuter-logo.jpg';
 ---
 
 <div id="page-boot" class="page-boot" aria-hidden="true">
-    <Image
-        src={logo}
-        alt=""
-        width={80}
-        height={80}
-        class="page-boot-logo h-20 w-20 rounded-2xl shadow-lg"
-        fetchpriority="high"
-        loading="eager"
-    />
+  <Image
+    src={logo}
+    alt=""
+    width={80}
+    height={80}
+    class="page-boot-logo h-20 w-20 rounded-2xl shadow-lg"
+    fetchpriority="high"
+    loading="eager"
+  />
 </div>
 
 <script is:inline>
-    (function () {
-        try {
-            // Si ya bootó en esta sesión, ocultar inmediatamente (cero flash).
-            if (sessionStorage.getItem('chuter:booted')) {
-                const el = document.getElementById('page-boot');
-                if (el) el.remove();
-                return;
-            }
-            sessionStorage.setItem('chuter:booted', '1');
-            // Limpiar el overlay del DOM tras la animación (700ms pop + 500ms fade)
-            setTimeout(() => {
-                const el = document.getElementById('page-boot');
-                if (el) el.remove();
-            }, 1600);
-        } catch (_) {
-            setTimeout(() => {
-                const el = document.getElementById('page-boot');
-                if (el) el.remove();
-            }, 1600);
-        }
-    })();
+  (function () {
+    try {
+      // Si ya bootó en esta sesión, ocultar inmediatamente (cero flash).
+      if (sessionStorage.getItem('chuter:booted')) {
+        const el = document.getElementById('page-boot');
+        if (el) el.remove();
+        return;
+      }
+      sessionStorage.setItem('chuter:booted', '1');
+      // Limpiar el overlay del DOM tras la animación (700ms pop + 500ms fade)
+      setTimeout(() => {
+        const el = document.getElementById('page-boot');
+        if (el) el.remove();
+      }, 1600);
+    } catch (_) {
+      setTimeout(() => {
+        const el = document.getElementById('page-boot');
+        if (el) el.remove();
+      }, 1600);
+    }
+  })();
 </script>

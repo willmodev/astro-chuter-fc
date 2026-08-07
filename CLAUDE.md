@@ -27,21 +27,24 @@ Sitio web institucional para el **Club Deportivo Chuter F.C.**, una escuela de f
 ## Información oficial del club (CONFIRMADA)
 
 ### Contacto
+
 - **Teléfono / WhatsApp:** 300 872 5964
 - **Formato internacional WhatsApp:** `573008725964`
 - **Email:** olimak8@hotmail.com
 - **Instagram:** [@1chuter](https://instagram.com/1chuter)
 
 ### Ubicación
-- **Ciudad:** Valledupar, Cesar *(confirmado por el cliente, 2026-08-07)*
+
+- **Ciudad:** Valledupar, Cesar _(confirmado por el cliente, 2026-08-07)_
 - **Cancha principal:** Cancha Los Algarrobillos — [Maps](https://maps.app.goo.gl/yvHRJFxW7WCUhWJQ7)
 - **Cancha secundaria:** Cancha del 12 de Octubre — [Maps](https://maps.app.goo.gl/24oxxbufXfMzXnwf9)
 - **Sector:** Los Algarrobillos
 
 ### Horarios
+
 - **Días:** Lunes, miércoles y viernes
 - **Hora:** 4:30 PM a 6:00 PM
-- *(Confirmar si hay diferencias por categoría)*
+- _(Confirmar si hay diferencias por categoría)_
 
 ### Categorías por edad (catálogo único, spec 15)
 
@@ -51,25 +54,28 @@ Sitio web institucional para el **Club Deportivo Chuter F.C.**, una escuela de f
 >
 > **Fuente única:** `src/lib/domain/categoria.ts`. La landing y el admin leen de ahí; no se escribe ninguna lista de categorías en otro lado.
 
-| SUB | Categoría | Edad | Entrenador |
-|---|---|---|---|
-| SUB 4 | **Baby** | 3 a 4 años | *(sin asignar)* |
-| SUB 6 | **Pony** | 5 a 6 años | Jorge Carrillo |
-| SUB 8 | **Benjamín** | 7 a 8 años | *(sin asignar)* |
-| SUB 10 | **Preinfantil** | 9 a 10 años | Camilo Andrade |
-| SUB 12 | **Infantil** | 11 a 12 años | Óscar Cárdenas |
-| SUB 14 | **Prejuvenil** | 13 a 14 años | Cristian Maestre |
-| SUB 16 | **Juvenil** | 15 a 16 años | *(sin asignar)* |
+| SUB    | Categoría       | Edad         | Entrenador       |
+| ------ | --------------- | ------------ | ---------------- |
+| SUB 4  | **Baby**        | 3 a 4 años   | _(sin asignar)_  |
+| SUB 6  | **Pony**        | 5 a 6 años   | Jorge Carrillo   |
+| SUB 8  | **Benjamín**    | 7 a 8 años   | _(sin asignar)_  |
+| SUB 10 | **Preinfantil** | 9 a 10 años  | Camilo Andrade   |
+| SUB 12 | **Infantil**    | 11 a 12 años | Óscar Cárdenas   |
+| SUB 14 | **Prejuvenil**  | 13 a 14 años | Cristian Maestre |
+| SUB 16 | **Juvenil**     | 15 a 16 años | _(sin asignar)_  |
 
 Una categoría pertenece a **un solo entrenador activo** a la vez; desactivar a un entrenador libera las suyas.
 
 ### Promoción actual
+
 - **Inscripción gratis** (destacar en hero como hook principal)
 
 ### Aval institucional
+
 - Reconocimiento Deportivo otorgado por **INDER**
 
 ### Liderazgo
+
 - **CEO:** Camilo Andrade ([@camilo8andrade](https://instagram.com/camilo8andrade))
 - **CEO:** Ebed Shaday Calderón ([@ebedshadaycalderon](https://instagram.com/ebedshadaycalderon))
 
@@ -124,14 +130,14 @@ Los schemas viven en `src/content.config.ts` (loader `glob`).
 
 ```ts
 schema: z.object({
-  sub: z.number(),                  // 4 | 6 | 8 | 10 | 12 | 14 | 16
+  sub: z.number(), // 4 | 6 | 8 | 10 | 12 | 14 | 16
   horario: z.string(),
-  icono: z.string(),                // nombre de icono Lucide
-  entrenador: z.string().optional(),// sin dato → la tarjeta omite la línea
+  icono: z.string(), // nombre de icono Lucide
+  entrenador: z.string().optional(), // sin dato → la tarjeta omite la línea
   descripcion: z.string(),
   color: z.enum(['navy', 'blue', 'gold']).default('navy'),
   orden: z.number(),
-})
+});
 ```
 
 > El markdown **no** lleva `nombre`, `nacidos` ni `edadAprox`: el nombre y la edad
@@ -140,12 +146,13 @@ schema: z.object({
 > resuelve el catálogo, ordena y falla el build si un `sub` no existe.
 
 ### Formadores
+
 ```ts
 const formadoresCollection = defineCollection({
   type: 'content',
   schema: z.object({
     nombre: z.string(),
-    rol: z.string(),                  // "CEO y Director Técnico"
+    rol: z.string(), // "CEO y Director Técnico"
     bio: z.string(),
     foto: z.string(),
     instagram: z.string().optional(),
@@ -155,16 +162,18 @@ const formadoresCollection = defineCollection({
 ```
 
 Crear inicialmente:
+
 - `formadores/camilo-andrade.md` (CEO, instagram: camilo8andrade)
 - `formadores/ebed-shaday-calderon.md` (CEO, instagram: ebedshadaycalderon)
 
 ### Testimonios
+
 ```ts
 const testimoniosCollection = defineCollection({
   type: 'content',
   schema: z.object({
     autor: z.string(),
-    relacion: z.string(),             // "Mamá de Mateo, 8 años"
+    relacion: z.string(), // "Mamá de Mateo, 8 años"
     texto: z.string(),
     foto: z.string().optional(),
     orden: z.number(),
@@ -179,6 +188,7 @@ Para testimonios usar placeholder hasta que llegue la data real, marcado clarame
 ## Convenciones de código
 
 ### TypeScript
+
 - `strict: true` siempre
 - **Cero `any`.** Si toca, justificar con comentario `// any necesario porque…`
 - Tipos explícitos en props de componentes Astro:
@@ -193,6 +203,7 @@ Para testimonios usar placeholder hasta que llegue la data real, marcado clarame
   ```
 
 ### Componentes
+
 - **`.astro` por defecto** para todo lo estático
 - **`.tsx` solo si hay interactividad real** (form, menú móvil, dialog, carrusel controlado)
 - Nombres en **PascalCase** para componentes
@@ -200,6 +211,7 @@ Para testimonios usar placeholder hasta que llegue la data real, marcado clarame
 - Props desestructuradas, no `props.algo`
 
 ### Imports
+
 - Alias `@/*` apuntando a `src/*` (ya configurado en `tsconfig.json`)
 - Orden de imports:
   1. Librerías externas
@@ -208,12 +220,14 @@ Para testimonios usar placeholder hasta que llegue la data real, marcado clarame
   4. Tipos al final
 
 ### Estilos
+
 - **Tailwind utility-first.** No CSS modules ni styled-components.
 - Si una clase se repite mucho, abstraer a componente, no a CSS.
 - Tokens de marca solo desde `global.css`, nunca hardcodear hex en componentes.
 - Mobile-first: clase base es mobile, modificadores son `md:` y `lg:`.
 
 ### Naming
+
 - Archivos de páginas en `kebab-case` (`inscripcion.astro`)
 - Componentes en `PascalCase` (`HeroSection.astro`)
 - Variables y funciones en `camelCase`
@@ -226,6 +240,7 @@ Para testimonios usar placeholder hasta que llegue la data real, marcado clarame
 **Conventional Commits en español con emoji** (ya tengo configurado el slash command `/commit` que respeta esto).
 
 Ejemplos:
+
 - `✨ feat: agregar sección hero con imagen de fondo`
 - `🐛 fix: corregir botón de WhatsApp en mobile`
 - `💄 style: ajustar paleta del card de programa`
@@ -235,6 +250,7 @@ Ejemplos:
 - `♿ a11y: agregar focus-visible a botones`
 
 **Reglas:**
+
 - Commits atómicos (un cambio lógico por commit)
 - En español, siempre
 - NUNCA `git add .` masivo — revisar archivos antes
@@ -245,17 +261,20 @@ Ejemplos:
 ## Performance budget
 
 Métricas obligatorias en Lighthouse mobile (Slow 4G):
+
 - **Performance:** 95+
 - **Accessibility:** 100
 - **Best Practices:** 100
 - **SEO:** 100
 
 Targets específicos:
+
 - **LCP** (Largest Contentful Paint): < 1.5s
 - **CLS** (Cumulative Layout Shift): < 0.05
 - **JS bundle inicial:** < 50KB
 
 **Tácticas obligatorias:**
+
 - `<Image>` de Astro para todas las imágenes
 - `loading="lazy"` en imágenes below-the-fold
 - `fetchpriority="high"` solo en imagen del hero
@@ -290,16 +309,19 @@ Targets específicos:
 El número siempre debe linkear con un mensaje pre-cargado para facilitar la conversión:
 
 **Hero principal:**
+
 ```
 https://wa.me/573008725964?text=Hola%20Chuter%20FC%2C%20quiero%20información%20para%20inscribir%20a%20mi%20hijo
 ```
 
 **Card de categoría específica:**
+
 ```
 https://wa.me/573008725964?text=Hola%20Chuter%20FC%2C%20quiero%20inscribir%20a%20mi%20hijo%20en%20la%20categoría%20{NOMBRE_CATEGORIA}
 ```
 
 **Botón flotante:**
+
 ```
 https://wa.me/573008725964?text=Hola%20Chuter%20FC
 ```
@@ -326,13 +348,31 @@ Centralizar la lógica en `src/lib/whatsapp.ts` con una función helper.
 
 ---
 
+## Scripts de npm
+
+| Comando                                                            | Qué hace                                                  |
+| ------------------------------------------------------------------ | --------------------------------------------------------- |
+| `npm run dev` · `npm run build` · `npm run preview`                | Astro                                                     |
+| `npm run lint`                                                     | `eslint .`                                                |
+| `npm run typecheck`                                                | `astro check`                                             |
+| `npm run check`                                                    | `astro check && eslint .` — **falla si cualquiera falla** |
+| `npm run format`                                                   | `prettier --write .`                                      |
+| `npm run format:check`                                             | `prettier --check .`                                      |
+| `npm run db:generate` · `db:migrate` · `db:seed` · `db:seed:admin` | Drizzle y seeds                                           |
+
+`check` no incluye `format:check` a propósito: el formato no bloquea, se corre a mano con
+`npm run format` (spec 16).
+
+---
+
 ## Flujo de trabajo con Claude Code
 
 1. **Antes de codear nada nuevo**, mostrarme un plan en chat.
 2. **Implementar en iteraciones pequeñas**, no todo de una.
 3. **Hacer commit después de cada sección importante** con `/commit`.
 4. **Probar visualmente** con `npm run dev` antes de avanzar.
-5. **Si algo falla**, NO insistir 5 veces con la misma estrategia — pausar y preguntarme.
+5. **Antes de cerrar**, `npm run check` en verde.
+6. **Si algo falla**, NO insistir 5 veces con la misma estrategia — pausar y preguntarme.
 
 ---
 
@@ -340,7 +380,7 @@ Centralizar la lógica en `src/lib/whatsapp.ts` con una función helper.
 
 Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar como placeholders:
 
-- [ ] Logo SVG en alta calidad (mientras tanto usar el PNG en `/public/logo-temp.png`)
+- [x] Logo SVG confirmado (Will, 2026-08-07): **`public/images/chuter-logo.svg` es el definitivo**. Ya lo usan `AdminNav` y la tarjeta del club. El `/public/logo-temp.png` que mencionaba este pendiente nunca existió.
 - [x] Costos confirmados (cliente, 2026-07-10): mensualidad **$50.000 COP/jugador sin descuento por hermanos**; uniforme **$100.000 COP** ($80.000 c/u si son hermanos); inscripción gratis. El descuento de hermanos es del **uniforme**, no de la mensualidad.
 - [x] Ubicación confirmada (cliente, 2026-08-07): **Valledupar, Cesar**, con link de Maps propio para cada una de las dos canchas en `LOCATION.mapsUrl` y `LOCATION.secondaryMapsUrl`
 - [x] Costos en el sitio público: **no se publican** (cliente, 2026-08-07). Siguen solo en el admin
@@ -355,6 +395,7 @@ Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar
 - [ ] Fotos profesionales de los formadores
 
 Para cualquier dato no provisto, usar texto placeholder y marcar con comentario:
+
 ```html
 <!-- TODO: pedir a Camilo - costo mensualidad -->
 <p>Mensualidad desde $XX.XXX COP</p>
@@ -366,6 +407,7 @@ Para cualquier dato no provisto, usar texto placeholder y marcar con comentario:
 
 `.env.example` es plantilla versionada: solo **nombres** de variables con valor **vacío** (nunca
 data real). Los valores reales van en `.env` (gitignored) y en el panel de Vercel.
+
 ```
 PUBLIC_WHATSAPP_NUMBER=
 PUBLIC_CONTACT_EMAIL=

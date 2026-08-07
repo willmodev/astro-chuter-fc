@@ -3,6 +3,7 @@ import { fmt } from '@/lib/format';
 import { waTo } from '@/lib/whatsapp';
 
 import { Icon } from '../../chrome/Icon';
+
 import type { Alumno } from '../../data/types';
 
 // Pantalla de éxito tras `registrarPago`: recibo por WhatsApp al acudiente
@@ -31,11 +32,26 @@ export function ExitoPago({ alumno, meses, total, onVolver }: Readonly<Props>) {
         textAlign: 'center',
       }}
     >
-      <div style={{ display: 'grid', gap: 12, justifyItems: 'center', maxWidth: 320, width: '100%' }}>
+      <div
+        style={{
+          display: 'grid',
+          gap: 12,
+          justifyItems: 'center',
+          maxWidth: 320,
+          width: '100%',
+        }}
+      >
         <span style={{ color: 'var(--success)' }}>
           <Icon name="circle-check" size={40} />
         </span>
-        <p style={{ margin: 0, fontSize: 17, fontWeight: 700, color: 'var(--text-strong)' }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 17,
+            fontWeight: 700,
+            color: 'var(--text-strong)',
+          }}
+        >
           Pago registrado
         </p>
         <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>

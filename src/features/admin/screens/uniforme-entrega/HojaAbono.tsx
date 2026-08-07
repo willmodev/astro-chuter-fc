@@ -4,6 +4,7 @@ import { fmt } from '@/lib/format';
 import type { TipoKit } from '@/lib/domain/uniformes';
 
 import { CampoTexto } from '../../ui/CampoTexto';
+
 import type { KitUniforme } from '../../data/types';
 
 // Hoja de abono (spec 12): registra un pago parcial o total del kit. Muestra
@@ -43,13 +44,33 @@ export function HojaAbono({ kit, onAbono, onClose }: Readonly<Props>) {
         border: '1px solid var(--border-subtle)',
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-        <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Precio</span>
-        <strong style={{ color: 'var(--text-strong)' }}>{fmt(kit.precio)}</strong>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontSize: 13,
+        }}
+      >
+        <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>
+          Precio
+        </span>
+        <strong style={{ color: 'var(--text-strong)' }}>
+          {fmt(kit.precio)}
+        </strong>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-        <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Saldo</span>
-        <strong style={{ color: 'var(--text-strong)' }}>{fmt(kit.saldo)}</strong>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontSize: 13,
+        }}
+      >
+        <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>
+          Saldo
+        </span>
+        <strong style={{ color: 'var(--text-strong)' }}>
+          {fmt(kit.saldo)}
+        </strong>
       </div>
 
       <CampoTexto
@@ -78,7 +99,14 @@ export function HojaAbono({ kit, onAbono, onClose }: Readonly<Props>) {
       </button>
 
       {errorMsg && (
-        <p style={{ margin: 0, fontSize: 13, color: 'var(--error)', fontWeight: 600 }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 13,
+            color: 'var(--error)',
+            fontWeight: 600,
+          }}
+        >
           {errorMsg}
         </p>
       )}

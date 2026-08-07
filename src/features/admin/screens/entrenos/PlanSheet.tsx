@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Sheet } from '../../chrome/Sheet';
 import { CampoTexto } from '../../ui/CampoTexto';
+
 import type { PlanSemana } from '../../data/types';
 
 // Hoja modal del plan semanal (patrón HojaEntrega, spec 08): tema + objetivos.
@@ -13,7 +14,12 @@ interface Props {
   onClose: () => void;
 }
 
-export function PlanSheet({ plan, semanaLabel, onGuardar, onClose }: Readonly<Props>) {
+export function PlanSheet({
+  plan,
+  semanaLabel,
+  onGuardar,
+  onClose,
+}: Readonly<Props>) {
   const [tema, setTema] = useState(plan?.tema ?? '');
   const [objetivos, setObjetivos] = useState(plan?.objetivos ?? '');
   const valido = tema.trim() !== '';

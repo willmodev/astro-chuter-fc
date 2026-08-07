@@ -15,7 +15,11 @@ export function esDiaEntreno(valor: string): valor is DiaEntreno {
 
 /** El día de entreno que cae hoy (Lun/Mié/Vie), o `null` los demás días. */
 export function diaDeFecha(fecha: Date): DiaEntreno | null {
-  const porDia: Record<number, DiaEntreno> = { 1: 'Lunes', 3: 'Miércoles', 5: 'Viernes' };
+  const porDia: Record<number, DiaEntreno> = {
+    1: 'Lunes',
+    3: 'Miércoles',
+    5: 'Viernes',
+  };
   return porDia[fecha.getDay()] ?? null;
 }
 
@@ -46,8 +50,18 @@ export const SEMANAS_PASADAS = 3;
 export const SEMANAS_FUTURAS = 1; // permite planear la próxima semana con antelación
 
 const MESES_CORTOS = [
-  'ene', 'feb', 'mar', 'abr', 'may', 'jun',
-  'jul', 'ago', 'sep', 'oct', 'nov', 'dic',
+  'ene',
+  'feb',
+  'mar',
+  'abr',
+  'may',
+  'jun',
+  'jul',
+  'ago',
+  'sep',
+  'oct',
+  'nov',
+  'dic',
 ];
 
 /** Lunes (00:00 local) de la semana que contiene a `fecha`. */
@@ -81,7 +95,8 @@ function labelSemana(lunes: Date): string {
 }
 
 function subSemana(offset: number): string {
-  if (offset < 0) return offset === -1 ? 'Próxima semana' : `En ${-offset} semanas`;
+  if (offset < 0)
+    return offset === -1 ? 'Próxima semana' : `En ${-offset} semanas`;
   if (offset === 0) return 'Semana actual';
   if (offset === 1) return 'Semana pasada';
   return `Hace ${offset} semanas`;

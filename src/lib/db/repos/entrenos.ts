@@ -101,17 +101,31 @@ export async function upsertPlan(
     });
 }
 
+export interface PlaneacionInput {
+  entrenadorId: string;
+  semanaInicio: string;
+  dia: DiaEntreno;
+  parteCentralUrl: string | null;
+  parteCentralNota: string;
+}
+
 // Upsert de la planeación: toca SOLO url/nota (no pisa la asistencia).
-export async function upsertPlaneacion(
-  entrenadorId: string,
-  semanaInicio: string,
-  dia: DiaEntreno,
-  parteCentralUrl: string | null,
-  parteCentralNota: string,
-): Promise<void> {
+export async function upsertPlaneacion({
+  entrenadorId,
+  semanaInicio,
+  dia,
+  parteCentralUrl,
+  parteCentralNota,
+}: PlaneacionInput): Promise<void> {
   await db
     .insert(sesiones)
-    .values({ entrenadorId, semanaInicio, dia, parteCentralUrl, parteCentralNota })
+    .values({
+      entrenadorId,
+      semanaInicio,
+      dia,
+      parteCentralUrl,
+      parteCentralNota,
+    })
     .onConflictDoUpdate({
       target: [sesiones.entrenadorId, sesiones.semanaInicio, sesiones.dia],
       set: { parteCentralUrl, parteCentralNota, actualizadoEn: new Date() },

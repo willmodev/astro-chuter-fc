@@ -1,5 +1,6 @@
 import { Icon } from '../../chrome/Icon';
 import { Card } from '../../ui/Card';
+
 import type { PlanSemana } from '../../data/types';
 
 // Card del plan semanal (cabecera del Excel): tema + objetivos del entrenador
@@ -28,14 +29,34 @@ export function PlanCard({ plan, onEditar }: Readonly<Props>) {
           cursor: 'pointer',
         }}
       >
-        <span style={{ color: 'var(--brand-gold-deep)', display: 'flex', flexShrink: 0 }}>
+        <span
+          style={{
+            color: 'var(--brand-gold-deep)',
+            display: 'flex',
+            flexShrink: 0,
+          }}
+        >
           <Icon name="circle-plus" size={20} />
         </span>
         <span style={{ flex: 1, minWidth: 0 }}>
-          <span style={{ display: 'block', fontSize: 14, fontWeight: 700, color: 'var(--brand-gold-deep)' }}>
+          <span
+            style={{
+              display: 'block',
+              fontSize: 14,
+              fontWeight: 700,
+              color: 'var(--brand-gold-deep)',
+            }}
+          >
             Registrar plan de la semana
           </span>
-          <span style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+          <span
+            style={{
+              display: 'block',
+              fontSize: 12,
+              color: 'var(--text-muted)',
+              marginTop: 2,
+            }}
+          >
             Tema y objetivos de tu planeación
           </span>
         </span>
@@ -69,7 +90,14 @@ export function PlanCard({ plan, onEditar }: Readonly<Props>) {
         </button>
       }
     >
-      <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.45, color: 'var(--text-body)' }}>
+      <p
+        style={{
+          margin: 0,
+          fontSize: 13.5,
+          lineHeight: 1.45,
+          color: 'var(--text-body)',
+        }}
+      >
         {plan.objetivos}
       </p>
     </Card>

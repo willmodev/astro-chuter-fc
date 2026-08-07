@@ -1,6 +1,7 @@
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { Icon } from '../../chrome/Icon';
 import { AlumnoNoEncontrado } from '../ficha/AlumnoNoEncontrado';
+
 import { KitCard } from './KitCard';
 import { useUniformeAlumno } from './useUniformeAlumno';
 
@@ -16,7 +17,12 @@ export function UniformeEntrega({ alumnoId, onVolver }: Readonly<Props>) {
   const data = useUniformeAlumno(alumnoId);
 
   if (data.estado !== 'listo') {
-    return <EstadoCarga estado={data.estado} onReintentar={data.recargar} />;
+    return (
+      <EstadoCarga
+        estado={data.estado}
+        onReintentar={() => void data.recargar()}
+      />
+    );
   }
   if (!data.alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
@@ -47,11 +53,22 @@ export function UniformeEntrega({ alumnoId, onVolver }: Readonly<Props>) {
         </button>
         <div style={{ minWidth: 0 }}>
           <strong
-            style={{ display: 'block', fontSize: 16, color: 'var(--text-strong)', lineHeight: 1.2 }}
+            style={{
+              display: 'block',
+              fontSize: 16,
+              color: 'var(--text-strong)',
+              lineHeight: 1.2,
+            }}
           >
             {data.alumno.nombre}
           </strong>
-          <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
+          <span
+            style={{
+              fontSize: 12.5,
+              color: 'var(--text-muted)',
+              fontWeight: 600,
+            }}
+          >
             {data.alumno.cat} · Uniforme
           </span>
         </div>

@@ -13,7 +13,6 @@ import {
 } from '@/lib/db/repos/entrenos';
 import { listarUsuarios } from '@/lib/db/repos/usuarios';
 import { DIAS_ENTRENO, rosterDe, type DiaEntreno } from '@/lib/domain/entrenos';
-
 import type { AlumnoPlantel } from '@/features/admin/data/types';
 
 import { listarPlantelCompleto } from './alumnos';
@@ -57,9 +56,7 @@ export async function vistaAdmin(
     listarUsuarios(),
     listarPlantelCompleto(),
   ]);
-  const ids = [
-    ...new Set([...planes, ...sesiones].map((x) => x.entrenadorId)),
-  ];
+  const ids = [...new Set([...planes, ...sesiones].map((x) => x.entrenadorId))];
   return ids
     .map((id) => {
       const u = usuarios.find((x) => x.id === id);
@@ -104,7 +101,13 @@ export async function guardarPlaneacion(input: PlaneacionInput): Promise<void> {
     anterior = url;
     url = await subirImagen(entrenadorId, semanaInicio, dia, imagen);
   }
-  await upsertPlaneacion(entrenadorId, semanaInicio, dia, url, nota.trim());
+  await upsertPlaneacion({
+    entrenadorId,
+    semanaInicio,
+    dia,
+    parteCentralUrl: url,
+    parteCentralNota: nota.trim(),
+  });
   if (anterior) await borrarBlob(anterior);
 }
 

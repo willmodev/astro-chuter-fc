@@ -33,7 +33,9 @@ export function ToggleKit({ kit, onChange }: Readonly<Props>) {
               border: activo
                 ? `2px solid ${op.color}`
                 : '1px solid var(--border-subtle)',
-              background: activo ? 'var(--surface-sunken)' : 'var(--surface-card)',
+              background: activo
+                ? 'var(--surface-sunken)'
+                : 'var(--surface-card)',
               color: activo ? 'var(--text-strong)' : 'var(--text-muted)',
               fontSize: 14.5,
               fontWeight: 700,

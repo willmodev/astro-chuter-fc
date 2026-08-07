@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Dialog } from 'radix-ui';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+
 import MotionProvider from '@/components/motion/MotionProvider';
 import { m, AnimatePresence } from '@/components/motion/M';
 import { ease } from '@/lib/motion';
@@ -49,14 +50,14 @@ function GalleryInner({ images }: GalleryLightboxProps) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:auto-rows-[200px] md:gap-4 lg:auto-rows-[240px]">
+      <div className="grid grid-cols-2 gap-3 md:auto-rows-[200px] md:grid-cols-4 md:gap-4 lg:auto-rows-[240px]">
         {images.map((image, index) => (
           <button
             key={index}
             onClick={() => openAt(index)}
             aria-label={`Ver imagen ${index + 1}: ${image.alt}`}
             style={{ ['--idx' as never]: index }}
-            className={`reveal group relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2 md:aspect-auto md:h-full ${image.gridClass ?? ''}`}
+            className={`reveal group focus-visible:outline-brand-gold relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 md:aspect-auto md:h-full ${image.gridClass ?? ''}`}
           >
             <img
               src={image.thumbnail}
@@ -66,8 +67,8 @@ function GalleryInner({ images }: GalleryLightboxProps) {
               style={{ animationDelay: `${index * -1.7}s` }}
               className="thumb-ken-burns h-full w-full object-cover transition-[filter] duration-300 group-hover:brightness-110"
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-navy-deep/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            <div className="absolute inset-0 flex items-center justify-center bg-brand-navy/0 opacity-0 transition-all duration-300 group-hover:bg-brand-navy/15 group-hover:opacity-100">
+            <div className="from-brand-navy-deep/60 pointer-events-none absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <div className="bg-brand-navy/0 group-hover:bg-brand-navy/15 absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100">
               <svg
                 aria-hidden="true"
                 width="28"
@@ -128,16 +129,18 @@ function GalleryInner({ images }: GalleryLightboxProps) {
                       />
                     </AnimatePresence>
 
-                    <p className="text-center text-sm text-white/70">{img.alt}</p>
+                    <p className="text-center text-sm text-white/70">
+                      {img.alt}
+                    </p>
 
-                    <div className="flex items-center gap-3 text-white/50 text-xs">
+                    <div className="flex items-center gap-3 text-xs text-white/50">
                       {current + 1} / {images.length}
                     </div>
                   </div>
 
                   <Dialog.Close
                     aria-label="Cerrar galería"
-                    className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2"
+                    className="focus-visible:outline-brand-gold absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2"
                   >
                     <X size={20} strokeWidth={1.5} aria-hidden="true" />
                   </Dialog.Close>
@@ -147,16 +150,24 @@ function GalleryInner({ images }: GalleryLightboxProps) {
                       <button
                         onClick={prev}
                         aria-label="Imagen anterior"
-                        className="absolute left-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2 md:left-4 md:h-12 md:w-12"
+                        className="focus-visible:outline-brand-gold absolute top-1/2 left-2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 md:left-4 md:h-12 md:w-12"
                       >
-                        <ChevronLeft size={20} strokeWidth={1.5} aria-hidden="true" />
+                        <ChevronLeft
+                          size={20}
+                          strokeWidth={1.5}
+                          aria-hidden="true"
+                        />
                       </button>
                       <button
                         onClick={next}
                         aria-label="Imagen siguiente"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-brand-gold focus-visible:outline-offset-2 md:right-4 md:h-12 md:w-12"
+                        className="focus-visible:outline-brand-gold absolute top-1/2 right-2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 md:right-4 md:h-12 md:w-12"
                       >
-                        <ChevronRight size={20} strokeWidth={1.5} aria-hidden="true" />
+                        <ChevronRight
+                          size={20}
+                          strokeWidth={1.5}
+                          aria-hidden="true"
+                        />
                       </button>
                     </>
                   )}

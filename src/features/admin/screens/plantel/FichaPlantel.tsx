@@ -5,6 +5,7 @@ import { useUniformesEntrenador } from '../../hooks/useUniformesEntrenador';
 import { Avatar } from '../../ui/Avatar';
 import { AcudienteTab } from '../ficha/AcudienteTab';
 import { AlumnoNoEncontrado } from '../ficha/AlumnoNoEncontrado';
+
 import { UniformePlantel } from './UniformePlantel';
 
 // Ficha del entrenador (solo lectura): identidad + acudiente + entrega del
@@ -20,13 +21,14 @@ export function FichaPlantel({ alumnoId, onVolver }: Readonly<Props>) {
   const uniformes = useUniformesEntrenador();
 
   if (estado !== 'listo') {
-    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+    return <EstadoCarga estado={estado} onReintentar={() => void recargar()} />;
   }
   const alumno = alumnos.find((a) => a.id === alumnoId);
   if (!alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
   }
-  const kits = uniformes.alumnos.find((a) => a.alumnoId === alumnoId)?.kits ?? [];
+  const kits =
+    uniformes.alumnos.find((a) => a.alumnoId === alumnoId)?.kits ?? [];
 
   return (
     <div style={{ display: 'grid', gap: 14, padding: '14px 16px 0' }}>
@@ -53,10 +55,23 @@ export function FichaPlantel({ alumnoId, onVolver }: Readonly<Props>) {
         </button>
         <Avatar name={alumno.name} size={44} />
         <span style={{ minWidth: 0 }}>
-          <strong style={{ display: 'block', fontSize: 16, color: 'var(--text-strong)', lineHeight: 1.2 }}>
+          <strong
+            style={{
+              display: 'block',
+              fontSize: 16,
+              color: 'var(--text-strong)',
+              lineHeight: 1.2,
+            }}
+          >
             {alumno.name}
           </strong>
-          <span style={{ fontSize: 12.5, color: 'var(--text-muted)', fontWeight: 600 }}>
+          <span
+            style={{
+              fontSize: 12.5,
+              color: 'var(--text-muted)',
+              fontWeight: 600,
+            }}
+          >
             {alumno.cat} · {alumno.desde}
           </span>
         </span>

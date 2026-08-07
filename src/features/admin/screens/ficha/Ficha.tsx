@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useAlumno } from '../../hooks/useAlumno';
+
 import { AcudienteTab } from './AcudienteTab';
 import { AlumnoNoEncontrado } from './AlumnoNoEncontrado';
 import { FichaAcciones } from './FichaAcciones';
@@ -26,6 +27,29 @@ interface Props {
 
 const TABS_READONLY: readonly TabFicha[] = ['uniforme', 'acudiente'];
 
+interface Secciones {
+  acciones: boolean;
+  pagos: boolean;
+  uniforme: boolean;
+  acudiente: boolean;
+  tabs?: readonly TabFicha[];
+}
+
+// Qué se muestra según rol y tab activo (en readOnly no hay nada de plata).
+function seccionesVisibles(readOnly: boolean, tab: TabFicha): Secciones {
+  return {
+    acciones: !readOnly,
+    pagos: tab === 'pagos' && !readOnly,
+    uniforme: tab === 'uniforme',
+    acudiente: tab === 'acudiente',
+    tabs: readOnly ? TABS_READONLY : undefined,
+  };
+}
+
+function tabInicial(readOnly: boolean): TabFicha {
+  return readOnly ? 'uniforme' : 'pagos';
+}
+
 export function Ficha({
   alumnoId,
   onVolver,
@@ -35,9 +59,10 @@ export function Ficha({
   onRegistrarUniforme,
 }: Readonly<Props>) {
   const { alumno, estado, recargar, cambiarActivo } = useAlumno(alumnoId);
-  const [tab, setTab] = useState<TabFicha>(readOnly ? 'uniforme' : 'pagos');
+  const [tab, setTab] = useState<TabFicha>(() => tabInicial(readOnly));
   const [confirmando, setConfirmando] = useState(false);
   const [ocupado, setOcupado] = useState(false);
+  const ver = seccionesVisibles(readOnly, tab);
 
   // Retirar pide confirmación; reactivar se aplica de una (spec 14).
   async function alCambiarActivo(): Promise<void> {
@@ -52,7 +77,7 @@ export function Ficha({
   }
 
   if (estado !== 'listo') {
-    return <EstadoCarga estado={estado} onReintentar={recargar} />;
+    return <EstadoCarga estado={estado} onReintentar={() => void recargar()} />;
   }
   if (!alumno) {
     return <AlumnoNoEncontrado onVolver={onVolver} />;
@@ -66,7 +91,7 @@ export function Ficha({
         readOnly={readOnly}
         onEditar={onEditar}
       />
-      {!readOnly && (
+      {ver.acciones && (
         <FichaAcciones
           alumno={alumno}
           ocupado={ocupado}
@@ -74,23 +99,22 @@ export function Ficha({
           onCambiarActivo={() => void alCambiarActivo()}
         />
       )}
-      <TabsFicha
-        tab={tab}
-        onTab={setTab}
-        tabs={readOnly ? TABS_READONLY : undefined}
-      />
+      <TabsFicha tab={tab} onTab={setTab} tabs={ver.tabs} />
 
-      {tab === 'pagos' && !readOnly && (
+      {ver.pagos && (
         <PagosDelAnio
           alumno={alumno}
           onCobrarMes={(mes) => onRegistrarPago?.(mes)}
           cobrosHabilitados={alumno.activo}
         />
       )}
-      {tab === 'uniforme' && (
-        <UniformeTab alumno={alumno} onGestionar={() => onRegistrarUniforme?.()} />
+      {ver.uniforme && (
+        <UniformeTab
+          alumno={alumno}
+          onGestionar={() => onRegistrarUniforme?.()}
+        />
       )}
-      {tab === 'acudiente' && <AcudienteTab alumno={alumno} />}
+      {ver.acudiente && <AcudienteTab alumno={alumno} />}
 
       {confirmando && (
         <HojaRetiro

@@ -1,8 +1,8 @@
-import type { CSSProperties } from 'react';
-
 import { waTo } from '@/lib/whatsapp';
 
 import { Icon } from '../../chrome/Icon';
+
+import type { CSSProperties } from 'react';
 import type { Alumno } from '../../data/types';
 
 // Acciones de la ficha (solo admin): cobrar, escribir por WhatsApp y
@@ -85,7 +85,9 @@ export function FichaAcciones({
           border: retirado
             ? '1px solid var(--border-subtle)'
             : '1px solid var(--error-soft)',
-          background: retirado ? 'var(--surface-sunken)' : 'var(--surface-card)',
+          background: retirado
+            ? 'var(--surface-sunken)'
+            : 'var(--surface-card)',
           color: retirado ? 'var(--brand-navy)' : 'var(--error-deep)',
           fontSize: 13.5,
           fontWeight: 700,

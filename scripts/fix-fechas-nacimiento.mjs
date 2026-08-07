@@ -18,7 +18,11 @@ const COMMIT = process.argv.includes('--yes');
 
 const FECHAS = [
   { documento: '1066891011', nombre: 'GERONIMO ESCORCIA', fecha: '2016-09-08' },
-  { documento: '1124089273', nombre: 'MATEW ANDRES MENDEZ', fecha: '2019-01-19' },
+  {
+    documento: '1124089273',
+    nombre: 'MATEW ANDRES MENDEZ',
+    fecha: '2019-01-19',
+  },
   { documento: '1137877038', nombre: 'ADRIAN PACHECO', fecha: '2016-04-05' },
   { documento: '1065830677', nombre: 'CRISTIAN RUIDIAZ', fecha: '2015-01-17' },
   { documento: '1066298435', nombre: 'ABRAHAM PEREZ', fecha: '2018-01-05' },
@@ -70,7 +74,9 @@ for (const { documento, nombre, fecha } of FECHAS) {
     await db
       .update(alumnos)
       .set({ fechaNacimiento: fecha })
-      .where(and(eq(alumnos.documento, documento), isNull(alumnos.fechaNacimiento)));
+      .where(
+        and(eq(alumnos.documento, documento), isNull(alumnos.fechaNacimiento)),
+      );
   }
 }
 

@@ -1,6 +1,7 @@
 import { esMesCobrable, MESES_VISIBLES as MONTHS } from '@/lib/domain/cartera';
 
 import { Icon } from '../../chrome/Icon';
+
 import type { Alumno, EstadoMes } from '../../data/types';
 
 // Tira FEB–DIC reutilizando el vocabulario visual de `PagosDelAnio` (Ficha),
@@ -12,18 +13,27 @@ interface Props {
   onToggle: (mesIndex: number) => void;
 }
 
-const ESTILO_MES: Record<EstadoMes, { bg: string; fg: string; label: string }> = {
-  paid: { bg: 'var(--cell-paid-bg)', fg: 'var(--cell-paid-fg)', label: 'Pagado' },
-  due: { bg: 'var(--cell-due-bg)', fg: 'var(--cell-due-fg)', label: 'Debe' },
-  pending: {
-    bg: 'var(--cell-pending-bg)',
-    fg: 'var(--cell-pending-fg)',
-    label: 'Pendiente',
-  },
-  na: { bg: 'var(--cell-na-bg)', fg: 'var(--cell-na-fg)', label: '—' },
-};
+const ESTILO_MES: Record<EstadoMes, { bg: string; fg: string; label: string }> =
+  {
+    paid: {
+      bg: 'var(--cell-paid-bg)',
+      fg: 'var(--cell-paid-fg)',
+      label: 'Pagado',
+    },
+    due: { bg: 'var(--cell-due-bg)', fg: 'var(--cell-due-fg)', label: 'Debe' },
+    pending: {
+      bg: 'var(--cell-pending-bg)',
+      fg: 'var(--cell-pending-fg)',
+      label: 'Pendiente',
+    },
+    na: { bg: 'var(--cell-na-bg)', fg: 'var(--cell-na-fg)', label: '—' },
+  };
 
-export function SelectorMeses({ alumno, seleccionados, onToggle }: Readonly<Props>) {
+export function SelectorMeses({
+  alumno,
+  seleccionados,
+  onToggle,
+}: Readonly<Props>) {
   return (
     <div style={{ display: 'grid', gap: 10 }}>
       <p className="eyebrow">Meses a cobrar</p>
@@ -47,7 +57,9 @@ export function SelectorMeses({ alumno, seleccionados, onToggle }: Readonly<Prop
             minHeight: 58,
             position: 'relative',
             borderRadius: 'var(--radius-md)',
-            border: marcado ? '2px solid var(--brand-navy)' : '1px solid var(--border-subtle)',
+            border: marcado
+              ? '2px solid var(--brand-navy)'
+              : '1px solid var(--border-subtle)',
             background: s.bg,
             color: s.fg,
           } as const;
@@ -55,7 +67,12 @@ export function SelectorMeses({ alumno, seleccionados, onToggle }: Readonly<Prop
             <>
               {marcado && (
                 <span
-                  style={{ position: 'absolute', top: 4, right: 4, color: 'var(--brand-navy)' }}
+                  style={{
+                    position: 'absolute',
+                    top: 4,
+                    right: 4,
+                    color: 'var(--brand-navy)',
+                  }}
                 >
                   <Icon name="circle-check" size={14} />
                 </span>

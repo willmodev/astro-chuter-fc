@@ -4,6 +4,7 @@ import { mesesEnMora } from '@/lib/domain/cartera';
 import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
+
 import type { Alumno } from '../../data/types';
 
 // Fila tocable de la lista: avatar (aro dorado si mora), nombre,
@@ -64,7 +65,9 @@ export function FilaAlumno({ alumno, onOpen }: Readonly<Props>) {
         </span>
       </span>
       <BadgeFila retirado={retirado} meses={enMora ? meses : 0} />
-      <span style={{ display: 'flex', color: 'var(--text-muted)', flexShrink: 0 }}>
+      <span
+        style={{ display: 'flex', color: 'var(--text-muted)', flexShrink: 0 }}
+      >
         <Icon name="chevron-right" size={18} />
       </span>
     </button>
