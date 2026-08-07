@@ -16,17 +16,19 @@ import { SCHEDULE, LOCATION, SITE } from '@/lib/site';
   class="relative isolate flex min-h-[88vh] items-center overflow-hidden bg-brand-navy-deep"
   aria-label="Sección principal de Chuter FC"
 >
-  <!-- Capa 1 (más lenta): imagen hero, da sensación de fondo profundo -->
-  <HeroParallaxLayer speed={0.55} client:load className="absolute inset-0 z-0">
+  <!-- Capa 1 (más lenta): imagen hero, da sensación de fondo profundo.
+       La foto va bajo un overlay navy al 85-95%, así que en mobile pedimos
+       menos resolución que el ancho real: baja el peso del LCP sin verse. -->
+  <HeroParallaxLayer speed={0.55} client:idle className="absolute inset-0 z-0">
     <Image
       src={heroImg}
       alt="Entrenamiento de niños en Chuter FC — Cancha Los Algarrobillos"
       class="h-[120%] w-full object-cover object-[30%_center] 2xl:[filter:saturate(1.08)]"
-      widths={[640, 960, 1440]}
-      sizes="100vw"
+      widths={[540, 800, 1080, 1440]}
+      sizes="(max-width: 767px) 75vw, 100vw"
       loading="eager"
       fetchpriority="high"
-      quality={85}
+      quality={62}
     />
   </HeroParallaxLayer>
 
@@ -36,7 +38,7 @@ import { SCHEDULE, LOCATION, SITE } from '@/lib/site';
   <div class="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[40%] bg-gradient-to-l from-brand-navy-deep/50 to-transparent xl:block"></div>
 
   <!-- Capa 2 (semi-fast): bloom dorado + pelota SVG, primer plano decorativo -->
-  <HeroParallaxLayer speed={1.25} client:load className="pointer-events-none absolute inset-0 z-[2]">
+  <HeroParallaxLayer speed={1.25} client:idle className="pointer-events-none absolute inset-0 z-[2]">
     <div class="pointer-events-none absolute -left-24 -top-24 h-[480px] w-[480px] rounded-full bg-brand-gold/15 blur-3xl"></div>
     <HeroBallBg />
   </HeroParallaxLayer>
@@ -104,7 +106,7 @@ import { SCHEDULE, LOCATION, SITE } from '@/lib/site';
           variant="cta-gold"
           size="lg"
           target="_blank"
-          ariaLabel="Inscribirse gratis en Chuter FC vía WhatsApp"
+          ariaLabel="¡Quiero inscribirme gratis! — escribir a Chuter FC por WhatsApp"
         >
           ¡Quiero inscribirme gratis!
         </BrandButton>
@@ -127,7 +129,7 @@ import { SCHEDULE, LOCATION, SITE } from '@/lib/site';
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 text-[0.65rem] uppercase tracking-[0.25em] text-white/60 md:px-6 lg:px-12">
       <span class="hidden sm:inline">{LOCATION.venue} · {LOCATION.secondaryVenueShort}</span>
       <HeroScrollHint />
-      <span class="hidden text-white/40 sm:inline section-marker italic normal-case tracking-normal">desde 2024</span>
+      <span class="hidden text-white/70 sm:inline section-marker italic normal-case tracking-normal">desde 2024</span>
     </div>
   </div>
 </section>

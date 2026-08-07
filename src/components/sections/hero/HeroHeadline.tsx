@@ -6,11 +6,10 @@ import {
     useTransform,
     useReducedMotion,
 } from "@/components/motion/M";
-import { ease } from "@/lib/motion";
 
 /**
  * HeroHeadline — headline cinematográfico con:
- * - Reveal carácter por carácter en el primer mount (stagger)
+ * - Reveal carácter por carácter en CSS (.hero-char): pinta sin esperar a React
  * - Parallax linked al scroll (cada línea se desplaza a velocidad distinta)
  * - "campeones" gold serif italic con un offset y rotation propio
  * - Underline gold dibujándose
@@ -81,23 +80,17 @@ function HeroHeadlineInner() {
                         >
                             <span className="inline-block">
                                 {chars.map((ch, charIdx) => (
-                                    <m.span
+                                    <span
                                         key={charIdx}
-                                        className="inline-block"
-                                        initial={
-                                            reduced
-                                                ? false
-                                                : { opacity: 0, y: "0.6em", rotate: 8 }
-                                        }
-                                        animate={{ opacity: 1, y: 0, rotate: 0 }}
-                                        transition={{
-                                            duration: 0.7,
-                                            delay: baseDelay + charIdx * 0.025,
-                                            ease: ease.outExpo,
+                                        className="hero-char"
+                                        style={{
+                                            animationDelay: `${
+                                                baseDelay + charIdx * 0.025
+                                            }s`,
                                         }}
                                     >
                                         {ch === " " ? "\u00A0" : ch}
-                                    </m.span>
+                                    </span>
                                 ))}
                             </span>
                             {line.underline && (
@@ -117,16 +110,12 @@ function HeroHeadlineInner() {
                                             strokeLinecap="round"
                                         />
                                     </svg>
-                                    <m.span
-                                        className="inline-block"
-                                        initial={
-                                            reduced ? false : { opacity: 0 }
-                                        }
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 1.2 }}
+                                    <span
+                                        className="hero-char"
+                                        style={{ animationDelay: '1.2s' }}
                                     >
                                         .
-                                    </m.span>
+                                    </span>
                                 </>
                             )}
                         </span>

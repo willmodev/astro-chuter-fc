@@ -238,6 +238,19 @@
     animation-delay: calc(var(--idx, 0) * 110ms + 200ms);
 }
 
+/* Reveal carácter por carácter del headline. Va en CSS (no en JS) para que el
+   H1 pinte con el primer frame: si dependiera de la hidratación de React el
+   titular quedaba invisible ~1.5s y hundía el Speed Index. */
+@keyframes hero-char-in {
+    from { opacity: 0; transform: translateY(0.6em) rotate(8deg); }
+    to   { opacity: 1; transform: none; }
+}
+
+.hero-char {
+    display: inline-block;
+    animation: hero-char-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 .hero-underline path {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
@@ -420,6 +433,7 @@
 @media (prefers-reduced-motion: reduce) {
     .reveal,
     .reveal-line,
+    .hero-char,
     .card-icon-pop,
     .pin-drop,
     .hero-scroll-chevron,

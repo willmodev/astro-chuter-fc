@@ -8,6 +8,10 @@ import PageBoot from '@/components/layout/PageBoot.astro';
 import CursorDot from '@/components/interactive/CursorDot';
 import ScrollProgress from '@/components/interactive/ScrollProgress';
 import '@/styles/global.css';
+// Solo Bebas Neue se precarga: es la display de todos los titulares y la que
+// más difiere del fallback, así que su swap es el que movía el layout.
+// Las otras dos no se precargan para no competir con el LCP del hero.
+import fontDisplay from '@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff2?url';
 
 interface Props {
   title?: string;
@@ -42,7 +46,10 @@ const jsonLd = buildSportsActivityLocationJsonLd();
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" as="font" type="font/woff2" href={fontDisplay} crossorigin="anonymous" />
+
+    {/* Sin favicon.svg: pesa 323 KB (logo vectorizado) y el navegador lo
+        descarga en la carga inicial compitiendo con el LCP. */}
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
@@ -81,6 +88,6 @@ const jsonLd = buildSportsActivityLocationJsonLd();
     <Footer />
     <WhatsAppFab />
     <ScrollProgress client:idle />
-    <CursorDot client:idle />
+    <CursorDot client:media="(hover: hover) and (pointer: fine) and (min-width: 1024px)" />
   </body>
 </html>
