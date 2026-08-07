@@ -518,9 +518,16 @@ grep sobre el código y la prueba de que `npm run check` falla a propósito. Los
 | HU-7.2   | Que el toggle de Cartera actualice cabecera y tarjetas **en el mismo render**, y que la preferencia sobreviva a recargar la página. (Está resuelto por diseño con `useSyncExternalStore` + `localStorage`, pero no se vio corriendo.) |
 | DT-2     | Los 5 criterios: retirar/reactivar un alumno y registrar un pago actualizando Inicio sin recargar, ausencia de parpadeo y una sola llamada a `dashboard.stats` en la pestaña Red.                                                     |
 | Paginado | Que Alumnos y Cartera monten 15 filas, que el scroll agregue 15 sin peticiones nuevas, que cambiar de filtro resetee y que un refetch **no** resetee la ventana.                                                                      |
-| Calidad  | Cero scroll horizontal de 320px a desktop en Más, Inicio, Cartera y Ficha (**el sitio público sí se verificó**).                                                                                                                      |
+| Calidad  | Cero scroll horizontal de 320px a desktop en las pantallas del **admin** (Más, Inicio, Cartera, Ficha).                                                                                                                               |
 
 Ninguno de estos depende de código sin escribir: es verificación de comportamiento en vivo.
+
+**El sitio público sí se verificó** con `playwright-cli --headed` a 390px y 1440px (capturas
+en `.playwright-cli/spec16-*.png`): `scrollWidth > clientWidth` da **`false`** en ambos
+anchos, el eyebrow del hero, el mapa SVG completo, los botones de Maps/Waze y los 6 campos
+del formulario se ven igual que antes, y la categoría sugerida sigue calculándose bien tras
+mover esa derivación al hook nuevo (`2018-03-15` → Benjamín SUB 8). Sin errores de consola
+de la aplicación.
 
 ---
 
