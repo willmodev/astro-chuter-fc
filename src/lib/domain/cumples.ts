@@ -19,6 +19,9 @@ const MES_ABREV = [
 
 const MS_DIA = 24 * 60 * 60 * 1000;
 
+/** Ventana por defecto del bloque "Próximos cumpleaños" del dashboard. */
+export const VENTANA_CUMPLES_DIAS = 30;
+
 export interface AlumnoConFecha {
   name: string;
   cat: string;
@@ -46,12 +49,13 @@ function proximoCumple(nacimiento: Date, hoy: Date): Date {
 }
 
 /**
- * Próximos cumpleaños ordenados por proximidad (incluye el cruce de año).
- * Ignora alumnos sin fecha completa (`fechaNacimiento === null`).
+ * Próximos cumpleaños dentro de `ventanaDias`, ordenados por proximidad
+ * (incluye el cruce de año). Ignora alumnos sin fecha completa.
  */
 export function proximosCumples(
   alumnos: readonly AlumnoConFecha[],
   hoy: Date,
+  ventanaDias: number = VENTANA_CUMPLES_DIAS,
 ): Cumple[] {
   const base = aMedianoche(hoy);
   return alumnos
@@ -65,9 +69,10 @@ export function proximosCumples(
       return {
         name: a.name,
         cat: a.cat,
-        fecha: `${prox.getDate()} ${MES_ABREV[prox.getMonth()]}`,
+        fecha: `${String(prox.getDate())} ${MES_ABREV[prox.getMonth()]}`,
         dias,
       };
     })
+    .filter((c) => c.dias <= ventanaDias)
     .sort((x, y) => x.dias - y.dias);
 }
