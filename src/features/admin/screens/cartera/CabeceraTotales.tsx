@@ -1,4 +1,4 @@
-import { fmt } from '@/lib/format';
+import { Monto } from '../../ui/Monto';
 
 import type { CSSProperties } from 'react';
 
@@ -18,13 +18,13 @@ export function CabeceraTotales({
       <div style={tarjeta}>
         <span className="eyebrow">Recaudado año</span>
         <strong style={{ fontSize: 20, color: 'var(--text-strong)' }}>
-          {fmt(recaudoAnio)}
+          <Monto valor={recaudoAnio} />
         </strong>
       </div>
       <div style={tarjeta}>
         <span className="eyebrow">Cartera vencida</span>
         <strong style={{ fontSize: 20, color: 'var(--error-deep)' }}>
-          {fmt(carteraVencida)}
+          <Monto valor={carteraVencida} />
         </strong>
       </div>
     </div>

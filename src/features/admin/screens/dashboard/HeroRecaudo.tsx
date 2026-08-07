@@ -1,6 +1,5 @@
-import { fmtShort } from '@/lib/format';
-
 import { Badge } from '../../ui/Badge';
+import { Monto } from '../../ui/Monto';
 
 import type { Stats } from '../../data/types';
 
@@ -35,7 +34,9 @@ export function HeroRecaudo({ stats, mesLong }: Readonly<Props>) {
         <span className="eyebrow" style={{ color: 'var(--brand-gold)' }}>
           Recaudo de {mesLong.toLowerCase()} · en curso
         </span>
-        <Badge tone="gold">Meta {fmtShort(stats.metaMes)}</Badge>
+        <Badge tone="gold">
+          Meta <Monto valor={stats.metaMes} corto />
+        </Badge>
       </div>
 
       <div
@@ -50,7 +51,7 @@ export function HeroRecaudo({ stats, mesLong }: Readonly<Props>) {
           className="font-display tabular"
           style={{ fontSize: 46, lineHeight: 0.9 }}
         >
-          {fmtShort(stats.recaudoMes)}
+          <Monto valor={stats.recaudoMes} corto />
         </span>
       </div>
 
@@ -88,7 +89,7 @@ export function HeroRecaudo({ stats, mesLong }: Readonly<Props>) {
           <span>
             Cartera vencida{' '}
             <b style={{ color: 'var(--brand-gold)', fontWeight: 800 }}>
-              {fmtShort(stats.carteraVencida)}
+              <Monto valor={stats.carteraVencida} corto />
             </b>
           </span>
         </div>

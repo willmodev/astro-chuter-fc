@@ -1,8 +1,8 @@
 import { ESTADO_UNIFORME_META } from '@/lib/domain/uniformes';
-import { fmt } from '@/lib/format';
 
 import { Badge } from '../../ui/Badge';
 import { Card } from '../../ui/Card';
+import { Monto } from '../../ui/Monto';
 import { EtiquetaKit } from '../uniformes/EtiquetaKit';
 
 import type { Alumno, KitUniforme } from '../../data/types';
@@ -98,7 +98,13 @@ function FilaKit({ kit }: Readonly<{ kit: KitUniforme }>) {
             fontWeight: 600,
           }}
         >
-          {pagado ? 'Pagado' : `Saldo ${fmt(kit.saldo)}`}
+          {pagado ? (
+            'Pagado'
+          ) : (
+            <>
+              Saldo <Monto valor={kit.saldo} />
+            </>
+          )}
         </span>
       </div>
     </div>

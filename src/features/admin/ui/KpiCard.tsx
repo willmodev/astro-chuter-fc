@@ -7,7 +7,7 @@ type DeltaTone = 'paid' | 'due' | 'neutral';
 
 interface Props {
   label: string;
-  value: string | number;
+  value: ReactNode;
   unit?: string;
   delta?: string;
   deltaTone?: DeltaTone;

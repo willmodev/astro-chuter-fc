@@ -1,6 +1,8 @@
 import { Card } from '../../ui/Card';
 
 import { BotonMenu } from './BotonMenu';
+import { SwitchMontos } from './SwitchMontos';
+import { TarjetaClub } from './TarjetaClub';
 import { useLogout } from './useLogout';
 
 interface Props {
@@ -63,6 +65,10 @@ export function MasMenu({
           onClick={onOpenEntrenamientos}
         />
       )}
+
+      {role === 'admin' && <SwitchMontos />}
+
+      <TarjetaClub />
 
       <button
         type="button"

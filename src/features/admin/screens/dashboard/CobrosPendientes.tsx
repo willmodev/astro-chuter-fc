@@ -1,9 +1,9 @@
 import { mesesEnMora, saldoPendiente } from '@/lib/domain/cartera';
-import { fmt } from '@/lib/format';
 import { waTo } from '@/lib/whatsapp';
 
 import { Icon } from '../../chrome/Icon';
 import { Avatar } from '../../ui/Avatar';
+import { Monto } from '../../ui/Monto';
 
 import type { Alumno } from '../../data/types';
 
@@ -78,7 +78,7 @@ export function CobrosPendientes({ morosos, onOpen }: Readonly<Props>) {
                   }}
                 >
                   {meses} {meses === 1 ? 'mes' : 'meses'} ·{' '}
-                  {fmt(saldoPendiente(s))}
+                  <Monto valor={saldoPendiente(s)} />
                 </span>
               </span>
             </button>

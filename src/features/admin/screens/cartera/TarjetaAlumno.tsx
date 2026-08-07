@@ -1,9 +1,9 @@
 import { estadoAlumno } from '@/lib/domain/alumnos';
 import { saldoPendiente } from '@/lib/domain/cartera';
-import { fmt } from '@/lib/format';
 
 import { Avatar } from '../../ui/Avatar';
 import { Badge } from '../../ui/Badge';
+import { Monto } from '../../ui/Monto';
 
 import { TiraMeses } from './TiraMeses';
 
@@ -54,11 +54,14 @@ export function TarjetaAlumno({ alumno, onCobrarMes }: Readonly<Props>) {
               fontWeight: 600,
             }}
           >
-            {alumno.cat} · {fmt(alumno.cuota)}/mes
+            {alumno.cat} · <Monto valor={alumno.cuota} />
+            /mes
           </span>
         </div>
         {enMora ? (
-          <Badge tone="due">{fmt(saldo)}</Badge>
+          <Badge tone="due">
+            <Monto valor={saldo} />
+          </Badge>
         ) : (
           <Badge tone="paid">Al día</Badge>
         )}
