@@ -347,6 +347,8 @@ Desde el spec 16 el enforcement es **real**, no aspiracional: en la raíz existe
 
 **Fuera del linter:** `src/components/ui/**` (generado por shadcn, `CLAUDE.md` dice no tocarlo manualmente) y el material **no versionado** (`references/`, el bundle del design system, `docs/comercial/`, `.playwright-cli/`) — ESLint no lee `.gitignore`, así que van explícitos en `ignores`.
 
+**Severidad type-aware (spec 17):** `strictTypeChecked`. Quedan **5 supresiones** en todo el repo, todas de una línea y con motivo escrito, todas por tipos que no reflejan el runtime (`import.meta.env` en módulos que también importan los scripts de Node, y un `const [row] = …limit(1)` sin `noUncheckedIndexedAccess`). Detalle y regla para código nuevo en `.claude/rules/coding-rules.md` §5.
+
 - `npm run build`: marketing prerenderizado; `/admin` + `/api` como funciones del adapter.
 - `npm run dev`: login → dashboard (Action) → registrar pago (celda cambia + recibo WhatsApp) → número de uniforme repetido (alerta) → logout.
 - Opcional: Playwright MCP contra el dev server.
