@@ -5,7 +5,7 @@
 > Stack: Astro + React (island) · Neon Postgres · Drizzle ORM · Better Auth · Astro Actions · Vercel.
 > Datos reales: `CHUTER FC 2026.xlsx` (local, **no versionado** por PII de menores). Esquema y reglas en `docs/excel-data-dictionary.md`.
 >
-> **Reconciliado con el código el 2026-08-07 (specs 16 y 17).** Cada ☑ cita el spec que la cerró. Lo único realmente pendiente: **HU-7.3** (gestionar tarifas/cuotas) y **HU-8.2** (exportar cartera), las dos `Could`. HU-3.3 y HU-3.6 son `Won't` (obsoletas, no se harán), HU-7.4 quedó `Won't` por el spec 15 y HU-6.1/HU-6.2 quedaron obsoletas por el spec 09. **La sección de deuda técnica quedó sin nada abierto**: el spec 17 cerró DT-3, DT-4 y DT-5, y de paso DT-6 y DT-7, que salieron de esa misma verificación. Fuentes: **backlog** = qué falta · **specs/** = por qué se hizo así · **`docs/ARCHITECTURE.md`** = cómo está hecho hoy.
+> **Reconciliado con el código el 2026-08-07 (specs 16 y 17).** Cada ☑ cita el spec que la cerró. Lo único realmente pendiente: **HU-7.3** (gestionar tarifas/cuotas) y **HU-8.2** (exportar cartera), las dos `Could`. HU-3.3 y HU-3.6 son `Won't` (obsoletas, no se harán), HU-7.4 quedó `Won't` por el spec 15 y HU-6.1/HU-6.2 quedaron obsoletas por el spec 09. **La sección de deuda técnica quedó sin nada abierto**: el spec 17 cerró DT-3, DT-4 y DT-5, y de paso DT-6 y DT-7, que salieron de esa misma verificación. El spec 18 abrió **DT-8** (`useUniformeAlumno` descarga toda la tabla de uniformes para pintar un alumno), única deuda abierta hoy. Fuentes: **backlog** = qué falta · **specs/** = por qué se hizo así · **`docs/ARCHITECTURE.md`** = cómo está hecho hoy.
 
 ## Roles
 
@@ -302,18 +302,29 @@ Como administrador quiero ver el entrenamiento de hoy para tenerlo presente.
 ## EPIC 5 — Uniformes
 
 > **Implementado por el spec 12 (2026-07-19).** La inspección del Excel reveló un modelo distinto al asumido: **dos kits por alumno** (AZUL/ORO, $100.000 c/u), **4 estados por kit** (verde=pagado+entregado · rojo=entregado sin pagar · azul=pagado sin entregar · blanco=nada) y **abonos parciales** (pago tri-estado derivado). El spec 12 lo implementa completo: tabla `uniformes` por `(alumnoId, kit)`, seed AZUL/ORO por color, y realineación de UI (pantalla Uniformes con tabs Estado/Numeración por kit, gestión por kit con entrega + abono, ficha con los dos kits). El **aviso "migración de uniformes en camino"** del spec 11 quedó **retirado**.
+>
+> **Rehecho por el spec 18 (2026-08-07).** Los dos tabs (Estado / Numeración) no eran dos vistas de lo mismo sino **dos universos distintos** (164 kits vs. 82 alumnos de un solo kit, y este último solo los entregados): había que saber de antemano en cuál vivía la respuesta. Se reemplazan por **una sola lista de filas-kit** con buscador, filtros desplegables y paginado **de servidor** — la única lista del admin que crece 2× por alumno. Por qué esta pantalla pagina distinto al resto: `docs/ARCHITECTURE.md` §4.
 
-### HU-5.1 · Control por kit — `Must` · Pantalla: Uniformes · ☑ (spec 12)
+### HU-5.1 · Vista única de kits con filtros — `Must` · Pantalla: Uniformes · ☑ (spec 12, rehecha en spec 18)
 
-Como administrador quiero ver los uniformes entregados por kit (azul/oro) para llevar el control.
+Como administrador quiero una sola lista de kits que pueda buscar, filtrar y ordenar para responder cualquier pregunta de uniformes sin cambiar de pestaña.
 
-- **Aceptación:** Toggle de kit (AZUL/ORO); contadores Entregados/Por entregar; listado del kit ordenado por número con nombre, categoría y talla. Además, tab **Estado** con matriz 2×2 (entrega × pago) sobre los 2N kits y filtro por estado.
+- **Aceptación:**
+  - Dado que abro Uniformes, entonces veo **una sola lista** de filas-kit (una por alumno activo × kit, 164 hoy) — **no hay tabs** «Estado» ni «Numeración».
+  - Cada fila muestra número de camiseta (`—` si no se ha entregado), nombre, categoría, etiqueta del kit y badge de estado; con abono parcial agrega la palabra **«Abonado»**, sin monto.
+  - Dado el buscador, cuando escribo, entonces filtra por **nombre** (sin mayúsculas ni acentos) **o** por **número de camiseta** exacto, con debounce de 300 ms.
+  - Dados los tres desplegables **Kit · Estado · Categoría**, cuando combino cualquiera, entonces la lista se recorta a la intersección y los conteos de cada estado se calculan sobre el **total filtrado**, no sobre la página.
+  - Dado el selector de **Orden** (Prioridad · Nombre · Número), cuando lo cambio, entonces la lista se reordena y vuelve a la primera página.
+  - Dado el pie de la lista, cuando pulso **«Mostrar más»**, entonces se agregan 20 filas al final; el botón desaparece cuando ya no quedan.
+  - Tocar una fila abre la gestión del kit de ese alumno.
+- **Hecho (spec 18) — paginado de servidor:** filtro, orden, página (20), `total`, conteos por estado y números repetidos salen de **una sola consulta** (`paginaUniformes()` en `src/lib/db/repos/uniformes-pagina.ts`), vía la Action `uniformes.listarPagina` (gate de rol admin en servidor) y el hook `useUniformesPagina`. Es paginado **de datos**, al revés que Alumnos y Cartera (paginado de render, spec 16): esta lista es 2N y lo que crece es el payload. `scripts/verificar-estados-uniformes.mjs` compara fila por fila la derivación en SQL contra `lib/domain` sobre el set completo.
 
 ### HU-5.2 · Detección de números repetidos — `Must` · Pantalla: Uniformes · ☑ (spec 12)
 
 Como administrador quiero que el sistema avise si un número está repetido en un kit para evitar duplicados (R6).
 
 - **Aceptación:** Dado dos alumnos con el mismo número en el mismo kit, cuando veo el kit, entonces aparece una alerta indicando el/los número(s) repetido(s); y al capturar la entrega, el número repetido **advierte sin bloquear**.
+- **Nota (spec 18):** el banner es **uno solo** y muestra los duplicados de **los dos kits** por separado. Se calcula sobre **todo el set**, no sobre la página ni sobre el filtro de kit: sigue visible aunque esté filtrando otra cosa.
 
 ### HU-5.3 · Registrar entrega de uniforme — `Should` · Pantalla: Uniformes/Ficha · ☑ (spec 12)
 
@@ -325,7 +336,8 @@ Como administrador quiero registrar la entrega (kit, número, talla) para actual
 
 Como administrador quiero ver quién no tiene uniforme para gestionar entregas.
 
-- **Aceptación:** El tab **Estado** cubre los pendientes: la celda "Sin iniciar"/"Por entregar" filtra la lista de kits sin entregar, cada uno con acción para abrir su gestión (reemplaza la sección "Por entregar" del prototipo).
+- **Aceptación:** El desplegable **Estado** cubre los pendientes: elegir "Sin iniciar" o "Por entregar" recorta la lista a los kits sin entregar, cada uno con su conteo al lado y acción para abrir su gestión (reemplaza la sección "Por entregar" del prototipo).
+- **Nota (spec 18):** antes esto vivía en la matriz 2×2 del tab **Estado**; ahora es una opción del desplegable, combinable con Kit y Categoría.
 
 ---
 
@@ -536,6 +548,15 @@ Las barras solo comunicaban altura relativa: era imposible saber cuánto se reca
 
 - **Origen:** Will, verificación en vivo (2026-08-07).
 - **Resolución:** etiqueta de monto por barra con el primitivo `<Monto corto>`, **no** con `fmtShort` directo, para que el toggle de ocultar montos (HU-7.2) la enmascare junto al resto del Dashboard en vez de dejar la plata expuesta en el gráfico.
+
+### DT-8 · `useUniformeAlumno` descarga toda la tabla de uniformes para pintar un alumno — `Should` · ☐
+
+`useUniformeAlumno` (`src/features/admin/screens/uniforme-entrega/useUniformeAlumno.ts`) llama a `uniformes.listar`, que trae **los dos kits de los 82 alumnos activos** —la tabla entera, 164 filas— solo para renderizar **un** alumno en la pantalla de gestión del kit. Es exactamente la misma ineficiencia que el spec 17 corrigió para la ficha de alumno en **DT-3**: pedir la lista completa y hacer el `.find()` en el cliente.
+
+- **Aceptación:** abrir la gestión del kit consulta solo los uniformes de ese alumno, sin descargar la tabla completa.
+- **Disparador:** se arregla **cuando se toque la pantalla de gestión del kit**, o antes si el plantel crece lo suficiente para que la descarga se note en el celular.
+- **Solución natural:** una Action que sirva un solo alumno, como la `alumnos.porId` que cerró DT-3. `uniformes.listar` **no se elimina**: la siguen usando el entrenador (`FichaPlantel`) y esta misma pantalla hasta que se migre.
+- **Origen:** spec 18, declarado explícitamente fuera de alcance (el spec migró la pantalla Uniformes a `uniformes.listarPagina`, no la de gestión del kit).
 
 ---
 

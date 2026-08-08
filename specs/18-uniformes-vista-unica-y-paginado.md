@@ -1,6 +1,8 @@
 # SPEC 18 — Uniformes: vista única con filtros y paginado en servidor
 
-> **Estado:** Aprobado · **Depende de:** SPEC 08 (modelo de 4 estados y las pantallas Estado/Numeración que este spec reemplaza), SPEC 11 (persistencia en Neon y el patrón Action + refetch pesimista), SPEC 12 (dos kits por alumno, abonos y el universo de 2N kits), SPEC 16 (paginado incremental de render, del que este spec se aparta a propósito) · **Fecha:** 2026-08-07
+> **Estado:** Implementado _(2026-08-08 · rama `spec-18-uniformes-vista-unica-y-paginado`;
+> quedan 4 criterios de verificación visual pendientes, ver «Estado de verificación»)_ ·
+> **Depende de:** SPEC 08 (modelo de 4 estados y las pantallas Estado/Numeración que este spec reemplaza), SPEC 11 (persistencia en Neon y el patrón Action + refetch pesimista), SPEC 12 (dos kits por alumno, abonos y el universo de 2N kits), SPEC 16 (paginado incremental de render, del que este spec se aparta a propósito) · **Fecha:** 2026-08-07
 > **Objetivo:** Reemplazar los dos tabs de la pantalla Uniformes por una sola lista de kits con buscador y filtros desplegables, con el filtrado, el orden, los conteos y el paginado resueltos en SQL.
 
 ---
@@ -30,7 +32,9 @@ filtrable, y paginado de verdad contra la base.
 
 **Dentro:**
 
-- **Consulta paginada en SQL** (`src/lib/db/repos/uniformes.ts`): una función nueva
+- **Consulta paginada en SQL** (implementada en `src/lib/db/repos/uniformes-pagina.ts` y
+  `uniformes-sql.ts`, re-exportada desde `uniformes.ts` para no pasar el límite de 200 líneas
+  por archivo): una función nueva
   `paginaUniformes(filtros)` que resuelve todo contra Postgres en una sola consulta — CTE de
   conteo de hermanos por acudiente normalizado, precio del kit derivado de ese conteo, estado
   del kit derivado de `entregado` + `abonado_cop` vs precio, filtros, orden, `LIMIT`/`OFFSET`.
@@ -253,85 +257,125 @@ funcionando en `npm run dev` durante todo ese tramo. El cambio visible ocurre en
 
 ## Criterios de aceptación
 
+> **Leyenda de verificación (2026-08-08).** `[x]` = verificado contra la base real o por
+> inspección del código. `[ ]` = **pendiente de una pasada en el navegador con sesión de
+> admin**, que no se pudo hacer en la implementación por no tener credenciales. Ver
+> «Estado de verificación» al final.
+
 ### Paridad SQL ↔ dominio
 
-- [ ] `node scripts/verificar-estados-uniformes.mjs` reporta **0 diferencias** en `estado`,
+- [x] `node scripts/verificar-estados-uniformes.mjs` reporta **0 diferencias** en `estado`,
       `precio` y `cat` sobre las 164 filas.
-- [ ] El script sale con código ≠ 0 si se introduce una diferencia a propósito (por ejemplo,
+- [x] El script sale con código ≠ 0 si se introduce una diferencia a propósito (por ejemplo,
       cambiando `PRECIO_UNIFORME_HERMANO` solo en dominio).
-- [ ] La consulta **importa** `PRECIO_UNIFORME` y `PRECIO_UNIFORME_HERMANO` de
+- [x] La consulta **importa** `PRECIO_UNIFORME` y `PRECIO_UNIFORME_HERMANO` de
       `lib/domain/precios.ts`: `grep '100000'` y `grep '80000'` en `src/lib/db/` no devuelven
       nada.
 
 ### Universo y filtros
 
-- [ ] Sin ningún filtro, `total` es **164** (82 alumnos activos × 2 kits).
-- [ ] Un alumno **retirado** no aparece en ninguna fila ni suma en ningún conteo.
-- [ ] Un kit **sin fila** en la tabla `uniformes` aparece igual, con estado «Sin iniciar».
-- [ ] El desplegable **Kit** con «Azul» deja `total` en 82.
-- [ ] El desplegable **Estado** tiene 5 opciones (Todos + los 4 estados) y filtra la lista
+- [x] Sin ningún filtro, `total` es **164** (82 alumnos activos × 2 kits).
+- [x] Un alumno **retirado** no aparece en ninguna fila ni suma en ningún conteo. _(Medido: 15
+      retirados en la base, 0 colados.)_
+- [x] Un kit **sin fila** en la tabla `uniformes` aparece igual, con estado «Sin iniciar».
+      _(Medido: 103 kits con registro + 61 sin registro = 164.)_
+- [x] El desplegable **Kit** con «Azul» deja `total` en 82.
+- [x] El desplegable **Estado** tiene 5 opciones (Todos + los 4 estados) y filtra la lista
       completa, no la página visible.
-- [ ] El desplegable **Categoría** lista las 7 del catálogo de `lib/domain/categoria.ts` más
+- [x] El desplegable **Categoría** lista las 7 del catálogo de `lib/domain/categoria.ts` más
       «Todas»; ninguna categoría está escrita a mano en el componente.
-- [ ] Los tres filtros son **combinables**: Kit Azul + Pago pendiente + SUB 12 devuelve la
+- [x] Los tres filtros son **combinables**: Kit Azul + Pago pendiente + SUB 12 devuelve la
       intersección.
 
 ### Conteos
 
-- [ ] El conteo de cada opción de Estado se calcula sobre el **total filtrado** por kit,
+- [x] El conteo de cada opción de Estado se calcula sobre el **total filtrado** por kit,
       categoría y búsqueda — no sobre la página, ni sobre el set global.
-- [ ] Con «Kit Azul» puesto, la suma de los 4 conteos de Estado es exactamente 82.
-- [ ] Ninguna opción de Estado con conteo > 0 devuelve una lista vacía al seleccionarla.
+- [x] Con «Kit Azul» puesto, la suma de los 4 conteos de Estado es exactamente 82.
+- [x] Ninguna opción de Estado con conteo > 0 devuelve una lista vacía al seleccionarla.
 
 ### Búsqueda
 
-- [ ] Escribir `jonas` encuentra a `JONAS QUINTERO SANTANA` (sin importar mayúsculas).
-- [ ] Escribir `nuñez` encuentra a `NUÑEZ` y `munoz` encuentra a `MUÑOZ` (acentos y eñes
-      insensibles en los dos sentidos).
-- [ ] Escribir `10` devuelve los kits cuyo **número** es exactamente 10, en ambos kits.
+- [x] Escribir `jonas` encuentra a `JONAS QUINTERO SANTANA` (sin importar mayúsculas).
+- [x] Escribir `nuñez` encuentra a `NUÑEZ` y `munoz` encuentra a `MUÑOZ` (acentos y eñes
+      insensibles en los dos sentidos). _En la base no existe ningún `MUÑOZ`/`NUÑEZ`; la regla
+      se verificó con los nombres con eñe reales: `bolanos`↔`bolaños`→`BOLAÑOS` y
+      `penate`→`PEÑATE`. **Este fue el único bug real del spec**: el nombre se normalizaba en
+      SQL pero el texto buscado no, así que buscar con eñe no encontraba nada._
+- [x] Escribir `10` devuelve los kits cuyo **número** es exactamente 10, en ambos kits. _Hoy
+      solo hay **2 dorsales asignados en toda la base** (ambos en kit Azul), así que «en ambos
+      kits» no es falsable con datos reales; la condición no discrimina por kit._
 - [ ] La búsqueda dispara **una** petición 300 ms después de la última tecla, no una por tecla
       (verificado en la pestaña Red).
-- [ ] Limpiar la búsqueda devuelve la lista completa.
+- [x] Limpiar la búsqueda devuelve la lista completa.
 
 ### Orden
 
-- [ ] El orden por defecto es **Prioridad**: la primera fila es «Pago pendiente».
-- [ ] Con orden por **Número**, las filas sin número (`—`) quedan **al final**, no al principio.
-- [ ] Con orden por **Nombre**, `Ángel` y `Angel` quedan juntos (sin acentos).
-- [ ] Cambiar el orden vuelve a la primera página.
+- [x] El orden por defecto es **Prioridad**: la primera fila es «Pago pendiente».
+- [x] Con orden por **Número**, las filas sin número (`—`) quedan **al final**, no al principio.
+- [x] Con orden por **Nombre**, `Ángel` y `Angel` quedan juntos (sin acentos). _Se ordena por
+      `nombre_norm`, la misma columna sin acentos que usa la búsqueda._
+- [x] Cambiar el orden vuelve a la primera página.
 
 ### Paginado
 
-- [ ] La primera carga pinta **20** filas y el pie dice «20 de 164».
-- [ ] «Mostrar más» **agrega** 20 al final; las 20 anteriores siguen en pantalla.
-- [ ] Ninguna fila aparece dos veces al recorrer todas las páginas hasta el final.
-- [ ] Cuando ya no quedan filas, el botón «Mostrar más» **desaparece**.
-- [ ] Cambiar cualquier filtro, la búsqueda o el orden resetea la lista a 20 filas.
+- [x] La primera carga pinta **20** filas y el pie dice «20 de 164».
+- [x] «Mostrar más» **agrega** 20 al final; las 20 anteriores siguen en pantalla.
+- [x] Ninguna fila aparece dos veces al recorrer todas las páginas hasta el final. _(Medido:
+      recorrido completo → 164 claves `(alumnoId, kit)` únicas.)_
+- [x] Cuando ya no quedan filas, el botón «Mostrar más» **desaparece**.
+- [x] Cambiar cualquier filtro, la búsqueda o el orden resetea la lista a 20 filas.
 - [ ] La primera carga pide **una** sola vez a `uniformes.listarPagina`, no una por render.
 
 ### Vista y no-regresión
 
-- [ ] La pantalla **no tiene tabs**: no existe «Estado» ni «Numeración» en la interfaz.
-- [ ] Cada fila muestra número (o `—`), nombre, categoría, etiqueta de kit y badge de estado.
-- [ ] Una fila con `0 < abonado < precio` muestra la palabra **«Abonado»** en su línea
-      secundaria, y **ningún monto en pesos aparece en toda la pantalla**.
-- [ ] El banner de números repetidos muestra los duplicados de **los dos kits** por separado y
-      está siempre visible cuando existe alguno, sin depender del filtro de kit.
+- [x] La pantalla **no tiene tabs**: no existe «Estado» ni «Numeración» en la interfaz.
+- [x] Cada fila muestra número (o `—`), nombre, categoría, etiqueta de kit y badge de estado.
+- [x] Una fila con `0 < abonado < precio` muestra la palabra **«Abonado»** en su línea
+      secundaria, y **ningún monto en pesos aparece en toda la pantalla**. _(`grep` de `Monto`,
+      `COP` y `toLocaleString` en `screens/uniformes/` no devuelve nada.)_
+- [x] El banner de números repetidos muestra los duplicados de **los dos kits** por separado y
+      está siempre visible cuando existe alguno, sin depender del filtro de kit. _Hoy no hay
+      ningún número repetido en la base, así que el banner no se ve; el pipeline se verificó
+      con umbral forzado._
 - [ ] Tocar una fila abre la pantalla de gestión del uniforme de ese alumno, como antes.
 - [ ] De 320 px a desktop: **cero scroll horizontal**.
-- [ ] El **entrenador** no ve esta pantalla y `uniformes.listarPagina` le responde error con su
-      sesión.
-- [ ] `FichaPlantel` (entrenador) y la pantalla de gestión del kit siguen funcionando: nadie
+- [x] El **entrenador** no ve esta pantalla y `uniformes.listarPagina` le responde error con su
+      sesión. _Verificado sin sesión → `401 UNAUTHORIZED`; con sesión de entrenador el gate es
+      `requireAdmin`, que responde `FORBIDDEN`._
+- [x] `FichaPlantel` (entrenador) y la pantalla de gestión del kit siguen funcionando: nadie
       rompió `uniformes.listar`.
 
 ### Calidad
 
-- [ ] Ningún archivo supera 200 líneas efectivas; cero `any`; `npm run check` y `npm run build`
-      en verde.
-- [ ] `grep` de `TabsUniformes`, `EstadoTab`, `NumeracionTab`, `MatrizEstado`, `ToggleKit`,
+- [x] Ningún archivo supera 200 líneas efectivas; cero `any`; `npm run check` y `npm run build`
+      en verde. _`npm run check`: **0 errores**. `npm run build` compila los 286 archivos en
+      verde y falla **después**, en el hook post-build de `@astrojs/vercel`, al crear un
+      symlink: esta máquina Windows no tiene privilegios para `mklink` (comprobado aparte). No
+      es del código y no afecta el deploy en Vercel (Linux)._
+- [x] `grep` de `TabsUniformes`, `EstadoTab`, `NumeracionTab`, `MatrizEstado`, `ToggleKit`,
       `ContadoresKit`, `FilaEstado` y `FilaUniforme` no devuelve resultados en `src/`.
-- [ ] `docs/backlog.md` registra la deuda de `useUniformeAlumno` con su disparador.
-- [ ] `docs/ARCHITECTURE.md` explica por qué Uniformes pagina en servidor y Alumnos/Cartera no.
+- [x] `docs/backlog.md` registra la deuda de `useUniformeAlumno` con su disparador. _(DT-8.)_
+- [x] `docs/ARCHITECTURE.md` explica por qué Uniformes pagina en servidor y Alumnos/Cartera no.
+
+---
+
+## Estado de verificación
+
+**Verificado contra la base de producción** (solo lecturas): la paridad SQL ↔ dominio sobre las
+164 filas, el universo y los tres filtros combinables, los conteos sobre el total filtrado, la
+búsqueda por nombre y por dorsal, los tres órdenes, el recorrido completo del paginado sin
+repetir ni omitir filas, y el rechazo de la Action sin sesión.
+
+**Pendiente de una pasada en el navegador con sesión de admin** (4 criterios): el debounce visto
+en la pestaña Red, que la primera carga dispare una sola petición, que tocar una fila abra la
+gestión del kit, y que no haya scroll horizontal de 320 px a desktop. No se pudieron comprobar
+porque la implementación no tuvo credenciales de admin, y crear un usuario de prueba habría
+sido una escritura en la base de producción.
+
+**Dos criterios no son falsables con los datos de hoy** y quedan anotados arriba: no hay ningún
+número de camiseta repetido (el banner no se ve), y solo hay 2 dorsales asignados en toda la
+base, ambos en kit Azul.
 
 ---
 

@@ -210,6 +210,22 @@ export const sesiones = pgTable(
 - `drizzle.config.ts` en raíz; migraciones en `drizzle/`.
 - **Seed:** `scripts/seed-from-excel.mjs` + `scripts/seed-uniformes.mjs` (con `exceljs`, **devDependency**) leen el Excel **local**, marcan pago y kits por **color de relleno** de la celda (verde = pagado/entregado), upsert idempotente por documento y por `(documento, kit)`, reusando `lib/domain`. `xlsx` no sirve: no lee estilos de celda y los estilos **son** los datos.
 
+### Dos paginados y por qué no son el mismo (specs 16 y 18)
+
+El admin tiene **dos** estrategias de paginado conviviendo a propósito. No es inconsistencia: responden a cuellos de botella distintos.
+
+**Paginado de render (spec 16) — Alumnos y Cartera.** El hook `useListaIncremental` recorta la ventana visible con `items.slice(0, tope)` sobre una lista que ya llegó **completa** en una sola llamada a la Action. Los contadores y totales se siguen calculando sobre la lista filtrada completa, nunca sobre la ventana. Ahí el que dolía era el **DOM** (pintar cientos de filas), no el payload: `alumnos.listar` son ~55 KB (≈10 KB gzip) para 82 alumnos.
+
+**Paginado de servidor (spec 18) — Uniformes.** Es la única lista del admin cuyo universo es **2N**: una fila por (alumno activo × kit), hoy 82 × 2 = **164 filas**. Crece al doble de rápido que cualquier otra lista del panel, y lo que crece es el **payload**, no el DOM. Por eso `paginaUniformes()` (`src/lib/db/repos/uniformes-pagina.ts`) resuelve en **una sola consulta** el filtro, el orden, la página (20 filas), el `total`, los conteos por estado sobre el total filtrado y los números repetidos sobre todo el set. Encima van la Action `uniformes.listarPagina` y el hook `useUniformesPagina`.
+
+- Se pagina con `row_number()` en una CTE, no con `LIMIT`/`OFFSET`, y los tres órdenes (Prioridad · Nombre · Número) cierran con el desempate `(alumno_id, kit)`: **sin un orden total, dos páginas consecutivas pueden repetir u omitir una fila**.
+- Los acentos se normalizan con `translate()` y **no** con la extensión `unaccent`, para no depender de habilitar una extensión en Neon.
+- Los precios se **inyectan** como parámetros desde `lib/domain/precios.ts`: no hay números mágicos en `src/lib/db/`.
+
+**El costo consciente de esta decisión:** cuatro derivaciones que el dominio hace en TypeScript —conteo de hermanos por acudiente normalizado, precio del kit, estado del kit y categoría por edad cumplida— quedan escritas **también** en SQL. Lo que impide que las dos versiones se separen en silencio es `scripts/verificar-estados-uniformes.mjs`, que las compara fila por fila sobre el set completo y sale con código ≠ 0 ante la primera diferencia; es criterio de aceptación del spec 18, no una verificación opcional. Duplicar una regla solo se paga cuando hay un guardián que la vigila.
+
+**El umbral, para el lector futuro:** el criterio para migrar una lista a paginado de servidor **no es cuántas filas tiene hoy**, sino si **el payload crece más rápido que el DOM**. Alumnos y Cartera siguen con paginado de render mientras su universo sea 1 fila por alumno; el día que una de ellas duplique su universo, o que el plantel crezca lo suficiente para disparar el umbral de DT-3 (>300 activos o >200 KB en `alumnos.listar`), se migra en su propio spec.
+
 ---
 
 ## 5. La isla admin (cliente)
