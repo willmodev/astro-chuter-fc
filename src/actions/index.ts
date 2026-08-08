@@ -17,6 +17,7 @@ import { registrar as registrarPago } from '@/actions/pagos';
 import {
   anularEntregaKit,
   listar as listarUniformes,
+  listarPagina as listarPaginaUniformes,
   registrarEntregaKit,
   registrarPagoKit,
 } from '@/actions/uniformes';
@@ -49,6 +50,7 @@ export const server = {
   },
   uniformes: {
     listar: listarUniformes,
+    listarPagina: listarPaginaUniformes,
     registrarEntrega: registrarEntregaKit,
     anularEntrega: anularEntregaKit,
     registrarPago: registrarPagoKit,
