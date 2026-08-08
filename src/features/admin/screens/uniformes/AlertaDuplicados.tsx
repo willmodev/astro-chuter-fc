@@ -1,12 +1,21 @@
+import { KITS } from '@/lib/domain/uniformes';
+import type { TipoKit } from '@/lib/domain/uniformes';
+
 import { Icon } from '../../chrome/Icon';
 
-// Alerta de números repetidos dentro del kit (R6). No aparece si no hay ninguno.
+// Alerta de números repetidos (R6), con los dos kits en un solo banner.
+// No aparece si no hay ninguno.
 interface Props {
-  numeros: number[];
+  duplicados: Record<TipoKit, number[]>;
 }
 
-export function AlertaDuplicados({ numeros }: Readonly<Props>) {
-  if (numeros.length === 0) return null;
+const NOMBRE: Record<TipoKit, string> = { AZUL: 'Azul', ORO: 'Oro' };
+
+export function AlertaDuplicados({ duplicados }: Readonly<Props>) {
+  const partes = KITS.filter((k) => duplicados[k].length > 0).map(
+    (k) => `Kit ${NOMBRE[k]}: ${duplicados[k].join(', ')}`,
+  );
+  if (partes.length === 0) return null;
 
   return (
     <div
@@ -23,8 +32,8 @@ export function AlertaDuplicados({ numeros }: Readonly<Props>) {
         <Icon name="triangle-alert" size={18} />
       </span>
       <span style={{ fontSize: 12.5, color: '#946200', lineHeight: 1.35 }}>
-        Números repetidos en este kit: <strong>{numeros.join(', ')}</strong>.
-        Revisá las entregas para evitar duplicados.
+        Números repetidos: <strong>{partes.join(' · ')}</strong>. Revisá las
+        entregas para evitar duplicados.
       </span>
     </div>
   );
