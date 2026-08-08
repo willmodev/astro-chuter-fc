@@ -3,11 +3,16 @@
 // servidor: el entrenador ve la entrega, nunca montos ni estado de pago (spec 12).
 import {
   fijarAbono,
+  paginaUniformes,
   uniformesDeAlumno,
   upsertEntrega,
 } from '@/lib/db/repos/uniformes';
 import { AlumnoReglaError } from '@/lib/domain/alumnos';
 import { precioUniforme } from '@/lib/domain/precios';
+import type {
+  FiltrosUniformes,
+  PaginaUniformes,
+} from '@/lib/db/repos/uniformes';
 import type { TipoKit } from '@/lib/domain/uniformes';
 import type {
   Alumno,
@@ -35,6 +40,16 @@ export async function listarUniformesAdmin(
     cat: a.cat,
     kits: a.kits,
   }));
+}
+
+// Página de la pantalla Uniformes (spec 18). El repo ya resuelve filtro, orden,
+// conteos y paginado en una consulta: acá no queda nada que orquestar, pero la
+// Action sigue entrando por el service como todo el resto del admin.
+export function paginaUniformesAdmin(
+  filtros: FiltrosUniformes,
+  hoy: Date,
+): Promise<PaginaUniformes> {
+  return paginaUniformes(filtros, hoy);
 }
 
 // Entrenador: solo sus categorías, contrato SIN dinero (solo entrega).
