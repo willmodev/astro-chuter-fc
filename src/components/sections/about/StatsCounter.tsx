@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 import MotionProvider from '@/components/motion/MotionProvider';
 import {
@@ -7,7 +7,6 @@ import {
   useTransform,
   useReducedMotion,
 } from '@/components/motion/M';
-import { ease } from '@/lib/motion';
 
 interface Stat {
   value: string;
@@ -29,6 +28,7 @@ interface Props {
 function StatsInner({ stats }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  const hidratado = useHidratado();
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -37,14 +37,13 @@ function StatsInner({ stats }: Props) {
     offset: ['start 90%', 'end 30%'],
   });
 
+  // La entrada la hace `.reveal` (CSS scroll-driven), no Motion: así el bloque
+  // sale visible del servidor. Con `initial={{opacity:0}}` quedaba un hueco en
+  // blanco de ~750px en mobile hasta que el island terminaba de hidratar.
   return (
-    <m.div
+    <div
       ref={ref}
-      initial={reduced ? false : { opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '0px 0px -15% 0px' }}
-      transition={{ duration: 1.1, ease: ease.outExpo }}
-      className="border-brand-navy-deep mt-16 grid grid-cols-1 overflow-hidden border-y-2 sm:grid-cols-3"
+      className="reveal border-brand-navy-deep mt-16 grid grid-cols-1 overflow-hidden border-y-2 sm:grid-cols-3"
     >
       {stats.map((stat, idx) => (
         <StatCell
@@ -53,10 +52,20 @@ function StatsInner({ stats }: Props) {
           idx={idx}
           progress={scrollYProgress}
           reduced={!!reduced}
+          hidratado={hidratado}
         />
       ))}
-    </m.div>
+    </div>
   );
+}
+
+/** false durante el render del servidor y el primer render del cliente. */
+function useHidratado(): boolean {
+  const [hidratado, setHidratado] = useState(false);
+  useEffect(() => {
+    setHidratado(true);
+  }, []);
+  return hidratado;
 }
 
 interface CellProps {
@@ -64,17 +73,20 @@ interface CellProps {
   idx: number;
   progress: ReturnType<typeof useScroll>['scrollYProgress'];
   reduced: boolean;
+  hidratado: boolean;
 }
 
-function StatCell({ stat, idx, progress, reduced }: CellProps) {
+function StatCell({ stat, idx, progress, reduced, hidratado }: CellProps) {
   const { value, valueNum, valueSuffix, label, sub } = stat;
 
   // Cada stat empieza a contar a una fracción ligeramente distinta del scroll.
   const start = 0.05 + idx * 0.06;
   const end = 0.7 + idx * 0.05;
 
+  // Sin JS el conteo no corre, así que el HTML del servidor lleva ya el valor
+  // final: si el island nunca hidrata se lee "7", no un "0" falso.
   const display = useTransform(progress, (v) => {
-    if (valueNum === undefined || reduced) return value;
+    if (valueNum === undefined || reduced || !hidratado) return value;
     const t = Math.min(1, Math.max(0, (v - start) / (end - start)));
     const eased = 1 - Math.pow(1 - t, 3);
     return `${String(Math.round(eased * valueNum))}${valueSuffix ?? ''}`;
@@ -105,7 +117,11 @@ function StatCell({ stat, idx, progress, reduced }: CellProps) {
       <m.span
         aria-hidden="true"
         className="bg-brand-gold mt-4 block h-px origin-left"
-        style={reduced ? { transform: 'scaleX(1)' } : { scaleX: barScale }}
+        style={
+          reduced || !hidratado
+            ? { transform: 'scaleX(1)' }
+            : { scaleX: barScale }
+        }
       />
     </div>
   );
