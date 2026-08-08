@@ -3,8 +3,8 @@ import { Monto } from '../../ui/Monto';
 
 import type { Stats } from '../../data/types';
 
-// Hero navy: recaudo del mes en curso, barra de progreso a la meta y
-// cartera vencida. Numeral grande en Bebas.
+// Hero navy: recaudo del mes en curso, barra de progreso a la meta y lo que
+// falta para cumplirla. Numeral grande en Bebas.
 interface Props {
   stats: Stats;
   mesLong: string;
@@ -28,13 +28,19 @@ export function HeroRecaudo({ stats, mesLong }: Readonly<Props>) {
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'flex-start',
+          alignItems: 'center',
+          gap: 10,
         }}
       >
-        <span className="eyebrow" style={{ color: 'var(--brand-gold)' }}>
-          Recaudo de {mesLong.toLowerCase()} · en curso
+        <span
+          className="eyebrow"
+          style={{ color: 'var(--brand-gold)', minWidth: 0 }}
+        >
+          Recaudo de {mesLong.toLowerCase()}{' '}
+          <span style={{ whiteSpace: 'nowrap' }}>· en curso</span>
         </span>
-        <Badge tone="gold">
+        {/* La píldora tiene alto fijo: sin nowrap el texto se parte y se sale. */}
+        <Badge tone="gold" style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>
           Meta <Monto valor={stats.metaMes} corto />
         </Badge>
       </div>
@@ -76,21 +82,32 @@ export function HeroRecaudo({ stats, mesLong }: Readonly<Props>) {
         <div
           style={{
             display: 'flex',
+            flexWrap: 'wrap',
             justifyContent: 'space-between',
+            columnGap: 12,
+            rowGap: 2,
             marginTop: 7,
             fontSize: 12,
             color: 'rgba(255,255,255,0.8)',
           }}
         >
-          <span>
+          <span style={{ whiteSpace: 'nowrap' }}>
             <b style={{ color: '#fff', fontWeight: 800 }}>{stats.pctMeta}%</b>{' '}
             de la meta
           </span>
-          <span>
-            Cartera vencida{' '}
-            <b style={{ color: 'var(--brand-gold)', fontWeight: 800 }}>
-              <Monto valor={stats.carteraVencida} corto />
-            </b>
+          <span style={{ whiteSpace: 'nowrap' }}>
+            {stats.faltaMeta === 0 ? (
+              <b style={{ color: 'var(--brand-gold)', fontWeight: 800 }}>
+                ¡Meta cumplida!
+              </b>
+            ) : (
+              <>
+                Falta{' '}
+                <b style={{ color: 'var(--brand-gold)', fontWeight: 800 }}>
+                  <Monto valor={stats.faltaMeta} corto />
+                </b>
+              </>
+            )}
           </span>
         </div>
       </div>

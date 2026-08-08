@@ -2,8 +2,8 @@
 // cumpleaños, todo derivado en servidor desde los pagos reales.
 import { soloActivos } from '@/lib/domain/alumnos';
 import {
-  carteraVencida,
   estaEnMora,
+  faltanteMeta,
   indiceMesVivo,
   MESES_VISIBLES,
   MESES_VISIBLES_LARGOS,
@@ -51,9 +51,9 @@ function computeStats(
     pctUpToDate: Math.round(pctAlDia(activos)),
     recaudo: recaudoAnio(todos),
     recaudoMes: recMes,
-    carteraVencida: carteraVencida(activos),
     metaMes: meta,
     pctMeta: meta === 0 ? 0 : Math.round((recMes / meta) * 100),
+    faltaMeta: faltanteMeta(meta, recMes),
   };
 }
 

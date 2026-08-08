@@ -116,7 +116,7 @@ export interface Stats {
   pctUpToDate: number;
   recaudo: number;
   recaudoMes: number;
-  carteraVencida: number;
   metaMes: number;
   pctMeta: number;
+  faltaMeta: number; // meta − recaudado del mes, con piso en 0
 }

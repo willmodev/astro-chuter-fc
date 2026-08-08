@@ -159,6 +159,11 @@ export function metaMes(
   );
 }
 
+/** Cuánto falta para cumplir la meta del mes (nunca negativo si ya se superó). */
+export function faltanteMeta(meta: number, recaudado: number): number {
+  return Math.max(0, meta - recaudado);
+}
+
 /** % de alumnos sin ningún mes en mora. */
 export function pctAlDia(alumnos: readonly AlumnoCartera[]): number {
   if (alumnos.length === 0) return 0;
