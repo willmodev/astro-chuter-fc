@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { AccionRapidaMenu } from './chrome/AccionRapidaMenu';
 import { AdminShell } from './chrome/AdminShell';
-import { IconButton } from './chrome/IconButton';
+// import { IconButton } from './chrome/IconButton'; // campana oculta (ver abajo)
 import { TABS_ADMIN, type TabId } from './chrome/tabs';
 import { EntrenadorApp } from './EntrenadorApp';
 import { useDashboardData } from './hooks/useDashboardData';
@@ -39,7 +39,7 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
   const { ruta, navegar, volver } = useAdminRouter('admin');
   const [actionOpen, setActionOpen] = useState(false);
   const dashboard = useDashboardData();
-  const { data, recargar } = dashboard;
+  const { recargar } = dashboard;
   const meta = META[ruta.vista];
   const navegarTab = (tab: TabId) => {
     navegar(RUTA_DE_TAB[tab]);
@@ -51,14 +51,17 @@ function AdminHome({ role, userName }: Readonly<AdminAppProps>) {
     if (ruta.vista === 'dashboard') void recargar();
   }, [ruta.vista, recargar]);
 
-  const right =
-    ruta.vista === 'dashboard' && data ? (
-      <IconButton
-        icon="bell"
-        label="Notificaciones"
-        badge={data.stats.morosos}
-      />
-    ) : undefined;
+  // Campana oculta a pedido (2026-08-08). Para reactivarla: descomentar esto,
+  // el import de IconButton y volver a sacar `data` del hook.
+  // const right =
+  //   ruta.vista === 'dashboard' && data ? (
+  //     <IconButton
+  //       icon="bell"
+  //       label="Notificaciones"
+  //       badge={data.stats.morosos}
+  //     />
+  //   ) : undefined;
+  const right = undefined;
 
   return (
     <>
