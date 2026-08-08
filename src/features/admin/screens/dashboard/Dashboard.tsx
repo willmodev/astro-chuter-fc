@@ -61,7 +61,7 @@ export function Dashboard({
           </button>
         }
       >
-        Cobros pendientes
+        Cobros pendientes ({data.stats.morosos})
       </SectionLabel>
       <CobrosPendientes
         morosos={data.morosos}

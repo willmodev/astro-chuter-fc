@@ -22,9 +22,13 @@ import { construirAlumnos } from './alumnos';
 import { entrenoDeHoy, type EntrenoDeHoy } from './entreno-de-hoy';
 import { catDe, parseFechaLocal } from './mapea-alumno';
 
+// Cuántos morosos viajan al dashboard: es una cola de trabajo, no la lista
+// completa (esa vive en Cartera).
+const TOP_MOROSOS = 5;
+
 export interface DashboardStats {
   stats: Stats;
-  morosos: Alumno[]; // top 4 por saldo desc
+  morosos: Alumno[]; // top TOP_MOROSOS por saldo desc
   monthly: { m: string; total: number }[];
   cumples: Cumple[];
   meses: string[];
@@ -81,7 +85,7 @@ export async function statsDashboard(hoy: Date): Promise<DashboardStats> {
   const morosos = activos
     .filter(estaEnMora)
     .sort((a, b) => saldoPendiente(b) - saldoPendiente(a))
-    .slice(0, 4);
+    .slice(0, TOP_MOROSOS);
   const monthly = MESES_VISIBLES.slice(0, mesVivo + 1).map((m, i) => ({
     m,
     total: alumnos.reduce(
