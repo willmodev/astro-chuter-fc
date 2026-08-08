@@ -30,6 +30,11 @@ export function FilaKitItem({
       style={{
         display: 'flex',
         alignItems: 'center',
+        // A 320 px el badge no cabe junto al nombre y lo comprimía hasta cortar
+        // la etiqueta del kit ("Kit A…"), que es justo lo que distingue la fila.
+        // Con wrap el badge baja a su propia línea solo cuando no cabe.
+        flexWrap: 'wrap',
+        rowGap: 6,
         gap: 12,
         width: '100%',
         padding: '12px 14px',
@@ -59,7 +64,7 @@ export function FilaKitItem({
       >
         {fila.numero ?? '—'}
       </span>
-      <span style={{ flex: 1, minWidth: 0 }}>
+      <span style={{ flex: '1 1 170px', minWidth: 0 }}>
         <span
           style={{
             display: 'block',
@@ -77,12 +82,13 @@ export function FilaKitItem({
           style={{
             display: 'flex',
             alignItems: 'center',
+            // La meta envuelve en vez de cortarse: en un celular angosto es
+            // preferible una segunda línea a un "Kit A…" ilegible.
+            flexWrap: 'wrap',
             gap: 5,
             fontSize: 12,
             fontWeight: 600,
             color: 'var(--text-muted)',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
           }}
         >
           {fila.cat} · <EtiquetaKit kit={fila.kit} />
@@ -90,7 +96,9 @@ export function FilaKitItem({
           {abonoParcial && <>· Abonado</>}
         </span>
       </span>
-      <Badge tone={meta.tone}>{meta.label}</Badge>
+      <Badge tone={meta.tone} style={{ marginLeft: 'auto', flexShrink: 0 }}>
+        {meta.label}
+      </Badge>
     </button>
   );
 }
