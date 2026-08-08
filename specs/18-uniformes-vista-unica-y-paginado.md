@@ -1,7 +1,7 @@
 # SPEC 18 — Uniformes: vista única con filtros y paginado en servidor
 
 > **Estado:** Implementado _(2026-08-08 · rama `spec-18-uniformes-vista-unica-y-paginado`;
-> quedan 4 criterios de verificación visual pendientes, ver «Estado de verificación»)_ ·
+> todos los criterios verificados, ver «Estado de verificación»)_ ·
 > **Depende de:** SPEC 08 (modelo de 4 estados y las pantallas Estado/Numeración que este spec reemplaza), SPEC 11 (persistencia en Neon y el patrón Action + refetch pesimista), SPEC 12 (dos kits por alumno, abonos y el universo de 2N kits), SPEC 16 (paginado incremental de render, del que este spec se aparta a propósito) · **Fecha:** 2026-08-07
 > **Objetivo:** Reemplazar los dos tabs de la pantalla Uniformes por una sola lista de kits con buscador y filtros desplegables, con el filtrado, el orden, los conteos y el paginado resueltos en SQL.
 
@@ -257,10 +257,9 @@ funcionando en `npm run dev` durante todo ese tramo. El cambio visible ocurre en
 
 ## Criterios de aceptación
 
-> **Leyenda de verificación (2026-08-08).** `[x]` = verificado contra la base real o por
-> inspección del código. `[ ]` = **pendiente de una pasada en el navegador con sesión de
-> admin**, que no se pudo hacer en la implementación por no tener credenciales. Ver
-> «Estado de verificación» al final.
+> **Verificación completa (2026-08-08).** Todos los criterios verificados: los de datos contra
+> la base real, y los de interfaz en el navegador con sesión de admin (playwright, 320 px y
+> 1440 px). Ver «Estado de verificación» al final.
 
 ### Paridad SQL ↔ dominio
 
@@ -305,8 +304,8 @@ funcionando en `npm run dev` durante todo ese tramo. El cambio visible ocurre en
 - [x] Escribir `10` devuelve los kits cuyo **número** es exactamente 10, en ambos kits. _Hoy
       solo hay **2 dorsales asignados en toda la base** (ambos en kit Azul), así que «en ambos
       kits» no es falsable con datos reales; la condición no discrimina por kit._
-- [ ] La búsqueda dispara **una** petición 300 ms después de la última tecla, no una por tecla
-      (verificado en la pestaña Red).
+- [x] La búsqueda dispara **una** petición 300 ms después de la última tecla, no una por tecla
+      (verificado en la pestaña Red). _Escribir `jonas` (5 teclas) produjo **1** petición._
 - [x] Limpiar la búsqueda devuelve la lista completa.
 
 ### Orden
@@ -325,7 +324,7 @@ funcionando en `npm run dev` durante todo ese tramo. El cambio visible ocurre en
       recorrido completo → 164 claves `(alumnoId, kit)` únicas.)_
 - [x] Cuando ya no quedan filas, el botón «Mostrar más» **desaparece**.
 - [x] Cambiar cualquier filtro, la búsqueda o el orden resetea la lista a 20 filas.
-- [ ] La primera carga pide **una** sola vez a `uniformes.listarPagina`, no una por render.
+- [x] La primera carga pide **una** sola vez a `uniformes.listarPagina`, no una por render.
 
 ### Vista y no-regresión
 
@@ -338,8 +337,12 @@ funcionando en `npm run dev` durante todo ese tramo. El cambio visible ocurre en
       está siempre visible cuando existe alguno, sin depender del filtro de kit. _Hoy no hay
       ningún número repetido en la base, así que el banner no se ve; el pipeline se verificó
       con umbral forzado._
-- [ ] Tocar una fila abre la pantalla de gestión del uniforme de ese alumno, como antes.
-- [ ] De 320 px a desktop: **cero scroll horizontal**.
+- [x] Tocar una fila abre la pantalla de gestión del uniforme de ese alumno, como antes.
+      _(Verificado: la fila de Jonas abre `/admin/alumnos/28/uniforme`.)_
+- [x] De 320 px a desktop: **cero scroll horizontal**. _`scrollWidth === clientWidth === 320`.
+      La primera pasada destapó que a 320 px el badge comprimía la fila hasta cortar la
+      etiqueta del kit («Kit A…»), lo que dejaba indistinguibles las filas de Azul y Oro; se
+      corrigió con `flexWrap` para que el badge baje de línea solo cuando no cabe._
 - [x] El **entrenador** no ve esta pantalla y `uniformes.listarPagina` le responde error con su
       sesión. _Verificado sin sesión → `401 UNAUTHORIZED`; con sesión de entrenador el gate es
       `requireAdmin`, que responde `FORBIDDEN`._
@@ -367,11 +370,18 @@ funcionando en `npm run dev` durante todo ese tramo. El cambio visible ocurre en
 búsqueda por nombre y por dorsal, los tres órdenes, el recorrido completo del paginado sin
 repetir ni omitir filas, y el rechazo de la Action sin sesión.
 
-**Pendiente de una pasada en el navegador con sesión de admin** (4 criterios): el debounce visto
-en la pestaña Red, que la primera carga dispare una sola petición, que tocar una fila abra la
-gestión del kit, y que no haya scroll horizontal de 320 px a desktop. No se pudieron comprobar
-porque la implementación no tuvo credenciales de admin, y crear un usuario de prueba habría
-sido una escritura en la base de producción.
+**Verificado en el navegador** con sesión de admin (playwright): la primera carga dispara **una**
+sola petición; escribir `jonas` (5 teclas) dispara **una** sola tras el debounce; los conteos de
+la pantalla (10 · 3 · 61 · 90 = 164, y con Kit Azul 6 · 3 · 19 · 54 = 82) coinciden exactamente
+con los medidos por script; «Mostrar más» pasa a «40 de 164» sin filas repetidas; filtrar por
+kit resetea a «20 de 82»; el orden por número da `1, 10, —, —…`; tocar una fila abre
+`/admin/alumnos/28/uniforme`; y no hay scroll horizontal ni a 320 px ni en desktop.
+
+**Un defecto encontrado y corregido en esa pasada:** a 320 px el badge de estado comprimía la
+fila hasta dejar el nombre en «ANDRES D…» y la etiqueta del kit en «Kit A…» — es decir, en el
+celular no se distinguía una fila de kit Azul de una de Oro, que es lo que la fila existe para
+mostrar. Corregido con `flexWrap` (el badge baja a su propia línea solo cuando no cabe); en
+desktop no cambia nada. Capturas en `.playwright-cli/spec18-*.png`.
 
 **Dos criterios no son falsables con los datos de hoy** y quedan anotados arriba: no hay ningún
 número de camiseta repetido (el banner no se ve), y solo hay 2 dorsales asignados en toda la
