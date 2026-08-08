@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 
-import heroImg from '@/assets/images/hero.jpg';
+import heroImg from '@/assets/images/club/hero-evento.jpg';
 import BrandButton from '@/components/layout/BrandButton.astro';
 import HeroTicket from '@/components/sections/hero/HeroTicket';
 import HeroBallBg from '@/components/sections/hero/HeroBallBg.astro';
@@ -22,11 +22,13 @@ import { SCHEDULE, LOCATION } from '@/lib/site';
        La foto va bajo un overlay navy al 85-95%, así que en mobile pedimos
        menos resolución que el ancho real: baja el peso del LCP sin verse. -->
   <HeroParallaxLayer speed={0.55} client:idle className="absolute inset-0 z-0">
+    <!-- La fuente mide 1280px de ancho (foto de WhatsApp): no se piden anchos
+         mayores para no hacer upscale. El vignette de la derecha cubre el resto. -->
     <Image
       src={heroImg}
-      alt="Entrenamiento de niños en Chuter FC — Cancha Los Algarrobillos"
-      class="h-[120%] w-full object-cover object-[30%_center] 2xl:[filter:saturate(1.08)]"
-      widths={[540, 800, 1080, 1440]}
+      alt="Niños y niñas de Chuter FC reunidos en la cancha junto a sus formadores"
+      class="h-[120%] w-full object-cover object-[50%_60%] 2xl:[filter:saturate(1.08)]"
+      widths={[540, 800, 1080, 1280]}
       sizes="(max-width: 767px) 75vw, 100vw"
       loading="eager"
       fetchpriority="high"

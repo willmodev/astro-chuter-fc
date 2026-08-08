@@ -5,89 +5,54 @@ import Section from '@/components/layout/Section.astro';
 import Container from '@/components/layout/Container.astro';
 import SectionHeading from '@/components/layout/SectionHeading.astro';
 import GalleryLightbox from '@/components/interactive/GalleryLightbox';
-import img1 from '@/assets/images/img1.webp';
-import img2 from '@/assets/images/img2.webp';
-import img3 from '@/assets/images/img3.webp';
-import img4 from '@/assets/images/img4.webp';
-import img5 from '@/assets/images/img5.webp';
-import img6 from '@/assets/images/img6.webp';
-import img7 from '@/assets/images/img7.webp';
+import { SALAS_GALERIA } from '@/lib/galeria';
+import type { FotoGaleria } from '@/lib/galeria';
+import type { SalaRenderizada } from '@/components/interactive/gallery/types';
 
-const rawImages = [
-  {
-    src: img1,
-    alt: 'Niños entrenando fútbol en Chuter FC — cancha Los Algarrobillos',
-    gridClass: 'md:col-span-2 md:row-span-2',
-  },
-  {
-    src: img2,
-    alt: 'Práctica de control del balón en Chuter FC',
-    gridClass: '',
-  },
-  {
-    src: img3,
-    alt: 'Entrenamiento grupal de jóvenes deportistas en Chuter FC',
-    gridClass: 'md:row-span-2',
-  },
-  {
-    src: img4,
-    alt: 'Sesión de formación técnica con niños de Chuter FC',
-    gridClass: '',
-  },
-  {
-    src: img5,
-    alt: 'Los más pequeños disfrutando su primer entrenamiento en Chuter FC',
-    gridClass: 'md:col-span-2',
-  },
-  {
-    src: img6,
-    alt: 'Cancha de la Provincia durante entrenamiento de Chuter FC',
-    gridClass: '',
-  },
-  {
-    src: img7,
-    alt: 'Niño de Chuter FC celebrando un gol en práctica',
-    gridClass: '',
-  },
-];
+// Ancho que la pieza llega a ocupar en la retícula de 4 columnas. Se pide sin
+// recortar: el encuadre lo hace `object-cover`, así se evita el doble recorte.
+function anchoThumb({ gridClass }: FotoGaleria): number {
+  return gridClass.includes('col-span-2') ? 900 : 480;
+}
 
-const images = await Promise.all(
-  rawImages.map(async ({ src, alt, gridClass }) => {
-    const thumb = await getImage({
-      src,
-      width: 480,
-      height: 600,
+async function renderizarFoto(foto: FotoGaleria) {
+  const [thumb, full] = await Promise.all([
+    getImage({
+      src: foto.src,
+      width: anchoThumb(foto),
       format: 'webp',
-      quality: 80,
-      fit: 'cover',
-    });
-    const full = await getImage({
-      src,
-      width: 1080,
-      format: 'webp',
-      quality: 85,
-    });
-    return {
-      src: thumb.src,
-      fullSrc: full.src,
-      alt,
-      width: full.attributes.width as number,
-      height: full.attributes.height as number,
-      gridClass,
-    };
-  }),
-);
+      quality: 78,
+    }),
+    getImage({ src: foto.src, width: 1080, format: 'webp', quality: 85 }),
+  ]);
 
-const lightboxImages = images.map(
-  ({ src, fullSrc, alt, width, height, gridClass }) => ({
-    src: fullSrc,
-    thumbnail: src,
-    alt,
-    width,
-    height,
-    gridClass,
-  }),
-);
+  return {
+    src: full.src,
+    thumbnail: thumb.src,
+    alt: foto.alt,
+    cedula: foto.cedula,
+    width: full.attributes.width as number,
+    height: full.attributes.height as number,
+    gridClass: foto.gridClass,
+  };
+}
+
+let offset = 0;
+const salas: SalaRenderizada[] = [];
+
+for (const sala of SALAS_GALERIA) {
+  const piezas = await Promise.all(sala.fotos.map(renderizarFoto));
+  salas.push({
+    numero: sala.numero,
+    titulo: sala.titulo,
+    descripcion: sala.descripcion,
+    piezas,
+    offset,
+  });
+  offset += piezas.length;
+}
+
+const totalPiezas = offset;
 ---
 
 <Section id="galeria" variant="white">
@@ -98,7 +63,7 @@ const lightboxImages = images.map(
         numero="06"
         eyebrow="Fotos del club"
         title="En acción, con el barrio."
-        subtitle="Momentos reales de nuestros entrenamientos en la Cancha de la Provincia, Los Algarrobillos."
+        subtitle="Un recorrido en tres salas por lo que pasa cada lunes, miércoles y viernes en la cancha."
       />
       <p
         class="text-brand-navy/70 hidden font-serif text-sm italic md:block md:max-w-[18rem] md:text-right"
@@ -109,8 +74,14 @@ const lightboxImages = images.map(
       </p>
     </div>
 
-    <div class="mt-12">
-      <GalleryLightbox images={lightboxImages} client:visible />
+    <p
+      class="text-brand-navy/45 mt-8 font-mono text-[0.7rem] tracking-[0.2em] uppercase"
+    >
+      {SALAS_GALERIA.length} salas · {totalPiezas} piezas
+    </p>
+
+    <div class="mt-8">
+      <GalleryLightbox salas={salas} client:visible />
     </div>
   </Container>
 </Section>

@@ -1,186 +1,64 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Dialog } from 'radix-ui';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import MotionProvider from '@/components/motion/MotionProvider';
-import { m, AnimatePresence } from '@/components/motion/M';
-import { ease } from '@/lib/motion';
 
-interface GalleryImage {
-  src: string;
-  thumbnail: string;
-  alt: string;
-  width: number;
-  height: number;
-  gridClass?: string;
-}
+import GallerySala from './gallery/GallerySala';
+import GalleryDialog from './gallery/GalleryDialog';
+
+import type { SalaRenderizada } from './gallery/types';
 
 interface GalleryLightboxProps {
-  images: GalleryImage[];
+  salas: SalaRenderizada[];
 }
 
-function GalleryInner({ images }: GalleryLightboxProps) {
-  const [open, setOpen] = useState(false);
-  const [current, setCurrent] = useState(0);
+function GalleryInner({ salas }: GalleryLightboxProps) {
+  const [abierto, setAbierto] = useState(false);
+  const [actual, setActual] = useState(0);
 
-  const prev = useCallback(() => {
-    setCurrent((i) => (i - 1 + images.length) % images.length);
-  }, [images.length]);
+  // El recorrido es continuo: las flechas cruzan de una sala a la siguiente.
+  const piezas = useMemo(() => salas.flatMap((sala) => sala.piezas), [salas]);
 
-  const next = useCallback(() => {
-    setCurrent((i) => (i + 1) % images.length);
-  }, [images.length]);
+  const anterior = useCallback(() => {
+    setActual((i) => (i - 1 + piezas.length) % piezas.length);
+  }, [piezas.length]);
+
+  const siguiente = useCallback(() => {
+    setActual((i) => (i + 1) % piezas.length);
+  }, [piezas.length]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!abierto) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') prev();
-      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') anterior();
+      if (e.key === 'ArrowRight') siguiente();
     };
     window.addEventListener('keydown', handler);
     return () => {
       window.removeEventListener('keydown', handler);
     };
-  }, [open, prev, next]);
+  }, [abierto, anterior, siguiente]);
 
-  const openAt = (index: number) => {
-    setCurrent(index);
-    setOpen(true);
-  };
-
-  const img = images[current];
+  const abrirEn = useCallback((indiceGlobal: number) => {
+    setActual(indiceGlobal);
+    setAbierto(true);
+  }, []);
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 md:auto-rows-[200px] md:grid-cols-4 md:gap-4 lg:auto-rows-[240px]">
-        {images.map((image, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              openAt(index);
-            }}
-            aria-label={`Ver imagen ${String(index + 1)}: ${image.alt}`}
-            style={{ ['--idx' as never]: index }}
-            className={`reveal group focus-visible:outline-brand-gold relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 md:aspect-auto md:h-full ${image.gridClass ?? ''}`}
-          >
-            <img
-              src={image.thumbnail}
-              alt={image.alt}
-              loading="lazy"
-              decoding="async"
-              style={{ animationDelay: `${String(index * -1.7)}s` }}
-              className="thumb-ken-burns h-full w-full object-cover transition-[filter] duration-300 group-hover:brightness-110"
-            />
-            <div className="from-brand-navy-deep/60 pointer-events-none absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            <div className="bg-brand-navy/0 group-hover:bg-brand-navy/15 absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100">
-              <svg
-                aria-hidden="true"
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="white"
-                strokeWidth="1.5"
-                className="drop-shadow-lg transition-transform duration-300 group-hover:scale-110"
-              >
-                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-              </svg>
-            </div>
-          </button>
+      <div className="space-y-14 md:space-y-20">
+        {salas.map((sala) => (
+          <GallerySala key={sala.numero} sala={sala} onAbrir={abrirEn} />
         ))}
       </div>
 
-      <Dialog.Root open={open} onOpenChange={setOpen}>
-        <AnimatePresence>
-          {open && (
-            <Dialog.Portal forceMount>
-              <Dialog.Overlay asChild>
-                <m.div
-                  className="fixed inset-0 z-50 bg-neutral-950/92 backdrop-blur-md"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, ease: ease.outQuint }}
-                />
-              </Dialog.Overlay>
-
-              <Dialog.Content
-                className="fixed inset-0 z-50 flex items-center justify-center p-4 focus:outline-none"
-                aria-describedby={undefined}
-                asChild
-              >
-                <m.div
-                  initial={{ opacity: 0, scale: 0.94 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.32, ease: ease.outExpo }}
-                >
-                  <Dialog.Title className="sr-only">
-                    Galería de fotos — imagen {current + 1} de {images.length}
-                  </Dialog.Title>
-
-                  <div className="relative flex max-h-full max-w-5xl flex-col items-center gap-4">
-                    <AnimatePresence mode="wait" initial={false}>
-                      <m.img
-                        key={current}
-                        src={img.src}
-                        alt={img.alt}
-                        className="max-h-[80vh] max-w-full rounded-xl object-contain shadow-2xl"
-                        initial={{ opacity: 0, x: 24 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -24 }}
-                        transition={{ duration: 0.28, ease: ease.outQuint }}
-                      />
-                    </AnimatePresence>
-
-                    <p className="text-center text-sm text-white/70">
-                      {img.alt}
-                    </p>
-
-                    <div className="flex items-center gap-3 text-xs text-white/50">
-                      {current + 1} / {images.length}
-                    </div>
-                  </div>
-
-                  <Dialog.Close
-                    aria-label="Cerrar galería"
-                    className="focus-visible:outline-brand-gold absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2"
-                  >
-                    <X size={20} strokeWidth={1.5} aria-hidden="true" />
-                  </Dialog.Close>
-
-                  {images.length > 1 && (
-                    <>
-                      <button
-                        onClick={prev}
-                        aria-label="Imagen anterior"
-                        className="focus-visible:outline-brand-gold absolute top-1/2 left-2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 md:left-4 md:h-12 md:w-12"
-                      >
-                        <ChevronLeft
-                          size={20}
-                          strokeWidth={1.5}
-                          aria-hidden="true"
-                        />
-                      </button>
-                      <button
-                        onClick={next}
-                        aria-label="Imagen siguiente"
-                        className="focus-visible:outline-brand-gold absolute top-1/2 right-2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 md:right-4 md:h-12 md:w-12"
-                      >
-                        <ChevronRight
-                          size={20}
-                          strokeWidth={1.5}
-                          aria-hidden="true"
-                        />
-                      </button>
-                    </>
-                  )}
-                </m.div>
-              </Dialog.Content>
-            </Dialog.Portal>
-          )}
-        </AnimatePresence>
-      </Dialog.Root>
+      <GalleryDialog
+        piezas={piezas}
+        actual={actual}
+        abierto={abierto}
+        onAbiertoChange={setAbierto}
+        onAnterior={anterior}
+        onSiguiente={siguiente}
+      />
     </>
   );
 }
