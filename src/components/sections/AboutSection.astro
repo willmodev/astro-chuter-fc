@@ -174,6 +174,8 @@ const stats = [
     </div>
 
     <!-- Stats row con counters animados -->
-    <StatsCounter client:visible stats={stats} />
+    <!-- rootMargin: hidrata bien antes de asomar, así el conteo ya corre
+         cuando el bloque entra en pantalla (y nunca se ve el valor estático). -->
+    <StatsCounter client:visible={{ rootMargin: '600px' }} stats={stats} />
   </Container>
 </Section>
