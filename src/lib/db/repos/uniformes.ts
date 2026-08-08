@@ -4,6 +4,18 @@ import { db } from '@/lib/db/client';
 import { uniformes } from '@/lib/db/schema';
 import type { TipoKit } from '@/lib/domain/uniformes';
 
+// La consulta paginada de la pantalla Uniformes (spec 18) vive en su propio
+// módulo por el límite de 200 líneas, pero se expone desde acá: para el resto
+// del proyecto el repo de uniformes sigue siendo una sola puerta.
+export {
+  paginaUniformes,
+  todasLasFilasKit,
+  type FilaKit,
+  type FiltrosUniformes,
+  type OrdenUniformes,
+  type PaginaUniformes,
+} from './uniformes-pagina';
+
 // Fila cruda de uniforme (lo mínimo para derivar estado y saldo por kit).
 export interface UniformeRow {
   alumnoId: number;
