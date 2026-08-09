@@ -16,7 +16,7 @@ interface Props {
   role: 'admin' | 'entrenador';
 }
 
-type SidebarProps = Omit<Props, 'onAction'>;
+type SidebarProps = Props;
 
 export function AdminNav({
   tabs,
@@ -32,6 +32,7 @@ export function AdminNav({
         tabs={tabs}
         active={active}
         onTab={onTab}
+        onAction={onAction}
         userName={userName}
         role={role}
       />
@@ -44,6 +45,7 @@ function Sidebar({
   tabs,
   active,
   onTab,
+  onAction,
   userName,
   role,
 }: Readonly<SidebarProps>) {
@@ -66,6 +68,19 @@ function Sidebar({
           <div className="admin-sidebar__tag">Administración</div>
         </div>
       </div>
+      {/* En móvil la acción rápida es el FAB de la tab-bar, que en desktop se
+          oculta; sin este CTA el alta de alumno quedaba sin punto de entrada. */}
+      {onAction && (
+        <button
+          type="button"
+          onClick={onAction}
+          className="admin-sidebar__cta"
+          data-testid="sidebar-accion-rapida"
+        >
+          <Icon name="plus" size={18} strokeWidth={2.4} />
+          <span>Acción rápida</span>
+        </button>
+      )}
       <nav className="admin-sidebar__nav">
         {tabs.map((t) => {
           const on = active === t.id;

@@ -13,16 +13,19 @@ import type { RutaAdmin } from './router/types';
 interface Props {
   ruta: RutaAdmin;
   navegar: (ruta: RutaAdmin) => void;
-  volver: () => void;
+  volver: (fallback?: RutaAdmin) => void;
 }
 
+// El ← siempre retrocede en el historial (`volver`): así se respeta de dónde
+// vino el usuario — p. ej. Cartera → Ficha → ← devuelve a Cartera, no a la
+// lista de Alumnos. El fallback solo aplica si se entró por deep-link.
 export function VistaDetalle({ ruta, navegar, volver }: Readonly<Props>) {
   switch (ruta.vista) {
     case 'equipo':
       return (
         <EquipoScreen
           onBack={() => {
-            navegar({ vista: 'mas' });
+            volver({ vista: 'mas' });
           }}
         />
       );
@@ -32,7 +35,7 @@ export function VistaDetalle({ ruta, navegar, volver }: Readonly<Props>) {
         <Ficha
           alumnoId={ruta.alumnoId}
           onVolver={() => {
-            navegar({ vista: 'alumnos' });
+            volver({ vista: 'alumnos' });
           }}
           onEditar={() => {
             navegar({ vista: 'alumnoEditar', alumnoId: ruta.alumnoId });
@@ -52,7 +55,7 @@ export function VistaDetalle({ ruta, navegar, volver }: Readonly<Props>) {
           alumnoId={ruta.alumnoId}
           mes={ruta.mes}
           onVolver={() => {
-            navegar({ vista: 'ficha', alumnoId: ruta.alumnoId });
+            volver({ vista: 'ficha', alumnoId: ruta.alumnoId });
           }}
         />
       );
@@ -62,7 +65,7 @@ export function VistaDetalle({ ruta, navegar, volver }: Readonly<Props>) {
         <AlumnoForm
           modo="nuevo"
           onVolver={() => {
-            navegar({ vista: 'alumnos' });
+            volver({ vista: 'alumnos' });
           }}
           onGuardado={(alumnoId) => {
             navegar({ vista: 'ficha', alumnoId });
@@ -76,7 +79,7 @@ export function VistaDetalle({ ruta, navegar, volver }: Readonly<Props>) {
           modo="editar"
           alumnoId={ruta.alumnoId}
           onVolver={() => {
-            navegar({ vista: 'ficha', alumnoId: ruta.alumnoId });
+            volver({ vista: 'ficha', alumnoId: ruta.alumnoId });
           }}
           onGuardado={(alumnoId) => {
             navegar({ vista: 'ficha', alumnoId });
@@ -94,13 +97,20 @@ export function VistaDetalle({ ruta, navegar, volver }: Readonly<Props>) {
       );
 
     case 'uniformeEntrega':
-      return <UniformeEntrega alumnoId={ruta.alumnoId} onVolver={volver} />;
+      return (
+        <UniformeEntrega
+          alumnoId={ruta.alumnoId}
+          onVolver={() => {
+            volver({ vista: 'uniformes' });
+          }}
+        />
+      );
 
     case 'entrenamientos':
       return (
         <Entrenamientos
           onBack={() => {
-            navegar({ vista: 'mas' });
+            volver({ vista: 'mas' });
           }}
         />
       );
