@@ -42,6 +42,8 @@ export interface Semana {
   n: number; // número ISO de la semana
   label: string; // "8 – 12 jun"
   sub: string; // "Semana actual" | "Hace 2 semanas"
+  chip: string; // versión corta para el selector: "Esta semana" | "Hace 2 sem"
+  offset: number; // +pasado · 0 actual · -futuro
   current: boolean;
   inicio: Date; // lunes 00:00 local — permite derivar la fecha de cada día
 }
@@ -104,15 +106,25 @@ function subSemana(offset: number): string {
   return `Hace ${String(offset)} semanas`;
 }
 
+/** Etiqueta corta del chip: cabe en una línea sobre la fecha. */
+function chipSemana(offset: number): string {
+  if (offset < 0)
+    return offset === -1 ? 'Próxima' : `En ${String(-offset)} sem`;
+  if (offset === 0) return 'Esta semana';
+  if (offset === 1) return 'Pasada';
+  return `Hace ${String(offset)} sem`;
+}
+
 /**
- * `SEMANAS_FUTURAS` próximas + semana viva + `SEMANAS_PASADAS` anteriores,
- * ordenadas de futura a pasada (0 = actual). Fecha inyectable (testeable).
+ * `SEMANAS_PASADAS` anteriores + semana viva + `SEMANAS_FUTURAS` próximas,
+ * en orden de calendario (la más antigua primero, como se lee una agenda).
+ * Fecha inyectable (testeable).
  */
 export function generarSemanas(hoy: Date): Semana[] {
   const base = lunesDe(hoy);
   const total = SEMANAS_FUTURAS + SEMANAS_PASADAS + 1;
   return Array.from({ length: total }, (_, i) => {
-    const offset = i - SEMANAS_FUTURAS; // -futuras … +pasadas
+    const offset = SEMANAS_PASADAS - i; // +pasadas … -futuras
     const lunes = new Date(base);
     lunes.setDate(lunes.getDate() - offset * 7);
     const n = numeroSemana(lunes);
@@ -121,6 +133,8 @@ export function generarSemanas(hoy: Date): Semana[] {
       n,
       label: labelSemana(lunes),
       sub: subSemana(offset),
+      chip: chipSemana(offset),
+      offset,
       current: offset === 0,
       inicio: new Date(lunes),
     };

@@ -7,6 +7,7 @@ import { Badge } from '../../ui/Badge';
 import { WeekChips } from '../../ui/WeekChips';
 
 import { DayCard } from './DayCard';
+import { NotaSemana } from './NotaSemana';
 import { PlanCard } from './PlanCard';
 import { PlanSheet } from './PlanSheet';
 import { useEntrenos } from './useEntrenos';
@@ -67,6 +68,8 @@ export function Entrenos({
         value={semana.id}
         onChange={data.setWeekId}
       />
+
+      <NotaSemana semana={semana} />
 
       {data.estado !== 'listo' ? (
         <EstadoCarga
