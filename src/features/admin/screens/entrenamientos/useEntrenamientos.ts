@@ -5,6 +5,7 @@ import { semanaInicioISO, type Semana } from '@/lib/domain/entrenos';
 
 import { semanas } from '../../data/mock';
 import { aPlan, aSesiones } from '../../data/mapea-entrenos';
+import { useSemanasVisibles } from '../../hooks/useSemanasVisibles';
 
 import type { EstadoCargaValor } from '../../chrome/EstadoCarga';
 import type { AlumnoPlantel, PlanSemana, Sesion } from '../../data/types';
@@ -37,6 +38,8 @@ export function useEntrenamientos(): EntrenamientosData {
 
   const semana = semanas.find((w) => w.id === weekId) ?? actual;
   const semanaInicio = semanaInicioISO(semana);
+  // Aquí el historial es el de todos los entrenadores (lo resuelve la Action).
+  const visibles = useSemanasVisibles(semana.id);
 
   const recargar = useCallback(async () => {
     setEstado('cargando');
@@ -69,5 +72,5 @@ export function useEntrenamientos(): EntrenamientosData {
     void recargar();
   }, [recargar]);
 
-  return { semanas, semana, setWeekId, grupos, estado, recargar };
+  return { semanas: visibles, semana, setWeekId, grupos, estado, recargar };
 }

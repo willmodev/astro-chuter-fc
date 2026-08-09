@@ -3,6 +3,7 @@
 // (subir → guardar URL → borrar el anterior, tolerante a fallo del borrado).
 import {
   planesEnSemana,
+  semanasConRegistro,
   sesionActual,
   sesionesEnSemana,
   upsertAsistencia,
@@ -71,6 +72,15 @@ export async function vistaAdmin(
       };
     })
     .sort((a, b) => a.entrenadorNombre.localeCompare(b.entrenadorNombre, 'es'));
+}
+
+// Semanas de la ventana con historial: el entrenador mira lo suyo, el admin
+// lo de todos. Alimenta el filtro del selector (no oculta nada editable).
+export function semanasConHistorial(
+  semanas: readonly string[],
+  entrenadorId?: string,
+): Promise<string[]> {
+  return semanasConRegistro(semanas, entrenadorId);
 }
 
 export async function guardarPlan(

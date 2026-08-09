@@ -151,6 +151,25 @@ export function semanaInicioISO(semana: Semana): string {
   return `${String(d.getFullYear())}-${mes}-${dia}`;
 }
 
+/**
+ * Semanas que se ofrecen en el selector: la actual y las futuras siempre (ahí
+ * sí hay trabajo por hacer); las pasadas solo si tienen historial. La semana
+ * seleccionada nunca se oculta, aunque esté vacía (deep-link o recién abierta).
+ */
+export function semanasVisibles(
+  semanas: readonly Semana[],
+  conRegistro: readonly string[],
+  seleccionada: string,
+): Semana[] {
+  const conDatos = new Set(conRegistro);
+  return semanas.filter(
+    (s) =>
+      s.offset <= 0 ||
+      s.id === seleccionada ||
+      conDatos.has(semanaInicioISO(s)),
+  );
+}
+
 /** Semana de la ventana cuyo `weekId` (`w-25`) coincide; `null` si no está. */
 export function semanaPorWeekId(
   semanas: readonly Semana[],

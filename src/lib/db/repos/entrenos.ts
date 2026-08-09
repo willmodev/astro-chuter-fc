@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, gte, lte } from 'drizzle-orm';
 
 import { db } from '@/lib/db/client';
 import { planesSemana, sesiones } from '@/lib/db/schema';
@@ -63,6 +63,48 @@ export function sesionesEnSemana(
       )
     : eq(sesiones.semanaInicio, semanaInicio);
   return db.select(SESION_COLS).from(sesiones).where(filtro);
+}
+
+// Semanas del rango con algo registrado (plan o sesión), sin repetir. Alimenta
+// el selector: las semanas pasadas vacías no se ofrecen.
+export async function semanasConRegistro(
+  semanas: readonly string[],
+  entrenadorId?: string,
+): Promise<string[]> {
+  if (semanas.length === 0) return [];
+  // 'YYYY-MM-DD' ordena lexicográficamente igual que por fecha.
+  const ordenadas = [...semanas].sort();
+  const desde = ordenadas[0];
+  const hasta = ordenadas[ordenadas.length - 1];
+  const rango = (col: typeof planesSemana.semanaInicio) =>
+    and(gte(col, desde), lte(col, hasta));
+
+  const [planes, filas] = await Promise.all([
+    db
+      .selectDistinct({ semanaInicio: planesSemana.semanaInicio })
+      .from(planesSemana)
+      .where(
+        entrenadorId
+          ? and(
+              rango(planesSemana.semanaInicio),
+              eq(planesSemana.entrenadorId, entrenadorId),
+            )
+          : rango(planesSemana.semanaInicio),
+      ),
+    db
+      .selectDistinct({ semanaInicio: sesiones.semanaInicio })
+      .from(sesiones)
+      .where(
+        entrenadorId
+          ? and(
+              rango(sesiones.semanaInicio),
+              eq(sesiones.entrenadorId, entrenadorId),
+            )
+          : rango(sesiones.semanaInicio),
+      ),
+  ]);
+  const conDatos = new Set([...planes, ...filas].map((r) => r.semanaInicio));
+  return semanas.filter((s) => conDatos.has(s));
 }
 
 // Sesión puntual (para leer la URL de blob previa antes de reemplazarla).
