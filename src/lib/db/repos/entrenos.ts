@@ -28,6 +28,10 @@ const PLAN_COLS = {
   objetivos: planesSemana.objetivos,
 };
 
+type ColumnaSemana =
+  | typeof planesSemana.semanaInicio
+  | typeof sesiones.semanaInicio;
+
 const SESION_COLS = {
   entrenadorId: sesiones.entrenadorId,
   semanaInicio: sesiones.semanaInicio,
@@ -76,8 +80,9 @@ export async function semanasConRegistro(
   const ordenadas = [...semanas].sort();
   const desde = ordenadas[0];
   const hasta = ordenadas[ordenadas.length - 1];
-  const rango = (col: typeof planesSemana.semanaInicio) =>
-    and(gte(col, desde), lte(col, hasta));
+  // El tipo de columna de Drizzle lleva el nombre de tabla como literal, así
+  // que el helper acepta la unión de ambas `semana_inicio`, no una sola.
+  const rango = (col: ColumnaSemana) => and(gte(col, desde), lte(col, hasta));
 
   const [planes, filas] = await Promise.all([
     db
