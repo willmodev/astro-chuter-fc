@@ -53,7 +53,7 @@ export function EntrenadorApp({
   userName,
   cats,
 }: Readonly<EntrenadorAppProps>) {
-  const { ruta, navegar } = useAdminRouter('entrenador');
+  const { ruta, navegar, volver } = useAdminRouter('entrenador');
   const meta = META[ruta.vista] ?? META_DEFAULT;
 
   const navegarTab = (tab: TabId) => {
@@ -89,7 +89,7 @@ export function EntrenadorApp({
           weekId={ruta.weekId}
           day={ruta.day}
           onVolver={() => {
-            navegar({ vista: 'entrenos' });
+            volver({ vista: 'entrenos' });
           }}
           onGuardado={() => {
             navegar({ vista: 'entrenos' });
@@ -108,7 +108,7 @@ export function EntrenadorApp({
         <FichaPlantel
           alumnoId={ruta.alumnoId}
           onVolver={() => {
-            navegar({ vista: 'plantel' });
+            volver({ vista: 'plantel' });
           }}
         />
       )}

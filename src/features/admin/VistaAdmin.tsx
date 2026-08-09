@@ -17,7 +17,7 @@ interface Props {
   userName: string;
   dashboard: DashboardData;
   navegar: (ruta: RutaAdmin) => void;
-  volver: () => void;
+  volver: (fallback?: RutaAdmin) => void;
   navegarTab: (tab: TabId) => void;
 }
 

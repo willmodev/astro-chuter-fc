@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { Rol } from '@/lib/domain/usuarios';
 
@@ -25,11 +25,14 @@ function esEstadoNavegacion(valor: unknown): valor is EstadoNavegacion {
 export function useAdminRouter(role: Rol): {
   ruta: RutaAdmin;
   navegar: (destino: RutaAdmin) => void;
-  volver: () => void;
+  volver: (fallback?: RutaAdmin) => void;
 } {
   const [ruta, setRuta] = useState<RutaAdmin>(() =>
     aplicarGate(parseRuta(window.location.pathname), role),
   );
+  // Entradas de historial que empujó la app. Si es 0 el usuario llegó por
+  // deep-link y un `back()` lo sacaría del sitio: ahí se usa el fallback.
+  const propias = useRef(0);
 
   useEffect(() => {
     // Normaliza URLs no canónicas o prohibidas por rol (/admin/cartera de un
@@ -42,6 +45,7 @@ export function useAdminRouter(role: Rol): {
     }
 
     const alCambiarHistorial = (evento: PopStateEvent): void => {
+      propias.current = Math.max(0, propias.current - 1);
       const base = aplicarGate(parseRuta(window.location.pathname), role);
       const mes = esEstadoNavegacion(evento.state)
         ? evento.state.mes
@@ -62,16 +66,25 @@ export function useAdminRouter(role: Rol): {
       const estado: EstadoNavegacion | null =
         efectivo.vista === 'pago' ? { mes: efectivo.mes } : null;
       window.history.pushState(estado, '', rutaAPath(efectivo));
+      propias.current += 1;
       setRuta(efectivo);
     },
     [role],
   );
 
-  // Vuelve a la ruta anterior real del historial (popstate re-sincroniza la
-  // vista). Respeta de dónde vino el usuario en vez de forzar un destino fijo.
-  const volver = useCallback((): void => {
-    window.history.back();
-  }, []);
+  // Retrocede en el historial (popstate re-sincroniza la vista): respeta de
+  // dónde vino el usuario en vez de forzar un destino fijo. Sin historial
+  // propio (deep-link) cae al `fallback` para no salirse del admin.
+  const volver = useCallback(
+    (fallback?: RutaAdmin): void => {
+      if (propias.current > 0) {
+        window.history.back();
+        return;
+      }
+      navegar(fallback ?? { vista: 'dashboard' });
+    },
+    [navegar],
+  );
 
   return { ruta, navegar, volver };
 }
