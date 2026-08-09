@@ -7,6 +7,7 @@ import {
   guardarAsistencia,
   guardarPlan,
   guardarPlaneacion,
+  semanasConHistorial,
   vistaAdmin,
   vistaEntrenador,
 } from '@/lib/services/entrenos';
@@ -41,6 +42,21 @@ export const listar = defineAction({
       rol: 'entrenador' as const,
       ...(await vistaEntrenador(semanaInicio, user.id)),
     };
+  },
+});
+
+// Cuáles de las semanas de la ventana tienen algo registrado. El selector
+// oculta las pasadas vacías: sin historial no hay nada que consultar ahí.
+export const semanasConDatos = defineAction({
+  input: z.object({}),
+  handler: async (_input, { locals }) => {
+    const user = requireUser(locals);
+    const ventana = generarSemanas(new Date()).map(semanaInicioISO);
+    const conDatos = await semanasConHistorial(
+      ventana,
+      user.role === 'admin' ? undefined : user.id,
+    );
+    return { semanas: conDatos };
   },
 });
 

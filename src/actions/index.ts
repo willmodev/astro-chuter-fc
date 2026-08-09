@@ -12,6 +12,7 @@ import {
   guardarPlanSemana,
   guardarPlaneacionDia,
   listar as listarEntrenos,
+  semanasConDatos,
 } from '@/actions/entrenos';
 import { registrar as registrarPago } from '@/actions/pagos';
 import {
@@ -57,6 +58,7 @@ export const server = {
   },
   entrenos: {
     listar: listarEntrenos,
+    semanasConDatos,
     guardarPlan: guardarPlanSemana,
     guardarPlaneacion: guardarPlaneacionDia,
     guardarAsistencia: guardarAsistenciaDia,

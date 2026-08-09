@@ -10,6 +10,7 @@ import {
 import { pendientesDe } from '@/lib/domain/sesion';
 
 import { useAlumnosPlantel } from '../../hooks/useAlumnosPlantel';
+import { useSemanasVisibles } from '../../hooks/useSemanasVisibles';
 import { semanas } from '../../data/mock';
 import { aPlan, aSesiones } from '../../data/mapea-entrenos';
 import { combinaEstado } from '../../hooks/combinaEstado';
@@ -47,6 +48,9 @@ export function useEntrenos(
 
   const semana = semanas.find((w) => w.id === weekId) ?? actual;
   const semanaInicio = semanaInicioISO(semana);
+  // El selector solo ofrece semanas con trabajo real (ver useSemanasVisibles);
+  // la ventana completa se conserva para resolver la semana de la URL.
+  const visibles = useSemanasVisibles(semana.id);
   const roster = useMemo(
     () => rosterDe(cats, plantel.alumnos),
     [cats, plantel.alumnos],
@@ -83,7 +87,7 @@ export function useEntrenos(
   );
 
   return {
-    semanas,
+    semanas: visibles,
     semana,
     setWeekId,
     plan,
