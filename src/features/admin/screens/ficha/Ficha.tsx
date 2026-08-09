@@ -20,7 +20,8 @@ interface Props {
   alumnoId: number;
   onVolver: () => void;
   onEditar: () => void;
-  onRegistrarPago: (mes?: number) => void;
+  // Siempre con mes: la única entrada a cobro desde la ficha es tocar el mes.
+  onRegistrarPago: (mes: number) => void;
   onRegistrarUniforme: () => void;
 }
 
@@ -61,9 +62,6 @@ export function Ficha({
       <FichaAcciones
         alumno={alumno}
         ocupado={ocupado}
-        onRegistrarPago={() => {
-          onRegistrarPago();
-        }}
         onCambiarActivo={() => void alCambiarActivo()}
       />
       <TabsFicha tab={tab} onTab={setTab} />
