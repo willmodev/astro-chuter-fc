@@ -66,9 +66,17 @@ const waLink = `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponen
               </svg>
             </div>
             <p class="text-sm text-neutral-600">
-              <strong class="font-semibold text-neutral-800"
-                >{SCHEDULE.daysHuman}</strong
-              > — {SCHEDULE.hoursHuman}
+              {
+                SCHEDULE.bloques.map((bloque) => (
+                  <>
+                    <strong class="font-semibold text-neutral-800">
+                      {bloque.dias}
+                    </strong>{' '}
+                    — {bloque.horas}
+                    <br />
+                  </>
+                ))
+              }
             </p>
           </div>
           <div class="reveal flex items-start gap-3" style="--idx:2">

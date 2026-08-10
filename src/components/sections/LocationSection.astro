@@ -108,8 +108,13 @@ import { LOCATION, SCHEDULE, CONTACT } from '@/lib/site';
             </div>
             <div>
               <p class="text-sm font-semibold text-neutral-700">Horarios</p>
-              <p class="text-base text-neutral-600">{SCHEDULE.daysHuman}</p>
-              <p class="text-sm text-neutral-500">{SCHEDULE.hoursHuman}</p>
+              {
+                SCHEDULE.bloques.map((bloque) => (
+                  <p class="text-base text-neutral-600">
+                    {bloque.dias} — {bloque.horas}
+                  </p>
+                ))
+              }
             </div>
           </div>
 
