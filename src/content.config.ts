@@ -9,7 +9,6 @@ const programasCollection = defineCollection({
   // los años a mano. `entrenador` es opcional: sin dato no se muestra la línea.
   schema: z.object({
     sub: z.number(),
-    horario: z.string(),
     icono: z.string(),
     entrenador: z.string().optional(),
     descripcion: z.string(),
@@ -26,6 +25,8 @@ const formadoresCollection = defineCollection({
     bio: z.string(),
     foto: z.string(),
     instagram: z.string().optional(),
+    /** Títulos y certificaciones; solo la usan los fundadores. */
+    credenciales: z.array(z.string()).optional(),
     etiqueta: z.string().default('Formador'),
     orden: z.number(),
   }),

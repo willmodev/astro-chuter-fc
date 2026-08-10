@@ -1,8 +1,12 @@
 ---
-nombre: 'Camilo Andrade'
-rol: 'Preinfantil'
+nombre: 'Camilo Andrade Guerra'
+rol: 'Dirección · Entrenador Preinfantil'
 bio: 'Cofundador del club'
 foto: ''
-etiqueta: 'Entrenador'
-orden: 4
+etiqueta: 'Fundador'
+credenciales:
+  - 'Licenciado en Educación Física, Recreación y Deportes'
+  - 'Magíster en Educación'
+  - 'Tarjeta de entrenador — COCED'
+orden: 1
 ---
