@@ -1,7 +1,9 @@
 import canteraGrupo from '@/assets/images/club/cantera-grupo.jpg';
 import canteraRetrato from '@/assets/images/club/cantera-retrato.jpg';
 import canteraSaludo from '@/assets/images/club/cantera-saludo.webp';
+import canteraTrofeos from '@/assets/images/club/cantera-trofeos.jpg';
 import familiaAbrazo from '@/assets/images/club/familia-abrazo.jpg';
+import familiaCharla from '@/assets/images/club/familia-charla.jpg';
 import familiaCirculo from '@/assets/images/club/familia-circulo.jpg';
 import familiaCirculoRosa from '@/assets/images/club/familia-circulo-rosa.jpg';
 import familiaHidratacion from '@/assets/images/club/familia-hidratacion.jpg';
@@ -53,6 +55,12 @@ export const SALAS_GALERIA: readonly SalaGaleria[] = [
         src: canteraGrupo,
         alt: 'Grupo de los más pequeños de Chuter FC posando en la cancha',
         cedula: 'La formación de los más pequeños',
+        gridClass: 'md:col-span-2 md:row-span-2',
+      },
+      {
+        src: canteraTrofeos,
+        alt: 'Plantel de Chuter FC posando en la cancha con cinco trofeos',
+        cedula: 'Los primeros trofeos',
         gridClass: 'md:col-span-2 md:row-span-2',
       },
     ],
@@ -120,6 +128,12 @@ export const SALAS_GALERIA: readonly SalaGaleria[] = [
         alt: 'Charla técnica de Chuter FC: el grupo sentado alrededor del formador',
         cedula: 'La charla, sentados en la grama',
         gridClass: 'md:col-span-2',
+      },
+      {
+        src: familiaCharla,
+        alt: 'Equipo de Chuter FC en círculo alrededor del formador al atardecer',
+        cedula: 'El círculo del formador',
+        gridClass: 'md:col-span-2 md:row-span-2',
       },
     ],
   },

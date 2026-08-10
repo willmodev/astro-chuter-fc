@@ -1,11 +1,11 @@
 export const SITE = {
   name: 'Chuter FC',
   legalName: 'Club Deportivo Chuter F.C.',
-  tagline: 'Formando campeones dentro y fuera de la cancha',
+  tagline: 'Todo niño es un campeón',
   description:
-    'Escuela de fútbol para niños y niñas en Los Algarrobillos, avalada por INDER. Inscripción gratis. Categorías Pony, Preinfantil, Infantil y Prejuvenil.',
+    'Escuela de fútbol para niños y niñas en Valledupar, Cesar, avalada por INDER. Inscripción gratis. Categorías de Baby a Juvenil, para edades de 3 a 16 años.',
   shortDescription:
-    'Escuela de fútbol para niños y niñas en Los Algarrobillos. Avalada por INDER.',
+    'Escuela de fútbol para niños y niñas en Valledupar. Avalada por INDER.',
   url: import.meta.env.PUBLIC_SITE_URL ?? 'https://chuterfc.com',
   locale: 'es_CO',
   language: 'es',
@@ -36,10 +36,44 @@ export const LOCATION = {
   country: 'CO',
 } as const;
 
+export interface BloqueHorario {
+  /** Días del bloque, para leer humano: 'Lunes y miércoles'. */
+  dias: string;
+  /** Abreviatura para espacios apretados: 'Lun y Mié'. */
+  diasCorto: string;
+  /** Franja legible: '5:30 a 7:00 PM'. */
+  horas: string;
+  /** Franja compacta: '5:30–7:00 PM'. */
+  horasCorto: string;
+  /** Entrada de schema.org: 'Mo,We 17:30-19:00'. */
+  schema: string;
+}
+
 export const SCHEDULE = {
+  bloques: [
+    {
+      dias: 'Lunes y miércoles',
+      diasCorto: 'Lun y Mié',
+      horas: '5:30 a 7:00 PM',
+      horasCorto: '5:30–7:00 PM',
+      schema: 'Mo,We 17:30-19:00',
+    },
+    {
+      dias: 'Viernes',
+      diasCorto: 'Vie',
+      horas: '3:00 a 4:30 PM',
+      horasCorto: '3:00–4:30 PM',
+      schema: 'Fr 15:00-16:30',
+    },
+  ],
+  /** Solo los días, sin horas: 'Lunes, miércoles y viernes'. */
   daysHuman: 'Lunes, miércoles y viernes',
-  hoursHuman: '4:30 PM a 6:00 PM',
-  schemaOpeningHours: 'Mo,We,Fr 16:30-18:00',
+  /** Una línea completa: 'Lun y Mié 5:30–7:00 PM · Vie 3:00–4:30 PM'. */
+  resumenCorto: 'Lun y Mié 5:30–7:00 PM · Vie 3:00–4:30 PM',
+  /** Para el frontmatter derivado de programas y las tarjetas de categoría. */
+  resumenPrograma: 'Lun y Mié 5:30–7:00 PM · Vie 3:00–4:30 PM',
+  /** Array para el JSON-LD; schema.org acepta varias entradas. */
+  schemaOpeningHours: ['Mo,We 17:30-19:00', 'Fr 15:00-16:30'],
 } as const;
 
 export const PROMO = {

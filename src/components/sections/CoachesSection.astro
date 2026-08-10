@@ -3,11 +3,16 @@ import { getCollection } from 'astro:content';
 
 import { listarProgramas } from '@/lib/programas';
 
+import FoundersBlock from './FoundersBlock.astro';
+
 const formadores = (await getCollection('formadores')).sort(
   (a, b) => a.data.orden - b.data.orden,
 );
 const directivos = formadores.filter((f) => f.data.etiqueta === 'Dirección');
 const entrenadores = formadores.filter((f) => f.data.etiqueta === 'Entrenador');
+const fundadores = formadores.filter(
+  (f) => f.data.etiqueta === 'Fundador' || f.data.etiqueta === 'Fundadora',
+);
 
 // Edad por categoría, desde el catálogo único (spec 15): nunca un rango de años
 // escrito a mano. La clave es el nombre de la categoría, que es el `rol` del
@@ -61,6 +66,8 @@ function initials(nombre: string): string {
         niña que pasa por la cancha.
       </p>
     </div>
+
+    <FoundersBlock fundadores={fundadores} />
 
     <!-- Dirección -->
     <div class="mt-12">

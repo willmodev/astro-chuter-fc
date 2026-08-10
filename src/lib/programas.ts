@@ -4,6 +4,7 @@
 import { getCollection } from 'astro:content';
 
 import { categoriaDeEtiqueta, etiquetaDeSub } from '@/lib/domain/categoria';
+import { SCHEDULE } from '@/lib/site';
 
 export interface ProgramaPublicado {
   sub: number;
@@ -31,6 +32,7 @@ export async function listarProgramas(): Promise<ProgramaPublicado[]> {
         ...data,
         nombre: categoria.nombre,
         edades: categoria.edades,
+        horario: SCHEDULE.resumenPrograma,
       };
     })
     .sort((a, b) => a.orden - b.orden);

@@ -74,8 +74,8 @@ export function TarjetaClub() {
         />
         <InfoRow
           icon="clock"
-          title={SCHEDULE.daysHuman}
-          sub={SCHEDULE.hoursHuman}
+          title="Horario"
+          sub={SCHEDULE.resumenCorto}
           borde
         />
         <InfoRow
