@@ -1,7 +1,6 @@
 import { CONTACT, LOCATION, SCHEDULE, SITE } from '@/lib/site';
 import { WA_FAB } from '@/lib/whatsapp';
 
-import { DirectoresClub } from './DirectoresClub';
 import { InfoRow } from './InfoRow';
 
 // Identidad y contacto del club (HU-7.1). La ven admin y entrenador por
@@ -87,11 +86,6 @@ export function TarjetaClub() {
           borde
         />
       </div>
-
-      <span className="eyebrow" style={{ padding: '2px 2px 0' }}>
-        Directores técnicos
-      </span>
-      <DirectoresClub />
     </>
   );
 }
