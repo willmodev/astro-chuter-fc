@@ -42,9 +42,9 @@ Sitio web institucional para el **Club Deportivo Chuter F.C.**, una escuela de f
 
 ### Horarios
 
-- **Días:** Lunes, miércoles y viernes
-- **Hora:** 4:30 PM a 6:00 PM
-- _(Confirmar si hay diferencias por categoría)_
+- **Lunes y miércoles:** 5:30 PM a 7:00 PM
+- **Viernes:** 3:00 PM a 4:30 PM
+- _(Supuesto: se asume 1h30 de duración por bloque, igual que antes. El cliente solo confirmó la hora de inicio — confirmar la hora de fin con Camilo.)_
 
 ### Categorías por edad (catálogo único, spec 15)
 
@@ -384,7 +384,7 @@ Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar
 - [x] Costos confirmados (cliente, 2026-07-10): mensualidad **$50.000 COP/jugador sin descuento por hermanos**; uniforme **$100.000 COP** ($80.000 c/u si son hermanos); inscripción gratis. El descuento de hermanos es del **uniforme**, no de la mensualidad.
 - [x] Ubicación confirmada (cliente, 2026-08-07): **Valledupar, Cesar**, con link de Maps propio para cada una de las dos canchas en `LOCATION.mapsUrl` y `LOCATION.secondaryMapsUrl`
 - [x] Costos en el sitio público: **no se publican** (cliente, 2026-08-07). Siguen solo en el admin
-- [ ] Confirmar si el horario es uniforme para todas las categorías o varía
+- [x] Horario por categoría (cerrado 2026-08-10): el cliente confirmó que es el mismo para las 7 categorías, ahora partido en dos bloques (lunes/miércoles 5:30-7:00 PM, viernes 3:00-4:30 PM). Ver spec 19.
 - [ ] **Entrenador de Baby (SUB 4), Benjamín (SUB 8) y Juvenil (SUB 16)** — hoy hay 4 entrenadores para 7 categorías; las tarjetas omiten la línea
 - [x] **Fechas de nacimiento** (cerrado 2026-08-07): la base tiene **82 alumnos activos y 0 sin fecha**. El cliente confirmó que de los 15 que faltaban solo sigue Ángel Santiago (`2020-02-26`); los otros 14 ya no están en el club y se retiraron (`scripts/retirar-alumnos.mjs`)
 - [ ] **Limpiar la hoja `CATEGORIAS`** — quedan 3 filas de alumnos ya retirados (`JOSE ANTONIO LOPEZ`, `MATIAS VIDES VASQUEZ`, `MAXIMILIANO PINTO`). No rompe nada (el seed no reactiva), pero la hoja no refleja el plantel real
@@ -393,6 +393,7 @@ Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar
 - [ ] Logros del club (torneos, posiciones, años)
 - [ ] Bios completas de Camilo Andrade y Ebed Shaday Calderón
 - [ ] Fotos profesionales de los formadores
+- [ ] **Foto propia por categoría** (7 fotos, una por SUB): las 4 fotos que envió Camilo no corresponden a categorías; pendiente solicitarlas. Ver spec 19.
 
 Para cualquier dato no provisto, usar texto placeholder y marcar con comentario:
 
