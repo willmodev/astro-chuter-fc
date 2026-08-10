@@ -1,0 +1,77 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  fundadores: CollectionEntry<'formadores'>[];
+}
+
+const { fundadores } = Astro.props;
+
+function initials(nombre: string): string {
+  return nombre
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();
+}
+---
+
+<div class="mt-12">
+  <div class="reveal flex items-center gap-3 pb-1" style="--idx:0">
+    <span class="section-marker text-brand-clay text-base italic"
+      >Propietarios y fundadores</span
+    >
+    <span class="bg-brand-navy/15 inline-block h-px flex-1" aria-hidden="true"
+    ></span>
+  </div>
+  <div class="mt-6 grid gap-6 md:grid-cols-2">
+    {
+      fundadores.map((f, i) => (
+        <article
+          class="coach-flip border-brand-navy/10 relative flex items-center gap-5 rounded-sm border bg-white p-6 shadow-sm md:gap-6 md:p-7"
+          data-from={i % 2 === 0 ? 'left' : 'right'}
+          style={`--idx:${String(i)}`}
+        >
+          <div class="bg-brand-navy-deep bg-pitch-lines text-brand-gold ring-brand-navy/20 relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-sm shadow-md ring-1 md:h-28 md:w-28">
+            <span class="font-display text-4xl leading-none tracking-wide md:text-5xl">
+              {initials(f.data.nombre)}
+            </span>
+            <span
+              class="bg-brand-gold/70 absolute top-2 right-2 h-1.5 w-1.5 rounded-full"
+              aria-hidden="true"
+            />
+          </div>
+          <div class="min-w-0">
+            <span class="bg-brand-navy text-brand-cream inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.6rem] font-bold tracking-wider uppercase">
+              {f.data.etiqueta}
+            </span>
+            <h3 class="font-display text-brand-navy-deep mt-2 text-[2rem] leading-[0.9]">
+              {f.data.nombre}
+            </h3>
+            <p
+              class="text-brand-clay font-serif text-base italic"
+              style="font-variation-settings:'opsz' 144,'wght' 500;"
+            >
+              {f.data.rol}
+            </p>
+            {f.data.credenciales && f.data.credenciales.length > 0 && (
+              <ul class="mt-2 space-y-1 text-sm text-neutral-600">
+                {f.data.credenciales.map((credencial) => (
+                  <li class="flex gap-2">
+                    <span class="text-brand-clay" aria-hidden="true">
+                      &middot;
+                    </span>
+                    <span>{credencial}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</div>
