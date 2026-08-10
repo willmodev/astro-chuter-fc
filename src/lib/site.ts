@@ -47,21 +47,6 @@ export const PROMO = {
   hookShort: 'Inscripción gratis',
 } as const;
 
-export const COACHES = [
-  {
-    name: 'Camilo Andrade',
-    role: 'CEO y Director Técnico',
-    instagram: 'camilo8andrade',
-    instagramUrl: 'https://instagram.com/camilo8andrade',
-  },
-  {
-    name: 'Ebed Shaday Calderón',
-    role: 'CEO y Director Técnico',
-    instagram: 'ebedshadaycalderon',
-    instagramUrl: 'https://instagram.com/ebedshadaycalderon',
-  },
-] as const;
-
 export const NAV_LINKS = [
   { label: 'Inicio', href: '#inicio' },
   { label: 'Programas', href: '#programas' },
