@@ -11,8 +11,8 @@ import {
   listarAlumnos,
 } from '@/lib/db/repos/alumnos';
 import type { AlumnoRow, DatosEditablesAlumno } from '@/lib/db/repos/alumnos';
-import { pagosDeAlumno, pagosPorAnio } from '@/lib/db/repos/pagos';
-import type { PagoRow } from '@/lib/db/repos/pagos';
+import { detallePagosDeAlumno, pagosPorAnio } from '@/lib/db/repos/pagos';
+import type { PagoDetalle, PagoRow } from '@/lib/db/repos/pagos';
 import { todosUniformes, uniformesDeAlumno } from '@/lib/db/repos/uniformes';
 import type { UniformeRow } from '@/lib/db/repos/uniformes';
 import {
@@ -144,20 +144,27 @@ export async function listarPlantel(
 
 // Ficha: incluye retirados — su historial sigue consultable (spec 14).
 // Consulta puntual (spec 17, DT-3): nunca carga las tres tablas completas.
+// Devuelve además el detalle de los pagos vivos del año, que es lo que la hoja
+// de anulación muestra (spec 20); de ahí se derivan los meses pagados.
+export interface AlumnoFicha {
+  alumno: Alumno | undefined;
+  pagos: PagoDetalle[];
+}
+
 export async function alumnoAdminPorId(
   id: number,
   hoy: Date,
-): Promise<Alumno | undefined> {
+): Promise<AlumnoFicha> {
   const anio = hoy.getFullYear();
   const [row, pagos, kits, acudientes] = await Promise.all([
     alumnoPorId(id),
-    pagosDeAlumno(id, anio),
+    detallePagosDeAlumno(id, anio),
     uniformesDeAlumno(id),
     acudientesDeAlumnos(),
   ]);
-  if (!row) return undefined;
+  if (!row) return { alumno: undefined, pagos: [] };
   const hermanos = conteoHermanos(acudientes);
-  return aAlumno({
+  const alumno = aAlumno({
     row,
     pagados: new Set(pagos.map((p) => p.mes)),
     hermanos: hermanos.get(normaliza(row.acudiente)) ?? 1,
@@ -165,6 +172,7 @@ export async function alumnoAdminPorId(
     anio,
     hoy,
   });
+  return { alumno, pagos };
 }
 
 function aEditables(

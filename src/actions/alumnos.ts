@@ -51,7 +51,8 @@ export const porId = defineAction({
   input: z.object({ id: z.number().int().positive() }),
   handler: async ({ id }, { locals }) => {
     requireAdmin(locals);
-    return { alumno: await alumnoAdminPorId(id, new Date()) };
+    // { alumno, pagos }: el detalle alimenta la hoja de anulación (spec 20).
+    return alumnoAdminPorId(id, new Date());
   },
 });
 
