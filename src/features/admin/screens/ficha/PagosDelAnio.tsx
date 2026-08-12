@@ -10,9 +10,12 @@ import type { Alumno, EstadoMes } from '../../data/types';
 // Un mes cobrable (debe o pendiente) es tocable → navega a Registrar pago
 // con ese mes preseleccionado. A un retirado se le consulta el historial pero
 // no se le cobra: `cobrosHabilitados` en false apaga los meses (spec 14).
+// Un mes pagado también es tocable → abre la hoja de anulación, incluso con
+// los cobros apagados: ese flag apaga cobrar, no corregir (spec 20).
 interface Props {
   alumno: Alumno;
   onCobrarMes: (mesIndex: number) => void;
+  onAnularMes: (mesIndex: number) => void;
   cobrosHabilitados?: boolean;
 }
 
@@ -35,6 +38,7 @@ const ESTILO_MES: Record<EstadoMes, { bg: string; fg: string; label: string }> =
 export function PagosDelAnio({
   alumno,
   onCobrarMes,
+  onAnularMes,
   cobrosHabilitados = true,
 }: Readonly<Props>) {
   return (
@@ -49,6 +53,8 @@ export function PagosDelAnio({
         const estado = alumno.states[i] ?? 'na';
         const s = ESTILO_MES[estado];
         const cobrable = cobrosHabilitados && esMesCobrable(estado);
+        const anulable = estado === 'paid';
+        const largo = MONTHS_LONG[i] ?? mes;
         const celda = (
           <>
             <span style={{ fontSize: 12.5, fontWeight: 800 }}>{mes}</span>
@@ -67,22 +73,31 @@ export function PagosDelAnio({
           color: s.fg,
         } as const;
 
-        return cobrable ? (
+        if (!cobrable && !anulable) {
+          return (
+            <div key={mes} style={estilo}>
+              {celda}
+            </div>
+          );
+        }
+
+        return (
           <button
             key={mes}
             type="button"
             onClick={() => {
-              onCobrarMes(i);
+              if (anulable) onAnularMes(i);
+              else onCobrarMes(i);
             }}
-            aria-label={`Registrar cobro de ${MONTHS_LONG[i] ?? mes}`}
+            aria-label={
+              anulable
+                ? `Anular pago de ${largo}`
+                : `Registrar cobro de ${largo}`
+            }
             style={{ ...estilo, cursor: 'pointer' }}
           >
             {celda}
           </button>
-        ) : (
-          <div key={mes} style={estilo}>
-            {celda}
-          </div>
         );
       })}
     </div>
