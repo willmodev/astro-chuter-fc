@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { MESES_VISIBLES, NOMBRE_MES } from '@/lib/domain/cartera';
+
 import { EstadoCarga } from '../../chrome/EstadoCarga';
 import { useAlumno } from '../../hooks/useAlumno';
 
@@ -7,6 +9,7 @@ import { AcudienteTab } from './AcudienteTab';
 import { AlumnoNoEncontrado } from './AlumnoNoEncontrado';
 import { FichaAcciones } from './FichaAcciones';
 import { FichaHeader } from './FichaHeader';
+import { HojaAnularPago } from './HojaAnularPago';
 import { HojaRetiro } from './HojaRetiro';
 import { PagosDelAnio } from './PagosDelAnio';
 import { TabsFicha, type TabFicha } from './TabsFicha';
@@ -32,10 +35,17 @@ export function Ficha({
   onRegistrarPago,
   onRegistrarUniforme,
 }: Readonly<Props>) {
-  const { alumno, estado, recargar, cambiarActivo } = useAlumno(alumnoId);
+  const { alumno, pagos, estado, recargar, cambiarActivo, anularPago } =
+    useAlumno(alumnoId);
   const [tab, setTab] = useState<TabFicha>('pagos');
   const [confirmando, setConfirmando] = useState(false);
   const [ocupado, setOcupado] = useState(false);
+  // Índice dentro de la tira visible del mes cuya anulación se está confirmando.
+  const [anulandoMes, setAnulandoMes] = useState<number | null>(null);
+
+  const mesAnular =
+    anulandoMes === null ? undefined : MESES_VISIBLES[anulandoMes];
+  const pagoAnular = pagos.find((p) => p.mes === mesAnular);
 
   // Retirar pide confirmación; reactivar se aplica de una (spec 14).
   async function alCambiarActivo(): Promise<void> {
@@ -72,6 +82,7 @@ export function Ficha({
           onCobrarMes={(mes) => {
             onRegistrarPago(mes);
           }}
+          onAnularMes={setAnulandoMes}
           cobrosHabilitados={alumno.activo}
         />
       )}
@@ -79,6 +90,17 @@ export function Ficha({
         <UniformeTab alumno={alumno} onGestionar={onRegistrarUniforme} />
       )}
       {tab === 'acudiente' && <AcudienteTab alumno={alumno} />}
+
+      {mesAnular && pagoAnular && (
+        <HojaAnularPago
+          nombreMes={NOMBRE_MES[mesAnular]}
+          pago={pagoAnular}
+          onConfirmar={(motivo) => anularPago(mesAnular, motivo)}
+          onClose={() => {
+            setAnulandoMes(null);
+          }}
+        />
+      )}
 
       {confirmando && (
         <HojaRetiro

@@ -110,7 +110,7 @@ Un archivo por agregado en `src/lib/db/schema/`, re-export desde `schema/index.t
 | Archivo schema | Tablas                                                                                                                                                                                                                                                                       | Origen Excel                   |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
 | `alumnos.ts`   | `alumnos` (nombre, documento, anioNacimiento, fechaNacimiento **nullable**, acudiente/celular/direccion denormalizados, fechaInicio, activo)                                                                                                                                 | hoja `CATEGORIAS`              |
-| `pagos.ts`     | `pagos` (alumnoId, anio, mes enum, montoCop, metodo null, pagadoEn null, registradoPor) — **fila solo al pagar**                                                                                                                                                             | color verde de celdas MAR–NOV  |
+| `pagos.ts`     | `pagos` (alumnoId, anio, mes enum, montoCop, metodo null, pagadoEn null, registradoPor, **anuladoEn / anuladoPor / motivoAnulacion** null) — **fila solo al pagar**, con soft delete (spec 20)                                                                               | color verde de celdas MAR–NOV  |
 | `uniformes.ts` | `uniformes` (alumnoId, kit enum AZUL/ORO, entregado, numero null, talla, abonadoCop, registradoPor) — **fila por alumno-kit**, único `(alumnoId, kit)`                                                                                                                       | color de celdas AZUL=U / ORO=V |
 | `entrenos.ts`  | `planes_semana` (entrenadorId FK user, semanaInicio date, tema, objetivos), único `(entrenadorId, semanaInicio)` · `sesiones` (entrenadorId, semanaInicio, dia enum, parteCentralUrl null, parteCentralNota, ausentes int[] null), único `(entrenadorId, semanaInicio, dia)` | — (arranca vacío, sin seed)    |
 | `auth.ts`      | `user, session, account, verification` (`cats text[]` = categorías del entrenador)                                                                                                                                                                                           | Better Auth                    |
@@ -146,13 +146,35 @@ export const pagos = pgTable(
     metodo: text('metodo'), // 'efectivo' | 'transferencia' | null (seed)
     pagadoEn: timestamp('pagado_en'), // null en pagos del seed
     registradoPor: text('registrado_por').references(() => user.id), // null en seed
+    // Soft delete (spec 20): las tres viajan juntas — null = pago vivo.
+    anuladoEn: timestamp('anulado_en'),
+    anuladoPor: text('anulado_por').references(() => user.id),
+    motivoAnulacion: text('motivo_anulacion'),
   },
-  (t) => [unique().on(t.alumnoId, t.anio, t.mes)],
-); // un pago por alumno-mes-año
+  // Un pago VIVO por alumno-mes-año (índice PARCIAL, no `unique`).
+  (t) => [
+    uniqueIndex('pagos_alumno_anio_mes_vivo')
+      .on(t.alumnoId, t.anio, t.mes)
+      .where(sql`${t.anuladoEn} is null`),
+  ],
+);
 ```
 
 - El enum trae los 12 meses aunque hoy solo se cobre hasta NOV: la ventana de cobro vive en dominio (`MES_FIN_COBRO`), cambiarla no toca la BD.
 - `due/pending/na` **no existen como columna**: los deriva `estadoDelMes` en `lib/domain/cartera.ts` a partir de los pagos reales + `fechaInicio` del alumno + `ARRANQUE_CLUB` (MAR 2026) + mes vivo.
+
+#### `pagos` es la única tabla con soft delete (spec 20)
+
+Las demás tablas del admin no borran nada porque **no tienen qué borrar**: un alumno se retira (`alumnos.activo = false`, que es estado del alumno, no una baja de registro), una entrega de uniforme se revierte cambiando un booleano (`anularEntrega`), y un plan o una sesión de entreno se sobreescriben. En todos esos casos la fila sigue significando algo después de la corrección.
+
+Un pago es distinto: el error se corrige haciendo que la fila **deje de existir** para toda derivación. Con un `DELETE` el recaudo se arregla solo, pero desaparece la única evidencia de que hubo un cobro mal registrado — y son movimientos de dinero, en un club que apenas está dejando el Excel. Por eso `pagos` lleva `anulado_en` / `anulado_por` / `motivo_anulacion` (las tres juntas, o las tres `null`; nada las vuelve a `null`: reactivar un pago es registrarlo de nuevo).
+
+Dos consecuencias de diseño:
+
+- **El filtro `anulado_en IS NULL` vive en el repo** (`pagosPorAnio`, `pagosDeAlumno`), no en el dominio. Así `lib/domain/cartera.ts` no se enteró de la anulación y no hay dos lugares donde un pago pueda "contar o no contar": el mes anulado vuelve solo a `due`/`pending`, sale del recaudo y vuelve a la cartera vencida.
+- **La unicidad tuvo que volverse parcial.** Con el `unique(alumno_id, anio, mes)` original, la fila anulada seguía ocupando la combinación y el mes no se podía volver a cobrar — que es el 100 % de los casos de uso, porque se anula para cobrar lo correcto. La migración `0004` elimina `pagos_alumno_id_anio_mes_unique` y crea `pagos_alumno_anio_mes_vivo` con `WHERE anulado_en IS NULL`.
+
+El rastro se consulta por SQL (`scripts/verificar-anulacion-pagos.mjs`): **no hay pantalla de auditoría**, se construye cuando alguien la necesite.
 
 ```ts
 // src/lib/db/schema/uniformes.ts (spec 12) — una fila por alumno-kit

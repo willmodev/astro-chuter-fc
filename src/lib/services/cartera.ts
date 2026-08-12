@@ -1,7 +1,11 @@
 // Orquestación de cobros: registrar pagos reales. La derivación de estados vive
 // en el dominio; aquí solo se decide qué meses son insertables y se persiste.
 import { alumnoPorId } from '@/lib/db/repos/alumnos';
-import { insertarPagos, pagosDeAlumno } from '@/lib/db/repos/pagos';
+import {
+  anularPago as anularEnRepo,
+  insertarPagos,
+  pagosDeAlumno,
+} from '@/lib/db/repos/pagos';
 import type { NuevoPago } from '@/lib/db/repos/pagos';
 import { AlumnoReglaError } from '@/lib/domain/alumnos';
 import { esMesCobrable, estadoDelMes } from '@/lib/domain/cartera';
@@ -9,6 +13,14 @@ import type { Mes } from '@/lib/domain/cartera';
 import { CUOTA_MENSUAL } from '@/lib/domain/precios';
 
 import { parseFechaLocal } from './mapea-alumno';
+
+export interface AnularPagoInput {
+  alumnoId: number;
+  anio: number;
+  mes: Mes;
+  motivo: string; // recortado, mínimo 5 caracteres (validado en la Action)
+  anuladoPor: string; // id del admin de la sesión
+}
 
 export interface RegistrarPagosInput {
   alumnoId: number;
@@ -62,4 +74,21 @@ export async function registrarPagos(
     }));
 
   return insertarPagos(filas);
+}
+
+// Anula un pago registrado por error (spec 20). A diferencia de `registrarPagos`
+// NO exige que el alumno esté activo: corregir un error no es cobrar. También
+// aplica a los pagos de la carga inicial (sin método, fecha ni autor).
+export async function anularPago(input: AnularPagoInput): Promise<void> {
+  const alumno = await alumnoPorId(input.alumnoId);
+  if (!alumno) throw new AlumnoReglaError('El alumno ya no existe.');
+
+  const anulado = await anularEnRepo(input.alumnoId, input.anio, input.mes, {
+    anuladoPor: input.anuladoPor,
+    motivo: input.motivo.trim(),
+    anuladoEn: new Date(), // lo pone el servidor, nunca el cliente
+  });
+  if (!anulado) {
+    throw new AlumnoReglaError('Ese mes no tiene un pago registrado.');
+  }
 }

@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   integer,
   pgEnum,
@@ -5,7 +6,7 @@ import {
   serial,
   text,
   timestamp,
-  unique,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
 import { alumnos } from './alumnos';
@@ -42,6 +43,16 @@ export const pagos = pgTable(
     metodo: text('metodo'), // 'efectivo' | 'transferencia' | null (seed)
     pagadoEn: timestamp('pagado_en'), // null en pagos del seed
     registradoPor: text('registrado_por').references(() => user.id), // null en seed
+    // Soft delete (spec 20): las tres viajan juntas — null = pago vivo.
+    anuladoEn: timestamp('anulado_en'),
+    anuladoPor: text('anulado_por').references(() => user.id),
+    motivoAnulacion: text('motivo_anulacion'),
   },
-  (t) => [unique().on(t.alumnoId, t.anio, t.mes)], // un pago por alumno-mes-año
+  // Un solo pago VIVO por alumno-año-mes: parcial para poder volver a cobrar
+  // un mes anulado (spec 20).
+  (t) => [
+    uniqueIndex('pagos_alumno_anio_mes_vivo')
+      .on(t.alumnoId, t.anio, t.mes)
+      .where(sql`${t.anuladoEn} is null`),
+  ],
 );

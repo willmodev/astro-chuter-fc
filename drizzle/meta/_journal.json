@@ -29,6 +29,13 @@
       "when": 1784673685378,
       "tag": "0003_slim_angel",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786559815107,
+      "tag": "0004_majestic_texas_twister",
+      "breakpoints": true
     }
   ]
 }

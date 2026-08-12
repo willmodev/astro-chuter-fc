@@ -1,6 +1,9 @@
 import { actions } from 'astro:actions';
 import { useCallback, useEffect, useState } from 'react';
 
+import type { PagoDetalle } from '@/lib/db/repos/pagos';
+import type { Mes } from '@/lib/domain/cartera';
+
 import type { EstadoCargaValor } from '../chrome/EstadoCarga';
 import type { Alumno } from '../data/types';
 
@@ -10,13 +13,16 @@ import type { Alumno } from '../data/types';
 // vista. Incluye retirados: su ficha sigue consultable (spec 14).
 export interface AlumnoData {
   alumno: Alumno | undefined;
+  pagos: PagoDetalle[];
   estado: EstadoCargaValor;
   recargar: () => Promise<void>;
   cambiarActivo: (activo: boolean) => Promise<string | null>;
+  anularPago: (mes: Mes, motivo: string) => Promise<string | null>;
 }
 
 export function useAlumno(id: number): AlumnoData {
   const [alumno, setAlumno] = useState<Alumno | undefined>(undefined);
+  const [pagos, setPagos] = useState<PagoDetalle[]>([]);
   const [estado, setEstado] = useState<EstadoCargaValor>('cargando');
 
   const recargar = useCallback(async () => {
@@ -27,6 +33,7 @@ export function useAlumno(id: number): AlumnoData {
       return;
     }
     setAlumno(data.alumno);
+    setPagos(data.pagos);
     setEstado('listo');
   }, [id]);
 
@@ -45,5 +52,22 @@ export function useAlumno(id: number): AlumnoData {
     [id, recargar],
   );
 
-  return { alumno, estado, recargar, cambiarActivo };
+  // Anula el pago de un mes y refetch (pesimista, igual que cambiarActivo).
+  // El año es el en curso: la ficha solo pinta esa temporada (spec 20).
+  const anularPago = useCallback<AlumnoData['anularPago']>(
+    async (mes, motivo) => {
+      const { error } = await actions.pagos.anular({
+        alumnoId: id,
+        anio: new Date().getFullYear(),
+        mes,
+        motivo,
+      });
+      if (error) return error.message;
+      await recargar();
+      return null;
+    },
+    [id, recargar],
+  );
+
+  return { alumno, pagos, estado, recargar, cambiarActivo, anularPago };
 }

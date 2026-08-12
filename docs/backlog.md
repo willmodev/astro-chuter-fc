@@ -5,7 +5,7 @@
 > Stack: Astro + React (island) · Neon Postgres · Drizzle ORM · Better Auth · Astro Actions · Vercel.
 > Datos reales: `CHUTER FC 2026.xlsx` (local, **no versionado** por PII de menores). Esquema y reglas en `docs/excel-data-dictionary.md`.
 >
-> **Reconciliado con el código el 2026-08-07 (specs 16 y 17).** Cada ☑ cita el spec que la cerró. Lo único realmente pendiente: **HU-7.3** (gestionar tarifas/cuotas) y **HU-8.2** (exportar cartera), las dos `Could`. HU-3.3 y HU-3.6 son `Won't` (obsoletas, no se harán), HU-7.4 quedó `Won't` por el spec 15 y HU-6.1/HU-6.2 quedaron obsoletas por el spec 09. **La sección de deuda técnica quedó sin nada abierto**: el spec 17 cerró DT-3, DT-4 y DT-5, y de paso DT-6 y DT-7, que salieron de esa misma verificación. El spec 18 abrió **DT-8** (`useUniformeAlumno` descarga toda la tabla de uniformes para pintar un alumno), única deuda abierta hoy. Fuentes: **backlog** = qué falta · **specs/** = por qué se hizo así · **`docs/ARCHITECTURE.md`** = cómo está hecho hoy.
+> **Reconciliado con el código el 2026-08-07 (specs 16 y 17).** Cada ☑ cita el spec que la cerró. Lo único realmente pendiente: **HU-7.3** (gestionar tarifas/cuotas) y **HU-8.2** (exportar cartera), las dos `Could`. HU-3.3 y HU-3.6 son `Won't` (obsoletas, no se harán), HU-7.4 quedó `Won't` por el spec 15 y HU-6.1/HU-6.2 quedaron obsoletas por el spec 09. **La sección de deuda técnica quedó sin nada abierto**: el spec 17 cerró DT-3, DT-4 y DT-5, y de paso DT-6 y DT-7, que salieron de esa misma verificación. El spec 18 abrió **DT-8** (`useUniformeAlumno` descarga toda la tabla de uniformes para pintar un alumno) y el spec 20 abrió **DT-9** (el abono de uniforme no se puede bajar ni anular): las dos deudas abiertas hoy. Fuentes: **backlog** = qué falta · **specs/** = por qué se hizo así · **`docs/ARCHITECTURE.md`** = cómo está hecho hoy.
 
 ## Roles
 
@@ -251,6 +251,18 @@ Como administrador quiero contactar por WhatsApp a un moroso desde la lista para
 
 - **Aceptación:** Dado un alumno en mora, cuando pulso el ícono de WhatsApp, entonces se abre `wa.me` al celular del acudiente con mensaje de recordatorio. El ícono verde WhatsApp se usa solo aquí (R-marca).
 - **Hecho (spec 07):** botón de recordatorio en cada moroso de **Cobros pendientes** (dashboard) y acción WhatsApp en la ficha. La tarjeta de Cartera no lo lleva: se contacta desde el dashboard o entrando a la ficha.
+
+### HU-3.9 · Anular un pago registrado por error — `Must` · Pantalla: Ficha (tab Pagos) · ☑ (spec 20)
+
+Como administrador quiero anular el pago de un mes que registré por error para corregir la cartera sin tocar la base a mano.
+
+- **Aceptación:**
+  - Dado un mes en verde en el tab Pagos de la ficha, cuando lo toco, entonces se abre una hoja con el mes, el monto real de la fila, la fecha, el método y quién lo registró; si el pago viene de la carga inicial del Excel la hoja lo dice explícitamente.
+  - Cuando escribo un motivo de **5 caracteres mínimo** y confirmo, entonces el mes vuelve a rojo (si venció) o gris (si no), el monto sale de "Recaudado año" y del recaudo del mes, y vuelve a sumar a "Cartera vencida".
+  - El mes anulado se puede **volver a cobrar** desde Registrar pago.
+  - La celda verde es tocable también en un alumno **retirado**: ese flag apaga cobrar, no corregir.
+  - Solo **admin**: el entrenador recibe error del servidor.
+- **Hecho (spec 20):** soft delete en `pagos` (`anulado_en`, `anulado_por`, `motivo_anulacion`) con índice único **parcial** `WHERE anulado_en IS NULL`; los repos filtran los anulados, así que el dominio no se toca. `pagos.anular` + `HojaAnularPago`, refetch pesimista. El rastro queda en la base y se consulta por SQL: **no hay pantalla de auditoría** (fuera de alcance). Verificado contra la base real: anular un mes vencido baja el recaudo y sube la mora, volver a cobrarlo lo restaura, y la fila anulada conserva `monto_cop`, `metodo`, `pagado_en` y `registrado_por` intactos.
 
 ---
 
@@ -557,6 +569,15 @@ Las barras solo comunicaban altura relativa: era imposible saber cuánto se reca
 - **Disparador:** se arregla **cuando se toque la pantalla de gestión del kit**, o antes si el plantel crece lo suficiente para que la descarga se note en el celular.
 - **Solución natural:** una Action que sirva un solo alumno, como la `alumnos.porId` que cerró DT-3. `uniformes.listar` **no se elimina**: la siguen usando el entrenador (`FichaPlantel`) y esta misma pantalla hasta que se migre.
 - **Origen:** spec 18, declarado explícitamente fuera de alcance (el spec migró la pantalla Uniformes a `uniformes.listarPagina`, no la de gestión del kit).
+
+### DT-9 · El abono de uniforme no se puede bajar ni anular — `Should` · ☐
+
+`uniformes.registrarPago` solo **suma** al abono del kit: no existe forma de corregir un abono digitado mal (un cero de más) ni de deshacerlo. Es el mismo problema que el spec 20 resolvió para la mensualidad, pero en otra tabla y con otro modelo: el uniforme guarda un **monto acumulado** en la fila, no una fila por mes, así que el soft delete de `pagos` no se traslada tal cual.
+
+- **Aceptación:** un admin puede corregir o revertir el abono de un kit sin tocar la base a mano, dejando rastro de quién y por qué (el mismo estándar que la anulación de mensualidad).
+- **Disparador:** el primer abono mal digitado que el club reporte, o cuando se toque la pantalla de gestión del kit (se puede resolver junto a **DT-8**).
+- **Camino probable:** pasar el abono acumulado a un historial de movimientos (una fila por abono, anulable), en vez de seguir sumando sobre un solo campo. Es cambio de modelo, no un `UPDATE` más.
+- **Origen:** spec 20, declarado explícitamente fuera de alcance para no duplicar el tamaño del spec (`anularEntrega` sí existe para la **entrega** del kit; lo que no tiene reversa es el **dinero**).
 
 ---
 
