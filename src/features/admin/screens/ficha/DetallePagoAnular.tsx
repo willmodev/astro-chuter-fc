@@ -32,7 +32,11 @@ export function DetallePagoAnular({ pago }: Readonly<Props>) {
           <FilaDato label="Fecha">
             {pago.pagadoEn ? fechaLarga(pago.pagadoEn) : 'Sin fecha'}
           </FilaDato>
-          <FilaDato label="Método">{pago.metodo ?? 'Sin método'}</FilaDato>
+          <FilaDato label="Método">
+            <span style={{ textTransform: 'capitalize' }}>
+              {pago.metodo ?? 'Sin método'}
+            </span>
+          </FilaDato>
           <FilaDato label="Registró">
             {pago.registradoPorNombre ?? 'Sin autor'}
           </FilaDato>

@@ -36,9 +36,15 @@ const { rows: indices } = await db.execute(sql`
 for (const i of indices) console.log(`\n${i.indexname}\n  ${i.indexdef}`);
 
 const { rows: anulados } = await db.execute(sql`
-  select count(*)::int as total from pagos where anulado_en is not null
+  select p.alumno_id, a.nombre, p.anio, p.mes, p.monto_cop, p.metodo,
+         p.pagado_en, p.registrado_por, p.anulado_en, p.anulado_por,
+         p.motivo_anulacion
+  from pagos p join alumnos a on a.id = p.alumno_id
+  where p.anulado_en is not null
+  order by p.anulado_en desc
 `);
-console.log('\nPagos anulados en la base:', anulados[0]?.total);
+console.log(`\nPagos anulados en la base: ${anulados.length}`);
+if (anulados.length > 0) console.table(anulados);
 
 // Detalle de un alumno con pagos: los del seed deben salir con autor null.
 const documento = process.argv[2];
@@ -62,10 +68,20 @@ if (!alumno[0]) {
   console.table(detalle);
 
   const { anularPago } = await import('@/lib/services/cartera');
-  const mesLibre = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO',
-    'SEP', 'OCT', 'NOV', 'DIC'].find(
-    (m) => !detalle.some((d) => d.mes === m),
-  );
+  const mesLibre = [
+    'ENE',
+    'FEB',
+    'MAR',
+    'ABR',
+    'MAY',
+    'JUN',
+    'JUL',
+    'AGO',
+    'SEP',
+    'OCT',
+    'NOV',
+    'DIC',
+  ].find((m) => !detalle.some((d) => d.mes === m));
   if (mesLibre) {
     try {
       await anularPago({
