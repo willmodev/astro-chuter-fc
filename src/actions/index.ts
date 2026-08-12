@@ -14,7 +14,10 @@ import {
   listar as listarEntrenos,
   semanasConDatos,
 } from '@/actions/entrenos';
-import { registrar as registrarPago } from '@/actions/pagos';
+import {
+  anular as anularPago,
+  registrar as registrarPago,
+} from '@/actions/pagos';
 import {
   anularEntregaKit,
   listar as listarUniformes,
@@ -48,6 +51,7 @@ export const server = {
   },
   pagos: {
     registrar: registrarPago,
+    anular: anularPago,
   },
   uniformes: {
     listar: listarUniformes,
