@@ -1,6 +1,6 @@
 # SPEC 20 — Anular pago de mensualidad
 
-> **Estado:** Aprobado · **Depende de:** SPEC 06 (tab Pagos de la ficha y pantalla Registrar pago), SPEC 11 (persistencia de pagos en Neon y patrón Action + refetch pesimista), SPEC 14 (un retirado conserva su historial de pagos) · **Fecha:** 2026-08-12
+> **Estado:** Implementado · **Depende de:** SPEC 06 (tab Pagos de la ficha y pantalla Registrar pago), SPEC 11 (persistencia de pagos en Neon y patrón Action + refetch pesimista), SPEC 14 (un retirado conserva su historial de pagos) · **Fecha:** 2026-08-12
 > **Objetivo:** Permitir que un admin anule un pago de mensualidad registrado por error, dejando rastro en la base y devolviendo el mes a su estado de cobro derivado.
 
 ---
@@ -176,7 +176,7 @@ se construye la mecánica por debajo. El cambio visible ocurre en el paso 7.
 1. **Schema y migración.** Agregar las tres columnas a `src/lib/db/schema/pagos.ts` y cambiar
    `unique().on(...)` por el `uniqueIndex(...).where(...)` parcial. `npm run db:generate` y
    **revisar el SQL emitido a mano**: tiene que traer el `DROP CONSTRAINT
-   pagos_alumno_id_anio_mes_unique` y un `CREATE UNIQUE INDEX … WHERE "anulado_en" is null`. Si
+pagos_alumno_id_anio_mes_unique` y un `CREATE UNIQUE INDEX … WHERE "anulado_en" is null`. Si
    `drizzle-kit` omite el `WHERE`, se edita el archivo de migración antes de aplicarlo. Luego
    `npm run db:migrate`.
    _Prueba manual:_ `npm run dev` → la cartera, la ficha y el dashboard muestran exactamente los
@@ -190,8 +190,8 @@ se construye la mecánica por debajo. El cambio visible ocurre en el paso 7.
    a rojo — después dejarla en `null` otra vez.
 
 3. **Repo: `anularPago` y `detallePagosDeAlumno`.** El primero hace `UPDATE … SET anulado_en,
-   anulado_por, motivo_anulacion WHERE alumno_id = … AND anio = … AND mes = … AND anulado_en IS
-   NULL`, con `returning` para saber si tocó una fila. El segundo es el `LEFT JOIN` a `user` que
+anulado_por, motivo_anulacion WHERE alumno_id = … AND anio = … AND mes = … AND anulado_en IS
+NULL`, con `returning` para saber si tocó una fila. El segundo es el `LEFT JOIN` a `user` que
    devuelve `PagoDetalle[]` de los pagos vivos del año.
    _Prueba manual:_ un script suelto que imprime el detalle de un alumno con pagos y verifica que
    los del seed aparecen con autor `null`.
@@ -229,59 +229,69 @@ se construye la mecánica por debajo. El cambio visible ocurre en el paso 7.
 
 ### Migración
 
-- [ ] Después de `npm run db:migrate`, la tabla `pagos` tiene `anulado_en`, `anulado_por` y
+- [x] Después de `npm run db:migrate`, la tabla `pagos` tiene `anulado_en`, `anulado_por` y
       `motivo_anulacion`, y las tres están en `null` en todas las filas existentes.
-- [ ] La constraint `pagos_alumno_id_anio_mes_unique` **ya no existe** y en su lugar hay un índice
-      único con `WHERE anulado_en IS NULL`.
-- [ ] Insertar dos pagos vivos del mismo alumno-año-mes sigue fallando.
-- [ ] Insertar un pago para un alumno-año-mes que ya tiene una fila **anulada** funciona.
-- [ ] Los totales del dashboard (recaudo año, recaudo mes, cartera vencida, % al día) son
-      idénticos antes y después de la migración.
+- [x] La constraint `pagos_alumno_id_anio_mes_unique` **ya no existe** y en su lugar hay un índice
+      único con `WHERE anulado_en IS NULL`. _(Verificado en `pg_indexes`: `CREATE UNIQUE INDEX
+pagos_alumno_anio_mes_vivo … WHERE (anulado_en IS NULL)`.)_
+- [x] Insertar dos pagos vivos del mismo alumno-año-mes sigue fallando. _(`duplicate key value
+violates unique constraint "pagos_alumno_anio_mes_vivo"`.)_
+- [x] Insertar un pago para un alumno-año-mes que ya tiene una fila **anulada** funciona.
+- [x] Los totales del dashboard (recaudo año, recaudo mes, cartera vencida, % al día) son
+      idénticos antes y después de la migración. _(Recaudo año $12.90M, agosto $650K, 38 de 83 al
+      día, 45 en mora — sin movimiento; con 0 filas anuladas el nuevo `WHERE` no altera nada.)_
 
 ### Anulación
 
-- [ ] Anular un mes pagado lo devuelve a **rojo (debe)** si ya venció, o a **gris (pendiente)** si
-      no.
-- [ ] Tras anular, el monto sale del "Recaudado año" y del recaudo del mes, y vuelve a sumar a la
-      "Cartera vencida".
-- [ ] Tras anular un mes vencido, el alumno reaparece en "Cobros pendientes" del dashboard.
-- [ ] El mes anulado se puede **volver a cobrar** desde Registrar pago, y queda verde otra vez.
-- [ ] La fila anulada conserva `monto_cop`, `metodo`, `pagado_en` y `registrado_por` intactos, y
+- [x] Anular un mes pagado lo devuelve a **rojo (debe)** si ya venció, o a **gris (pendiente)** si
+      no. _(JUL → Debe; AGO, mes en curso → Pendiente.)_
+- [x] Tras anular, el monto sale del "Recaudado año" y del recaudo del mes, y vuelve a sumar a la
+      "Cartera vencida". _(Año $12.90M → $12.80M con dos meses anulados; agosto $650K → $600K;
+      JUL del gráfico $2.15M → $2.10M.)_
+- [x] Tras anular un mes vencido, el alumno reaparece en "Cobros pendientes" del dashboard.
+      _(En mora 45 → 46, al día 38 → 37 de 83.)_
+- [x] El mes anulado se puede **volver a cobrar** desde Registrar pago, y queda verde otra vez.
+      _(JUL + AGO recobrados en una sola operación; los totales volvieron al baseline exacto.)_
+- [x] La fila anulada conserva `monto_cop`, `metodo`, `pagado_en` y `registrado_por` intactos, y
       guarda `anulado_en`, `anulado_por` y el `motivo_anulacion` que se escribió.
-- [ ] Recargar la página mantiene la anulación (persiste en Neon, no es estado de cliente).
-- [ ] Anular dos veces el mismo mes no es posible: la segunda vez la celda ya no está en `paid`.
+- [x] Recargar la página mantiene la anulación (persiste en Neon, no es estado de cliente).
+- [x] Anular dos veces el mismo mes no es posible: la segunda vez la celda ya no está en `paid`.
+      _(La celda pasa a "Registrar cobro de <Mes>".)_
 
 ### Reglas y permisos
 
-- [ ] `pagos.anular` responde error con sesión de **entrenador** y sin sesión (`FORBIDDEN` /
-      `UNAUTHORIZED`).
-- [ ] Un `motivo` de menos de 5 caracteres (o solo espacios) es rechazado por la Action.
-- [ ] Se puede anular el pago de un alumno **retirado** sin reactivarlo.
-- [ ] Se puede anular un pago de la **carga inicial** (sin método, fecha ni autor).
-- [ ] Anular un mes que no tiene pago devuelve el mensaje "Ese mes no tiene un pago registrado."
-      en vez de un error genérico.
+- [x] `pagos.anular` responde error con sesión de **entrenador** y sin sesión (`FORBIDDEN` /
+      `UNAUTHORIZED`). _(403 "Solo un administrador puede hacer esto." con un entrenador de prueba
+      —luego borrado—; 401 "Necesitás iniciar sesión." sin cookie.)_
+- [x] Un `motivo` de menos de 5 caracteres (o solo espacios) es rechazado por la Action.
+      _(`'    '` → 400 `AstroActionInputError`, `too_small` en `motivo`.)_
+- [x] Se puede anular el pago de un alumno **retirado** sin reactivarlo.
+- [x] Se puede anular un pago de la **carga inicial** (sin método, fecha ni autor).
+- [x] Anular un mes que no tiene pago devuelve el mensaje "Ese mes no tiene un pago registrado."
+      en vez de un error genérico. _(400 `BAD_REQUEST` con ese mensaje exacto.)_
 
 ### Interfaz
 
-- [ ] En el tab Pagos de la ficha, una celda **verde** es un botón; una celda `na` sigue sin ser
-      tocable.
-- [ ] La celda verde es tocable también en un alumno **retirado**, aunque las celdas cobrables
+- [x] En el tab Pagos de la ficha, una celda **verde** es un botón; una celda `na` sigue sin ser
+      tocable. _(ENE/FEB en `na` no exponen `aria-label`.)_
+- [x] La celda verde es tocable también en un alumno **retirado**, aunque las celdas cobrables
       sigan apagadas.
-- [ ] La hoja muestra el nombre largo del mes, el monto real de la fila en formato COP, la fecha
+- [x] La hoja muestra el nombre largo del mes, el monto real de la fila en formato COP, la fecha
       del pago y el nombre de quien lo registró.
-- [ ] Cuando el pago viene de la carga inicial, la hoja lo dice explícitamente en vez de mostrar
-      campos vacíos.
-- [ ] El botón Anular está deshabilitado mientras el motivo tenga menos de 5 caracteres.
-- [ ] Cerrar la hoja sin confirmar no cambia nada.
-- [ ] De 320 px a desktop: cero scroll horizontal en la hoja.
+- [x] Cuando el pago viene de la carga inicial, la hoja lo dice explícitamente en vez de mostrar
+      campos vacíos. _("Origen: Carga inicial del Excel", sin filas de fecha/método/autor.)_
+- [x] El botón Anular está deshabilitado mientras el motivo tenga menos de 5 caracteres.
+- [x] Cerrar la hoja sin confirmar no cambia nada.
+- [x] De 320 px a desktop: cero scroll horizontal en la hoja. _(`scrollWidth` = `clientWidth` en
+      documento y diálogo a 320 px.)_
 
 ### Calidad
 
-- [ ] `npm run check` en verde (astro check + eslint).
-- [ ] Ningún archivo supera 200 líneas efectivas; cero `any`.
-- [ ] `docs/backlog.md` tiene la HU de anular pago en el EPIC 3 y la deuda del abono de uniforme
-      sin reversa.
-- [ ] `docs/ARCHITECTURE.md` explica por qué `pagos` usa soft delete y las demás tablas no.
+- [x] `npm run check` en verde (astro check + eslint).
+- [x] Ningún archivo supera 200 líneas efectivas; cero `any`.
+- [x] `docs/backlog.md` tiene la HU de anular pago en el EPIC 3 (HU-3.9) y la deuda del abono de
+      uniforme sin reversa (DT-9).
+- [x] `docs/ARCHITECTURE.md` explica por qué `pagos` usa soft delete y las demás tablas no.
 
 ---
 
@@ -339,15 +349,15 @@ se construye la mecánica por debajo. El cambio visible ocurre en el paso 7.
 
 ## Riesgos
 
-| Riesgo                                                                                              | Mitigación                                                                                                                            |
-| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| La migración corre contra la **base de producción** (no hay entorno de pruebas)                     | Es aditiva: tres columnas nulables y un cambio de índice. El paso 1 exige revisar el SQL antes de aplicarlo y verificar que los totales del dashboard no se muevan |
-| `drizzle-kit` no emite el `WHERE` del índice parcial y crea un único total                          | El paso 1 obliga a leer el SQL generado; si falta el `WHERE`, se edita a mano antes de `db:migrate`. El criterio "insertar sobre una fila anulada funciona" lo detecta |
-| Queda un consumidor de pagos que no filtra `anulado_en` y sigue contando el pago anulado            | Los únicos accesos a `pagos` son `pagosPorAnio` y `pagosDeAlumno`; el criterio compara los cuatro totales del dashboard antes y después de anular  |
-| Un toque accidental sobre una celda verde anula un pago bueno                                       | La celda solo abre una hoja; anular exige escribir un motivo de 5+ caracteres y confirmar                                              |
-| El entrenador llama `pagos.anular` directamente                                                     | `requireAdmin` en la Action, en servidor, igual que `pagos.registrar`                                                                  |
-| Se anula un pago y nadie recuerda por qué                                                           | `motivo_anulacion` obligatorio, más `anulado_por` y `anulado_en`                                                                       |
-| El monto anulado descuadra contra un recibo de WhatsApp ya enviado al acudiente                     | Fuera del alcance técnico: el club avisa por su cuenta. Queda anotado como pendiente de producto, no de código                         |
+| Riesgo                                                                                   | Mitigación                                                                                                                                                             |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| La migración corre contra la **base de producción** (no hay entorno de pruebas)          | Es aditiva: tres columnas nulables y un cambio de índice. El paso 1 exige revisar el SQL antes de aplicarlo y verificar que los totales del dashboard no se muevan     |
+| `drizzle-kit` no emite el `WHERE` del índice parcial y crea un único total               | El paso 1 obliga a leer el SQL generado; si falta el `WHERE`, se edita a mano antes de `db:migrate`. El criterio "insertar sobre una fila anulada funciona" lo detecta |
+| Queda un consumidor de pagos que no filtra `anulado_en` y sigue contando el pago anulado | Los únicos accesos a `pagos` son `pagosPorAnio` y `pagosDeAlumno`; el criterio compara los cuatro totales del dashboard antes y después de anular                      |
+| Un toque accidental sobre una celda verde anula un pago bueno                            | La celda solo abre una hoja; anular exige escribir un motivo de 5+ caracteres y confirmar                                                                              |
+| El entrenador llama `pagos.anular` directamente                                          | `requireAdmin` en la Action, en servidor, igual que `pagos.registrar`                                                                                                  |
+| Se anula un pago y nadie recuerda por qué                                                | `motivo_anulacion` obligatorio, más `anulado_por` y `anulado_en`                                                                                                       |
+| El monto anulado descuadra contra un recibo de WhatsApp ya enviado al acudiente          | Fuera del alcance técnico: el club avisa por su cuenta. Queda anotado como pendiente de producto, no de código                                                         |
 
 ---
 
