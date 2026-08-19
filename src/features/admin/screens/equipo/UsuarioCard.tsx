@@ -6,6 +6,7 @@ import type { UsuarioRow } from './types';
 
 interface Props {
   usuario: UsuarioRow;
+  onEditar: () => void;
   onToggle: () => void;
   onReset: () => void;
   ocupado: boolean;
@@ -25,6 +26,7 @@ const accion = (color: string): CSSProperties => ({
 
 export function UsuarioCard({
   usuario,
+  onEditar,
   onToggle,
   onReset,
   ocupado,
@@ -33,7 +35,15 @@ export function UsuarioCard({
 
   return (
     <Card>
-      <div style={{ display: 'grid', gap: 10 }}>
+      {/* minmax(0,1fr): sin esto la columna crece con el contenido y la fila
+          de botones nunca envuelve en pantallas angostas. */}
+      <div
+        style={{
+          display: 'grid',
+          gap: 10,
+          gridTemplateColumns: 'minmax(0, 1fr)',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <strong style={{ fontSize: 15, color: 'var(--text-strong)' }}>
@@ -68,7 +78,15 @@ export function UsuarioCard({
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <button
+            type="button"
+            onClick={onEditar}
+            disabled={ocupado}
+            style={accion('var(--brand-navy)')}
+          >
+            Editar
+          </button>
           <button
             type="button"
             onClick={onToggle}

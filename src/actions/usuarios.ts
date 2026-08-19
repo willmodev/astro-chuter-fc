@@ -7,6 +7,7 @@ import { UsuarioReglaError } from '@/lib/domain/usuarios';
 import {
   cambiarActivo,
   crearUsuario,
+  editarUsuario,
   listarCategoriasAsignables,
   listarEquipo,
   resetearPassword,
@@ -53,6 +54,20 @@ export const crear = defineAction({
   handler: async (input, { locals, request }) => {
     requireAdmin(locals);
     await comoAccion(() => crearUsuario(request.headers, input));
+    return { ok: true };
+  },
+});
+
+export const editar = defineAction({
+  input: z.object({
+    userId: z.string().min(1),
+    name: z.string().min(2).max(80),
+    email: z.email(),
+    cats: catsSchema,
+  }),
+  handler: async (input, { locals, request }) => {
+    requireAdmin(locals);
+    await comoAccion(() => editarUsuario(request.headers, input));
     return { ok: true };
   },
 });

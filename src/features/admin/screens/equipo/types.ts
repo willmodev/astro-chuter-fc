@@ -22,3 +22,13 @@ export interface NuevoUsuarioInput {
   role: 'admin' | 'entrenador';
   cats: string[]; // [] si role = 'admin'
 }
+
+export interface EditarUsuarioInput {
+  userId: string;
+  name: string;
+  email: string;
+  cats: string[]; // ignorado si el usuario es admin o está inactivo
+}
+
+// Fuente única: la regla vive en el dominio, la pantalla solo la reexporta.
+export type { Traspaso } from '@/lib/domain/usuarios';

@@ -93,3 +93,70 @@ export function categoriasSinEntrenador(
     .map((c) => c.etiqueta)
     .filter((etiqueta) => !tomadas.has(etiqueta));
 }
+
+/** Una categoría que cambia de dueño al guardar la edición. */
+export interface Traspaso {
+  etiqueta: string; // 'SUB 12'
+  de: string; // 'Óscar Cárdenas'
+}
+
+export interface UsuarioAsignable extends UsuarioConCats {
+  id: string;
+  name: string;
+}
+
+// ¿Este usuario ocupa categorías hoy? Solo el entrenador activo que no es el
+// que se está editando.
+function cedeCategorias(u: UsuarioAsignable, targetId: string): boolean {
+  return u.role === 'entrenador' && u.activo && u.id !== targetId;
+}
+
+/**
+ * De las categorías marcadas, las que hoy tiene otro entrenador activo y por
+ * tanto cambian de dueño al guardar. Alimenta el resumen de la hoja; la lista
+ * de categorías ya viene con su dueño resuelto (`ocupadaPor`).
+ */
+export function traspasosDe(
+  cats: readonly string[],
+  categorias: readonly { etiqueta: string; ocupadaPor: string | null }[],
+): Traspaso[] {
+  const marcadas = new Set(cats);
+  return categorias
+    .filter((c) => marcadas.has(c.etiqueta) && c.ocupadaPor !== null)
+    .map((c) => ({ etiqueta: c.etiqueta, de: c.ocupadaPor ?? '' }));
+}
+
+/**
+ * Las categorías que hay que escribir para dejar a `targetId` con `cats`: las
+ * suyas más las de cada entrenador al que se le quita alguna.
+ */
+export function cambiosDeCats(
+  cats: readonly string[],
+  usuarios: readonly UsuarioAsignable[],
+  targetId: string,
+): { userId: string; cats: string[] }[] {
+  const pedidas = new Set(cats);
+  const cambios = [{ userId: targetId, cats: [...cats] }];
+
+  for (const u of usuarios) {
+    if (!cedeCategorias(u, targetId)) continue;
+    const quedan = u.cats.filter((c) => !pedidas.has(c));
+    if (quedan.length !== u.cats.length) {
+      cambios.push({ userId: u.id, cats: quedan });
+    }
+  }
+
+  return cambios;
+}
+
+/** Nadie más está usando ese correo (se compara sin distinguir mayúsculas). */
+export function emailDisponible(
+  usuarios: readonly { id: string; email: string }[],
+  targetId: string,
+  email: string,
+): boolean {
+  const buscado = email.trim().toLowerCase();
+  return !usuarios.some(
+    (u) => u.id !== targetId && u.email.toLowerCase() === buscado,
+  );
+}

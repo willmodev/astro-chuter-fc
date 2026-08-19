@@ -3,8 +3,7 @@ import { useMemo, useState } from 'react';
 
 import { categoriasSinEntrenador } from '@/lib/domain/usuarios';
 
-import { NuevoUsuarioSheet } from './NuevoUsuarioSheet';
-import { ResetPasswordSheet } from './ResetPasswordSheet';
+import { SheetsEquipo, type SheetState } from './SheetsEquipo';
 import { UsuarioCard } from './UsuarioCard';
 import { useEquipo } from './useEquipo';
 
@@ -13,11 +12,6 @@ import type { UsuarioRow } from './types';
 interface Props {
   onBack: () => void;
 }
-
-type SheetState =
-  | { tipo: 'nuevo' }
-  | { tipo: 'reset'; usuario: UsuarioRow }
-  | null;
 
 // Texto del banner de categorías huérfanas; null si están todas cubiertas.
 function textoSinEntrenador(usuarios: readonly UsuarioRow[]): string | null {
@@ -31,7 +25,8 @@ function textoSinEntrenador(usuarios: readonly UsuarioRow[]): string | null {
 }
 
 export function EquipoScreen({ onBack }: Readonly<Props>) {
-  const { usuarios, estado, crear, toggleActivo, resetPassword } = useEquipo();
+  const { usuarios, estado, crear, editar, toggleActivo, resetPassword } =
+    useEquipo();
   const [sheet, setSheet] = useState<SheetState>(null);
   const [ocupado, setOcupado] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
@@ -134,6 +129,9 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
             key={u.id}
             usuario={u}
             ocupado={ocupado === u.id}
+            onEditar={() => {
+              setSheet({ tipo: 'editar', usuario: u });
+            }}
             onToggle={() => void alTogglear(u)}
             onReset={() => {
               setSheet({ tipo: 'reset', usuario: u });
@@ -141,23 +139,15 @@ export function EquipoScreen({ onBack }: Readonly<Props>) {
           />
         ))}
 
-      {sheet?.tipo === 'nuevo' && (
-        <NuevoUsuarioSheet
-          onClose={() => {
-            setSheet(null);
-          }}
-          onCrear={crear}
-        />
-      )}
-      {sheet?.tipo === 'reset' && (
-        <ResetPasswordSheet
-          nombre={sheet.usuario.name}
-          onClose={() => {
-            setSheet(null);
-          }}
-          onReset={(password) => resetPassword(sheet.usuario.id, password)}
-        />
-      )}
+      <SheetsEquipo
+        sheet={sheet}
+        onClose={() => {
+          setSheet(null);
+        }}
+        onCrear={crear}
+        onEditar={editar}
+        onReset={resetPassword}
+      />
     </div>
   );
 }

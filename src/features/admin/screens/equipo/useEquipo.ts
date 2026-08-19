@@ -1,7 +1,11 @@
 import { actions } from 'astro:actions';
 import { useCallback, useEffect, useState } from 'react';
 
-import type { NuevoUsuarioInput, UsuarioRow } from './types';
+import type {
+  EditarUsuarioInput,
+  NuevoUsuarioInput,
+  UsuarioRow,
+} from './types';
 
 type Estado = 'cargando' | 'listo' | 'error';
 
@@ -10,8 +14,17 @@ interface UseEquipo {
   estado: Estado;
   recargar: () => Promise<void>;
   crear: (input: NuevoUsuarioInput) => Promise<string | null>;
+  editar: (input: EditarUsuarioInput) => Promise<string | null>;
   toggleActivo: (userId: string, activo: boolean) => Promise<string | null>;
   resetPassword: (userId: string, password: string) => Promise<string | null>;
+}
+
+// Devuelve null si la Action salió bien, o su mensaje de error.
+async function mensajeDeError(
+  llamada: Promise<{ error?: { message: string } }>,
+): Promise<string | null> {
+  const { error } = await llamada;
+  return error ? error.message : null;
 }
 
 // Estado de cliente de la pantalla Equipo + llamadas a las Actions. Las
@@ -37,35 +50,46 @@ export function useEquipo(): UseEquipo {
 
   const crear = useCallback<UseEquipo['crear']>(
     async (input) => {
-      const { error } = await actions.usuarios.crear(input);
-      if (error) return error.message;
-      await recargar();
-      return null;
+      const fallo = await mensajeDeError(actions.usuarios.crear(input));
+      if (!fallo) await recargar();
+      return fallo;
+    },
+    [recargar],
+  );
+
+  const editar = useCallback<UseEquipo['editar']>(
+    async (input) => {
+      const fallo = await mensajeDeError(actions.usuarios.editar(input));
+      if (!fallo) await recargar();
+      return fallo;
     },
     [recargar],
   );
 
   const toggleActivo = useCallback<UseEquipo['toggleActivo']>(
     async (userId, activo) => {
-      const { error } = await actions.usuarios.toggleActivo({ userId, activo });
-      if (error) return error.message;
-      await recargar();
-      return null;
+      const fallo = await mensajeDeError(
+        actions.usuarios.toggleActivo({ userId, activo }),
+      );
+      if (!fallo) await recargar();
+      return fallo;
     },
     [recargar],
   );
 
   const resetPassword = useCallback<UseEquipo['resetPassword']>(
-    async (userId, password) => {
-      const { error } = await actions.usuarios.resetPassword({
-        userId,
-        password,
-      });
-      if (error) return error.message;
-      return null;
-    },
+    async (userId, password) =>
+      mensajeDeError(actions.usuarios.resetPassword({ userId, password })),
     [],
   );
 
-  return { usuarios, estado, recargar, crear, toggleActivo, resetPassword };
+  return {
+    usuarios,
+    estado,
+    recargar,
+    crear,
+    editar,
+    toggleActivo,
+    resetPassword,
+  };
 }

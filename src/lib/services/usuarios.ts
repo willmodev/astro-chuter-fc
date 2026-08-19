@@ -1,19 +1,24 @@
 import { auth } from '@/lib/auth/server';
 import {
+  actualizarCats,
   categoriasOcupadas,
   listarUsuarios,
   type UsuarioRepo,
 } from '@/lib/db/repos/usuarios';
 import { listarCategorias } from '@/lib/domain/categoria';
 import {
+  cambiosDeCats,
+  emailDisponible,
   normalizaCats,
   puedeDesactivar,
   UsuarioReglaError,
   validaDisponibles,
+  type UsuarioAsignable,
   type UsuarioDominio,
 } from '@/lib/domain/usuarios';
 import type {
   CategoriaAsignable,
+  EditarUsuarioInput,
   NuevoUsuarioInput,
   UsuarioRow,
 } from '@/features/admin/screens/equipo/types';
@@ -114,5 +119,60 @@ export async function resetearPassword(
   await auth.api.setUserPassword({
     headers,
     body: { userId, newPassword },
+  });
+}
+
+function aAsignable(u: UsuarioRepo): UsuarioAsignable {
+  return {
+    id: u.id,
+    name: u.name,
+    role: u.role,
+    activo: !u.banned,
+    cats: u.cats,
+  };
+}
+
+// Las categorías solo se tocan en un entrenador activo: en un admin no aplican
+// y en un inactivo crearían un duplicado al reactivarlo.
+function catsAEscribir(
+  target: UsuarioRepo,
+  pedidas: readonly string[],
+): string[] | null {
+  if (target.role === 'admin' || target.banned) return null;
+  return normalizaCats('entrenador', pedidas);
+}
+
+/**
+ * Edita nombre, correo y categorías. Marcar una categoría de otro entrenador
+ * activo se la quita a esa persona en la misma escritura (spec 21).
+ */
+export async function editarUsuario(
+  headers: Headers,
+  input: EditarUsuarioInput,
+): Promise<void> {
+  const usuarios = await listarUsuarios();
+  const target = usuarios.find((u) => u.id === input.userId);
+  if (!target) {
+    throw new UsuarioReglaError('El usuario ya no existe.');
+  }
+
+  const email = input.email.trim();
+  if (!emailDisponible(usuarios, target.id, email)) {
+    throw new UsuarioReglaError(
+      'Ese correo ya lo usa otro usuario del equipo.',
+    );
+  }
+
+  // Primero las categorías: es la parte que puede dejar datos inconsistentes.
+  const cats = catsAEscribir(target, input.cats);
+  if (cats !== null) {
+    await actualizarCats(
+      cambiosDeCats(cats, usuarios.map(aAsignable), target.id),
+    );
+  }
+
+  await auth.api.adminUpdateUser({
+    headers,
+    body: { userId: target.id, data: { name: input.name.trim(), email } },
   });
 }
