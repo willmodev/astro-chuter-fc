@@ -468,6 +468,20 @@ Como administrador quiero elegir las categorías de un entrenador de una lista p
   - Dado un `admin`, entonces no se muestra el selector y se guarda `cats = []`.
   - La pantalla Equipo avisa cuántas categorías quedaron **sin entrenador asignado**.
 
+### HU-7.8 · Editar un usuario y traspasar sus categorías — `Must` · Pantalla: Equipo · ☑ (spec 21)
+
+Como administrador quiero corregir el nombre y el correo de un usuario y reasignar las categorías de un entrenador para arreglar datos mal escritos y mover un grupo sin desactivar a nadie.
+
+- **Aceptación:**
+  - Dada una tarjeta de la pantalla Equipo, cuando la abro con "Editar", entonces puedo cambiar **nombre y correo**; el **rol no se edita** y no aparece ningún control de rol.
+  - Dado un correo que ya usa otro usuario, cuando guardo, entonces se muestra un error en la hoja y no se guarda nada.
+  - Dado un entrenador activo, cuando edito sus categorías, entonces las que hoy tiene otro entrenador activo aparecen **seleccionables** e indican quién las tiene.
+  - Dada una categoría que marco y que hoy es de otro entrenador, cuando guardo, entonces pasa a mi entrenador y se le quita al anterior en **una sola operación**; ninguna categoría queda en dos tarjetas a la vez.
+  - Dado que marco o desmarco categorías, entonces la hoja lista los traspasos pendientes antes de confirmar.
+  - Dado un usuario `admin`, entonces la hoja muestra solo nombre y correo, sin selector de categorías.
+  - Dado un entrenador desactivado, entonces el selector queda bloqueado con la nota de reactivarlo y guardar no cambia sus categorías.
+  - Dado un entrenador que invoca la Action `usuarios.editar`, entonces recibe `FORBIDDEN`.
+
 ### HU-7.6 · Ver a quién le falta la fecha de nacimiento — `Should` · Pantalla: Alumnos/Ficha · ☑ (spec 15)
 
 Como administrador quiero saber a qué alumnos les falta la fecha de nacimiento para completarlas y que su categoría deje de estimarse.

@@ -48,3 +48,21 @@ export async function categoriasOcupadas(
     );
   return filas.flatMap((f) => f.cats);
 }
+
+/**
+ * Escribe las categorías de varios usuarios de una sola vez. El driver
+ * `neon-http` no tiene transacciones interactivas, pero `batch` viaja como una
+ * sola transacción del lado de Neon: o se mueven todas, o no se mueve ninguna.
+ */
+export async function actualizarCats(
+  cambios: readonly { userId: string; cats: string[] }[],
+): Promise<void> {
+  if (cambios.length === 0) return;
+  const [primera, ...resto] = cambios.map((c) =>
+    db
+      .update(user)
+      .set({ cats: c.cats, updatedAt: new Date() })
+      .where(eq(user.id, c.userId)),
+  );
+  await db.batch([primera, ...resto]);
+}

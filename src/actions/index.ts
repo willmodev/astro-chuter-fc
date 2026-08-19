@@ -28,6 +28,7 @@ import {
 import {
   categoriasAsignables,
   crear,
+  editar as editarUsuario,
   listar,
   resetPassword,
   toggleActivo,
@@ -38,6 +39,7 @@ export const server = {
   usuarios: {
     listar,
     crear,
+    editar: editarUsuario,
     toggleActivo,
     resetPassword,
     categoriasAsignables,

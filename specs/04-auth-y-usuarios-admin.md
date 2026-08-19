@@ -37,7 +37,7 @@ Además **extiende** `ARCHITECTURE.md §3`, que solo contemplaba admins seed de 
 **Fuera del alcance (otros specs):**
 
 - **App real del entrenador** (sus listas, entrenamientos, pasar lista) — aquí solo su cuenta y el placeholder.
-- **Editar nombre/rol** de un usuario existente — por ahora solo crear, desactivar/reactivar y resetear contraseña.
+- **Editar nombre/rol** de un usuario existente — por ahora solo crear, desactivar/reactivar y resetear contraseña. _(Cubierto después por el **SPEC 21**: se editan nombre, correo y categorías, con traspaso entre entrenadores. El **rol sigue sin editarse**.)_
 - **Segundo admin (Ebed)** — no va en el seed; Camilo lo crea desde "Equipo".
 - **Resto del schema y datos reales** (alumnos, acudientes, pagos, uniformes, entrenamientos) y el seed desde Excel — spec de datos.
 - **Recuperación/verificación de contraseña por email**, verificación de email, 2FA, "recordar sesión" configurable.
