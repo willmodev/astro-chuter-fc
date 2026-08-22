@@ -63,9 +63,14 @@ const TRABAJOS = [
     // círculo completo de niños. El original es 3:4 y el hero es panorámico:
     // sin este recorte, la mitad del archivo era malla y piso.
     recorte: { top: 460, ancho: 1200, alto: 900 },
-    // q88: el original ya viene comprimido por WhatsApp y Astro lo reencodea a
-    // WebP encima con quality=62. Este archivo es solo el insumo.
-    calidad: 88,
+    // q100: el cliente pidió el hero lo más nítido posible. El original ya
+    // viene comprimido por WhatsApp; este recorte no le suma una segunda
+    // pérdida encima. El peso no importa: es el insumo, no lo que se sirve.
+    calidad: 100,
+    // Unsharp suave. La fuente mide 1200 px de ancho y el hero la amplía en
+    // pantallas grandes, así que se recupera el micro-contraste que el JPEG de
+    // WhatsApp aplanó. sigma bajo a propósito: más agresivo mete halos.
+    nitidez: { sigma: 0.7, m1: 0.4, m2: 2.2 },
   },
 
   // — Foto para la galería (sala 02 · En juego) —
@@ -102,7 +107,7 @@ async function canalRetrato(origen, offsetY) {
   );
 }
 
-function canalEscena(origen, recorte, calidad) {
+function canalEscena(origen, recorte, calidad, nitidez) {
   const img = sharp(origen).rotate();
   const recortada = recorte
     ? img.extract({
@@ -112,15 +117,17 @@ function canalEscena(origen, recorte, calidad) {
         height: recorte.alto,
       })
     : img;
-  return recortada.jpeg({ quality: calidad, mozjpeg: true });
+  const realzada = nitidez ? recortada.sharpen(nitidez) : recortada;
+  return realzada.jpeg({ quality: calidad, mozjpeg: true });
 }
 
-async function procesar({ archivo, destino: rel, offsetY, recorte, calidad }) {
+async function procesar(trabajo) {
+  const { archivo, destino: rel, offsetY, recorte, calidad, nitidez } = trabajo;
   const origen = path.join(ORIGEN, archivo);
   const esRetrato = calidad === undefined;
   const canal = esRetrato
     ? await canalRetrato(origen, offsetY ?? 0)
-    : canalEscena(origen, recorte, calidad);
+    : canalEscena(origen, recorte, calidad, nitidez);
 
   const antes = (await stat(origen)).size;
   const buffer = await canal.toBuffer();

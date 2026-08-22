@@ -19,20 +19,23 @@ import { SCHEDULE, LOCATION } from '@/lib/site';
   aria-label="Sección principal de Chuter FC"
 >
   <!-- Capa 1 (más lenta): imagen hero, da sensación de fondo profundo.
-       La foto va bajo un overlay navy al 85-95%, así que en mobile pedimos
-       menos resolución que el ancho real: baja el peso del LCP sin verse. -->
+       El cliente pidió el hero nítido (2026-08-22): se sirve al ancho real del
+       viewport y con quality alta, aunque el overlay navy tape parte del
+       detalle. Es el trade-off consciente contra el presupuesto de LCP. -->
   <HeroParallaxLayer speed={0.55} client:idle className="absolute inset-0 z-0">
     <!-- La fuente mide 1200px de ancho (foto de WhatsApp): no se piden anchos
-         mayores para no hacer upscale. El vignette de la derecha cubre el resto. -->
+         mayores porque serían upscale — píxeles inventados, más peso y ni un
+         detalle más. En monitores >1200px el navegador estira; el techo real de
+         nitidez lo pone la fuente, no esta config. -->
     <Image
       src={heroImg}
       alt="Formadores de Chuter FC dando indicaciones a un grupo de niños reunidos en la cancha"
       class="h-[120%] w-full object-cover object-[50%_42%] 2xl:[filter:saturate(1.08)]"
       widths={[540, 800, 1080, 1200]}
-      sizes="(max-width: 767px) 75vw, 100vw"
+      sizes="100vw"
       loading="eager"
       fetchpriority="high"
-      quality={62}
+      quality={90}
     />
   </HeroParallaxLayer>
 
