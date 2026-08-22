@@ -55,6 +55,19 @@ const TRABAJOS = [
     calidad: 97,
   },
 
+  // — Fondo del hero —
+  {
+    archivo: 'img11.jpeg',
+    destino: 'club/hero-charla-formadores.jpg',
+    // 4:3 desde la banda donde entran las caras de los tres formadores y el
+    // círculo completo de niños. El original es 3:4 y el hero es panorámico:
+    // sin este recorte, la mitad del archivo era malla y piso.
+    recorte: { top: 460, ancho: 1200, alto: 900 },
+    // q88: el original ya viene comprimido por WhatsApp y Astro lo reencodea a
+    // WebP encima con quality=62. Este archivo es solo el insumo.
+    calidad: 88,
+  },
+
   // — Foto para la galería (sala 02 · En juego) —
   {
     archivo: 'img11.jpeg',
