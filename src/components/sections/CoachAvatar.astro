@@ -1,0 +1,71 @@
+---
+import { Image } from 'astro:assets';
+
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  nombre: string;
+  /** Sin foto, la tarjeta cae a las iniciales sobre fondo navy. */
+  foto?: ImageMetadata;
+  /** `cuadrado` para fundadores y dirección; `circulo` para el cuerpo técnico. */
+  forma: 'cuadrado' | 'circulo';
+  /** El punto dorado de la esquina, solo en las tarjetas anchas. */
+  punto?: boolean;
+}
+
+const { nombre, foto, forma, punto = false } = Astro.props;
+
+const CAJA = {
+  cuadrado: 'h-24 w-24 rounded-sm md:h-28 md:w-28',
+  circulo: 'h-24 w-24 rounded-full',
+} as const;
+
+function initials(nombre: string): string {
+  return nombre
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();
+}
+---
+
+<div
+  class:list={[
+    'bg-brand-navy-deep bg-pitch-lines text-brand-gold ring-brand-navy/20 relative flex shrink-0 items-center justify-center overflow-hidden shadow-md ring-1',
+    CAJA[forma],
+  ]}
+>
+  {
+    foto ? (
+      <Image
+        src={foto}
+        alt={`Retrato de ${nombre}`}
+        widths={[336, 448, 640]}
+        sizes="(max-width: 767px) 96px, 112px"
+        quality={88}
+        loading="lazy"
+        class="h-full w-full object-cover"
+      />
+    ) : (
+      <span
+        class:list={[
+          'font-display leading-none tracking-wide',
+          forma === 'cuadrado' ? 'text-4xl md:text-5xl' : 'text-4xl',
+        ]}
+      >
+        {initials(nombre)}
+      </span>
+    )
+  }
+  {
+    punto && (
+      <span
+        class="bg-brand-gold/70 absolute top-2 right-2 h-1.5 w-1.5 rounded-full"
+        aria-hidden="true"
+      />
+    )
+  }
+</div>

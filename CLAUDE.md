@@ -131,7 +131,6 @@ Los schemas viven en `src/content.config.ts` (loader `glob`).
 ```ts
 schema: z.object({
   sub: z.number(), // 4 | 6 | 8 | 10 | 12 | 14 | 16
-  horario: z.string(),
   icono: z.string(), // nombre de icono Lucide
   entrenador: z.string().optional(), // sin dato → la tarjeta omite la línea
   descripcion: z.string(),
@@ -139,6 +138,9 @@ schema: z.object({
   orden: z.number(),
 });
 ```
+
+> `horario` **no** va en el frontmatter: el spec 19 lo sacó de los 7 markdowns y lo
+> deriva de `SCHEDULE.resumenPrograma` dentro de `listarProgramas()`.
 
 > El markdown **no** lleva `nombre`, `nacidos` ni `edadAprox`: el nombre y la edad
 > publicada salen del catálogo de `lib/domain/categoria.ts` a partir de `sub`.
@@ -149,17 +151,26 @@ schema: z.object({
 
 ```ts
 const formadoresCollection = defineCollection({
-  type: 'content',
-  schema: z.object({
-    nombre: z.string(),
-    rol: z.string(), // "CEO y Director Técnico"
-    bio: z.string(),
-    foto: z.string(),
-    instagram: z.string().optional(),
-    orden: z.number(),
-  }),
+  loader: glob({ pattern: '**/*.md', base: './src/content/formadores' }),
+  // Schema-función para el helper `image()`: la ruta del frontmatter llega como
+  // ImageMetadata y `<Image>` la optimiza en build (spec 22).
+  schema: ({ image }) =>
+    z.object({
+      nombre: z.string(),
+      rol: z.string(), // categoría del entrenador, o cargo si es dirección
+      bio: z.string(),
+      foto: image().optional(), // sin foto la tarjeta cae a iniciales
+      instagram: z.string().optional(),
+      credenciales: z.array(z.string()).optional(), // solo los fundadores
+      etiqueta: z.string().default('Formador'), // Fundador | Dirección | Entrenador
+      orden: z.number(),
+    }),
 });
 ```
+
+> `etiqueta` es lo que agrupa la sección Equipo en sus tres bloques. Los retratos
+> viven en `src/assets/images/formadores/` (cuadrados de 640 px, generados con
+> `scripts/optimizar-fotos-equipo.mjs`), **no** en `public/`.
 
 Crear inicialmente:
 
@@ -387,12 +398,12 @@ Estos son los TODOs que aún tengo que conseguir y que Claude Code debe respetar
 - [x] Horario por categoría (cerrado 2026-08-10): el cliente confirmó que es el mismo para las 7 categorías, ahora partido en dos bloques (lunes/miércoles 5:30-7:00 PM, viernes 3:00-4:30 PM). Ver spec 19.
 - [ ] **Entrenador de Baby (SUB 4), Benjamín (SUB 8) y Juvenil (SUB 16)** — hoy hay 4 entrenadores para 7 categorías; las tarjetas omiten la línea
 - [x] **Fechas de nacimiento** (cerrado 2026-08-07): la base tiene **82 alumnos activos y 0 sin fecha**. El cliente confirmó que de los 15 que faltaban solo sigue Ángel Santiago (`2020-02-26`); los otros 14 ya no están en el club y se retiraron (`scripts/retirar-alumnos.mjs`)
-- [ ] **Limpiar la hoja `CATEGORIAS`** — quedan 3 filas de alumnos ya retirados (`JOSE ANTONIO LOPEZ`, `MATIAS VIDES VASQUEZ`, `MAXIMILIANO PINTO`). No rompe nada (el seed no reactiva), pero la hoja no refleja el plantel real
-- [ ] **3 filas del Excel que el seed omite** — `GERONIMO ESCORCIA` (año `2106`; su fecha real ya está en la base, falta corregir la hoja), `ABRAHAM PEREZ` (sin nacimiento), `JUAN PABLO MAESTRE` (sin documento)
+- [ ] **Limpiar la hoja `CATEGORIAS`** — queda **1** fila de alumno ya retirado: `JOSE ANTONIO LOPEZ` (fila 15). `MATIAS VIDES VASQUEZ` y `MAXIMILIANO PINTO` ya salieron de la hoja (verificado 2026-08-22). No rompe nada (el seed no reactiva), pero la hoja no refleja el plantel real
+- [ ] **1 fila del Excel que el seed omite** — `JUAN PABLO MAESTRE`, sin documento en la hoja. Las otras dos ya están resueltas (verificado 2026-08-22): `GERONIMO ESCORCIA` — el cliente reconfirmó `08/09/2016`, que ya estaba en la base **y** ya está corregido en el Excel (`F13 = 2016`) — y `ABRAHAM PEREZ`, que ya trae `2018-01-05`
 - [ ] Testimonios reales (nombre del padre/madre + texto + foto opcional)
 - [ ] Logros del club (torneos, posiciones, años)
 - [ ] Bios completas de Camilo Andrade y Ebed Shaday Calderón
-- [ ] Fotos profesionales de los formadores
+- [x] **Fotos de los formadores** (cliente, 2026-08-22): llegaron los 6 retratos (Alirio, Camilo, Ebed Shaday, Jorge, Óscar, Cristian) más la grupal del cuerpo técnico. Versionados en `src/assets/images/formadores/` y `club/equipo-cuerpo-tecnico.jpg`; los muestran las tarjetas de la sección Equipo. Ver spec 22
 - [ ] **Foto propia por categoría** (7 fotos, una por SUB): las 4 fotos que envió Camilo no corresponden a categorías; pendiente solicitarlas. Ver spec 19.
 
 Para cualquier dato no provisto, usar texto placeholder y marcar con comentario:

@@ -2,7 +2,7 @@
 nombre: 'Camilo Andrade'
 rol: 'Preinfantil'
 bio: ''
-foto: ''
+foto: '../../assets/images/formadores/camilo-andrade.jpg'
 etiqueta: 'Entrenador'
 orden: 4
 ---

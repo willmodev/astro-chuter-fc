@@ -1,4 +1,6 @@
 ---
+import CoachAvatar from './CoachAvatar.astro';
+
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -6,17 +8,6 @@ interface Props {
 }
 
 const { fundadores } = Astro.props;
-
-function initials(nombre: string): string {
-  return nombre
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase();
-}
 ---
 
 <div class="mt-12">
@@ -35,15 +26,12 @@ function initials(nombre: string): string {
           data-from={i % 2 === 0 ? 'left' : 'right'}
           style={`--idx:${String(i)}`}
         >
-          <div class="bg-brand-navy-deep bg-pitch-lines text-brand-gold ring-brand-navy/20 relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-sm shadow-md ring-1 md:h-28 md:w-28">
-            <span class="font-display text-4xl leading-none tracking-wide md:text-5xl">
-              {initials(f.data.nombre)}
-            </span>
-            <span
-              class="bg-brand-gold/70 absolute top-2 right-2 h-1.5 w-1.5 rounded-full"
-              aria-hidden="true"
-            />
-          </div>
+          <CoachAvatar
+            nombre={f.data.nombre}
+            foto={f.data.foto}
+            forma="cuadrado"
+            punto
+          />
           <div class="min-w-0">
             <span class="bg-brand-navy text-brand-cream inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.6rem] font-bold tracking-wider uppercase">
               {f.data.etiqueta}

@@ -19,17 +19,21 @@ const programasCollection = defineCollection({
 
 const formadoresCollection = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/formadores' }),
-  schema: z.object({
-    nombre: z.string(),
-    rol: z.string(),
-    bio: z.string(),
-    foto: z.string(),
-    instagram: z.string().optional(),
-    /** Títulos y certificaciones; solo la usan los fundadores. */
-    credenciales: z.array(z.string()).optional(),
-    etiqueta: z.string().default('Formador'),
-    orden: z.number(),
-  }),
+  // Schema-función para usar el helper `image()`: la ruta del frontmatter llega
+  // resuelta como `ImageMetadata` y `<Image>` la optimiza en build.
+  schema: ({ image }) =>
+    z.object({
+      nombre: z.string(),
+      rol: z.string(),
+      bio: z.string(),
+      /** Retrato en `src/assets/images/formadores/`; sin foto la tarjeta usa iniciales. */
+      foto: image().optional(),
+      instagram: z.string().optional(),
+      /** Títulos y certificaciones; solo la usan los fundadores. */
+      credenciales: z.array(z.string()).optional(),
+      etiqueta: z.string().default('Formador'),
+      orden: z.number(),
+    }),
 });
 
 const testimoniosCollection = defineCollection({

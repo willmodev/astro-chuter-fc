@@ -1,8 +1,11 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 
+import equipoFoto from '@/assets/images/club/equipo-cuerpo-tecnico.jpg';
 import { listarProgramas } from '@/lib/programas';
 
+import CoachAvatar from './CoachAvatar.astro';
 import FoundersBlock from './FoundersBlock.astro';
 
 const formadores = (await getCollection('formadores')).sort(
@@ -20,17 +23,6 @@ const fundadores = formadores.filter(
 const edadesPorCategoria = new Map(
   (await listarProgramas()).map((p) => [p.nombre, p.edades]),
 );
-
-function initials(nombre: string): string {
-  return nombre
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase();
-}
 ---
 
 <section id="equipo" class="bg-brand-cream bg-grain relative py-16 md:py-24">
@@ -67,6 +59,28 @@ function initials(nombre: string): string {
       </p>
     </div>
 
+    <!-- Retrato del cuerpo técnico completo -->
+    <figure class="reveal mx-auto mt-12 max-w-2xl" style="--idx:3">
+      <div
+        class="ring-brand-navy/10 aspect-[3/2] overflow-hidden rounded-sm shadow-lg ring-1 md:aspect-[16/10]"
+      >
+        <Image
+          src={equipoFoto}
+          alt="Los seis integrantes del cuerpo técnico de Chuter FC posando en la cancha con el uniforme del club"
+          widths={[1008, 1200]}
+          sizes="(max-width: 767px) 100vw, 672px"
+          quality={92}
+          loading="lazy"
+          class="h-full w-full object-cover object-center"
+        />
+      </div>
+      <figcaption
+        class="text-brand-navy/50 mt-3 text-center text-[0.7rem] tracking-[0.18em] uppercase"
+      >
+        El cuerpo técnico de Chuter FC
+      </figcaption>
+    </figure>
+
     <FoundersBlock fundadores={fundadores} />
 
     <!-- Dirección -->
@@ -87,15 +101,12 @@ function initials(nombre: string): string {
               data-from={i % 2 === 0 ? 'left' : 'right'}
               style={`--idx:${String(i)}`}
             >
-              <div class="bg-brand-navy-deep bg-pitch-lines text-brand-gold ring-brand-navy/20 relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-sm shadow-md ring-1 md:h-28 md:w-28">
-                <span class="font-display text-4xl leading-none tracking-wide md:text-5xl">
-                  {initials(d.data.nombre)}
-                </span>
-                <span
-                  class="bg-brand-gold/70 absolute top-2 right-2 h-1.5 w-1.5 rounded-full"
-                  aria-hidden="true"
-                />
-              </div>
+              <CoachAvatar
+                nombre={d.data.nombre}
+                foto={d.data.foto}
+                forma="cuadrado"
+                punto
+              />
               <div class="min-w-0">
                 <span class="bg-brand-navy text-brand-cream inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.6rem] font-bold tracking-wider uppercase">
                   {d.data.etiqueta}
@@ -145,11 +156,11 @@ function initials(nombre: string): string {
               >
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <div class="bg-brand-navy-deep bg-pitch-lines text-brand-gold ring-brand-navy/20 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full shadow-md ring-1">
-                <span class="font-display text-4xl leading-none tracking-wide">
-                  {initials(e.data.nombre)}
-                </span>
-              </div>
+              <CoachAvatar
+                nombre={e.data.nombre}
+                foto={e.data.foto}
+                forma="circulo"
+              />
               <div>
                 <h3 class="font-display text-brand-navy-deep text-2xl leading-tight">
                   {e.data.nombre}
