@@ -8,6 +8,7 @@ import familiaCirculo from '@/assets/images/club/familia-circulo.jpg';
 import familiaCirculoRosa from '@/assets/images/club/familia-circulo-rosa.jpg';
 import familiaHidratacion from '@/assets/images/club/familia-hidratacion.jpg';
 import juegoCarrera from '@/assets/images/club/juego-carrera.jpg';
+import juegoCharlaPartido from '@/assets/images/club/juego-charla-partido.jpg';
 import juegoDescanso from '@/assets/images/club/juego-descanso.jpg';
 import juegoDisputa from '@/assets/images/club/juego-disputa.jpg';
 import juegoEspalda from '@/assets/images/club/juego-espalda.jpg';
@@ -95,6 +96,12 @@ export const SALAS_GALERIA: readonly SalaGaleria[] = [
         alt: 'Niño de Chuter FC recostado en la grama tras el entrenamiento',
         cedula: 'El respiro',
         gridClass: 'md:row-span-2',
+      },
+      {
+        src: juegoCharlaPartido,
+        alt: 'Entrenadores de Chuter FC dando indicaciones al plantel antes de un partido',
+        cedula: 'La charla antes del partido',
+        gridClass: 'md:col-span-2 md:row-span-2',
       },
     ],
   },
