@@ -73,6 +73,16 @@ const TRABAJOS = [
     nitidez: { sigma: 0.7, m1: 0.4, m2: 2.2 },
   },
 
+  // — Fondo del hero en móvil (viewport vertical, spec del 2026-08-26) —
+  {
+    archivo: 'img17.jpeg',
+    destino: 'club/hero-pareja-uniformes.jpg',
+    // Sin recorte: el frame vertical 1200x1600 ES el encuadre para móvil;
+    // `object-cover` solo pela un poco los bordes laterales.
+    calidad: 100,
+    nitidez: { sigma: 0.7, m1: 0.4, m2: 2.2 },
+  },
+
   // — Foto para la galería (sala 02 · En juego) —
   {
     archivo: 'img11.jpeg',

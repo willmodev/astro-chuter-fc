@@ -1,7 +1,8 @@
 ---
-import { Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
 
 import heroImg from '@/assets/images/club/hero-charla-formadores.jpg';
+import heroMovilImg from '@/assets/images/club/hero-pareja-uniformes.jpg';
 import BrandButton from '@/components/layout/BrandButton.astro';
 import HeroTicket from '@/components/sections/hero/HeroTicket';
 import HeroBallBg from '@/components/sections/hero/HeroBallBg.astro';
@@ -11,6 +12,17 @@ import HeroHeadline from '@/components/sections/hero/HeroHeadline';
 import HeroParallaxLayer from '@/components/sections/hero/HeroParallaxLayer';
 import { WA_HERO } from '@/lib/whatsapp';
 import { SCHEDULE, LOCATION } from '@/lib/site';
+
+// Ambas fuentes miden 1200px de ancho (fotos de WhatsApp): no se piden anchos
+// mayores porque serían upscale. El techo de nitidez lo pone la fuente.
+const OPCIONES_HERO = {
+  widths: [540, 800, 1080, 1200],
+  sizes: '100vw',
+  quality: 90,
+  format: 'webp',
+};
+const heroMovil = await getImage({ src: heroMovilImg, ...OPCIONES_HERO });
+const heroEscritorio = await getImage({ src: heroImg, ...OPCIONES_HERO });
 ---
 
 <section
@@ -19,24 +31,29 @@ import { SCHEDULE, LOCATION } from '@/lib/site';
   aria-label="Sección principal de Chuter FC"
 >
   <!-- Capa 1 (más lenta): imagen hero, da sensación de fondo profundo.
-       El cliente pidió el hero nítido (2026-08-22): se sirve al ancho real del
-       viewport y con quality alta, aunque el overlay navy tape parte del
-       detalle. Es el trade-off consciente contra el presupuesto de LCP. -->
+       Art direction (2026-08-26): en viewport vertical `object-cover` escalaba
+       la foto horizontal ~2.5x por altura y se veía borrosa en móvil. Se sirve
+       una foto vertical en portrait y la horizontal en landscape; el navegador
+       descarga solo la fuente que aplica, así que el LCP no cambia. -->
   <HeroParallaxLayer speed={0.55} client:idle className="absolute inset-0 z-0">
-    <!-- La fuente mide 1200px de ancho (foto de WhatsApp): no se piden anchos
-         mayores porque serían upscale — píxeles inventados, más peso y ni un
-         detalle más. En monitores >1200px el navegador estira; el techo real de
-         nitidez lo pone la fuente, no esta config. -->
-    <Image
-      src={heroImg}
-      alt="Formadores de Chuter FC dando indicaciones a un grupo de niños reunidos en la cancha"
-      class="h-[120%] w-full object-cover object-[50%_42%] 2xl:[filter:saturate(1.08)]"
-      widths={[540, 800, 1080, 1200]}
-      sizes="100vw"
-      loading="eager"
-      fetchpriority="high"
-      quality={90}
-    />
+    <picture>
+      <source
+        media="(orientation: portrait)"
+        srcset={heroMovil.srcSet.attribute}
+        sizes="100vw"
+      />
+      <img
+        src={heroEscritorio.src}
+        srcset={heroEscritorio.srcSet.attribute}
+        sizes="100vw"
+        alt="Integrantes de Chuter FC con el uniforme del club en la cancha"
+        class="h-[120%] w-full object-cover object-[50%_42%] 2xl:[filter:saturate(1.08)]"
+        loading="eager"
+        fetchpriority="high"
+        width={heroImg.width}
+        height={heroImg.height}
+      />
+    </picture>
   </HeroParallaxLayer>
 
   <!-- Overlay base navy (estático) -->
