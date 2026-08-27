@@ -1,9 +1,15 @@
+import {
+  EDAD_MAX_CAPTACION,
+  EDAD_MIN_CAPTACION,
+} from '@/lib/domain/categoria';
+
 export const SITE = {
   name: 'Chuter FC',
   legalName: 'Club Deportivo Chuter F.C.',
   tagline: 'Todo niño es un campeón',
   description:
-    'Escuela de fútbol para niños y niñas en Valledupar, Cesar, avalada por INDER. Inscripción gratis. Categorías de Baby a Juvenil, para edades de 3 a 16 años.',
+    'Escuela de fútbol para niños y niñas en Valledupar, Cesar, avalada por INDER. Inscripción gratis. Categorías de Baby a Juvenil, para edades de ' +
+    `${String(EDAD_MIN_CAPTACION)} a ${String(EDAD_MAX_CAPTACION)} años.`,
   shortDescription:
     'Escuela de fútbol para niños y niñas en Valledupar. Avalada por INDER.',
   url: import.meta.env.PUBLIC_SITE_URL ?? 'https://chuterfc.com',

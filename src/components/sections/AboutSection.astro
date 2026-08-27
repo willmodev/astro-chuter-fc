@@ -4,10 +4,16 @@ import Container from '@/components/layout/Container.astro';
 import SectionHeading from '@/components/layout/SectionHeading.astro';
 import BrandButton from '@/components/layout/BrandButton.astro';
 import StatsCounter from '@/components/sections/about/StatsCounter';
+import { CATEGORIAS } from '@/lib/domain/categoria';
 import { WA_HERO } from '@/lib/whatsapp';
 
 const stats = [
-  { value: '7', valueNum: 7, label: 'Categorías', sub: 'Baby a Juvenil' },
+  {
+    value: String(CATEGORIAS.length),
+    valueNum: CATEGORIAS.length,
+    label: 'Categorías',
+    sub: 'Baby a Juvenil',
+  },
   {
     value: '3×',
     valueNum: 3,

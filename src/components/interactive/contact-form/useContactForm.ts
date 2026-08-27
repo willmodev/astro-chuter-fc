@@ -3,7 +3,10 @@ import { useState, type SubmitEvent } from 'react';
 import { actions } from 'astro:actions';
 
 import { formatearFechaISO, parseFechaNacimiento } from '@/lib/domain/alumnos';
-import { categoriaDeFecha, rangoFechasAdmitidas } from '@/lib/domain/categoria';
+import {
+  categoriaDeCaptacion,
+  rangoFechasAdmitidas,
+} from '@/lib/domain/categoria';
 
 export type Status = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -15,7 +18,7 @@ export function useContactForm() {
   const [status, setStatus] = useState<Status>('idle');
   const [childDate, setChildDate] = useState('');
   const fechaNino = parseFechaNacimiento(childDate);
-  const catSugerida = fechaNino ? categoriaDeFecha(fechaNino, HOY) : null;
+  const catSugerida = fechaNino ? categoriaDeCaptacion(fechaNino, HOY) : null;
   const suggestedCat = catSugerida
     ? `${catSugerida.nombre} · ${catSugerida.etiqueta}`
     : null;

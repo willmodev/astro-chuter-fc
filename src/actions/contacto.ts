@@ -2,14 +2,18 @@ import { defineAction } from 'astro:actions';
 import { z } from 'astro/zod';
 
 import { parseFechaNacimiento } from '@/lib/domain/alumnos';
-import { categoriaDeFecha } from '@/lib/domain/categoria';
+import {
+  categoriaDeCaptacion,
+  EDAD_MAX_CAPTACION,
+  EDAD_MIN_CAPTACION,
+} from '@/lib/domain/categoria';
 import { procesarInscripcion } from '@/lib/services/contacto';
 
-// La fecha debe caer en alguna categoría del catálogo: el `min`/`max` del input
-// es UX, la frontera real es esta.
-const fechaEnCategoria = (iso: string): boolean => {
+// La fecha debe caer en el rango de captación: el `min`/`max` del input es UX,
+// la frontera real es esta.
+const fechaEnCaptacion = (iso: string): boolean => {
   const fecha = parseFechaNacimiento(iso);
-  return fecha !== null && categoriaDeFecha(fecha, new Date()) !== null;
+  return fecha !== null && categoriaDeCaptacion(fecha, new Date()) !== null;
 };
 
 export const enviarContacto = defineAction({
@@ -20,7 +24,10 @@ export const enviarContacto = defineAction({
     nombreNino: z.string().min(2),
     fechaNacimiento: z
       .string()
-      .refine(fechaEnCategoria, 'Recibimos niños y niñas de hasta 16 años.'),
+      .refine(
+        fechaEnCaptacion,
+        `Recibimos niños y niñas de ${String(EDAD_MIN_CAPTACION)} a ${String(EDAD_MAX_CAPTACION)} años.`,
+      ),
     emailAcudiente: z.email().optional().or(z.literal('')),
     mensaje: z.string().max(1000).optional(),
     botcheck: z.string().optional(), // honeypot

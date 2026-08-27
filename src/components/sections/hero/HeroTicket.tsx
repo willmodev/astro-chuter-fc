@@ -1,5 +1,10 @@
 import MotionProvider from '@/components/motion/MotionProvider';
 import { m, useReducedMotion } from '@/components/motion/M';
+import {
+  CATEGORIAS,
+  EDAD_MAX_CAPTACION,
+  EDAD_MIN_CAPTACION,
+} from '@/lib/domain/categoria';
 import { ease, spring } from '@/lib/motion';
 
 interface Props {
@@ -63,7 +68,7 @@ function TicketInner({ avalLabel = 'INDER' }: Props) {
               Categorías
             </dt>
             <dd className="font-display text-brand-navy-deep text-2xl leading-none">
-              4
+              {CATEGORIAS.length}
             </dd>
           </div>
           <div className="border-brand-navy/25 border-x border-dashed">
@@ -71,7 +76,7 @@ function TicketInner({ avalLabel = 'INDER' }: Props) {
               Edades
             </dt>
             <dd className="font-display text-brand-navy-deep text-2xl leading-none">
-              4–14
+              {EDAD_MIN_CAPTACION}–{EDAD_MAX_CAPTACION}
             </dd>
           </div>
           <div>

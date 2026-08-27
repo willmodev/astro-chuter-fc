@@ -28,12 +28,21 @@ export interface AlumnoParaCategoria {
 const SUB_MIN = Math.min(...CATEGORIAS.map((c) => c.sub));
 const SUB_MAX = Math.max(...CATEGORIAS.map((c) => c.sub));
 
+// Rango de CAPTACIÓN (pedido literal del cliente, 2026-08-26): el club recibe
+// de 3 a 15 años. La regla de permanencia sigue llegando a SUB 16 — un
+// inscrito de 15 cumple 16 y sigue en Juvenil — por eso el tope es aparte.
+export const EDAD_MIN_CAPTACION = SUB_MIN - 1;
+export const EDAD_MAX_CAPTACION = 15;
+
 export const etiquetaDeSub = (sub: number): string => `SUB ${String(sub)}`;
 
 // "SUB 8" cubre a los de 7 y 8. En SUB 4 caen además los más chicos, por el
-// clamp inferior (un niño de 3 es, literalmente, sub 4).
+// clamp inferior (un niño de 3 es, literalmente, sub 4). La edad publicada se
+// topa en la de captación: Juvenil dice "15 años", no "15 a 16".
 const edadesDeSub = (sub: number): string =>
-  `${String(sub - 1)} a ${String(sub)} años`;
+  sub - 1 >= EDAD_MAX_CAPTACION
+    ? `${String(sub - 1)} años`
+    : `${String(sub - 1)} a ${String(sub)} años`;
 
 function aCategoria(sub: number, nombre: string): Categoria {
   return {
@@ -112,11 +121,18 @@ export function categoriaDeAlumno(
     : categoriaDeAnio(alumno.anioNacimiento, hoy);
 }
 
-/** Rango de fechas de nacimiento admitidas hoy (para `min`/`max` del form). */
+/** Categoría solo si la edad está en el rango de captación (form público). */
+export function categoriaDeCaptacion(fecha: Date, hoy: Date): Categoria | null {
+  if (Number.isNaN(fecha.getTime())) return null;
+  const edad = edadCumplida(fecha, hoy);
+  return edad > EDAD_MAX_CAPTACION ? null : categoriaDeEdad(edad);
+}
+
+/** Rango de fechas de nacimiento que capta el form público (`min`/`max`). */
 export function rangoFechasAdmitidas(hoy: Date): { min: Date; max: Date } {
   return {
     min: new Date(
-      hoy.getFullYear() - (SUB_MAX + 1),
+      hoy.getFullYear() - (EDAD_MAX_CAPTACION + 1),
       hoy.getMonth(),
       hoy.getDate() + 1,
     ),
